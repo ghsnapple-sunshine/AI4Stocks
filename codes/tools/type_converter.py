@@ -4,6 +4,7 @@ import numpy as np
 
 class TypeConverter:
     @staticmethod
-    def Tuple2List(tup: tuple):
-        ls = list(chain.from_iterable(tup))
-        return np.reshape(ls, (len(tup), len(ls) // len(tup)))
+    def Tuple2Arr(tup: tuple):
+        arr = np.array(tup)
+        arr = np.reshape(arr, (-1, len(tup)))
+        return arr

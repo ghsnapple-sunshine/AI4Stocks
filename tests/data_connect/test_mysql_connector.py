@@ -1,11 +1,11 @@
 import datetime
+import unittest
 from codes.data_connect.mysql_connector import MysqlConnector
 from codes.data_connect.mysql_common import MysqlRole
-import unittest
 from unittest import TestCase
 
 
-class MysqlConnectTest(TestCase):
+class TestMysqlConnect(TestCase):
     def setUp(self):
         self.connector = MysqlConnector(MysqlRole.DbTest)
         self.connector.connect()

@@ -43,7 +43,7 @@ class MysqlConnector:
             self.conn.commit()
         if fetch:
             res = self.cursor.fetchall()
-            return TypeConverter.Tuple2List(res)
+            return TypeConverter.Tuple2Arr(res)
         return res
 
     def executeMany(self, sql, vals, commit=False):

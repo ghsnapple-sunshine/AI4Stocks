@@ -4,11 +4,11 @@ from codes.data_connect.mysql_common import MysqlColumnType, MysqlConstants, Mys
 from codes.data_connect.mysql_operator import MysqlOperator
 
 
-class MysqlOperatorTest(unittest.TestCase):
+class TestMysqlOperator(unittest.TestCase):
     def test_all(self):
-        op = MysqlOperatorTest.createTable()
-        MysqlOperatorTest.insertData(op)
-        MysqlOperatorTest.tryInsertData(op)
+        op = TestMysqlOperator.createTable()
+        TestMysqlOperator.insertData(op)
+        TestMysqlOperator.tryInsertData(op)
 
     def tearDown(self):
         op = MysqlOperator(MysqlRole.DbTest)
