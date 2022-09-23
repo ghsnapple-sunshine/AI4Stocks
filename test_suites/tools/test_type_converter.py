@@ -1,6 +1,6 @@
 import unittest
 
-from codes.tools.type_converter import TypeConverter
+from ai4stocks.tools.type_converter import TypeConverter
 from numpy import ndarray
 
 

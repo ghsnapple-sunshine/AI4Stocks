@@ -1,17 +1,17 @@
-# 对akshare的接口进行封装
-# https://www.akshare.xyz/tutorial.html
+# 下载沪深股票列表
 import akshare as ak
 from pandas import DataFrame
 
-from codes.data_connect.mysql_common import MysqlRole, MysqlConstants, MysqlColumnAddReq, MysqlColumnType
-from codes.data_connect.mysql_operator import MysqlOperator
+from ai4stocks.data_connect.mysql_common import MysqlConstants, MysqlColAddReq, MysqlColType
+from ai4stocks.data_connect.mysql_operator import MysqlOperator
 
 
-class AkDlStockList:
+class StockListHandler:
     @staticmethod
     def Download():
         stocks = ak.stock_info_a_code_name()
 
+        '''
         # StockList返回的股票代码是“000001”，“000002”这样的格式
         # 但是stock_zh_a_daily（）函数中，要求代码的格式为“sz000001”，或“sh600001”
         # 即必须有sz或者sh作为前序
@@ -25,20 +25,23 @@ class AkDlStockList:
             elif temp[0] == "3":
                 temp = "sz" + temp
             stocks.iloc[i, 0] = temp
+        '''
+
         return stocks
 
     @staticmethod
-    def Save2Database(stocks, role: MysqlRole.DbStock):
-        op = MysqlOperator(role)
-        data = [['code', MysqlColumnType.Varchar8, MysqlColumnAddReq.PRIMKEY],
-                ['name', MysqlColumnType.Varchar6, MysqlColumnAddReq.NONE]]
-        df = DataFrame(data=data, columns=MysqlConstants.COLUMN_INDEXS)
-        op.CreateTable(MysqlConstants.STOCK_LIST_TABLE, df)
-        op.InsertData(MysqlConstants.STOCK_LIST_TABLE, stocks)
+    def Save2Database(stocks, op: MysqlOperator):
+        cols = [
+            ['code', MysqlColType.STOCK_CODE, MysqlColAddReq.PRIMKEY],
+            ['name', MysqlColType.STOCK_NAME, MysqlColAddReq.NONE]
+        ]
+        table_meta = DataFrame(data=cols, columns=MysqlConstants.META_COLS)
+        op.CreateTable(MysqlConstants.STOCK_LIST_TABLE, table_meta)
+        op.TryInsertData(MysqlConstants.STOCK_LIST_TABLE, stocks) #自动忽略重复Insert
         op.Disconnect()
 
     @staticmethod
-    def DownloadAndSave(role: MysqlRole.DbStock):
-        stocks = AkDlStockList.Download()
-        AkDlStockList.Save2Database(stocks, role)
+    def DownloadAndSave(op: MysqlOperator):
+        stocks = StockListHandler.Download()
+        StockListHandler.Save2Database(stocks, op=op)
         return stocks.shape[0]
