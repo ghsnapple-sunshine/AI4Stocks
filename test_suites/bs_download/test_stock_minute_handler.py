@@ -1,0 +1,38 @@
+import unittest
+
+from pendulum import DateTime
+
+from ai4stocks.bs_download.stock_minute_handler import StockMinuteHandler
+from test.ak_download.test_tools import TestTools
+from test.common.base_test import BaseTest
+from test.common.db_sweeper import DbSweeper
+
+
+class StockMinuteHandlerTest(BaseTest):
+    def test_download_1_month(self) -> None:
+        DbSweeper.CleanUp()
+        stocks = TestTools.CreateStockListTable(self.op)
+        start_date = DateTime(2022, 8, 1)
+        end_date = DateTime(2022, 8, 31)
+        tbls = StockMinuteHandler.DownloadAndSave(op=self.op, start_date=start_date, end_date=end_date)
+        assert stocks.shape[0] == len(tbls)
+
+    def test_download_1_year(self) -> None:
+        DbSweeper.CleanUp()
+        stocks = TestTools.CreateStockListTable(self.op)
+        start_date = DateTime(2021, 1, 1)
+        end_date = DateTime(2021, 12, 31)
+        tbls = StockMinuteHandler.DownloadAndSave(op=self.op, start_date=start_date, end_date=end_date)
+        assert stocks.shape[0] == len(tbls)
+
+    def test_download_10_year(self) -> None:
+        DbSweeper.CleanUp()
+        stocks = TestTools.CreateStockListTable(self.op)
+        start_date = DateTime(2011, 1, 1)
+        end_date = DateTime(2021, 12, 31)
+        tbls = StockMinuteHandler.DownloadAndSave(op=self.op, start_date=start_date, end_date=end_date)
+        assert stocks.shape[0] == len(tbls)
+
+
+if __name__ == '__main__':
+    unittest.main()

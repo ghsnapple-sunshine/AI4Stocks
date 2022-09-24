@@ -2,7 +2,7 @@ import akshare as ak
 from pandas import DataFrame
 from pendulum import DateTime
 
-from ai4stocks.ak_download.common import FuquanType
+from ai4stocks.common.common import FuquanType
 from ai4stocks.data_connect.mysql_common import MysqlColType, MysqlColAddReq, MysqlConstants
 from ai4stocks.data_connect.mysql_operator import MysqlOperator
 
