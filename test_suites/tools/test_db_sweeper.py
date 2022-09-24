@@ -16,9 +16,8 @@ class TestDbSweeper(BaseTest):
         except ProgrammingError as e:
             assert e.args[0] == 1146
 
-
     def CreateTable(self):
         data = [['code', MysqlColType.STOCK_CODE, MysqlColAddReq.PRIMKEY],
                 ['name', MysqlColType.STOCK_NAME, MysqlColAddReq.NONE]]
         df = DataFrame(data=data, columns=MysqlConstants.META_COLS)
-        self.op.CreateTable(MysqlConstants.STOCK_LIST_TABLE, df, False)
+        self.op.CreateTable(MysqlConstants.STOCK_LIST_TABLE, df, True)
