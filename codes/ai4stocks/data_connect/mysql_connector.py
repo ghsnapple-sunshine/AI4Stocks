@@ -47,7 +47,8 @@ class MysqlConnector:
             if fetch:
                 res = self.cursor.fetchall()
                 db = DataFrame(list(res))
-                db.columns = [d[0] for d in self.cursor.description]
+                if not db.empty:
+                    db.columns = [d[0] for d in self.cursor.description]
                 return db
             return res
         except DatabaseError as e:
