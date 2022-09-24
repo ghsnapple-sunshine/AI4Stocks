@@ -2,7 +2,7 @@ import unittest
 from pandas import DataFrame
 
 from ai4stocks.download.akshare.stock_list_handler import StockListHandler
-from ai4stocks.download.data_connect.mysql_common import MysqlConstants
+from ai4stocks.download.connect.mysql_common import MysqlConstants
 from test.common.base_test import BaseTest
 
 

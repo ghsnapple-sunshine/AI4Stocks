@@ -2,8 +2,8 @@
 import akshare as ak
 from pandas import DataFrame
 
-from ai4stocks.download.data_connect.mysql_common import MysqlConstants, MysqlColAddReq, MysqlColType
-from ai4stocks.download.data_connect.mysql_operator import MysqlOperator
+from ai4stocks.download.connect.mysql_common import MysqlConstants, MysqlColAddReq, MysqlColType
+from ai4stocks.download.connect.mysql_operator import MysqlOperator
 
 
 class StockListHandler:

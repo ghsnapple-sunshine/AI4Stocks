@@ -3,7 +3,7 @@ import unittest
 from pendulum import DateTime
 
 from ai4stocks.download.akshare.stock_daily_handler import StockDailyHandler
-from test.download.ak_download.test_tools import TestTools
+from test.common.test_tools import TestTools
 from test.common.base_test import BaseTest
 from test.common.db_sweeper import DbSweeper
 
