@@ -1,7 +1,7 @@
 import pymysql
 from pandas import DataFrame
 
-from ai4stocks.data_connect.mysql_common import MysqlRole
+from ai4stocks.download.data_connect.mysql_common import MysqlRole
 from pymysql.err import DatabaseError
 
 

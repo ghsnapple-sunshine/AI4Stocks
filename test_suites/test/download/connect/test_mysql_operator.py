@@ -1,6 +1,6 @@
 import unittest
 from pandas import DataFrame
-from ai4stocks.data_connect.mysql_common import MysqlColType, MysqlConstants, MysqlColAddReq
+from ai4stocks.download.data_connect.mysql_common import MysqlColType, MysqlConstants, MysqlColAddReq
 from test.common.base_test import BaseTest
 
 

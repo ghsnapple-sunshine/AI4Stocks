@@ -1,4 +1,3 @@
-import datetime
 import unittest
 
 from test.common.base_test import BaseTest

@@ -2,8 +2,8 @@ import unittest
 
 from pendulum import DateTime
 
-from ai4stocks.bs_download.stock_minute_handler import StockMinuteHandler
-from test.ak_download.test_tools import TestTools
+from ai4stocks.download.baostock.stock_minute_handler import StockMinuteHandler
+from test.common.test_tools import TestTools
 from test.common.base_test import BaseTest
 from test.common.db_sweeper import DbSweeper
 

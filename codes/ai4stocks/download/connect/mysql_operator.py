@@ -1,5 +1,5 @@
-from ai4stocks.data_connect.mysql_connector import MysqlConnector
-from ai4stocks.data_connect.mysql_common import MysqlConstants
+from ai4stocks.download.data_connect.mysql_connector import MysqlConnector
+from ai4stocks.download.data_connect.mysql_common import MysqlConstants
 from pandas import DataFrame
 import pandas as pd
 

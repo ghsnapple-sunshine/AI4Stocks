@@ -2,22 +2,22 @@ import unittest
 
 from pendulum import DateTime
 
-from ai4stocks.ak_download.stock_minute_handler import StockMinuteHandler
-from test.ak_download.test_tools import TestTools
+from ai4stocks.download.akshare.stock_daily_handler import StockDailyHandler
+from test.download.ak_download.test_tools import TestTools
 from test.common.base_test import BaseTest
 from test.common.db_sweeper import DbSweeper
 
 
-class StockMinuteHandlerTest(BaseTest):
+class StockDailyHandlerTest(BaseTest):
     def setUp(self) -> None:
         super().setUp()
         DbSweeper.CleanUp()
 
     def test_download(self) -> None:
         stocks = TestTools.CreateStockListTable(self.op)
-        start_date = DateTime(2022, 9, 1)
-        end_date = DateTime(2022, 9, 30)
-        tbls = StockMinuteHandler.DownloadAndSave(op=self.op, start_date=start_date, end_date=end_date)
+        start_date = DateTime(2022, 1, 1)
+        end_date = DateTime(2022, 6, 30)
+        tbls = StockDailyHandler.DownloadAndSave(op=self.op, start_date=start_date, end_date=end_date)
         assert stocks.shape[0] * 2 == len(tbls)
 
 

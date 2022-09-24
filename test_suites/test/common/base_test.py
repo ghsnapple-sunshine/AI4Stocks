@@ -1,7 +1,7 @@
 import unittest
 
-from ai4stocks.data_connect.mysql_common import MysqlRole
-from ai4stocks.data_connect.mysql_operator import MysqlOperator
+from ai4stocks.download.data_connect.mysql_common import MysqlRole
+from ai4stocks.download.data_connect.mysql_operator import MysqlOperator
 from pendulum import DateTime
 
 
