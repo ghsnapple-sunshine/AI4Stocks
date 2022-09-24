@@ -10,7 +10,7 @@ class StockListHandlerTest(BaseTest):
     def test_all(self):
         res = StockListHandler.DownloadAndSave(self.op)
         cnt = self.op.GetTableCnt(MysqlConstants.STOCK_LIST_TABLE)
-        assert cnt == res
+        assert cnt == res.shape[0]
         tbl = self.op.GetTable(MysqlConstants.STOCK_LIST_TABLE)
         assert type(tbl) == DataFrame
 

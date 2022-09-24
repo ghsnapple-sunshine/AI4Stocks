@@ -9,8 +9,8 @@ from ai4stocks.data_connect.mysql_operator import MysqlOperator
 
 class StockDailyHandler:
     @staticmethod
-    def DownloadStockDailyInfos(code: str, start_date: DateTime, end_date: DateTime, fuquan: FuquanType):
-        # 使用接口（stock_zh_a_hist）,code为Str6
+    def DownloadStockDailyInfos(code: str, start_date: DateTime, end_date: DateTime, fuquan: FuquanType) -> DataFrame:
+        # 使用接口（stock_zh_a_hist，源：东财）,code为Str6
         # 备用接口（stock_zh_a_daily，源：新浪，未实现）
         start_date = start_date.format('YYYYMMDD')
         end_date = end_date.format('YYYYMMDD')
@@ -35,7 +35,7 @@ class StockDailyHandler:
         return daily_info
 
     @staticmethod
-    def Save2Database(op: MysqlOperator, code: str, fuquan: FuquanType, data: DataFrame):
+    def Save2Database(op: MysqlOperator, code: str, fuquan: FuquanType, data: DataFrame) -> str:
         cols = [
             ['date', MysqlColType.DATE, MysqlColAddReq.PRIMKEY],
             ['code', MysqlColType.STOCK_CODE, MysqlColAddReq.NONE],
@@ -58,22 +58,19 @@ class StockDailyHandler:
         return table_name
 
     @staticmethod
-    def DownAndSave(op: MysqlOperator):
-        start_date = DateTime(2010, 1, 1)
-        end_date = DateTime(2022, 6, 30)
-
-        tbl = op.GetTable(MysqlConstants.STOCK_LIST_TABLE)
+    def DownloadAndSave(op: MysqlOperator, start_date: DateTime, end_date: DateTime) -> list:
+        stocks = op.GetTable(MysqlConstants.STOCK_LIST_TABLE)
 
         tbls = []
         FUQUANS = [FuquanType.HOUFUQIAN, FuquanType.QIANFUQIAN]
-        for index, row in tbl.iterrows():
+        for index, row in stocks.iterrows():
             for fuquan in FUQUANS:
                 code = row['code']
                 name = row['name']
                 daily_info = StockDailyHandler.DownloadStockDailyInfos(code=code, start_date=start_date,
                                                                        end_date=end_date, fuquan=fuquan)
                 table_name = StockDailyHandler.Save2Database(op=op, code=code, fuquan=fuquan, data=daily_info)
-                print('Successfully Download Stock {0} {1} {2}'.format(code, name, fuquan))
+                print('Successfully Download Stock {0} {1} {2}'.format(code, name, fuquan.toString()))
                 tbls.append(table_name)
 
         return tbls

@@ -8,7 +8,7 @@ from ai4stocks.data_connect.mysql_operator import MysqlOperator
 
 class StockListHandler:
     @staticmethod
-    def Download():
+    def Download() -> DataFrame:
         stocks = ak.stock_info_a_code_name()
 
         '''
@@ -30,18 +30,18 @@ class StockListHandler:
         return stocks
 
     @staticmethod
-    def Save2Database(stocks, op: MysqlOperator):
+    def Save2Database(stocks, op: MysqlOperator) -> None:
         cols = [
             ['code', MysqlColType.STOCK_CODE, MysqlColAddReq.PRIMKEY],
             ['name', MysqlColType.STOCK_NAME, MysqlColAddReq.NONE]
         ]
         table_meta = DataFrame(data=cols, columns=MysqlConstants.META_COLS)
         op.CreateTable(MysqlConstants.STOCK_LIST_TABLE, table_meta)
-        op.TryInsertData(MysqlConstants.STOCK_LIST_TABLE, stocks) #自动忽略重复Insert
+        op.TryInsertData(MysqlConstants.STOCK_LIST_TABLE, stocks) # 忽略重复Insert
         op.Disconnect()
 
     @staticmethod
-    def DownloadAndSave(op: MysqlOperator):
+    def DownloadAndSave(op: MysqlOperator) -> DataFrame:
         stocks = StockListHandler.Download()
         StockListHandler.Save2Database(stocks, op=op)
-        return stocks.shape[0]
+        return stocks
