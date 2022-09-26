@@ -1,6 +1,8 @@
+from pendulum import DateTime
+
 from ai4stocks.download.connect.mysql_connector import MysqlConnector
 from ai4stocks.download.connect.mysql_common import MysqlConstants
-from pandas import DataFrame
+from pandas import DataFrame, Timestamp
 import pandas as pd
 
 
@@ -11,7 +13,7 @@ class MysqlOperator(MysqlConnector):
         strAddReq = MysqlConstants.META_COLS[2]
         cols = []
         for index, row in colDesc.iterrows():
-            s = row[strColumn] + ' ' + row[strType].toString() + ' ' + row[strAddReq].toString()
+            s = row[strColumn] + ' ' + row[strType].ToSql() + ' ' + row[strAddReq].ToSql()
             cols.append(s)
         joinCols = ','.join(cols)
         strIfExist = 'if not exists ' if if_not_exist else ''
@@ -28,6 +30,9 @@ class MysqlOperator(MysqlConnector):
         self.ExecuteMany(sql, vals, True)
 
     def TryInsertData(self, name: str, df: DataFrame, update=False):
+        if df is None or isinstance(df, DataFrame) and df.shape[0] <= 0:
+            return
+
         inQ = ['%s'] * df.columns.size
         strInQ = ', '.join(inQ)
         cols = df.columns
@@ -40,22 +45,25 @@ class MysqlOperator(MysqlConnector):
         else:
             inQ2 = df.columns[1:] + "=%s"
             strInQ2 = ', '.join(inQ2)
-            sql = "insert into `{0}`({1}) values({2}) on duplicate key update {3}".format(name, strCols, strInQ,
-                                                                                          strInQ2)
+            sql = "insert into `{0}`({1}) values({2}) on duplicate key update {3}".format(
+                name, strCols, strInQ, strInQ2)
             df = pd.concat([df, df.iloc[:, 1:colNum]], axis=1)
             for row in range(df.shape[0]):
                 ls = list(df.iloc[row, :])
-                ls = ['\'{0}\''.format(obj) if isinstance(obj, str) else obj
+                ls = ['\'{0}\''.format(obj) if MysqlOperator.IsAddComma(obj) else obj
                       for obj in ls]
-                sql = sql % tuple(ls)
-                self.Execute(sql)
+                sql2 = sql % tuple(ls)
+                self.Execute(sql2)
             self.conn.commit()
 
-    '''
-    def TryInsertData(self, tableName: str, df: DataFrame):
-        engine = create_engine()
-        pd.io.sql.to_sql(df, tableName, )
-    '''
+    @staticmethod
+    def IsAddComma(obj):
+        if isinstance(obj, str):
+            return True
+        elif isinstance(obj, DateTime) | isinstance(obj, Timestamp):  # 注意到DateTime类型在DateFrame中被封装为TimeSpan类型
+            return True
+        else:
+            return False
 
     def DropTable(self, name: str):
         sql = "drop table if exists `{0}`".format(name)

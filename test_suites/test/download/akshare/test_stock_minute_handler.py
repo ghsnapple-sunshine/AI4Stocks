@@ -17,8 +17,8 @@ class StockMinuteHandlerTest(BaseTest):
         stocks = TestTools.CreateStockListTable(self.op)
         start_date = DateTime(2022, 9, 1)
         end_date = DateTime(2022, 9, 30)
-        tbls = StockMinuteHandler.DownloadAndSave(op=self.op, start_date=start_date, end_date=end_date)
-        assert stocks.shape[0] * 2 == len(tbls)
+        tbls = StockMinuteHandler(op=self.op).DownloadAndSave(start_date=start_date, end_date=end_date)
+        assert stocks.shape[0] == len(tbls)
 
 
 if __name__ == '__main__':

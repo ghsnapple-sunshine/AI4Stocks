@@ -15,23 +15,27 @@ class MysqlColType(Enum):
     Int32 = 5,
     DATE = 10,  # 日期
     DATETIME = 11  # 日期时间
+    DATA_FREQ = 100 # 记录类型
+    DATA_SOURCE = 101 # 源类型
 
-    def toString(self):
+    def ToSql(self):
         COL_TYPE_DICT = {MysqlColType.STOCK_CODE: 'VARCHAR(6)',
                          MysqlColType.LONG_STOCK_CODE: 'VARCHAR(8)',
                          MysqlColType.STOCK_NAME: 'VARCHAR(4)',
                          MysqlColType.Float: 'FLOAT',
                          MysqlColType.Int32: 'INT',
                          MysqlColType.DATE: 'DATE',
-                         MysqlColType.DATETIME: 'DATETIME'}
+                         MysqlColType.DATETIME: 'DATETIME',
+                         MysqlColType.DATA_FREQ: 'VARCHAR(4)',
+                         MysqlColType.DATA_SOURCE: 'CHAR(2)'}
         return COL_TYPE_DICT[self]
 
 
 class MysqlColAddReq(Enum):
-    NONE = 1,
+    NONE = 1
     PRIMKEY = 2
 
-    def toString(self):
+    def ToSql(self):
         COL_ADDREQ_DICT = {MysqlColAddReq.NONE: '',
                            MysqlColAddReq.PRIMKEY: 'PRIMARY KEY'}
         return COL_ADDREQ_DICT[self]
@@ -42,3 +46,4 @@ class MysqlConstants:
     STOCK_LIST_TABLE = 'stock_list'
     DAILY_INFO_TABLE = 'daily_info_{0}_{1}'
     MINUTE_INFO_TABLE = 'minute{0}_info_{1}_{2}'
+    DOWN_RECORD_TABLE = 'down_record'

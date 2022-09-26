@@ -10,11 +10,8 @@ class TestDbSweeper(BaseTest):
     def test_sweep(self):
         self.CreateTable()
         DbSweeper.CleanUp()
-        try:
-            self.op.GetTable(MysqlConstants.STOCK_LIST_TABLE)
-            assert False
-        except ProgrammingError as e:
-            assert e.args[0] == 1146
+        data = self.op.GetTable(MysqlConstants.STOCK_LIST_TABLE)
+        assert data.empty
 
     def CreateTable(self):
         data = [['code', MysqlColType.STOCK_CODE, MysqlColAddReq.PRIMKEY],

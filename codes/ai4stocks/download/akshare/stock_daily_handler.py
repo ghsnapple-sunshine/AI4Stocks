@@ -2,20 +2,29 @@ import akshare as ak
 from pandas import DataFrame
 from pendulum import DateTime
 
-from ai4stocks.common.common import FuquanType
+from ai4stocks.common.common import FuquanType, DataFreqType, DataSourceType
+from ai4stocks.common.stock_code import StockCode, StockCodeType
+from ai4stocks.download.base_handler import BaseHandler
+from ai4stocks.download.download_recorder import DownloadRecorder
 from ai4stocks.download.connect.mysql_common import MysqlColType, MysqlColAddReq, MysqlConstants
 from ai4stocks.download.connect.mysql_operator import MysqlOperator
 
 
-class StockDailyHandler:
-    @staticmethod
-    def DownloadStockDailyInfos(code: str, start_date: DateTime, end_date: DateTime, fuquan: FuquanType) -> DataFrame:
+class StockDailyHandler(BaseHandler):
+    def __init__(self, op: MysqlOperator):
+        self.op = op
+        self.recorder = DownloadRecorder(op=op)
+        self.source = DataSourceType.AKSHARE_DONGCAI
+        self.fuquans = [FuquanType.NONE, FuquanType.QIANFUQIAN, FuquanType.HOUFUQIAN]
+        self.freq = DataFreqType.DAY
+
+    def Download(self, code: StockCode, fuquan: FuquanType, start_date: DateTime, end_date: DateTime) -> DataFrame:
         # 使用接口（stock_zh_a_hist，源：东财）,code为Str6
         # 备用接口（stock_zh_a_daily，源：新浪，未实现）
         start_date = start_date.format('YYYYMMDD')
         end_date = end_date.format('YYYYMMDD')
-        daily_info = ak.stock_zh_a_hist(symbol=code, period='daily', start_date=start_date, end_date=end_date,
-                                        adjust=fuquan.toString())
+        daily_info = ak.stock_zh_a_hist(
+            symbol=code.toCode6(), period='daily', start_date=start_date, end_date=end_date, adjust=fuquan.ToReq())
 
         # 重命名
         DAILY_NAME_DICT = {'日期': 'date',
@@ -32,8 +41,7 @@ class StockDailyHandler:
         daily_info.rename(columns=DAILY_NAME_DICT, inplace=True)
         return daily_info
 
-    @staticmethod
-    def Save2Database(op: MysqlOperator, code: str, fuquan: FuquanType, data: DataFrame) -> str:
+    def Save2Database(self, name: str, data: DataFrame) -> None:
         cols = [
             ['date', MysqlColType.DATE, MysqlColAddReq.PRIMKEY],
             ['open', MysqlColType.Float, MysqlColAddReq.NONE],
@@ -48,26 +56,5 @@ class StockDailyHandler:
             ['huanshoulv', MysqlColType.Float, MysqlColAddReq.NONE]
         ]
         table_meta = DataFrame(data=cols, columns=MysqlConstants.META_COLS)
-        table_name = MysqlConstants.DAILY_INFO_TABLE.format(code, fuquan.toString())
-        op.CreateTable(table_name, table_meta)
-        op.InsertData(table_name, data)
-        op.Disconnect()
-        return table_name
-
-    @staticmethod
-    def DownloadAndSave(op: MysqlOperator, start_date: DateTime, end_date: DateTime) -> list:
-        stocks = op.GetTable(MysqlConstants.STOCK_LIST_TABLE)
-
-        tbls = []
-        FUQUANS = [FuquanType.HOUFUQIAN, FuquanType.QIANFUQIAN]
-        for index, row in stocks.iterrows():
-            for fuquan in FUQUANS:
-                code = row['code']
-                name = row['name']
-                daily_info = StockDailyHandler.DownloadStockDailyInfos(code=code, start_date=start_date,
-                                                                       end_date=end_date, fuquan=fuquan)
-                table_name = StockDailyHandler.Save2Database(op=op, code=code, fuquan=fuquan, data=daily_info)
-                print('Successfully Download Stock Daily {0} {1} {2}'.format(code, name, fuquan.toString()))
-                tbls.append(table_name)
-
-        return tbls
+        self.op.CreateTable(name, table_meta, if_not_exist=True)
+        self.op.TryInsertData(name, data)

@@ -2,7 +2,7 @@ import pymysql
 from pandas import DataFrame
 
 from ai4stocks.download.connect.mysql_common import MysqlRole
-from pymysql.err import DatabaseError
+from pymysql.err import DatabaseError, ProgrammingError
 
 
 class MysqlConnector:
@@ -51,6 +51,12 @@ class MysqlConnector:
                     db.columns = [d[0] for d in self.cursor.description]
                 return db
             return res
+        except ProgrammingError as e:
+            if e.args[0] == 1146:
+                return DataFrame()
+            else:
+                print(sql)
+                raise e
         except DatabaseError as e:
             print(sql)
             raise e
@@ -62,6 +68,12 @@ class MysqlConnector:
             if commit:
                 self.conn.commit()
             return res
+        except ProgrammingError as e:
+            if e.args[0] == 1146:
+                return DataFrame()
+            else:
+                print(sql)
+                raise e
         except DatabaseError as e:
             print(sql)
             print(vals[0])
