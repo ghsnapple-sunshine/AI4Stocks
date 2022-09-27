@@ -1,5 +1,6 @@
 from enum import Enum
 
+
 class StockCodeType(Enum):
     CODE6 = 1
     CODE8 = 2
@@ -40,12 +41,15 @@ class StockCode:
         return 'unknown'
 
     def __eq__(self, other):
-        if other is StockCode:
+        if isinstance(other, StockCode):
             return self.code == other.code
-        elif other is str:
+        elif isinstance(other, str):
             return self.code == other
         else:
             return False
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
 
     def __str__(self):
         return self.code

@@ -2,10 +2,11 @@ import baostock as bs
 from pandas import DataFrame
 from pendulum import DateTime
 
-from ai4stocks.common.common import FuquanType, DataSourceType, DataFreqType
+from ai4stocks.common.constants import META_COLS
+from ai4stocks.common.types import FuquanType, DataSourceType, DataFreqType
 from ai4stocks.common.stock_code import StockCodeType, StockCode
 from ai4stocks.download.base_handler import BaseHandler
-from ai4stocks.download.connect.mysql_common import MysqlColType, MysqlColAddReq, MysqlConstants
+from ai4stocks.download.connect.mysql_common import MysqlColType, MysqlColAddReq
 from ai4stocks.download.connect.mysql_operator import MysqlOperator
 from ai4stocks.download.download_recorder import DownloadRecorder
 
@@ -55,14 +56,14 @@ class StockMinuteHandler(BaseHandler):
 
     def Save2Database(self, name: str, data: DataFrame) -> None:
         cols = [
-            ['datetime', MysqlColType.DATETIME, MysqlColAddReq.PRIMKEY],
-            ['open', MysqlColType.Float, MysqlColAddReq.NONE],
-            ['close', MysqlColType.Float, MysqlColAddReq.NONE],
-            ['high', MysqlColType.Float, MysqlColAddReq.NONE],
-            ['low', MysqlColType.Float, MysqlColAddReq.NONE],
-            ['chengjiaoliang', MysqlColType.Int32, MysqlColAddReq.NONE],
-            ['chengjiaoe', MysqlColType.Float, MysqlColAddReq.NONE],
+            ['datetime', MysqlColType.DATETIME, MysqlColAddReq.KEY],
+            ['open', MysqlColType.FLOAT, MysqlColAddReq.NONE],
+            ['close', MysqlColType.FLOAT, MysqlColAddReq.NONE],
+            ['high', MysqlColType.FLOAT, MysqlColAddReq.NONE],
+            ['low', MysqlColType.FLOAT, MysqlColAddReq.NONE],
+            ['chengjiaoliang', MysqlColType.INT32, MysqlColAddReq.NONE],
+            ['chengjiaoe', MysqlColType.FLOAT, MysqlColAddReq.NONE],
         ]
-        table_meta = DataFrame(data=cols, columns=MysqlConstants.META_COLS)
+        table_meta = DataFrame(data=cols, columns=META_COLS)
         self.op.CreateTable(name, table_meta)
-        self.op.TryInsertData(name, data)
+        self.op.InsertData(name, data)

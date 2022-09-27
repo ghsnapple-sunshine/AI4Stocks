@@ -1,4 +1,5 @@
 from enum import Enum
+from pendulum import Duration
 
 
 class FuquanType(Enum):
@@ -36,6 +37,13 @@ class DataFreqType(Enum):
         }
         return RECORD_TYPE_DICT[self]
 
+    def ToDuration(self) -> str:
+        RECORD_TYPE_DICT = {
+            DataFreqType.DAY: Duration(days=1),
+            DataFreqType.MIN5: Duration(minutes=5)
+        }
+        return RECORD_TYPE_DICT[self]
+
     def __str__(self):
         RECORD_TYPE_DICT = {
             DataFreqType.DAY: 'day',
@@ -55,10 +63,10 @@ class DataSourceType(Enum):
         }
         return SOURCE_TYPE_DICT[self]
 
-    def toPrint(self):
+    def __str__(self):
         SOURCE_TYPE_DICT = {
-            DataSourceType.BAOSTOCK: 'baostock',
-            DataSourceType.AKSHARE_DONGCAI: 'akshare(东财)'
+            DataSourceType.BAOSTOCK: 'bs',
+            DataSourceType.AKSHARE_DONGCAI: 'ak(东财)'
         }
         return SOURCE_TYPE_DICT[self]
 

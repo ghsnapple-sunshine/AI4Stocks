@@ -4,6 +4,8 @@ from ai4stocks.download.connect.mysql_common import MysqlRole
 from ai4stocks.download.connect.mysql_operator import MysqlOperator
 from pendulum import DateTime
 
+from test.common.db_sweeper import DbSweeper
+
 
 class BaseTest(unittest.TestCase):
     def setUp(self) -> None:
@@ -11,6 +13,7 @@ class BaseTest(unittest.TestCase):
         self.op.Connect()
         self.conn = self.op
         self.table_name = "test_{0}".format(DateTime.now().format('YYYYMMDD_hhmmss'))
+        DbSweeper.CleanUp()
 
     def tearDown(self) -> None:
         self.op.Disconnect()

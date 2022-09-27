@@ -9,12 +9,8 @@ from test.common.db_sweeper import DbSweeper
 
 
 class StockMinuteHandlerTest(BaseTest):
-    def setUp(self) -> None:
-        super().setUp()
-        DbSweeper.CleanUp()
-
     def test_download(self) -> None:
-        stocks = TestTools.CreateStockListTable(self.op)
+        stocks = TestTools.CreateStockList_2(self.op)
         start_date = DateTime(2022, 9, 1)
         end_date = DateTime(2022, 9, 30)
         tbls = StockMinuteHandler(op=self.op).DownloadAndSave(start_date=start_date, end_date=end_date)

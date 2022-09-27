@@ -2,8 +2,9 @@
 import akshare as ak
 from pandas import DataFrame
 
+from ai4stocks.common.constants import COL_STOCK_CODE, COL_STOCK_NAME, META_COLS, STOCK_LIST_TABLE
 from ai4stocks.common.stock_code import StockCode
-from ai4stocks.download.connect.mysql_common import MysqlConstants, MysqlColAddReq, MysqlColType
+from ai4stocks.download.connect.mysql_common import MysqlColAddReq, MysqlColType
 from ai4stocks.download.connect.mysql_operator import MysqlOperator
 
 
@@ -34,12 +35,12 @@ class StockListHandler:
 
     def Save2Database(self, stocks: DataFrame) -> None:
         cols = [
-            ['code', MysqlColType.STOCK_CODE, MysqlColAddReq.PRIMKEY],
-            ['name', MysqlColType.STOCK_NAME, MysqlColAddReq.NONE]
+            [COL_STOCK_CODE, MysqlColType.STOCK_CODE, MysqlColAddReq.KEY],
+            [COL_STOCK_NAME, MysqlColType.STOCK_NAME, MysqlColAddReq.NONE]
         ]
-        table_meta = DataFrame(data=cols, columns=MysqlConstants.META_COLS)
-        self.op.CreateTable(MysqlConstants.STOCK_LIST_TABLE, table_meta)
-        self.op.TryInsertData(MysqlConstants.STOCK_LIST_TABLE, stocks) # 忽略重复Insert
+        table_meta = DataFrame(data=cols, columns=META_COLS)
+        self.op.CreateTable(STOCK_LIST_TABLE, table_meta)
+        self.op.TryInsertData(STOCK_LIST_TABLE, stocks)  # 忽略重复Insert
         self.op.Disconnect()
 
     def DownloadAndSave(self) -> DataFrame:
@@ -48,6 +49,6 @@ class StockListHandler:
         return stocks
 
     def GetTable(self) -> DataFrame:
-        stocks = self.op.GetTable(MysqlConstants.STOCK_LIST_TABLE)
+        stocks = self.op.GetTable(STOCK_LIST_TABLE)
         stocks['code'] = stocks.apply(lambda x: StockCode(x['code']), axis=1)
         return stocks
