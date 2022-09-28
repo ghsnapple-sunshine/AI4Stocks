@@ -11,6 +11,7 @@ class StockCode:
     def __init__(self, code: str):
         self.code = code
 
+    '''
     def Format(self, typ=StockCodeType.CODE6) -> str:
         if typ == StockCodeType.CODE6:
             return self.toCode6()
@@ -18,6 +19,7 @@ class StockCode:
             return self.toCode8()
         else:
             return self.toCode9()
+    '''
 
     def toCode6(self) -> str:
         return self.code

@@ -20,29 +20,29 @@ class StockDailyHandlerTest(BaseTest):
         hdl = StockDailyHandler(self.op)
         end_date = DateTime.now() - Duration(days=1)
         start_date = DateTime.now() - Duration(months=1)
-        tbls = hdl.DownloadAndSave(start_date=start_date, end_date=end_date)
+        tbls = hdl.DownloadAndSave(start_time=start_date, end_time=end_date)
         assert stocks.shape[0] * 3 == len(tbls)
 
     def Download1(self) -> None:
         TestTools.CreateStockList_1(self.op)
         hdl = StockDailyHandler(self.op)
-        hdl.DownloadAndSave(start_date=DateTime(2022, 1, 5), end_date=DateTime(2022, 1, 6))
+        hdl.DownloadAndSave(start_time=DateTime(2022, 1, 5), end_time=DateTime(2022, 1, 6))
         db = hdl.GetTable(StockCode('000001'), fuquan=FuquanType.NONE)
         assert db.shape[0] == 2  # 2022/1/5, 2022/1/6
 
-        hdl.DownloadAndSave(start_date=DateTime(2022, 1, 5), end_date=DateTime(2022, 1, 7))
+        hdl.DownloadAndSave(start_time=DateTime(2022, 1, 5), end_time=DateTime(2022, 1, 7))
         db = hdl.GetTable(StockCode('000001'), fuquan=FuquanType.NONE)
         assert db.shape[0] == 3  # 2022/1/5, 2022/1/6, 2022/1/7
 
-        hdl.DownloadAndSave(start_date=DateTime(2022, 1, 4), end_date=DateTime(2022, 1, 6))
+        hdl.DownloadAndSave(start_time=DateTime(2022, 1, 4), end_time=DateTime(2022, 1, 6))
         db = hdl.GetTable(StockCode('000001'), fuquan=FuquanType.NONE)
         assert db.shape[0] == 4  # 2022/1/4, 2022/1/5, 2022/1/6，2022/1/7
 
-        hdl.DownloadAndSave(start_date=DateTime(2022, 1, 3), end_date=DateTime(2022, 1, 8))
+        hdl.DownloadAndSave(start_time=DateTime(2022, 1, 3), end_time=DateTime(2022, 1, 8))
         db = hdl.GetTable(StockCode('000001'), fuquan=FuquanType.NONE)
         assert db.shape[0] == 4  # 2022/1/4, 2022/1/5, 2022/1/6，2022/1/7, 2022/1/3为公休日, 2022/1/8为周六
 
-        hdl.DownloadAndSave(start_date=DateTime(2022, 1, 3), end_date=DateTime(2022, 1, 10))
+        hdl.DownloadAndSave(start_time=DateTime(2022, 1, 3), end_time=DateTime(2022, 1, 10))
         db = hdl.GetTable(StockCode('000001'), fuquan=FuquanType.NONE)
         assert db.shape[0] == 5  # 2022/1/4, 2022/1/5, 2022/1/6，2022/1/7, 2022/1/10, 2022/1/3为公休日, 2022/1/8为周六
 

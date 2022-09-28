@@ -13,19 +13,30 @@ from ai4stocks.download.download_recorder import DownloadRecorder
 
 
 class StockMinuteHandler(BaseHandler):
-    def __init__(self, op: MysqlOperator):
+    def __init__(
+            self,
+            op: MysqlOperator
+    ):
         self.op = op
         self.recorder = DownloadRecorder(op=op)
         self.source = DataSourceType.AKSHARE_DONGCAI
         self.fuquans = [FuquanType.NONE]
         self.freq = DataFreqType.MIN5
 
-    def Download(self, code: StockCode, fuquan: FuquanType, start_date: DateTime, end_date: DateTime) -> DataFrame:
+    def __Download__(
+            self,
+            code: StockCode,
+            fuquan: FuquanType,
+            start_time: DateTime,
+            end_time: DateTime
+    ) -> DataFrame:
         # 使用接口（stock_zh_a_hist_min_em，源：东财）,code为Str6
-        start_date = start_date.format('YYYY-MM-DD HH:mm:ss')
-        end_date = end_date.format('YYYY-MM-DD HH:mm:ss')
         minute_info = ak.stock_zh_a_hist_min_em(
-            symbol=code.toCode6(), period='5', start_date=start_date, end_date=end_date, adjust=fuquan.ToReq())
+            symbol=code.toCode6(),
+            period='5',
+            start_date=start_time.format('YYYY-MM-DD HH:mm:ss'),
+            end_date=end_time.format('YYYY-MM-DD HH:mm:ss'),
+            adjust=fuquan.ToReq())
 
         # 重命名
         MINUTE_NAME_DICT = {'时间': 'datetime',
@@ -39,10 +50,12 @@ class StockMinuteHandler(BaseHandler):
                             '涨跌幅': 'zhangdiefu',
                             '涨跌额': 'zhangdiee',
                             '换手率': 'huanshoulv'}
-        minute_info.rename(columns=MINUTE_NAME_DICT, inplace=True)
+        minute_info.rename(
+            columns=MINUTE_NAME_DICT,
+            inplace=True)
         return minute_info
 
-    def Save2Database(self, name: str, data: DataFrame):
+    def __Save2Database__(self, name: str, data: DataFrame):
         cols = [
             ['datetime', MysqlColType.DATETIME, MysqlColAddReq.KEY],
             ['open', MysqlColType.FLOAT, MysqlColAddReq.NONE],
@@ -56,6 +69,12 @@ class StockMinuteHandler(BaseHandler):
             ['zhangdiee', MysqlColType.FLOAT, MysqlColAddReq.NONE],
             ['huanshoulv', MysqlColType.FLOAT, MysqlColAddReq.NONE]
         ]
-        table_meta = DataFrame(data=cols, columns=META_COLS)
-        self.op.CreateTable(name, table_meta)
-        self.op.InsertData(name, data)
+        table_meta = DataFrame(
+            data=cols,
+            columns=META_COLS)
+        self.op.CreateTable(
+            name=name,
+            col_meta=table_meta)
+        self.op.InsertData(
+            name=name,
+            data=data)

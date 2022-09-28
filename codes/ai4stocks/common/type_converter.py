@@ -6,12 +6,16 @@ from pendulum import DateTime
 
 class TypeConverter:
     @staticmethod
-    def Tuple2Arr(tup: tuple):
+    def Tuple2Arr(
+            tup: tuple
+    ) -> np.array:
         arr = np.array(tup)
         arr = np.reshape(arr, (-1, len(tup)))
         return arr
 
     @staticmethod
-    def Ts2Dt(ts: Timestamp):
+    def Timestamp2Datetime(
+            ts: Timestamp
+    ) -> DateTime:
         dt = DateTime(ts.year, ts.month, ts.day, ts.hour, ts.minute, ts.second, ts.microsecond, ts.tzinfo)
         return dt

@@ -23,7 +23,7 @@ class TestDownloadRecorder(BaseTest):
         ]
         cols = ['code', 'freq', 'fuquan', 'source', 'start_date', 'end_date']
         df = DataFrame(data=ls, columns=cols)
-        self.recorder.Save2Database(df)
+        self.recorder.__Save2Database__(df)
 
     def Save2Database2(self):
         code = '000002'

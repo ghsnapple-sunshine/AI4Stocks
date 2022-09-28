@@ -8,44 +8,53 @@ from ai4stocks.download.connect.mysql_common import MysqlColAddReq, MysqlColType
 from ai4stocks.download.connect.mysql_operator import MysqlOperator
 
 
+def __Download__() -> DataFrame:
+    stocks = ak.stock_info_a_code_name()
+
+    '''
+    # StockList返回的股票代码是“000001”，“000002”这样的格式
+    # 但是stock_zh_a_daily（）函数中，要求代码的格式为“sz000001”，或“sh600001”
+    # 即必须有sz或者sh作为前序
+    # 因此，通过for循环对股票代码code进行格式变换
+    for i in range(len(stocks)):
+        temp = stocks.iloc[i, 0]
+        if temp[0] == "6":
+            temp = "sh" + temp
+        elif temp[0] == "0":
+            temp = "sz" + temp
+        elif temp[0] == "3":
+            temp = "sz" + temp
+        stocks.iloc[i, 0] = temp
+    '''
+
+    return stocks
+
+
 class StockListHandler:
-    def __init__(self, op: MysqlOperator):
+    def __init__(
+            self,
+            op: MysqlOperator
+    ):
         self.op = op
 
-    def Download(self) -> DataFrame:
-        stocks = ak.stock_info_a_code_name()
-
-        '''
-        # StockList返回的股票代码是“000001”，“000002”这样的格式
-        # 但是stock_zh_a_daily（）函数中，要求代码的格式为“sz000001”，或“sh600001”
-        # 即必须有sz或者sh作为前序
-        # 因此，通过for循环对股票代码code进行格式变换
-        for i in range(len(stocks)):
-            temp = stocks.iloc[i, 0]
-            if temp[0] == "6":
-                temp = "sh" + temp
-            elif temp[0] == "0":
-                temp = "sz" + temp
-            elif temp[0] == "3":
-                temp = "sz" + temp
-            stocks.iloc[i, 0] = temp
-        '''
-
-        return stocks
-
-    def Save2Database(self, stocks: DataFrame) -> None:
+    def __Save2Database__(
+            self,
+            stocks: DataFrame
+    ) -> None:
         cols = [
             [COL_STOCK_CODE, MysqlColType.STOCK_CODE, MysqlColAddReq.KEY],
             [COL_STOCK_NAME, MysqlColType.STOCK_NAME, MysqlColAddReq.NONE]
         ]
-        table_meta = DataFrame(data=cols, columns=META_COLS)
+        table_meta = DataFrame(
+            data=cols,
+            columns=META_COLS)
         self.op.CreateTable(STOCK_LIST_TABLE, table_meta)
         self.op.TryInsertData(STOCK_LIST_TABLE, stocks)  # 忽略重复Insert
         self.op.Disconnect()
 
     def DownloadAndSave(self) -> DataFrame:
-        stocks = self.Download()
-        self.Save2Database(stocks)
+        stocks = __Download__()
+        self.__Save2Database__(stocks)
         return stocks
 
     def GetTable(self) -> DataFrame:

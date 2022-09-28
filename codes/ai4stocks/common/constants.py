@@ -1,4 +1,3 @@
-
 COL_META_COLUMN = 'column'
 COL_META_TYPE = 'type'
 COL_META_ADDREQ = 'addreq'

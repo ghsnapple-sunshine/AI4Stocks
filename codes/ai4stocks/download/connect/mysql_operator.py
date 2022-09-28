@@ -27,16 +27,16 @@ class MysqlOperator(MysqlConnector):
         sql = 'create table {0}`{1}` ({2})'.format(str_if_exist, name, joinCols)
         self.Execute(sql)
 
-    def InsertData(self, name: str, df: DataFrame):
-        if df is None or isinstance(df, DataFrame) and df.shape[0] <= 0:
+    def InsertData(self, name: str, data: DataFrame):
+        if data is None or isinstance(data, DataFrame) and data.shape[0] <= 0:
             return
 
-        inQ = ['%s'] * df.columns.size
+        inQ = ['%s'] * data.columns.size
         inQ = ', '.join(inQ)
-        cols = df.columns
+        cols = data.columns
         cols = ', '.join(cols)
         sql = "insert into `{0}`({1}) values({2})".format(name, cols, inQ)
-        vals = df.values.tolist()
+        vals = data.values.tolist()
         self.ExecuteMany(sql, vals, True)
 
     def TryInsertData(self, name: str, df: DataFrame, col_meta=None, update=False):
