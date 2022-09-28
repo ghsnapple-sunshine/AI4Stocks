@@ -1,13 +1,13 @@
 import unittest
 
-from ai4stocks.common.type_converter import TypeConverter
+from ai4stocks.tools.tools import Tuple2Arr
 from numpy import ndarray
 
 
 class TestTypeConverter(unittest.TestCase):
     def test_Tuple2Array(self):
         tup = 1, 2, 3
-        arr = TypeConverter.Tuple2Arr(tup)
+        arr = Tuple2Arr(tup)
         assert type(arr) == ndarray
         assert arr[0, 0] == 1
         assert arr[0, 1] == 2

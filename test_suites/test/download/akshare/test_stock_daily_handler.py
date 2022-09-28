@@ -7,7 +7,6 @@ from ai4stocks.common.stock_code import StockCode
 from ai4stocks.download.akshare.stock_daily_handler import StockDailyHandler
 from test.common.test_tools import TestTools
 from test.common.base_test import BaseTest
-from test.common.db_sweeper import DbSweeper
 
 
 class StockDailyHandlerTest(BaseTest):

@@ -1,27 +1,32 @@
 from pandas import DataFrame
 from pendulum import DateTime, Duration
 
-from ai4stocks.common.type_converter import TypeConverter
 from ai4stocks.common.types import FuquanType, DataFreqType, DataSourceType
 from ai4stocks.common.stock_code import StockCode
 from ai4stocks.download.akshare.stock_list_handler import StockListHandler
 from ai4stocks.download.connect.mysql_operator import MysqlOperator
 from ai4stocks.download.download_recorder import DownloadRecorder
+from ai4stocks.tools.tools import Timestamp2Datetime
 
 
-def __HandleDateTime__(start_time: DateTime,
-                       end_time: DateTime) -> tuple:
+def __HandleDateTime__(
+        start_time: DateTime,
+        end_time: DateTime
+) -> tuple:
     ntz_start_time = __SimplifyDateTime__(time=start_time)
     ntz_end_time = __SimplifyDateTime__(time=end_time)
     ntz_last = __SimplifyDateTime__(
         time=DateTime.now(),
-        to_day=True) - Duration(minutes=1)
+        to_day=True
+    ) - Duration(minutes=1)
     ntz_end_time = ntz_end_time if ntz_end_time < ntz_last else ntz_last
     return ntz_start_time, ntz_end_time
 
 
-def __SimplifyDateTime__(time: DateTime,
-                         to_day: bool = False):
+def __SimplifyDateTime__(
+        time: DateTime,
+        to_day: bool = False
+):
     if to_day:
         return DateTime(year=time.year, month=time.month, day=time.day)
     return DateTime(year=time.year, month=time.month, day=time.day, hour=time.hour, minute=time.minute)
@@ -122,8 +127,8 @@ class BaseHandler:
             end_time: DateTime,
             table_name: str
     ) -> tuple:
-        cur_start_time = TypeConverter.Timestamp2Datetime(record['start_date'].iloc[0])
-        cur_end_time = TypeConverter.Timestamp2Datetime(record['end_date'].iloc[0])
+        cur_start_time = Timestamp2Datetime(record['start_date'].iloc[0])
+        cur_end_time = Timestamp2Datetime(record['end_date'].iloc[0])
         if start_time < cur_start_time:
             self.__DownloadAndSaveAStock__(
                 code=code,

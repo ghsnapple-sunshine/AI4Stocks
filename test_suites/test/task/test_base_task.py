@@ -22,38 +22,37 @@ class Inner:
 class TestBaseTask(unittest.TestCase):
     def test_Func1(self):
         task = BaseTask(obj=Inner(), method_name='Func1', args=('a', 'b'))
-        var = task.run()
+        var = task.Run()[1]
         assert var == 'print a b'
 
     def test_Func2_1(self):
         task = BaseTask(obj=Inner(), method_name='Func2', args=('a', 'b'))
-        var = task.run()
+        var = task.Run()[1]
         assert var == 'print a b  '
 
     def test_Func2_2(self):
         task = BaseTask(obj=Inner(), method_name='Func2', args=('a', 'b'), kwargs={'var3': 'c'})
-        var = task.run()
+        var = task.Run()[1]
         assert var == 'print a b c '
 
     def test_Func2_3(self):
         task = BaseTask(obj=Inner(), method_name='Func2', args=('a', 'b'), kwargs={'var4': 'd'})
-        var = task.run()
+        var = task.Run()[1]
         assert var == 'print a b  d'
 
     def test_Func2_4(self):
         task = BaseTask(obj=Inner(), method_name='Func2', args=('a', 'b'), kwargs={'var3': 'c', 'var4': 'd'})
-        var = task.run()
+        var = task.Run()[1]
         assert var == 'print a b c d'
 
     def test_Func2_5(self):
         task = BaseTask(obj=Inner(), method_name='Func2', args=('a', 'b'),
                         kwargs={'var3': 'c', 'var4': 'd', 'val5': 'e'})
         try:
-            var = task.run()
+            var = task.Run()[1]
             assert False
         except TypeError as e:
             assert True
-
 
 
 if __name__ == '__main__':

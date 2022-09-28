@@ -22,12 +22,19 @@ class DownloadRecorder:
         ]
         self.col_meta = DataFrame(data=cols, columns=META_COLS)
 
-    def Save(self, code: str, freq: DataFreqType, fuquan: FuquanType, source: DataSourceType,
-             start_time: DateTime, end_time: DateTime):
+    def Save(
+            self,
+            code: str,
+            freq: DataFreqType,
+            fuquan: FuquanType,
+            source: DataSourceType,
+            start_time: DateTime,
+            end_time: DateTime
+    ):
         ls = [[code, freq, fuquan, source, start_time, end_time]]
         cols = ['code', 'freq', 'fuquan', 'source', 'start_date', 'end_date']
-        df = DataFrame(data=ls, columns=cols)
-        self.Save2Database(data=df)
+        data = DataFrame(data=ls, columns=cols)
+        self.Save2Database(data=data)
 
     def Save2Database(self, data: DataFrame):
         table_name = DOWN_RECORD_TABLE

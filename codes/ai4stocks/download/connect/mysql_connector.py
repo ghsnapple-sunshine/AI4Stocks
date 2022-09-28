@@ -24,7 +24,6 @@ class MysqlConnector:
             self.db = 'stocks'
             self.password = input('请输入root@localhost的密码')
 
-
         self.conn = None
         self.cursor = None
 
@@ -46,7 +45,11 @@ class MysqlConnector:
             self.cursor.close()
             self.cursor = None
 
-    def Execute(self, sql, commit=False, fetch=False):
+    def Execute(
+            self,
+            sql: str,
+            commit: bool = False,
+            fetch: bool = False):
         self.Connect()
         try:
             res = self.cursor.execute(sql)
@@ -69,7 +72,11 @@ class MysqlConnector:
             print(sql)
             raise e
 
-    def ExecuteMany(self, sql, vals, commit=False):
+    def ExecuteMany(
+            self,
+            sql: str,
+            vals: list,
+            commit: bool = False):
         self.Connect()
         try:
             res = self.cursor.executemany(sql, vals)
