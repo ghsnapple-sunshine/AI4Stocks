@@ -10,13 +10,21 @@ class MysqlConnector:
         if role == MysqlRole.DbStock:
             self.user = 'stock'
             self.db = 'stocks'
+            self.password = 'Changeme_1234'
         elif role == MysqlRole.DbTest:
             self.user = 'test'
             self.db = 'stockstest'
+            self.password = 'Changeme_1234'
         elif role == MysqlRole.DbInfo:
             self.user = 'prosecutor'
             self.db = 'information_schema'
-        self.password = 'Changeme_1234'
+            self.password = 'Changeme_1234'
+        elif role == MysqlRole.ROOT:
+            self.user = 'root'
+            self.db = 'stocks'
+            self.password = input('请输入root@localhost的密码')
+
+
         self.conn = None
         self.cursor = None
 

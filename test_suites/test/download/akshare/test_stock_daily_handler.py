@@ -1,6 +1,6 @@
 import unittest
 
-from pendulum import DateTime
+from pendulum import DateTime, Duration
 
 from ai4stocks.common.types import FuquanType
 from ai4stocks.common.stock_code import StockCode
@@ -18,7 +18,9 @@ class StockDailyHandlerTest(BaseTest):
     def Download2(self) -> None:
         stocks = TestTools.CreateStockList_2(self.op)
         hdl = StockDailyHandler(self.op)
-        tbls = hdl.DownloadAndSave(start_date=DateTime(2022, 1, 1), end_date=DateTime(2022, 2, 10))
+        end_date = DateTime.now() - Duration(days=1)
+        start_date = DateTime.now() - Duration(months=1)
+        tbls = hdl.DownloadAndSave(start_date=start_date, end_date=end_date)
         assert stocks.shape[0] * 3 == len(tbls)
 
     def Download1(self) -> None:

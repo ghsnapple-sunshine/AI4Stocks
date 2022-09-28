@@ -5,6 +5,7 @@ class MysqlRole(Enum):
     DbStock = 1
     DbTest = 2
     DbInfo = 3
+    ROOT = 4
 
 
 class MysqlColType(Enum):
