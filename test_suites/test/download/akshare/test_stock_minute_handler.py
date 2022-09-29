@@ -12,7 +12,7 @@ class StockMinuteHandlerTest(BaseTest):
         stocks = create_stock_list_2(self.op)
         start_date = DateTime(2022, 9, 1)
         end_date = DateTime(2022, 9, 30)
-        tbls = StockMinuteHandler(op=self.op).DownloadAndSave(start_time=start_date, end_time=end_date)
+        tbls = StockMinuteHandler(op=self.op).download_and_save(start_time=start_date, end_time=end_date)
         assert stocks.shape[0] == len(tbls)
 
 

@@ -6,16 +6,16 @@ from ai4stocks.common.stock_code import StockCode
 from ai4stocks.download.akshare.stock_list_handler import StockListHandler
 from ai4stocks.download.connect.mysql_operator import MysqlOperator
 from ai4stocks.download.download_recorder import DownloadRecorder
-from ai4stocks.tools.tools import Timestamp2Datetime
+from ai4stocks.common.tools import timestamp_to_datetime
 
 
-def __HandleDateTime__(
+def __handle_date_time__(
         start_time: DateTime,
         end_time: DateTime
 ) -> tuple:
-    ntz_start_time = __SimplifyDateTime__(time=start_time)
-    ntz_end_time = __SimplifyDateTime__(time=end_time)
-    ntz_last = __SimplifyDateTime__(
+    ntz_start_time = __simplify_date_time__(time=start_time)
+    ntz_end_time = __simplify_date_time__(time=end_time)
+    ntz_last = __simplify_date_time__(
         time=DateTime.now(),
         to_day=True
     ) - Duration(minutes=1)
@@ -23,13 +23,23 @@ def __HandleDateTime__(
     return ntz_start_time, ntz_end_time
 
 
-def __SimplifyDateTime__(
+def __simplify_date_time__(
         time: DateTime,
         to_day: bool = False
 ):
     if to_day:
-        return DateTime(year=time.year, month=time.month, day=time.day)
-    return DateTime(year=time.year, month=time.month, day=time.day, hour=time.hour, minute=time.minute)
+        return DateTime(
+            year=time.year,
+            month=time.month,
+            day=time.day
+        )
+    return DateTime(
+        year=time.year,
+        month=time.month,
+        day=time.day,
+        hour=time.hour,
+        minute=time.minute
+    )
 
 
 class BaseHandler:
@@ -59,13 +69,13 @@ class BaseHandler:
     ) -> None:
         return
 
-    def DownloadAndSave(
+    def download_and_save(
             self,
             start_time: DateTime,
             end_time: DateTime
     ) -> list:
         # 处理start_time和end_time
-        start_time, end_time = __HandleDateTime__(
+        start_time, end_time = __handle_date_time__(
             start_time=start_time,
             end_time=end_time
         )
@@ -77,7 +87,7 @@ class BaseHandler:
             for fuquan in self.fuquans:
                 code = row['code']
                 name = row['name']
-                table_name = self.__GetTableName__(
+                table_name = self.__get_table_name__(
                     code=code,
                     fuquan=fuquan)
                 record = records[
@@ -86,14 +96,14 @@ class BaseHandler:
                     (records['fuquan'] == fuquan) &
                     (records['source'] == self.source)]
                 if record.empty:
-                    self.__DownloadAndSaveAStock__(
+                    self.__download_and_save_a_stock__(
                         code=code,
                         fuquan=fuquan,
                         start_time=start_time,
                         end_time=end_time,
                         name=table_name)
                 else:
-                    start_time, end_time = self.__DownloadPartialInfo__(
+                    start_time, end_time = self.__download_partial_info__(
                         code=code,
                         fuquan=fuquan,
                         record=record,
@@ -118,7 +128,7 @@ class BaseHandler:
 
         return tbs
 
-    def __DownloadPartialInfo__(
+    def __download_partial_info__(
             self,
             code: StockCode,
             fuquan: FuquanType,
@@ -127,10 +137,10 @@ class BaseHandler:
             end_time: DateTime,
             table_name: str
     ) -> tuple:
-        cur_start_time = Timestamp2Datetime(record['start_date'].iloc[0])
-        cur_end_time = Timestamp2Datetime(record['end_date'].iloc[0])
+        cur_start_time = timestamp_to_datetime(record['start_date'].iloc[0])
+        cur_end_time = timestamp_to_datetime(record['end_date'].iloc[0])
         if start_time < cur_start_time:
-            self.__DownloadAndSaveAStock__(
+            self.__download_and_save_a_stock__(
                 code=code,
                 fuquan=fuquan,
                 start_time=start_time,
@@ -138,7 +148,7 @@ class BaseHandler:
                 name=table_name
             )
         if end_time > cur_end_time:  # 注意无需elif
-            self.__DownloadAndSaveAStock__(
+            self.__download_and_save_a_stock__(
                 code=code,
                 fuquan=fuquan,
                 start_time=cur_end_time + self.freq.to_duration(),
@@ -149,7 +159,7 @@ class BaseHandler:
         end_time = end_time if end_time > cur_end_time else cur_end_time
         return start_time, end_time
 
-    def __DownloadAndSaveAStock__(
+    def __download_and_save_a_stock__(
             self,
             code: StockCode,
             fuquan: FuquanType,
@@ -167,7 +177,7 @@ class BaseHandler:
                 name=name,
                 data=data)
 
-    def __GetTableName__(
+    def __get_table_name__(
             self,
             code: StockCode,
             fuquan: FuquanType
@@ -179,12 +189,12 @@ class BaseHandler:
             fuquan.to_req())
         return table_name
 
-    def GetTable(
+    def get_table(
             self,
             code: StockCode,
             fuquan: FuquanType
     ) -> DataFrame:
-        table_name = self.__GetTableName__(
+        table_name = self.__get_table_name__(
             code=code,
             fuquan=fuquan)
         return self.op.get_table(table_name)

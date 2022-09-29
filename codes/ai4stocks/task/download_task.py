@@ -5,13 +5,10 @@ from enum import Enum
 from pendulum import Duration, DateTime
 
 from ai4stocks.task.base_task import BaseTask
-from ai4stocks.tools.tools import GetNowShift
+from ai4stocks.common.tools import GetNowShift
 
 
 class DownloadTask(BaseTask):
-    def plan_time(self) -> DateTime:
-        return self.plan_time
-
     def cycle(self) -> Duration:
         return Duration(seconds=1)
 

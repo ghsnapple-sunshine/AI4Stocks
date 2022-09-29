@@ -11,7 +11,7 @@ class StockDailyTask(DownloadTask):
                  plan_time: DateTime = None):
         super().__init__(
             obj=StockDailyHandler(op=MysqlOperator(MysqlRole.DbStock)),
-            method_name='downloadAndSave',
+            method_name='download_and_save',
             kwargs={
                 'start_time': DateTime(year=2020, month=1, day=1),
                 'end_time': DateTime.now()
