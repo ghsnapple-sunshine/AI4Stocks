@@ -10,7 +10,15 @@ def Tuple2Arr(tup: tuple) -> np.array:
 
 
 def Timestamp2Datetime(ts: Timestamp) -> DateTime:
-    dt = DateTime(ts.year, ts.month, ts.day, ts.hour, ts.minute, ts.second, ts.microsecond, ts.tzinfo)
+    dt = DateTime(
+        year=ts.year,
+        month=ts.month,
+        day=ts.day,
+        hour=ts.hour,
+        minute=ts.minute,
+        second=ts.second,
+        microsecond=ts.microsecond,
+        tzinfo=ts.tzinfo)
     return dt
 
 

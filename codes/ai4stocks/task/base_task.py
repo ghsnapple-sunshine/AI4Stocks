@@ -15,11 +15,11 @@ class BaseTask:
         self.args = args
         self.kwargs = kwargs
         if isinstance(plan_time, DateTime):
-            self.plan_time = plan_time
+            self.__plan_time = plan_time
         else:
-            self.plan_time = DateTime.now()
+            self.__plan_time = DateTime.now()
 
-    def Run(self) -> tuple:
+    def run(self) -> tuple:
         if not hasattr(self.obj, self.method_name):
             return False, None, None
 
@@ -43,5 +43,5 @@ class BaseTask:
         ))
         return True, res, None
 
-    def PlanTime(self) -> DateTime:
-        return self.plan_time
+    def plan_time(self) -> DateTime:
+        return self.__plan_time

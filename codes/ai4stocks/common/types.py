@@ -9,7 +9,7 @@ class FuquanType(Enum):
     QIANFUQIAN = 2
     HOUFUQIAN = 1
 
-    def ToReq(self) -> str:
+    def to_req(self) -> str:
         FUQIAN_TYPE_DICT = {
             FuquanType.NONE: '',
             FuquanType.QIANFUQIAN: 'qfq',
@@ -30,14 +30,14 @@ class DataFreqType(Enum):
     DAY = 1
     MIN5 = 2
 
-    def ToReq(self) -> str:
+    def to_req(self) -> str:
         RECORD_TYPE_DICT = {
             DataFreqType.DAY: 'day',
             DataFreqType.MIN5: '5'
         }
         return RECORD_TYPE_DICT[self]
 
-    def ToDuration(self) -> str:
+    def to_duration(self) -> str:
         RECORD_TYPE_DICT = {
             DataFreqType.DAY: Duration(days=1),
             DataFreqType.MIN5: Duration(minutes=5)
@@ -56,7 +56,7 @@ class DataSourceType(Enum):
     BAOSTOCK = 1
     AKSHARE_DONGCAI = 10
 
-    def toSql(self):
+    def to_sql(self):
         SOURCE_TYPE_DICT = {
             DataSourceType.BAOSTOCK: 'bs',
             DataSourceType.AKSHARE_DONGCAI: 'dc'

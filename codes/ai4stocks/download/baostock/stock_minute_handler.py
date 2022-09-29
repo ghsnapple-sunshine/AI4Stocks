@@ -11,7 +11,7 @@ from ai4stocks.download.connect.mysql_operator import MysqlOperator
 from ai4stocks.download.download_recorder import DownloadRecorder
 
 
-def __Str2Datetime__(str_datetime: str) -> DateTime:
+def __str_to_datetime__(str_datetime: str) -> DateTime:
     year = int(str_datetime[0:4])
     month = int(str_datetime[4:6])
     day = int(str_datetime[6:8])
@@ -21,7 +21,10 @@ def __Str2Datetime__(str_datetime: str) -> DateTime:
 
 
 class StockMinuteHandler(BaseHandler):
-    def __init__(self, op: MysqlOperator):
+    def __init__(
+            self,
+            op: MysqlOperator
+    ):
         self.op = op
         self.recorder = DownloadRecorder(op=op)
         self.source = DataSourceType.BAOSTOCK
@@ -29,14 +32,20 @@ class StockMinuteHandler(BaseHandler):
         self.code_type = StockCodeType.CODE6
         self.freq = DataFreqType.MIN5
 
-    def __Download__(self, code: StockCode, fuquan: FuquanType, start_time: DateTime, end_time: DateTime) -> DataFrame:
+    def __download__(
+            self,
+            code: StockCode,
+            fuquan: FuquanType,
+            start_time: DateTime,
+            end_time: DateTime
+    ) -> DataFrame:
         bs.login()
         start_time = start_time.format('YYYY-MM-DD')
         end_time = end_time.format('YYYY-MM-DD')
 
         fields = "time,open,high,low,close,volume,amount"
         rs = bs.query_history_k_data_plus(
-            code=code.toCode9(),
+            code=code.to_code9(),
             fields=fields,
             frequency='5',
             start_date=start_time,
@@ -54,7 +63,7 @@ class StockMinuteHandler(BaseHandler):
         minute_info.rename(
             columns=MINUTE_NAME_DICT,
             inplace=True)
-        minute_info['datetime'] = minute_info['time'].apply(lambda x: __Str2Datetime__(x))
+        minute_info['datetime'] = minute_info['time'].apply(lambda x: __str_to_datetime__(x))
         minute_info.drop(
             columns=['time'],
             inplace=True)
@@ -62,7 +71,7 @@ class StockMinuteHandler(BaseHandler):
         bs.logout()
         return minute_info
 
-    def __Save2Database__(
+    def __save_to_database__(
             self,
             name: str,
             data: DataFrame
@@ -77,5 +86,5 @@ class StockMinuteHandler(BaseHandler):
             ['chengjiaoe', MysqlColType.FLOAT, MysqlColAddReq.NONE],
         ]
         table_meta = DataFrame(data=cols, columns=META_COLS)
-        self.op.CreateTable(name, table_meta)
-        self.op.InsertData(name, data)
+        self.op.create_table(name, table_meta)
+        self.op.insert_data(name, data)

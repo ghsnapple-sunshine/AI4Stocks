@@ -23,7 +23,7 @@ class StockMinuteHandler(BaseHandler):
         self.fuquans = [FuquanType.NONE]
         self.freq = DataFreqType.MIN5
 
-    def __Download__(
+    def __download__(
             self,
             code: StockCode,
             fuquan: FuquanType,
@@ -32,11 +32,11 @@ class StockMinuteHandler(BaseHandler):
     ) -> DataFrame:
         # 使用接口（stock_zh_a_hist_min_em，源：东财）,code为Str6
         minute_info = ak.stock_zh_a_hist_min_em(
-            symbol=code.toCode6(),
+            symbol=code.to_code6(),
             period='5',
             start_date=start_time.format('YYYY-MM-DD HH:mm:ss'),
             end_date=end_time.format('YYYY-MM-DD HH:mm:ss'),
-            adjust=fuquan.ToReq())
+            adjust=fuquan.to_req())
 
         # 重命名
         MINUTE_NAME_DICT = {'时间': 'datetime',
@@ -55,7 +55,11 @@ class StockMinuteHandler(BaseHandler):
             inplace=True)
         return minute_info
 
-    def __Save2Database__(self, name: str, data: DataFrame):
+    def __save_to_database__(
+            self,
+            name: str,
+            data: DataFrame
+    ):
         cols = [
             ['datetime', MysqlColType.DATETIME, MysqlColAddReq.KEY],
             ['open', MysqlColType.FLOAT, MysqlColAddReq.NONE],
@@ -72,9 +76,9 @@ class StockMinuteHandler(BaseHandler):
         table_meta = DataFrame(
             data=cols,
             columns=META_COLS)
-        self.op.CreateTable(
+        self.op.create_table(
             name=name,
             col_meta=table_meta)
-        self.op.InsertData(
+        self.op.insert_data(
             name=name,
             data=data)

@@ -21,10 +21,10 @@ class StockCode:
             return self.toCode9()
     '''
 
-    def toCode6(self) -> str:
+    def to_code6(self) -> str:
         return self.code
 
-    def toCode9(self) -> str:
+    def to_code9(self) -> str:
         if self.code[0] == "6":
             return "sh." + self.code
         elif self.code[0] == "0":
@@ -33,7 +33,7 @@ class StockCode:
             return "sz." + self.code
         return 'unknown'
 
-    def toCode8(self) -> str:
+    def to_code8(self) -> str:
         if self.code[0] == "6":
             return "sh" + self.code
         elif self.code[0] == "0":

@@ -8,7 +8,7 @@ from pandas import DataFrame, Timestamp
 import pandas as pd
 
 
-def __ObjFormat__(obj):
+def __obj_format__(obj):
     # 注意到DateTime类型在DateFrame中被封装为TimeSpan类型
     if isinstance(obj, (str, DateTime, Timestamp, StockCode)):
         return '\'{0}\''.format(obj)  # 增加引号
@@ -18,7 +18,7 @@ def __ObjFormat__(obj):
 
 
 class MysqlOperator(MysqlConnector):
-    def CreateTable(
+    def create_table(
             self,
             name: str,
             col_meta: DataFrame,
@@ -26,10 +26,10 @@ class MysqlOperator(MysqlConnector):
     ):
         cols = []
         for index, row in col_meta.iterrows():
-            s = row[COL_META_COLUMN] + ' ' + row[COL_META_TYPE].ToSql() + ' ' + row[COL_META_ADDREQ].ToSql()
+            s = row[COL_META_COLUMN] + ' ' + row[COL_META_TYPE].to_sql() + ' ' + row[COL_META_ADDREQ].to_sql()
             cols.append(s)
 
-        is_key = col_meta[COL_META_ADDREQ].apply(lambda x: x.IsKey())
+        is_key = col_meta[COL_META_ADDREQ].apply(lambda x: x.is_key())
         prim_key = col_meta[is_key][COL_META_COLUMN]
 
         if not prim_key.empty:
@@ -40,9 +40,9 @@ class MysqlOperator(MysqlConnector):
         joinCols = ','.join(cols)
         str_if_exist = 'if not exists ' if if_not_exist else ''
         sql = 'create table {0}`{1}` ({2})'.format(str_if_exist, name, joinCols)
-        self.Execute(sql)
+        self.execute(sql)
 
-    def InsertData(
+    def insert_data(
             self,
             name: str,
             data: DataFrame
@@ -56,11 +56,11 @@ class MysqlOperator(MysqlConnector):
         cols = ', '.join(cols)
         sql = "insert into `{0}`({1}) values({2})".format(name, cols, inQ)
         vals = data.values.tolist()
-        self.ExecuteMany(sql, vals, True)
+        self.execute_many(sql, vals, True)
 
-    def TryInsertData(
+    def try_insert_data(
             self,
-                      name: str,
+            name: str,
             data: DataFrame,
             col_meta=None,
             update=False
@@ -74,7 +74,7 @@ class MysqlOperator(MysqlConnector):
         strCols = ', '.join(cols)
 
         if update:
-            self.__TryInsertDataAndUpdate__(
+            self.__try_insert_data_and_update__(
                 name=name,
                 data=data,
                 col_meta=col_meta,
@@ -84,9 +84,9 @@ class MysqlOperator(MysqlConnector):
 
         sql = "insert ignore into `{0}`({1}) values({2})".format(name, strCols, strInQ)
         vals = data.values.tolist()
-        self.ExecuteMany(sql, vals, True)
+        self.execute_many(sql, vals, True)
 
-    def __TryInsertDataAndUpdate__(
+    def __try_insert_data_and_update__(
             self,
             name: str,
             data: DataFrame,
@@ -94,7 +94,7 @@ class MysqlOperator(MysqlConnector):
             strCols: str,
             strInQ: str
     ):
-        normal_cols = col_meta[COL_META_ADDREQ].apply(lambda x: not x.IsKey())
+        normal_cols = col_meta[COL_META_ADDREQ].apply(lambda x: not x.is_key())
         normal_cols = col_meta[normal_cols][COL_META_COLUMN]
         inQ2 = [x + '=%s' for x in normal_cols]
         strInQ2 = ', '.join(inQ2)
@@ -103,22 +103,21 @@ class MysqlOperator(MysqlConnector):
         data = pd.concat([data, data[normal_cols]], axis=1)
         for row in range(data.shape[0]):
             ls = list(data.iloc[row, :])
-            ls = [__ObjFormat__(obj) for obj in ls]
+            ls = [__obj_format__(obj) for obj in ls]
             sql2 = sql % tuple(ls)
-            self.Execute(sql2)
+            self.execute(sql2)
         self.conn.commit()
 
-
-    def DropTable(self, name: str):
+    def drop_table(self, name: str):
         sql = "drop table if exists `{0}`".format(name)
-        self.Execute(sql)
+        self.execute(sql)
 
-    def GetTableCnt(self, name: str):
+    def get_table_cnt(self, name: str):
         sql = "select count(*) from {0}".format(name)
-        res = self.Execute(sql, fetch=True)
+        res = self.execute(sql, fetch=True)
         return res.iloc[0, 0]
 
-    def GetTable(self, name: str):
+    def get_table(self, name: str):
         sql = "select * from {0}".format(name)
-        res = self.Execute(sql, fetch=True)
+        res = self.execute(sql, fetch=True)
         return res

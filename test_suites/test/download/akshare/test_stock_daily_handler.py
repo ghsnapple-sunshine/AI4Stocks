@@ -5,25 +5,17 @@ from pendulum import DateTime, Duration
 from ai4stocks.common.types import FuquanType
 from ai4stocks.common.stock_code import StockCode
 from ai4stocks.download.akshare.stock_daily_handler import StockDailyHandler
-from test.common.test_tools import TestTools
+from test.common.test_tools import create_stock_list_1, create_stock_list_2
 from test.common.base_test import BaseTest
 
 
 class StockDailyHandlerTest(BaseTest):
     def test_all(self) -> None:
-        self.Download1()
-        self.Download2()
+        self.__download1__()
+        self.__download2__()
 
-    def Download2(self) -> None:
-        stocks = TestTools.CreateStockList_2(self.op)
-        hdl = StockDailyHandler(self.op)
-        end_date = DateTime.now() - Duration(days=1)
-        start_date = DateTime.now() - Duration(months=1)
-        tbls = hdl.DownloadAndSave(start_time=start_date, end_time=end_date)
-        assert stocks.shape[0] * 3 == len(tbls)
-
-    def Download1(self) -> None:
-        TestTools.CreateStockList_1(self.op)
+    def __download1__(self) -> None:
+        stocks = create_stock_list_1(self.op)
         hdl = StockDailyHandler(self.op)
         hdl.DownloadAndSave(start_time=DateTime(2022, 1, 5), end_time=DateTime(2022, 1, 6))
         db = hdl.GetTable(StockCode('000001'), fuquan=FuquanType.NONE)
@@ -44,6 +36,14 @@ class StockDailyHandlerTest(BaseTest):
         hdl.DownloadAndSave(start_time=DateTime(2022, 1, 3), end_time=DateTime(2022, 1, 10))
         db = hdl.GetTable(StockCode('000001'), fuquan=FuquanType.NONE)
         assert db.shape[0] == 5  # 2022/1/4, 2022/1/5, 2022/1/6，2022/1/7, 2022/1/10, 2022/1/3为公休日, 2022/1/8为周六
+
+    def __download2__(self) -> None:
+        stocks = create_stock_list_2(self.op)
+        hdl = StockDailyHandler(self.op)
+        end_date = DateTime.now() - Duration(days=1)
+        start_date = DateTime.now() - Duration(months=1)
+        tbls = hdl.DownloadAndSave(start_time=start_date, end_time=end_date)
+        assert stocks.shape[0] * 3 == len(tbls)
 
 
 if __name__ == '__main__':

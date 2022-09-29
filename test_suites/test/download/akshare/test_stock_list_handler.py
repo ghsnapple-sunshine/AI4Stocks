@@ -8,10 +8,10 @@ from test.common.base_test import BaseTest
 
 class StockListHandlerTest(BaseTest):
     def test_all(self):
-        res = StockListHandler(self.op).DownloadAndSave()
-        cnt = self.op.GetTableCnt(STOCK_LIST_TABLE)
+        res = StockListHandler(self.op).downloadAndSave()
+        cnt = self.op.get_table_cnt(STOCK_LIST_TABLE)
         assert cnt == res.shape[0]
-        tbl = self.op.GetTable(STOCK_LIST_TABLE)
+        tbl = self.op.get_table(STOCK_LIST_TABLE)
         assert type(tbl) == DataFrame
 
     def test_again(self):

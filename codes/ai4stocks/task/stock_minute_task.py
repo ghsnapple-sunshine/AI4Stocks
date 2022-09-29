@@ -13,7 +13,7 @@ class StockMinuteTask(DownloadTask):
     ):
         super().__init__(
             obj=StockMinuteHandler(op=MysqlOperator(MysqlRole.DbStock)),
-            method_name='DownloadAndSave',
+            method_name='downloadAndSave',
             kwargs={
                 'start_time': DateTime(year=2020, month=1, day=1),
                 'end_time': DateTime.now()
@@ -21,8 +21,8 @@ class StockMinuteTask(DownloadTask):
             plan_time=plan_time
         )
 
-    def Cycle(self) -> Duration:
+    def cycle(self) -> Duration:
         return Duration(days=1)
 
-    def ErrorCycle(self) -> Duration:
+    def errorCycle(self) -> Duration:
         return Duration(minutes=0)

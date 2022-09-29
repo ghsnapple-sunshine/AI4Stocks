@@ -9,26 +9,26 @@ from ai4stocks.tools.tools import GetNowShift
 
 
 class DownloadTask(BaseTask):
-    def PlanTime(self) -> DateTime:
+    def plan_time(self) -> DateTime:
         return self.plan_time
 
-    def Cycle(self) -> Duration:
+    def cycle(self) -> Duration:
         return Duration(seconds=1)
 
-    def ErrorCycle(self) -> Duration:
+    def errorCycle(self) -> Duration:
         return Duration(seconds=1)
 
-    def Run(self) -> tuple:
+    def run(self) -> tuple:
 
         try:
-            success, res, new_task = super().Run()
+            success, res, new_task = super().run()
             if success:
                 new_task = DownloadTask(
                     obj=self.obj,
                     method_name=self.method_name,
                     args=self.args,
                     kwargs=self.kwargs,
-                    plan_time=GetNowShift(self.Cycle())
+                    plan_time=GetNowShift(self.cycle())
                 )
                 return TaskStatus.Success, res, new_task
             else:
@@ -43,7 +43,7 @@ class DownloadTask(BaseTask):
                 method_name=self.method_name,
                 args=self.args,
                 kwargs=self.kwargs,
-                plan_time=GetNowShift(self.Cycle(), minus=True)
+                plan_time=GetNowShift(self.cycle(), minus=True)
             )
             return TaskStatus.PartialSuccess, None, new_task
 

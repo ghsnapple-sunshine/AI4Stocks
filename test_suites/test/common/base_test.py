@@ -10,10 +10,11 @@ from test.common.db_sweeper import DbSweeper
 class BaseTest(unittest.TestCase):
     def setUp(self) -> None:
         self.op = MysqlOperator(role=MysqlRole.DbTest)
-        self.op.Connect()
+        self.op.connect()
         self.conn = self.op
-        self.table_name = "test_{0}".format(DateTime.now().format('YYYYMMDD_hhmmss'))
-        DbSweeper.CleanUp()
+        self.table_name = "test_{0}".format(
+            DateTime.now().format('YYYYMMDD_HHmmss'))
+        DbSweeper.clean_up()
 
     def tearDown(self) -> None:
-        self.op.Disconnect()
+        self.op.disconnect()

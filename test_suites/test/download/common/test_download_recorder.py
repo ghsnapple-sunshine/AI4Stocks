@@ -2,17 +2,21 @@ from pendulum import DateTime
 from pandas import DataFrame
 
 from ai4stocks.common.types import FuquanType, DataFreqType, DataSourceType
+from ai4stocks.download.download_recorder import DownloadRecorder
 from test.common.base_test import BaseTest
 
 
 class TestDownloadRecorder(BaseTest):
+    def setUp(self):
+        super().setUp()
+        self.recorder = DownloadRecorder(self.op)
 
     def test_all(self) -> None:
-        self.Save2Database()
-        self.Save2Database2()
-        self.GetTable()
+        self.__save_to_database__()
+        self.__save_to_database2__()
+        self.__get_table__()
 
-    def Save2Database(self):
+    def __save_to_database__(self):
         ls = [
             ['000001',
              DataFreqType.DAY,
@@ -23,19 +27,19 @@ class TestDownloadRecorder(BaseTest):
         ]
         cols = ['code', 'freq', 'fuquan', 'source', 'start_date', 'end_date']
         df = DataFrame(data=ls, columns=cols)
-        self.recorder.__Save2Database__(df)
+        self.recorder.save_to_database(df)
 
-    def Save2Database2(self):
+    def __save_to_database2__(self):
         code = '000002'
         freq = DataFreqType.DAY
         fuquan = FuquanType.NONE
         source = DataSourceType.AKSHARE_DONGCAI
         start_date = DateTime(2000, 1, 1)
         end_date = DateTime(2022, 1, 1)
-        self.recorder.Save(code, freq, fuquan, source, start_date, end_date)
+        self.recorder.save(code, freq, fuquan, source, start_date, end_date)
 
-    def GetTable(self):
-        data = self.recorder.GetTable()
+    def __get_table__(self):
+        data = self.recorder.get_table()
         assert type(data) == DataFrame
         # 验证数据正确
         assert data[data['code'] == '000001']['freq'][0] == DataFreqType.DAY

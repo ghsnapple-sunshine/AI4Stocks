@@ -8,7 +8,7 @@ from ai4stocks.download.connect.mysql_common import MysqlColAddReq, MysqlColType
 from ai4stocks.download.connect.mysql_operator import MysqlOperator
 
 
-def __Download__() -> DataFrame:
+def __download__() -> DataFrame:
     stocks = ak.stock_info_a_code_name()
 
     '''
@@ -37,7 +37,7 @@ class StockListHandler:
     ):
         self.op = op
 
-    def __Save2Database__(
+    def __save_2_database__(
             self,
             stocks: DataFrame
     ) -> None:
@@ -48,16 +48,16 @@ class StockListHandler:
         table_meta = DataFrame(
             data=cols,
             columns=META_COLS)
-        self.op.CreateTable(STOCK_LIST_TABLE, table_meta)
-        self.op.TryInsertData(STOCK_LIST_TABLE, stocks)  # 忽略重复Insert
-        self.op.Disconnect()
+        self.op.create_table(STOCK_LIST_TABLE, table_meta)
+        self.op.try_insert_data(STOCK_LIST_TABLE, stocks)  # 忽略重复Insert
+        self.op.disconnect()
 
-    def DownloadAndSave(self) -> DataFrame:
-        stocks = __Download__()
-        self.__Save2Database__(stocks)
+    def downloadAndSave(self) -> DataFrame:
+        stocks = __download__()
+        self.__save_2_database__(stocks)
         return stocks
 
-    def GetTable(self) -> DataFrame:
-        stocks = self.op.GetTable(STOCK_LIST_TABLE)
+    def getTable(self) -> DataFrame:
+        stocks = self.op.get_table(STOCK_LIST_TABLE)
         stocks['code'] = stocks.apply(lambda x: StockCode(x['code']), axis=1)
         return stocks

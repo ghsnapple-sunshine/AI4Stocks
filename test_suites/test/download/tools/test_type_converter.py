@@ -5,7 +5,7 @@ from numpy import ndarray
 
 
 class TestTypeConverter(unittest.TestCase):
-    def test_Tuple2Array(self):
+    def test_tuple_to_array(self):
         tup = 1, 2, 3
         arr = Tuple2Arr(tup)
         assert type(arr) == ndarray

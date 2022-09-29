@@ -6,13 +6,13 @@ from ai4stocks.task.base_task import BaseTask
 
 
 class InnerA:
-    def Func1(self,
+    def func1(self,
               val1: str,
               val2: str):
         res = "print %s %s" % (val1, val2)
         return res
 
-    def Func2(self,
+    def func2(self,
               var1: str,
               var2: str,
               var3: str = "",
@@ -27,46 +27,46 @@ class InnerB:
 
 
 class TestBaseTask(unittest.TestCase):
-    def test_Func1(self):
-        task = BaseTask(obj=InnerA(), method_name='Func1', args=('a', 'b'))
-        var = task.Run()[1]
+    def test_func1(self):
+        task = BaseTask(obj=InnerA(), method_name='func1', args=('a', 'b'))
+        var = task.run()[1]
         assert var == 'print a b'
 
-    def test_Func2_1(self):
-        task = BaseTask(obj=InnerA(), method_name='Func2', args=('a', 'b'))
-        var = task.Run()[1]
+    def test_func2_1(self):
+        task = BaseTask(obj=InnerA(), method_name='func2', args=('a', 'b'))
+        var = task.run()[1]
         assert var == 'print a b  '
 
-    def test_Func2_2(self):
-        task = BaseTask(obj=InnerA(), method_name='Func2', args=('a', 'b'), kwargs={'var3': 'c'})
-        var = task.Run()[1]
+    def test_func2_2(self):
+        task = BaseTask(obj=InnerA(), method_name='func2', args=('a', 'b'), kwargs={'var3': 'c'})
+        var = task.run()[1]
         assert var == 'print a b c '
 
-    def test_Func2_3(self):
-        task = BaseTask(obj=InnerA(), method_name='Func2', args=('a', 'b'), kwargs={'var4': 'd'})
-        var = task.Run()[1]
+    def test_func2_3(self):
+        task = BaseTask(obj=InnerA(), method_name='func2', args=('a', 'b'), kwargs={'var4': 'd'})
+        var = task.run()[1]
         assert var == 'print a b  d'
 
-    def test_Func2_4(self):
-        task = BaseTask(obj=InnerA(), method_name='Func2', args=('a', 'b'), kwargs={'var3': 'c', 'var4': 'd'})
-        var = task.Run()[1]
+    def test_func2_4(self):
+        task = BaseTask(obj=InnerA(), method_name='func2', args=('a', 'b'), kwargs={'var3': 'c', 'var4': 'd'})
+        var = task.run()[1]
         assert var == 'print a b c d'
 
-    def test_Func2_5(self):
-        task = BaseTask(obj=InnerA(), method_name='Func2', args=('a', 'b'),
+    def test_func2_5(self):
+        task = BaseTask(obj=InnerA(), method_name='func2', args=('a', 'b'),
                         kwargs={'var3': 'c', 'var4': 'd', 'val5': 'e'})
         try:
-            var = task.Run()[1]
+            var = task.run()[1]
             assert False
         except TypeError as e:
             assert True
 
-    def test_catchError(self):
+    def test_catch_error(self):
         try:
             task = BaseTask(
                 obj=InnerB(),
                 method_name='run')
-            task.Run()
+            task.run()
             assert False
         except ValueError as e:
             logging.error('\n' + traceback.format_exc())

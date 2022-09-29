@@ -43,7 +43,7 @@ class BaseHandler:
         self.fuquans = [FuquanType.NONE]
         self.freq = DataFreqType.DAY
 
-    def __Download__(
+    def __download__(
             self,
             code: StockCode,
             fuquan: FuquanType,
@@ -52,7 +52,7 @@ class BaseHandler:
     ) -> DataFrame:
         return DataFrame()
 
-    def __Save2Database__(
+    def __save_to_database__(
             self,
             name: str,
             data: DataFrame
@@ -69,8 +69,8 @@ class BaseHandler:
             start_time=start_time,
             end_time=end_time
         )
-        stocks = StockListHandler(self.op).GetTable()
-        records = self.recorder.GetTable()
+        stocks = StockListHandler(self.op).getTable()
+        records = self.recorder.get_table()
         # 遍历股票清单和复权方式
         tbs = []
         for index, row in stocks.iterrows():
@@ -107,7 +107,7 @@ class BaseHandler:
                     code,
                     name,
                     fuquan))
-                self.recorder.Save(
+                self.recorder.save(
                     code=code,
                     freq=self.freq,
                     fuquan=fuquan,
@@ -134,14 +134,14 @@ class BaseHandler:
                 code=code,
                 fuquan=fuquan,
                 start_time=start_time,
-                end_time=cur_start_time - self.freq.ToDuration(),
+                end_time=cur_start_time - self.freq.to_duration(),
                 name=table_name
             )
         if end_time > cur_end_time:  # 注意无需elif
             self.__DownloadAndSaveAStock__(
                 code=code,
                 fuquan=fuquan,
-                start_time=cur_end_time + self.freq.ToDuration(),
+                start_time=cur_end_time + self.freq.to_duration(),
                 end_time=end_time,
                 name=table_name
             )
@@ -158,12 +158,12 @@ class BaseHandler:
             name: str
     ) -> None:
         if end_time >= start_time:
-            data = self.__Download__(
+            data = self.__download__(
                 code=code,
                 fuquan=fuquan,
                 start_time=start_time,
                 end_time=end_time)
-            self.__Save2Database__(
+            self.__save_to_database__(
                 name=name,
                 data=data)
 
@@ -173,10 +173,10 @@ class BaseHandler:
             fuquan: FuquanType
     ) -> str:
         table_name = '{0}_stock_{1}info_{2}_{3}'.format(
-            self.source.toSql(),
+            self.source.to_sql(),
             self.freq,
             code,
-            fuquan.ToReq())
+            fuquan.to_req())
         return table_name
 
     def GetTable(
@@ -187,4 +187,4 @@ class BaseHandler:
         table_name = self.__GetTableName__(
             code=code,
             fuquan=fuquan)
-        return self.op.GetTable(table_name)
+        return self.op.get_table(table_name)

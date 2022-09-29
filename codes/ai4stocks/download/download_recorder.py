@@ -22,7 +22,7 @@ class DownloadRecorder:
         ]
         self.col_meta = DataFrame(data=cols, columns=META_COLS)
 
-    def Save(
+    def save(
             self,
             code: str,
             freq: DataFreqType,
@@ -34,20 +34,20 @@ class DownloadRecorder:
         ls = [[code, freq, fuquan, source, start_time, end_time]]
         cols = ['code', 'freq', 'fuquan', 'source', 'start_date', 'end_date']
         data = DataFrame(data=ls, columns=cols)
-        self.Save2Database(data=data)
+        self.save_to_database(data=data)
 
-    def Save2Database(self, data: DataFrame):
+    def save_to_database(self, data: DataFrame):
         table_name = DOWN_RECORD_TABLE
 
         if not self.exist:
-            self.op.CreateTable(table_name, self.col_meta, if_not_exist=True)
+            self.op.create_table(table_name, self.col_meta, if_not_exist=True)
             self.exist = True
 
-        self.op.TryInsertData(table_name, data, self.col_meta, update=True)  # 如果原纪录已存在，则更新
+        self.op.try_insert_data(table_name, data, self.col_meta, update=True)  # 如果原纪录已存在，则更新
 
-    def GetTable(self):
+    def get_table(self):
         table_name = DOWN_RECORD_TABLE
-        df = self.op.GetTable(table_name)
+        df = self.op.get_table(table_name)
         if df.empty:
             return DataFrame(columns=['code', 'freq', 'fuquan', 'source', 'start_date', 'end_date'])
         df['code'] = df.apply(lambda x: StockCode(x['code']), axis=1)

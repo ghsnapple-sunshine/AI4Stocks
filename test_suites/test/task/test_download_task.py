@@ -27,18 +27,18 @@ class TestDownloadTask(unittest.TestCase):
             obj=InnerA(),
             method_name='run')
 
-        status, res, task = task.Run()
+        status, res, task = task.run()
         assert status == TaskStatus.PartialSuccess
         assert res is None
 
-        status, res, task = task.Run()
+        status, res, task = task.run()
         assert status == TaskStatus.Success
         assert res == 2
 
         task = DownloadTask(
             obj=InnerA(),
             method_name='jump')
-        status, res, task = task.Run()
+        status, res, task = task.run()
         assert status == TaskStatus.Fail
         assert res is None
 
@@ -47,7 +47,7 @@ class TestDownloadTask(unittest.TestCase):
             task = DownloadTask(
                 obj=InnerB(),
                 method_name='run')
-            task.Run()
+            task.run()
             assert True
         except ValueError as e:
             logging.error('\n' + traceback.format_exc())

@@ -8,13 +8,13 @@ from test.common.db_sweeper import DbSweeper
 
 class TestDbSweeper(BaseTest):
     def test_sweep(self):
-        self.CreateTable()
-        DbSweeper.CleanUp()
-        data = self.op.GetTable(STOCK_LIST_TABLE)
+        self.__create_table__()
+        DbSweeper.clean_up()
+        data = self.op.get_table(STOCK_LIST_TABLE)
         assert data.empty
 
-    def CreateTable(self):
+    def __create_table__(self):
         data = [['code', MysqlColType.STOCK_CODE, MysqlColAddReq.KEY],
                 ['name', MysqlColType.STOCK_NAME, MysqlColAddReq.NONE]]
         df = DataFrame(data=data, columns=META_COLS)
-        self.op.CreateTable(STOCK_LIST_TABLE, df, True)
+        self.op.create_table(STOCK_LIST_TABLE, df, True)

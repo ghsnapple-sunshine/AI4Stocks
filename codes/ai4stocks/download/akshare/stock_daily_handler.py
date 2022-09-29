@@ -19,13 +19,18 @@ class StockDailyHandler(BaseHandler):
         self.fuquans = [FuquanType.NONE, FuquanType.QIANFUQIAN, FuquanType.HOUFUQIAN]
         self.freq = DataFreqType.DAY
 
-    def __Download__(self, code: StockCode, fuquan: FuquanType, start_time: DateTime, end_time: DateTime) -> DataFrame:
+    def __download__(self, code: StockCode, fuquan: FuquanType, start_time: DateTime, end_time: DateTime) -> DataFrame:
         # 使用接口（stock_zh_a_hist，源：东财）,code为Str6
         # 备用接口（stock_zh_a_daily，源：新浪，未实现）
         start_time = start_time.format('YYYYMMDD')
         end_time = end_time.format('YYYYMMDD')
         daily_info = ak.stock_zh_a_hist(
-            symbol=code.toCode6(), period='daily', start_date=start_time, end_date=end_time, adjust=fuquan.ToReq())
+            symbol=code.to_code6(),
+            period='daily',
+            start_date=start_time,
+            end_date=end_time,
+            adjust=fuquan.to_req()
+        )
 
         # 重命名
         DAILY_NAME_DICT = {'日期': 'date',
@@ -42,7 +47,7 @@ class StockDailyHandler(BaseHandler):
         daily_info.rename(columns=DAILY_NAME_DICT, inplace=True)
         return daily_info
 
-    def __Save2Database__(self, name: str, data: DataFrame) -> None:
+    def __save_to_database__(self, name: str, data: DataFrame) -> None:
         cols = [
             ['date', MysqlColType.DATE, MysqlColAddReq.KEY],
             ['open', MysqlColType.FLOAT, MysqlColAddReq.NONE],
@@ -57,5 +62,5 @@ class StockDailyHandler(BaseHandler):
             ['huanshoulv', MysqlColType.FLOAT, MysqlColAddReq.NONE]
         ]
         table_meta = DataFrame(data=cols, columns=META_COLS)
-        self.op.CreateTable(name, table_meta, if_not_exist=True)
-        self.op.InsertData(name, data)
+        self.op.create_table(name, table_meta, if_not_exist=True)
+        self.op.insert_data(name, data)

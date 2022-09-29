@@ -14,12 +14,12 @@ class StockListTask(DownloadTask):
     ):
         super().__init__(
             obj=StockListHandler(op=MysqlOperator(MysqlRole.DbStock)),
-            method_name='DownloadAndSave',
+            method_name='downloadAndSave',
             plan_time=plan_time
         )
 
-    def Cycle(self) -> Duration:
+    def cycle(self) -> Duration:
         return Duration(days=15)
 
-    def ErrorCycle(self) -> Duration:
+    def errorCycle(self) -> Duration:
         return Duration(minutes=5)

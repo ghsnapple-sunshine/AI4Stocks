@@ -27,7 +27,7 @@ class MysqlConnector:
         self.conn = None
         self.cursor = None
 
-    def Connect(self):
+    def connect(self):
         if self.conn is None:
             config = {'host': '127.0.0.1',
                       'port': 3306,
@@ -38,19 +38,19 @@ class MysqlConnector:
             self.conn = pymysql.connect(**config)
             self.cursor = self.conn.cursor()
 
-    def Disconnect(self):
+    def disconnect(self):
         if self.conn is not None:
             self.conn.close()
             self.conn = None
             self.cursor.close()
             self.cursor = None
 
-    def Execute(
+    def execute(
             self,
             sql: str,
             commit: bool = False,
             fetch: bool = False):
-        self.Connect()
+        self.connect()
         try:
             res = self.cursor.execute(sql)
             if commit:
@@ -72,12 +72,12 @@ class MysqlConnector:
             print(sql)
             raise e
 
-    def ExecuteMany(
+    def execute_many(
             self,
             sql: str,
             vals: list,
             commit: bool = False):
-        self.Connect()
+        self.connect()
         try:
             res = self.cursor.executemany(sql, vals)
             if commit:

@@ -18,7 +18,7 @@ class MysqlColType(Enum):
     DATETIME = 11  # 日期时间
     ENUM = 100  # 记录类型
 
-    def ToSql(self):
+    def to_sql(self):
         COL_TYPE_DICT = {
             MysqlColType.STOCK_CODE: 'VARCHAR(6)',
             MysqlColType.LONG_STOCK_CODE: 'VARCHAR(8)',
@@ -38,7 +38,7 @@ class MysqlColAddReq(Enum):
     UNSIGNED = 3
     UNSIGNED_KEY = 4
 
-    def ToSql(self):
+    def to_sql(self):
         COL_ADDREQ_DICT = {
             MysqlColAddReq.NONE: '',
             MysqlColAddReq.KEY: 'NOT NULL',
@@ -47,7 +47,7 @@ class MysqlColAddReq(Enum):
         }
         return COL_ADDREQ_DICT[self]
 
-    def IsKey(self):
+    def is_key(self):
         COL_ADDREQ_DICT = {
             MysqlColAddReq.NONE: False,
             MysqlColAddReq.KEY: True,
