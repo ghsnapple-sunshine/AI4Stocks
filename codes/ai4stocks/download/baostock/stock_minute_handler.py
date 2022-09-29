@@ -19,6 +19,7 @@ def __Str2Datetime__(str_datetime: str) -> DateTime:
     minute = int(str_datetime[10:12])
     return DateTime(year=year, month=month, day=day, hour=hour, minute=minute)
 
+
 class StockMinuteHandler(BaseHandler):
     def __init__(self, op: MysqlOperator):
         self.op = op
@@ -53,8 +54,7 @@ class StockMinuteHandler(BaseHandler):
         minute_info.rename(
             columns=MINUTE_NAME_DICT,
             inplace=True)
-        minute_info['datetime'] = minute_info.apply(
-            lambda x: __Str2Datetime__(x['time']), axis=1)
+        minute_info['datetime'] = minute_info['time'].apply(lambda x: __Str2Datetime__(x))
         minute_info.drop(
             columns=['time'],
             inplace=True)

@@ -4,7 +4,6 @@ from pendulum import DateTime
 
 from ai4stocks.download.connect.mysql_operator import MysqlOperator
 from ai4stocks.task.base_task import BaseTask
-from ai4stocks.task.download_task import TaskStatus
 
 
 class TaskScheduler:
@@ -33,5 +32,3 @@ class TaskScheduler:
             tasks = tasks[1:]
             if isinstance(new_task, BaseTask):
                 tasks.append(new_task)
-
-

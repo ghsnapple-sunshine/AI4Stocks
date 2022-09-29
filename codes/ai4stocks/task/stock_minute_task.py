@@ -11,19 +11,15 @@ class StockMinuteTask(DownloadTask):
             self,
             plan_time: DateTime = None
     ):
-        self.obj = StockMinuteHandler(
-            op=MysqlOperator(MysqlRole.DbStock)
+        super().__init__(
+            obj=StockMinuteHandler(op=MysqlOperator(MysqlRole.DbStock)),
+            method_name='DownloadAndSave',
+            kwargs={
+                'start_time': DateTime(year=2020, month=1, day=1),
+                'end_time': DateTime.now()
+            },
+            plan_time=plan_time
         )
-        self.method_name = 'DownloadAndSave'
-        now = DateTime.now()
-        self.kwargs = {
-            'start_date': DateTime(2000, 1, 1),
-            'end_date': now
-        }
-        if isinstance(plan_time, DateTime):
-            self.plan_time = plan_time
-        else:
-            self.plan_time = now
 
     def Cycle(self) -> Duration:
         return Duration(days=1)

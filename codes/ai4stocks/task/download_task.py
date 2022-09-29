@@ -1,3 +1,5 @@
+import logging
+import traceback
 from enum import Enum
 
 from pendulum import Duration, DateTime
@@ -35,6 +37,7 @@ class DownloadTask(BaseTask):
             print("---------------Error occured when running method {0} in Type {1} object.---------------".format(
                 self.method_name, type(self.obj)
             ))
+            logging.error(traceback.format_exc())
             new_task = DownloadTask(
                 obj=self.obj,
                 method_name=self.method_name,
