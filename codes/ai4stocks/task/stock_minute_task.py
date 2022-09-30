@@ -24,5 +24,5 @@ class StockMinuteTask(DownloadTask):
     def cycle(self) -> Duration:
         return Duration(days=1)
 
-    def errorCycle(self) -> Duration:
-        return Duration(minutes=0)
+    def error_cycle(self) -> Duration:
+        return Duration(minutes=5)

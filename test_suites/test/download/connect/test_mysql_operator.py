@@ -11,6 +11,7 @@ class TestMysqlOperator(BaseTest):
         meta = self.__create_table__()
         self.__insert_data__()
         self.__try_insert_data__(meta)
+        self.__insert_null_data__()
         self.__get_table__()
 
     def __create_table__(self):
@@ -42,6 +43,13 @@ class TestMysqlOperator(BaseTest):
         assert db[db['code'] == '000001'].iloc[0, 1] == '狗狗银行'
         assert db[db['code'] == '600000'].iloc[0, 1] == '猪猪银行'
         assert db[db['code'] == '600001'].iloc[0, 1] == '建设银行'
+
+    def __insert_null_data__(self):
+        data = [['000002', 'xxx'],
+                ['000003', None]]
+        df = DataFrame(data=data, columns=['code', 'name'])
+        self.op.insert_data(self.table_name, df)
+        assert True  # 预期：不报错
 
     def __get_table__(self):
         db = self.op.get_table('test')

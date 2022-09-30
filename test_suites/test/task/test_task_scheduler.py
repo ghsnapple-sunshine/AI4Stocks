@@ -37,10 +37,24 @@ class TestTaskScheduler(BaseTest):
         sch = TaskScheduler(
             op=self.op,
             tasks=[
-                BaseTask(obj=InnerA(), method_name='run', plan_time=DateTime.now() - Duration(minutes=1)),
-                BaseTask(obj=InnerB(), method_name='run', plan_time=DateTime.now() - Duration(minutes=2)),
+                BaseTask(obj=InnerA(), method_name='run', plan_time=DateTime.now() - Duration(seconds=1)),
+                BaseTask(obj=InnerB(), method_name='run', plan_time=DateTime.now() - Duration(seconds=2)),
                 BaseTask(obj=InnerC('C'), method_name='run', plan_time=DateTime.now()),
                 BaseTask(obj=InnerC('C'), method_name='run2', plan_time=DateTime.now())
             ]
         )
         sch.run()
+
+    def test_delay(self):
+        start = DateTime.now()
+        sch = TaskScheduler(
+            op=self.op,
+            tasks=[
+                BaseTask(obj=InnerA(), method_name='run', plan_time=DateTime.now() + Duration(seconds=10)),
+                BaseTask(obj=InnerB(), method_name='run', plan_time=DateTime.now() + Duration(seconds=20)),
+                BaseTask(obj=InnerC('C'), method_name='run', plan_time=DateTime.now())
+            ]
+        )
+        sch.run()
+        end = DateTime.now()
+        assert end - start >= Duration(seconds=20)  # 预期至少20s才能执行完

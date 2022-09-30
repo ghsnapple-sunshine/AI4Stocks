@@ -2,7 +2,7 @@ import pymysql
 from pandas import DataFrame
 
 from ai4stocks.download.connect.mysql_common import MysqlRole
-from pymysql.err import DatabaseError, ProgrammingError
+from pymysql.err import DatabaseError, ProgrammingError, DataError
 
 
 class MysqlConnector:
@@ -89,7 +89,12 @@ class MysqlConnector:
             else:
                 print(sql)
                 raise e
+        except DataError as e:
+            if e.args[0] == 1264:
+                row = int(e.args[1].split(' ')[-1])
+                print(sql)
+                print(vals[row - 1: row + 1])
+            raise e
         except DatabaseError as e:
             print(sql)
-            print(vals[0])
             raise e

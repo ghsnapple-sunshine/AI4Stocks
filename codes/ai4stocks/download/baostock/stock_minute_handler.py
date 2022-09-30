@@ -2,7 +2,7 @@ import baostock as bs
 from pandas import DataFrame
 from pendulum import DateTime
 
-from ai4stocks.common.constants import META_COLS
+from ai4stocks.common.constants import META_COLS, INT_MAX_VALUE, INT_MIN_VALUE, FLOAT_MAX_VALUE, FLOAT_MIN_VALUE
 from ai4stocks.common.types import FuquanType, DataSourceType, DataFreqType
 from ai4stocks.common.stock_code import StockCodeType, StockCode
 from ai4stocks.download.base_handler import BaseHandler
@@ -18,6 +18,20 @@ def __str_to_datetime__(str_datetime: str) -> DateTime:
     hour = int(str_datetime[8:10])
     minute = int(str_datetime[10:12])
     return DateTime(year=year, month=month, day=day, hour=hour, minute=minute)
+
+
+def __check_int__(str_int: str):
+    _int = int(str_int)
+    if (_int > INT_MAX_VALUE) | (_int < INT_MIN_VALUE):
+        return None
+    return str_int
+
+
+def __check_float__(str_float: str):
+    _float = float(str_float)
+    if (_float > FLOAT_MAX_VALUE) | (_float < FLOAT_MIN_VALUE):
+        return None
+    return str_float
 
 
 class StockMinuteHandler(BaseHandler):
@@ -63,7 +77,15 @@ class StockMinuteHandler(BaseHandler):
         minute_info.rename(
             columns=MINUTE_NAME_DICT,
             inplace=True)
+
+        # 更改类型
         minute_info['datetime'] = minute_info['time'].apply(lambda x: __str_to_datetime__(x))
+        minute_info['open'] = minute_info['open'].apply(lambda x: __check_float__(x))
+        minute_info['close'] = minute_info['close'].apply(lambda x: __check_float__(x))
+        minute_info['high'] = minute_info['high'].apply(lambda x: __check_float__(x))
+        minute_info['low'] = minute_info['low'].apply(lambda x: __check_float__(x))
+        minute_info['chengjiaoliang'] = minute_info['chengjiaoliang'].apply(lambda x: __check_int__(x))
+        minute_info['chengjiaoe'] = minute_info['chengjiaoe'].apply(lambda x: __check_float__(x))
         minute_info.drop(
             columns=['time'],
             inplace=True)

@@ -9,6 +9,8 @@ import pandas as pd
 
 
 def __obj_format__(obj):
+    if obj is None:
+        return 'NULL'
     # 注意到DateTime类型在DateFrame中被封装为TimeSpan类型
     if isinstance(obj, (str, DateTime, Timestamp, StockCode)):
         return '\'{0}\''.format(obj)  # 增加引号
@@ -68,21 +70,18 @@ class MysqlOperator(MysqlConnector):
         if (data is None) or (isinstance(data, DataFrame) & data.empty):
             return
 
-        inQ = ['%s'] * data.columns.size
-        strInQ = ', '.join(inQ)
-        cols = data.columns
-        strCols = ', '.join(cols)
-
         if update:
             self.__try_insert_data_and_update__(
                 name=name,
                 data=data,
-                col_meta=col_meta,
-                strCols=strCols,
-                strInQ=strInQ)
+                col_meta=col_meta)
             return
 
-        sql = "insert ignore into `{0}`({1}) values({2})".format(name, strCols, strInQ)
+        sql = "insert ignore into `{0}`({1}) values({2})".format(
+            name,
+            ', '.join(data.columns),
+            ', '.join(['%s'] * data.columns.size)
+        )
         vals = data.values.tolist()
         self.execute_many(sql, vals, True)
 
@@ -90,21 +89,25 @@ class MysqlOperator(MysqlConnector):
             self,
             name: str,
             data: DataFrame,
-            col_meta: DataFrame,
-            strCols: str,
-            strInQ: str
+            col_meta: DataFrame
     ):
-        normal_cols = col_meta[COL_META_ADDREQ].apply(lambda x: not x.is_key())
+        normal_cols = col_meta[COL_META_ADDREQ].apply(
+            lambda x: not x.is_key()
+        )
         normal_cols = col_meta[normal_cols][COL_META_COLUMN]
         inQ2 = [x + '=%s' for x in normal_cols]
-        strInQ2 = ', '.join(inQ2)
+
         sql = "insert into `{0}`({1}) values({2}) on duplicate key update {3}".format(
-            name, strCols, strInQ, strInQ2)
+            name,
+            ', '.join(data.columns),
+            ', '.join(['%s'] * data.columns.size),
+            ', '.join(inQ2))
         data = pd.concat([data, data[normal_cols]], axis=1)
-        for row in range(data.shape[0]):
-            ls = list(data.iloc[row, :])
-            ls = [__obj_format__(obj) for obj in ls]
-            sql2 = sql % tuple(ls)
+        for index, row in data.iterrows():
+            ser = row.apply(
+                lambda x: __obj_format__(x)
+            )
+            sql2 = sql % tuple(ser)
             self.execute(sql2)
         self.conn.commit()
 

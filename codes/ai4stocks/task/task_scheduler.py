@@ -1,6 +1,6 @@
 import time
 
-from pendulum import DateTime
+from pendulum import DateTime, Period, datetime
 
 from ai4stocks.download.connect.mysql_operator import MysqlOperator
 from ai4stocks.task.base_task import BaseTask
@@ -19,15 +19,17 @@ class TaskScheduler:
         while len(tasks) > 0:
             tasks = sorted(
                 tasks,
-                key=lambda x: x.plan_time())
+                key=lambda x: x.get_plan_time())
             now = DateTime.now()
-            if now < tasks[0].plan_time():
-                print('{0}>>> 下一个任务预计将于{1}执行'.format(
+            if now < tasks[0].get_plan_time():
+                delay = tasks[0].get_plan_time() - now
+                print('{0}>>>Next task will be executed in {1}(Start at: {2})'.format(
                     now.format('YYYY-MM-DD HH:mm'),
-                    tasks[0].plan_time().format('YYYY-MM-DD HH:mm')
+                    delay.in_words(),
+                    tasks[0].get_plan_time().format('YYYY-MM-DD HH:mm')
                 ))
-                dly = tasks[0].plan_time() - now
-                time.sleep(secs=dly.seconds)
+
+                time.sleep(delay.total_seconds())
             status, res, new_task = tasks[0].run()
             tasks = tasks[1:]
             if isinstance(new_task, BaseTask):

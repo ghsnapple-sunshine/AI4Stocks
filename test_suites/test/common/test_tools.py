@@ -32,3 +32,17 @@ def create_stock_list_2(op: MysqlOperator) -> DataFrame:
     df = DataFrame(data=data, columns=['code', 'name'])
     op.insert_data(STOCK_LIST_TABLE, df)
     return df
+
+
+def create_stock_list_ex(op: MysqlOperator) -> DataFrame:
+    op.drop_table(STOCK_LIST_TABLE)
+    cols = [
+        ['code', MysqlColType.STOCK_CODE, MysqlColAddReq.KEY],
+        ['name', MysqlColType.STOCK_NAME, MysqlColAddReq.NONE]
+    ]
+    table_meta = DataFrame(data=cols, columns=META_COLS)
+    op.create_table(STOCK_LIST_TABLE, table_meta)
+    data = [['000795', '英洛华']]
+    df = DataFrame(data=data, columns=['code', 'name'])
+    op.insert_data(STOCK_LIST_TABLE, df)
+    return df

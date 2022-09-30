@@ -12,7 +12,7 @@ class DownloadTask(BaseTask):
     def cycle(self) -> Duration:
         return Duration(seconds=1)
 
-    def errorCycle(self) -> Duration:
+    def error_cycle(self) -> Duration:
         return Duration(seconds=1)
 
     def run(self) -> tuple:
@@ -40,7 +40,7 @@ class DownloadTask(BaseTask):
                 method_name=self.method_name,
                 args=self.args,
                 kwargs=self.kwargs,
-                plan_time=GetNowShift(self.cycle(), minus=True)
+                plan_time=GetNowShift(self.error_cycle())
             )
             return TaskStatus.PartialSuccess, None, new_task
 
