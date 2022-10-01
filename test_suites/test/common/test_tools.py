@@ -1,6 +1,7 @@
 from pandas import DataFrame
 
 from ai4stocks.common.constants import META_COLS, STOCK_LIST_TABLE
+from ai4stocks.common.stock_code import StockCode
 from ai4stocks.download.connect.mysql_common import MysqlColType, MysqlColAddReq
 from ai4stocks.download.connect.mysql_operator import MysqlOperator
 
@@ -34,7 +35,10 @@ def create_stock_list_2(op: MysqlOperator) -> DataFrame:
     return df
 
 
-def create_stock_list_ex(op: MysqlOperator) -> DataFrame:
+def create_stock_list_ex(
+        op: MysqlOperator,
+        code: StockCode
+) -> DataFrame:
     op.drop_table(STOCK_LIST_TABLE)
     cols = [
         ['code', MysqlColType.STOCK_CODE, MysqlColAddReq.KEY],
@@ -42,7 +46,7 @@ def create_stock_list_ex(op: MysqlOperator) -> DataFrame:
     ]
     table_meta = DataFrame(data=cols, columns=META_COLS)
     op.create_table(STOCK_LIST_TABLE, table_meta)
-    data = [['000795', '英洛华']]
+    data = [[code.to_code6(), '']]
     df = DataFrame(data=data, columns=['code', 'name'])
     op.insert_data(STOCK_LIST_TABLE, df)
     return df

@@ -11,21 +11,10 @@ from ai4stocks.download.connect.mysql_operator import MysqlOperator
 def __download__() -> DataFrame:
     stocks = ak.stock_info_a_code_name()
 
-    '''
-    # StockList返回的股票代码是“000001”，“000002”这样的格式
-    # 但是stock_zh_a_daily（）函数中，要求代码的格式为“sz000001”，或“sh600001”
-    # 即必须有sz或者sh作为前序
-    # 因此，通过for循环对股票代码code进行格式变换
-    for i in range(len(stocks)):
-        temp = stocks.iloc[i, 0]
-        if temp[0] == "6":
-            temp = "sh" + temp
-        elif temp[0] == "0":
-            temp = "sz" + temp
-        elif temp[0] == "3":
-            temp = "sz" + temp
-        stocks.iloc[i, 0] = temp
-    '''
+    # 剔除4开头的退市股票。
+    stocks = stocks[
+        stocks['code'].apply(lambda x: x[0] != '4')
+    ]
 
     return stocks
 
@@ -52,12 +41,12 @@ class StockListHandler:
         self.op.try_insert_data(STOCK_LIST_TABLE, stocks)  # 忽略重复Insert
         self.op.disconnect()
 
-    def downloadAndSave(self) -> DataFrame:
+    def download_and_save(self) -> DataFrame:
         stocks = __download__()
         self.__save_2_database__(stocks)
         return stocks
 
-    def getTable(self) -> DataFrame:
+    def get_table(self) -> DataFrame:
         stocks = self.op.get_table(STOCK_LIST_TABLE)
-        stocks['code'] = stocks.apply(lambda x: StockCode(x['code']), axis=1)
+        stocks['code'] = stocks['code'].apply(lambda x: StockCode(x))
         return stocks

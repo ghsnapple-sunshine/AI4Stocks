@@ -79,7 +79,7 @@ class BaseHandler:
             start_time=start_time,
             end_time=end_time
         )
-        stocks = StockListHandler(self.op).getTable()
+        stocks = StockListHandler(self.op).get_table()
         records = self.recorder.get_table()
         # 遍历股票清单和复权方式
         tbs = []
