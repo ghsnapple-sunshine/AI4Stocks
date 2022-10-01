@@ -1,4 +1,5 @@
 from pandas import DataFrame
+from pendulum import DateTime, Duration
 
 from ai4stocks.download.connect.mysql_common import MysqlRole
 from ai4stocks.download.connect.mysql_operator import MysqlOperator
@@ -9,10 +10,13 @@ from ai4stocks.task.task_scheduler import TaskScheduler
 
 
 def download():
+    now = DateTime.now()
     sch = TaskScheduler(
         op=MysqlOperator(MysqlRole.DbStock),
-        tasks=[StockListTask(), StockDailyTask(), StockMinuteTask()]
-        #tasks=[StockMinuteTask()]
+        tasks=[
+            StockListTask(plan_time=now),
+            StockDailyTask(plan_time=now+Duration(seconds=1)),
+            StockMinuteTask(plan_time=now+Duration(seconds=2))]
     )
     sch.run()
 
