@@ -79,16 +79,37 @@ class StockMinuteHandler(BaseHandler):
             inplace=True)
 
         # 更改类型
-        minute_info['datetime'] = minute_info['time'].apply(lambda x: __str_to_datetime__(x))
-        minute_info['open'] = minute_info['open'].apply(lambda x: __check_float__(x))
-        minute_info['close'] = minute_info['close'].apply(lambda x: __check_float__(x))
-        minute_info['high'] = minute_info['high'].apply(lambda x: __check_float__(x))
-        minute_info['low'] = minute_info['low'].apply(lambda x: __check_float__(x))
-        minute_info['chengjiaoliang'] = minute_info['chengjiaoliang'].apply(lambda x: __check_int__(x))
-        minute_info['chengjiaoe'] = minute_info['chengjiaoe'].apply(lambda x: __check_float__(x))
+        minute_info['datetime'] = minute_info['time'].apply(
+            lambda x: __str_to_datetime__(x)
+        )
+        minute_info['open'] = minute_info['open'].apply(
+            lambda x: __check_float__(x)
+        )
+        minute_info['close'] = minute_info['close'].apply(
+            lambda x: __check_float__(x)
+        )
+        minute_info['high'] = minute_info['high'].apply(
+            lambda x: __check_float__(x)
+        )
+        minute_info['low'] = minute_info['low'].apply(
+            lambda x: __check_float__(x)
+        )
+        minute_info['chengjiaoliang'] = minute_info['chengjiaoliang'].apply(
+            lambda x: __check_int__(x)
+        )
+        minute_info['chengjiaoe'] = minute_info['chengjiaoe'].apply(
+            lambda x: __check_float__(x)
+        )
+        # 删除time字段
         minute_info.drop(
             columns=['time'],
-            inplace=True)
+            inplace=True
+        )
+        # 按照start_date和end_date过滤数据
+        minute_info = minute_info[
+            (minute_info['datetime'] <= end_time) &
+            (minute_info['datetime'] >= start_time)
+        ]
 
         bs.logout()
         return minute_info
@@ -98,6 +119,9 @@ class StockMinuteHandler(BaseHandler):
             name: str,
             data: DataFrame
     ) -> None:
+        if (not isinstance(data, DataFrame)) or data.empty:
+            return
+
         cols = [
             ['datetime', MysqlColType.DATETIME, MysqlColAddReq.KEY],
             ['open', MysqlColType.FLOAT, MysqlColAddReq.NONE],

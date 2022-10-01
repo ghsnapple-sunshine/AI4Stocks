@@ -41,6 +41,16 @@ class StockMinuteHandlerTest(BaseTest):
         tbls = StockMinuteHandler(op=self.op).download_and_save(start_time=start_date, end_time=end_date)
         assert stocks.shape[0] == len(tbls)
 
+    def test_downlaod_in_a_day(self) -> None:
+        DbSweeper.clean_up()
+        stocks = create_stock_list_ex(self.op)
+        hdl = StockMinuteHandler(op=self.op)
+        start_time = DateTime(year=2022, month=9, day=30, hour=9)
+        end_time = DateTime(year=2022, month=9, day=30, hour=17)
+        hdl.download_and_save(start_time=start_time, end_time=end_time)
+        start_time = end_time
+        end_time = DateTime(year=2022, month=9, day=30, hour=18)
+        hdl.download_and_save(start_time=start_time, end_time=end_time)
 
 if __name__ == '__main__':
     unittest.main()

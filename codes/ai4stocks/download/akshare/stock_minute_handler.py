@@ -60,6 +60,9 @@ class StockMinuteHandler(BaseHandler):
             name: str,
             data: DataFrame
     ):
+        if (not isinstance(data, DataFrame)) or data.empty:
+            return
+
         cols = [
             ['datetime', MysqlColType.DATETIME, MysqlColAddReq.KEY],
             ['open', MysqlColType.FLOAT, MysqlColAddReq.NONE],

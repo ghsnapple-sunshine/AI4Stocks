@@ -37,7 +37,7 @@ class DataFreqType(Enum):
         }
         return RECORD_TYPE_DICT[self]
 
-    def to_duration(self) -> str:
+    def to_duration(self) -> Duration:
         RECORD_TYPE_DICT = {
             DataFreqType.DAY: Duration(days=1),
             DataFreqType.MIN5: Duration(minutes=5)

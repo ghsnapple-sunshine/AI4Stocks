@@ -12,14 +12,23 @@ from ai4stocks.download.connect.mysql_operator import MysqlOperator
 
 
 class StockDailyHandler(BaseHandler):
-    def __init__(self, op: MysqlOperator):
+    def __init__(
+            self,
+            op: MysqlOperator
+    ):
         self.op = op
         self.recorder = DownloadRecorder(op=op)
         self.source = DataSourceType.AKSHARE_DONGCAI
         self.fuquans = [FuquanType.NONE, FuquanType.QIANFUQIAN, FuquanType.HOUFUQIAN]
         self.freq = DataFreqType.DAY
 
-    def __download__(self, code: StockCode, fuquan: FuquanType, start_time: DateTime, end_time: DateTime) -> DataFrame:
+    def __download__(
+            self,
+            code: StockCode,
+            fuquan: FuquanType,
+            start_time: DateTime,
+            end_time: DateTime
+    ) -> DataFrame:
         # 使用接口（stock_zh_a_hist，源：东财）,code为Str6
         # 备用接口（stock_zh_a_daily，源：新浪，未实现）
         start_time = start_time.format('YYYYMMDD')
@@ -47,7 +56,14 @@ class StockDailyHandler(BaseHandler):
         daily_info.rename(columns=DAILY_NAME_DICT, inplace=True)
         return daily_info
 
-    def __save_to_database__(self, name: str, data: DataFrame) -> None:
+    def __save_to_database__(
+            self,
+            name: str,
+            data: DataFrame
+    ) -> None:
+        if (not isinstance(data, DataFrame)) or data.empty:
+            return
+
         cols = [
             ['date', MysqlColType.DATE, MysqlColAddReq.KEY],
             ['open', MysqlColType.FLOAT, MysqlColAddReq.NONE],
