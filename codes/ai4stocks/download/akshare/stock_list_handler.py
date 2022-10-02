@@ -10,12 +10,10 @@ from ai4stocks.download.connect.mysql_operator import MysqlOperator
 
 def __download__() -> DataFrame:
     stocks = ak.stock_info_a_code_name()
-
-    # 剔除4开头的退市股票。
+    # 剔除三板市场的股票
     stocks = stocks[
-        stocks['code'].apply(lambda x: x[0] != '4')
+        stocks['code'].apply(lambda x: (x[0] != '4') & (x[0] != '8'))
     ]
-
     return stocks
 
 

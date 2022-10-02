@@ -57,6 +57,7 @@ class StockMinuteHandler(BaseHandler):
         start_time = start_time.format('YYYY-MM-DD')
         end_time = end_time.format('YYYY-MM-DD')
 
+
         fields = "time,open,high,low,close,volume,amount"
         rs = bs.query_history_k_data_plus(
             code=code.to_code9(),
