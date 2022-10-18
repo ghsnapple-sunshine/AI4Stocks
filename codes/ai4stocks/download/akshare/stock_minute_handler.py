@@ -1,15 +1,10 @@
 import akshare as ak
 from pandas import DataFrame
-
-from ai4stocks.common.types import FuquanType, DataSourceType, DataFreqType
-from ai4stocks.common.constants import META_COLS
-from ai4stocks.common.stock_code import StockCode
-from ai4stocks.download.base_handler import BaseHandler
-from ai4stocks.download.connect.mysql_common import MysqlColType, MysqlColAddReq
-from ai4stocks.download.connect.mysql_operator import MysqlOperator
 from pendulum import DateTime
 
-from ai4stocks.download.download_recorder import DownloadRecorder
+from ai4stocks.common import FuquanType, DataSourceType, DataFreqType, META_COLS, StockCode
+from ai4stocks.download import BaseHandler, DownloadRecorder
+from ai4stocks.download.connect import MysqlColType, MysqlColAddReq, MysqlOperator
 
 
 class StockMinuteHandler(BaseHandler):

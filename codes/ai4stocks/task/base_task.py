@@ -1,4 +1,4 @@
-from pendulum import DateTime, Duration
+from pendulum import DateTime
 
 
 class BaseTask:

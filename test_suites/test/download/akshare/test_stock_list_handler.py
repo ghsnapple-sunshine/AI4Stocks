@@ -2,7 +2,7 @@ import unittest
 from pandas import DataFrame
 
 from ai4stocks.common.constants import STOCK_LIST_TABLE
-from ai4stocks.download.akshare.stock_list_handler import StockListHandler
+from ai4stocks.download.stock_list_handler import StockListHandler
 from test.common.base_test import BaseTest
 
 

@@ -1,11 +1,8 @@
 from pandas import DataFrame
 from pendulum import DateTime
 
-from ai4stocks.common.types import DataFreqType, FuquanType, DataSourceType
-from ai4stocks.common.constants import DOWN_RECORD_TABLE, META_COLS
-from ai4stocks.common.stock_code import StockCode
-from ai4stocks.download.connect.mysql_common import MysqlColAddReq, MysqlColType
-from ai4stocks.download.connect.mysql_operator import MysqlOperator
+from ai4stocks.common import DOWN_RECORD_TABLE, META_COLS, StockCode, DataFreqType, FuquanType, DataSourceType
+from ai4stocks.download.connect import MysqlColAddReq, MysqlColType, MysqlOperator
 
 
 class DownloadRecorder:

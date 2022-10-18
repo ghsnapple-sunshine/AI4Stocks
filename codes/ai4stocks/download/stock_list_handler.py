@@ -2,10 +2,8 @@
 import akshare as ak
 from pandas import DataFrame
 
-from ai4stocks.common.constants import COL_STOCK_CODE, COL_STOCK_NAME, META_COLS, STOCK_LIST_TABLE
-from ai4stocks.common.stock_code import StockCode
-from ai4stocks.download.connect.mysql_common import MysqlColAddReq, MysqlColType
-from ai4stocks.download.connect.mysql_operator import MysqlOperator
+from ai4stocks.common import COL_STOCK_CODE, COL_STOCK_NAME, META_COLS, STOCK_LIST_TABLE, StockCode
+from ai4stocks.download.connect import MysqlColAddReq, MysqlColType, MysqlOperator
 
 
 def __download__() -> DataFrame:

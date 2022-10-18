@@ -2,10 +2,10 @@ import logging
 import traceback
 from enum import Enum
 
-from pendulum import Duration, DateTime
+from pendulum import Duration
 
-from ai4stocks.task.base_task import BaseTask
-from ai4stocks.common.tools import GetNowShift
+from ai4stocks.common.tools import get_now_shift
+from ai4stocks.task import BaseTask
 
 
 class DownloadTask(BaseTask):
@@ -25,7 +25,7 @@ class DownloadTask(BaseTask):
                     method_name=self.method_name,
                     args=self.args,
                     kwargs=self.kwargs,
-                    plan_time=GetNowShift(self.cycle())
+                    plan_time=get_now_shift(self.cycle())
                 )
                 return TaskStatus.Success, res, new_task
             else:
@@ -40,7 +40,7 @@ class DownloadTask(BaseTask):
                 method_name=self.method_name,
                 args=self.args,
                 kwargs=self.kwargs,
-                plan_time=GetNowShift(self.error_cycle())
+                plan_time=get_now_shift(self.error_cycle())
             )
             return TaskStatus.PartialSuccess, None, new_task
 

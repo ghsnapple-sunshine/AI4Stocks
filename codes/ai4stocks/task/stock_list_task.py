@@ -1,9 +1,8 @@
 from pendulum import DateTime, Duration
 
-from ai4stocks.download.akshare.stock_list_handler import StockListHandler
-from ai4stocks.download.connect.mysql_common import MysqlRole
-from ai4stocks.download.connect.mysql_operator import MysqlOperator
-from ai4stocks.task.download_task import DownloadTask
+from ai4stocks.download import StockListHandler
+from ai4stocks.download.connect import MysqlRole, MysqlOperator
+from ai4stocks.task import DownloadTask
 
 
 class StockListTask(DownloadTask):

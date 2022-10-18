@@ -36,7 +36,7 @@ class StockMinuteHandlerTest(BaseTest):
 
     def test_download_irregular(self) -> None:
         DbSweeper.clean_up()
-        stocks = create_stock_list_ex(self.op)
+        stocks = create_stock_list_ex(self.op, StockCode('000795'))
         start_date = DateTime(2002, 1, 1)
         end_date = DateTime(2003, 1, 1)
         tbls = StockMinuteHandler(op=self.op).download_and_save(start_time=start_date, end_time=end_date)

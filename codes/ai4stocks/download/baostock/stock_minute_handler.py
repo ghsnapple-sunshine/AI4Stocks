@@ -2,13 +2,10 @@ import baostock as bs
 from pandas import DataFrame
 from pendulum import DateTime
 
-from ai4stocks.common.constants import META_COLS, INT_MAX_VALUE, INT_MIN_VALUE, FLOAT_MAX_VALUE, FLOAT_MIN_VALUE
-from ai4stocks.common.types import FuquanType, DataSourceType, DataFreqType
-from ai4stocks.common.stock_code import StockCodeType, StockCode
-from ai4stocks.download.base_handler import BaseHandler
-from ai4stocks.download.connect.mysql_common import MysqlColType, MysqlColAddReq
-from ai4stocks.download.connect.mysql_operator import MysqlOperator
-from ai4stocks.download.download_recorder import DownloadRecorder
+from ai4stocks.common import META_COLS, INT_MAX_VALUE, INT_MIN_VALUE, FLOAT_MAX_VALUE, FLOAT_MIN_VALUE, FuquanType, \
+    DataSourceType, DataFreqType, StockCode
+from ai4stocks.download import BaseHandler, DownloadRecorder
+from ai4stocks.download.connect import MysqlColType, MysqlColAddReq, MysqlOperator
 
 
 def __str_to_datetime__(str_datetime: str) -> DateTime:
@@ -43,7 +40,6 @@ class StockMinuteHandler(BaseHandler):
         self.recorder = DownloadRecorder(op=op)
         self.source = DataSourceType.BAOSTOCK
         self.fuquans = [FuquanType.NONE]
-        self.code_type = StockCodeType.CODE6
         self.freq = DataFreqType.MIN5
 
     def __download__(

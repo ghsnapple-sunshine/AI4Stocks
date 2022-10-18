@@ -1,8 +1,7 @@
 from pendulum import DateTime, Duration
 
-from ai4stocks.download.baostock.stock_minute_handler import StockMinuteHandler
-from ai4stocks.download.connect.mysql_common import MysqlRole
-from ai4stocks.download.connect.mysql_operator import MysqlOperator
+from ai4stocks.download.baostock import StockMinuteHandler
+from ai4stocks.download.connect import MysqlOperator, MysqlRole
 from ai4stocks.task.download_task import DownloadTask
 
 

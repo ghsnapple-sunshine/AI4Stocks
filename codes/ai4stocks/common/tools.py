@@ -22,7 +22,7 @@ def timestamp_to_datetime(ts: Timestamp) -> DateTime:
     return dt
 
 
-def GetNowShift(
+def get_now_shift(
         du: Duration,
         minus=False
 ) -> DateTime:
