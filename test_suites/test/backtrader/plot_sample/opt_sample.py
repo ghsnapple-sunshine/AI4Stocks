@@ -1,9 +1,8 @@
 import datetime
 
+import akshare as ak
 import backtrader as bt
 import pandas as pd
-import akshare as ak
-
 from backtrader_plotting import Bokeh, OptBrowser
 from backtrader_plotting.schemes import Tradimo
 
