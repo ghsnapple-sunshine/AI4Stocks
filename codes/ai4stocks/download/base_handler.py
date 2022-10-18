@@ -1,10 +1,10 @@
 from pandas import DataFrame
 from pendulum import DateTime, Duration
 
-from ai4stocks.common import FuquanType, DataFreqType, DataSourceType, StockCode
+from ai4stocks.common import FuquanType, StockCode, DataSourceType, DataFreqType
 from ai4stocks.common.tools import timestamp_to_datetime
+from ai4stocks.download import DownloadRecorder
 from ai4stocks.download.connect import MysqlOperator
-from ai4stocks.download.download_recorder import DownloadRecorder
 from ai4stocks.download.stock_list_handler import StockListHandler
 
 
@@ -59,14 +59,14 @@ class BaseHandler:
             start_time: DateTime,
             end_time: DateTime
     ) -> DataFrame:
-        return DataFrame()
+        pass
 
     def __save_to_database__(
             self,
             name: str,
             data: DataFrame
     ) -> None:
-        return
+        pass
 
     def download_and_save(
             self,
