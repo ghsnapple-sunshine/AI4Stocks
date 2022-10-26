@@ -1,4 +1,5 @@
 import unittest
+
 from pandas import DataFrame
 
 from ai4stocks.common.constants import META_COLS

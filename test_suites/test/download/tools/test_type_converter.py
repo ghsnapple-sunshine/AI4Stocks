@@ -1,7 +1,8 @@
 import unittest
 
-from ai4stocks.common.tools import tuple_to_array
 from numpy import ndarray
+
+from ai4stocks.common.tools import tuple_to_array
 
 
 class TestTypeConverter(unittest.TestCase):

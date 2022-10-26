@@ -1,8 +1,8 @@
-from pendulum import DateTime
 from pandas import DataFrame
+from pendulum import DateTime
 
 from ai4stocks.common.types import FuquanType, DataFreqType, DataSourceType
-from ai4stocks.download.download_recorder import DownloadRecorder
+from ai4stocks.download.slow.download_recorder import DownloadRecorder
 from test.common.base_test import BaseTest
 
 

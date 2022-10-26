@@ -7,11 +7,13 @@ class StockCodeType(Enum):
     CODE9 = 3
 
 
-class StockCode:
+class StockCode(str):
+    """
     def __init__(self, code: str):
         self.code = code
+    """
 
-    '''
+    """
     def Format(self, typ=StockCodeType.CODE6) -> str:
         if typ == StockCodeType.CODE6:
             return self.toCode6()
@@ -19,39 +21,25 @@ class StockCode:
             return self.toCode8()
         else:
             return self.toCode9()
-    '''
+    """
 
     def to_code6(self) -> str:
-        return self.code
+        return self
 
     def to_code9(self) -> str:
-        if self.code[0] == "6":
-            return "sh." + self.code
-        elif self.code[0] == "0":
-            return "sz." + self.code
-        elif self.code[0] == "3":
-            return "sz." + self.code
+        if self[0] == "6":
+            return "sh." + self
+        elif self[0] == "0":
+            return "sz." + self
+        elif self[0] == "3":
+            return "sz." + self
         return 'unknown'
 
     def to_code8(self) -> str:
-        if self.code[0] == "6":
-            return "sh" + self.code
-        elif self.code[0] == "0":
-            return "sz" + self.code
-        elif self.code[0] == "3":
-            return "sz" + self.code
+        if self[0] == "6":
+            return "sh" + self
+        elif self[0] == "0":
+            return "sz" + self
+        elif self[0] == "3":
+            return "sz" + self
         return 'unknown'
-
-    def __eq__(self, other):
-        if isinstance(other, StockCode):
-            return self.code == other.code
-        elif isinstance(other, str):
-            return self.code == other
-        else:
-            return False
-
-    def __ne__(self, other):
-        return not self.__eq__(other)
-
-    def __str__(self):
-        return self.code

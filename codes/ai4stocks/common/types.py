@@ -1,4 +1,5 @@
 from enum import Enum
+
 from pendulum import Duration
 
 
@@ -70,3 +71,24 @@ class DataSourceType(Enum):
         }
         return SOURCE_TYPE_DICT[self]
 
+
+class ColType(Enum):
+    DATETIME = 1
+    DATE = 2
+    OPEN = 10
+    CLOSE = 11
+    HIGH = 12
+    LOW = 13
+    CHENGJIAOLIANG = 20
+
+    def __str__(self):
+        COL_TYPE_DICT = {
+            ColType.DATETIME: 'datetime',
+            ColType.DATE: 'date',
+            ColType.OPEN: 'open',
+            ColType.CLOSE: 'close',
+            ColType.HIGH: 'high',
+            ColType.LOW: 'low',
+            ColType.CHENGJIAOLIANG: 'chengjiaoliang'
+        }
+        return COL_TYPE_DICT[self]

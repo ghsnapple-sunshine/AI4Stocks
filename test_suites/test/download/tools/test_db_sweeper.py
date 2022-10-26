@@ -9,7 +9,7 @@ from test.common.db_sweeper import DbSweeper
 class TestDbSweeper(BaseTest):
     def test_sweep(self):
         self.__create_table__()
-        DbSweeper.clean_up()
+        DbSweeper.cleanup()
         data = self.op.get_table(STOCK_LIST_TABLE)
         assert data.empty
 

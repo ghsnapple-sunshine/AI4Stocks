@@ -115,7 +115,7 @@ class MysqlOperator(MysqlConnector):
         sql = "drop table if exists `{0}`".format(name)
         self.execute(sql)
 
-    def get_table_cnt(self, name: str):
+    def get_record_cnt(self, name: str):
         sql = "select count(*) from {0}".format(name)
         res = self.execute(sql, fetch=True)
         return res.iloc[0, 0]

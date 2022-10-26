@@ -64,7 +64,7 @@ class StrategyMultiForks(bt.Strategy):
                     self.inds[d]['ma2'][0] > self.inds[d]['ma4'][0]) and (
                            self.inds[d]['ma4'][0] > self.inds[d]['ma4'][-1])
             sig2 = ((self.inds[d]['D1'][-1] > 0) or (self.inds[d]['A1'][0] > 0)) and (
-                    self.inds[d]['ma2'][0] > self.inds[d]['ma2'][-1]) and (d.close[0] / d.open[0] > 1.05) and (
+                    self.inds[d]['ma2'][0] > self.inds[d]['ma2'][-1]) and (d.close[0] / d.initial[0] > 1.05) and (
                            d.volume[0] / d.volume[-1] > 2)
             sig3 = ((self.inds[d]['D1'][-1] > 0) or (self.inds[d]['A1'][0] > 0)) and (
                     self.inds[d]['ma2'][0] > self.inds[d]['ma3'][0]) and (

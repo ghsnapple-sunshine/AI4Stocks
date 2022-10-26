@@ -21,13 +21,13 @@ class StrategyForks(Strategy):
         self.sma20 = MovingAverageSimple(self.data, period=20)
 
     def notify_order(self, order):
-        if order.status in [order.Submitted, order.Accepted]:
+        if order._status in [order.Submitted, order.Accepted]:
             # Buy/Sell order submitted/accepted to/by broker - Nothing to do
             return
 
         # Check if an order has been completed
         # Attention: broker could reject order if not enough cash
-        if order.status in [order.Completed]:
+        if order._status in [order.Completed]:
             if order.isbuy():
                 self.log(
                     'BUY EXECUTED, Price: %.2f, Cost: %.2f, Comm %.2f' %
@@ -45,7 +45,7 @@ class StrategyForks(Strategy):
 
             self.bar_executed = len(self)
 
-        elif order.status in [order.Canceled, order.Margin, order.Rejected]:
+        elif order._status in [order.Canceled, order.Margin, order.Rejected]:
             self.log('Order Canceled/Margin/Rejected')
 
         self.order = None

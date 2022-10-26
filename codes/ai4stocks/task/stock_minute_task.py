@@ -1,7 +1,7 @@
 from pendulum import DateTime, Duration
 
-from ai4stocks.download.baostock import StockMinuteHandler
 from ai4stocks.download.connect import MysqlOperator, MysqlRole
+from ai4stocks.download.slow import BsStockMinuteHandler
 from ai4stocks.task.download_task import DownloadTask
 
 
@@ -11,7 +11,7 @@ class StockMinuteTask(DownloadTask):
             plan_time: DateTime = None
     ):
         super().__init__(
-            obj=StockMinuteHandler(op=MysqlOperator(MysqlRole.DbStock)),
+            obj=BsStockMinuteHandler(operator=MysqlOperator(MysqlRole.DbStock)),
             method_name='download_and_save',
             kwargs={
                 'start_time': DateTime(year=2020, month=1, day=1),

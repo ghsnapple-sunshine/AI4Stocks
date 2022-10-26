@@ -49,12 +49,12 @@ class Strategy(bt.Strategy):
     #             print(d._name, '持仓' ,self.getposition(d).size)
 
     def notify_order(self, order):
-        if order.status in [order.Submitted, order.Accepted]:
+        if order._status in [order.Submitted, order.Accepted]:
             # 订单状态 submitted/accepted，无动作
             return
 
         # 订单完成
-        if order.status in [order.Completed]:
+        if order._status in [order.Completed]:
             if order.isbuy():
                 self.log('买单执行,%s, %.2f, %i' % (order.df._name,
                                                     order.executed.price, order.executed.size))
@@ -65,7 +65,7 @@ class Strategy(bt.Strategy):
 
         else:
             self.log('订单作废 %s, %s, isbuy=%i, size %i, open price %.2f' %
-                     (order.df._name, order.getstatusname(), order.isbuy(), order.created.size, order.df.open[0]))
+                     (order.df._name, order.getstatusname(), order.isbuy(), order.created.size, order.df.initial[0]))
 
     # 记录交易收益情况
     def notify_trade(self, trade):
@@ -142,7 +142,7 @@ class Strategy(bt.Strategy):
         for d in self.ranks:
             # 按次日开盘价计算下单量，下单量是100的整数倍
             size = int(
-                abs((self.broker.getvalue([d]) - targetvalue) / d.open[1] // 100 * 100))
+                abs((self.broker.getvalue([d]) - targetvalue) / d.initial[1] // 100 * 100))
             validday = d.datetime.datetime(1)  # 该股下一实际交易日
             if self.broker.getvalue([d]) > targetvalue:  # 持仓过多，要卖
                 # 次日跌停价近似值

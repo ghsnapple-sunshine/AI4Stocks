@@ -22,12 +22,16 @@ def timestamp_to_datetime(ts: Timestamp) -> DateTime:
     return dt
 
 
-def get_now_shift(
-        du: Duration,
-        minus=False
-) -> DateTime:
+def get_now_shift(du: Duration, minus=False) -> DateTime:
     now = DateTime.now()
     if minus:
         return now - du
     return now + du
 
+
+def datetime_to_date(datetime: DateTime) -> DateTime:
+    return DateTime(
+        year=datetime.year,
+        month=datetime.month,
+        day=datetime.day
+    )
