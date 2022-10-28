@@ -57,7 +57,7 @@ class SlowHandler(Handler):
 
                 self._recorder.save(para=spara)
                 tbs.append(table_name)
-
+                self._log_success_download(para=spara)
         return tbs
 
     @abstractmethod

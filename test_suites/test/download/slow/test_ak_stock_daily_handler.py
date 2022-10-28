@@ -13,6 +13,7 @@ class AkStockDailyHandlerTest(BaseTest):
     def test_all(self) -> None:
         self._download1()
         self._download2()
+        self._download3()
 
     def _download1(self) -> None:
         stocks = create_stock_list_1(self.operator)
@@ -52,6 +53,15 @@ class AkStockDailyHandlerTest(BaseTest):
         hdl = AkStockDailyHandler(self.operator)
         end_date = Date.today() - Duration(days=1)
         start_date = Date.today() - Duration(months=1)
+        tbls = hdl.obtain_data(para=Para()
+                               .with_start_n_end(start=start_date, end=end_date))
+        assert stocks.shape[0] * 3 == len(tbls)
+
+    def _download3(self) -> None:
+        stocks = create_stock_list_2(self.operator)
+        hdl = AkStockDailyHandler(self.operator)
+        end_date = Date.today() - Duration(days=1)
+        start_date = Date.today() - Duration(years=20)
         tbls = hdl.obtain_data(para=Para()
                                .with_start_n_end(start=start_date, end=end_date))
         assert stocks.shape[0] * 3 == len(tbls)

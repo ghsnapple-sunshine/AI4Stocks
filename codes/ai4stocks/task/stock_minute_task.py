@@ -12,7 +12,7 @@ class StockMinuteTask(DownloadTask):
                  operator: Operator,
                  start_time: DateTime = None):
         super().__init__(attr=BsStockMinuteHandler(operator=operator).obtain_data,
-                         args=Para().with_start_n_end(start=Date(2020, 1, 1), end=Date.today()),
+                         args=(Para().with_start_n_end(start=Date(2020, 1, 1), end=Date.today()),),
                          start_time=start_time)
 
     def cycle(self) -> Duration:

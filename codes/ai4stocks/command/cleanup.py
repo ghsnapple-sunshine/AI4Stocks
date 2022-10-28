@@ -1,20 +1,6 @@
 from pandas import DataFrame
 
-from ai4stocks.common.pendelum import DateTime, Duration
-from ai4stocks.download.mysql import RoleType, Operator
-from ai4stocks.task import StockDailyTask, StockListTask, StockMinuteTask, TaskScheduler
-
-
-def download():
-    now = DateTime.now()
-    sch = TaskScheduler(
-        operator=Operator(RoleType.DbStock),
-        tasks=[
-            StockListTask(start_time=now),
-            StockDailyTask(start_time=now + Duration(seconds=1)),
-            StockMinuteTask(start_time=now + Duration(seconds=2))]
-    )
-    sch.run()
+from ai4stocks.download.mysql import Operator, RoleType
 
 
 def cleanup() -> None:
