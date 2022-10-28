@@ -5,7 +5,7 @@ from ai4stocks.backtrader.frame.clock_manager import Clock
 
 
 class ITimeSequence:
-    def __init__(self, clock: Clock):
+    def __init__(self, clock: Clock = None):
         self._clock = clock
 
     @property

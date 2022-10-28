@@ -1,38 +1,44 @@
+from datetime import date, datetime
 from enum import Enum
-from pendulum import DateTime
 
-from ai4stocks.common.constants import COL_META_COLUMN, COL_META_TYPE, COL_META_ADDREQ
-from ai4stocks.common.stock_code import StockCode
-from ai4stocks.download.connect.mysql_connector import MysqlConnector
-from pandas import DataFrame, Timestamp
 import pandas as pd
+from pandas import DataFrame, Timestamp
+
+from ai4stocks.constants.meta import COLUMN, TYPE, ADDREQ
+from ai4stocks.download.mysql.connector import Connector
 
 
-def __obj_format__(obj):
+def _obj_format(obj):
     if obj is None:
         return 'NULL'
     # 注意到DateTime类型在DateFrame中被封装为TimeSpan类型
-    if isinstance(obj, (str, DateTime, Timestamp, StockCode)):
+    if isinstance(obj, (str, date, datetime, Timestamp)):
         return '\'{0}\''.format(obj)  # 增加引号
     if isinstance(obj, Enum):
         return obj.value
     return obj
 
 
-class MysqlOperator(MysqlConnector):
-    def create_table(
-            self,
-            name: str,
-            col_meta: DataFrame,
-            if_not_exist=True
-    ):
+class Operator(Connector):
+    def create_table(self,
+                     name: str,
+                     meta: DataFrame,
+                     if_not_exist=True) -> None:
+        """
+        在Mysql中创建表
+
+        :param name:            名称
+        :param meta:            元数据
+        :param if_not_exist:    检查表格是否已经存在，如果已经存在则不继续创建
+        :return:                None
+        """
         cols = []
-        for index, row in col_meta.iterrows():
-            s = row[COL_META_COLUMN] + ' ' + row[COL_META_TYPE].to_sql() + ' ' + row[COL_META_ADDREQ].to_sql()
+        for index, row in meta.iterrows():
+            s = '{0} {1} {2}'.format(row[COLUMN], row[TYPE].sql_format(), row[ADDREQ].sql_format())
             cols.append(s)
 
-        is_key = col_meta[COL_META_ADDREQ].apply(lambda x: x.is_key())
-        prim_key = col_meta[is_key][COL_META_COLUMN]
+        is_key = meta[ADDREQ].apply(lambda x: x.is_key())
+        prim_key = meta[is_key][COLUMN]
 
         if not prim_key.empty:
             apd = ','.join(prim_key)
@@ -44,11 +50,9 @@ class MysqlOperator(MysqlConnector):
         sql = 'create table {0}`{1}` ({2})'.format(str_if_exist, name, joinCols)
         self.execute(sql)
 
-    def insert_data(
-            self,
-            name: str,
-            data: DataFrame
-    ):
+    def insert_data(self,
+                    name: str,
+                    data: DataFrame) -> None:
         if (data is None) or (isinstance(data, DataFrame) & data.empty):
             return
 
@@ -60,21 +64,16 @@ class MysqlOperator(MysqlConnector):
         vals = data.values.tolist()
         self.execute_many(sql, vals, True)
 
-    def try_insert_data(
-            self,
-            name: str,
-            data: DataFrame,
-            col_meta=None,
-            update=False
-    ):
+    def try_insert_data(self,
+                        name: str,
+                        data: DataFrame,
+                        meta: DataFrame = None,
+                        update: bool = False):
         if (data is None) or (isinstance(data, DataFrame) & data.empty):
             return
 
         if update:
-            self.__try_insert_data_and_update__(
-                name=name,
-                data=data,
-                col_meta=col_meta)
+            self._try_insert_data_and_update(name=name, data=data, meta=meta)
             return
 
         sql = "insert ignore into `{0}`({1}) values({2})".format(
@@ -85,16 +84,12 @@ class MysqlOperator(MysqlConnector):
         vals = data.values.tolist()
         self.execute_many(sql, vals, True)
 
-    def __try_insert_data_and_update__(
-            self,
-            name: str,
-            data: DataFrame,
-            col_meta: DataFrame
-    ):
-        normal_cols = col_meta[COL_META_ADDREQ].apply(
-            lambda x: not x.is_key()
-        )
-        normal_cols = col_meta[normal_cols][COL_META_COLUMN]
+    def _try_insert_data_and_update(self,
+                                    name: str,
+                                    data: DataFrame,
+                                    meta: DataFrame):
+        normal_cols = meta[ADDREQ].apply(lambda x: not x.is_key())
+        normal_cols = meta[normal_cols][COLUMN]
         inQ2 = [x + '=%s' for x in normal_cols]
 
         sql = "insert into `{0}`({1}) values({2}) on duplicate key update {3}".format(
@@ -105,7 +100,7 @@ class MysqlOperator(MysqlConnector):
         data = pd.concat([data, data[normal_cols]], axis=1)
         for index, row in data.iterrows():
             ser = row.apply(
-                lambda x: __obj_format__(x)
+                lambda x: _obj_format(x)
             )
             sql2 = sql % tuple(ser)
             self.execute(sql2)

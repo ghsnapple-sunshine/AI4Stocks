@@ -12,6 +12,7 @@ class Account(Sequence):
         """
         初始化账户
         """
+        super().__init__()
         self._holdings: ndarray = ndarray(shape=(1,))
         self._init_cash: float = 0
         self._cash: ndarray = ndarray(shape=(1,))

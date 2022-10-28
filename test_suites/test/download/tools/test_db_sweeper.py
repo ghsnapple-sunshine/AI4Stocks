@@ -1,20 +1,21 @@
 from pandas import DataFrame
 
-from ai4stocks.common.constants import STOCK_LIST_TABLE, META_COLS
-from ai4stocks.download.connect.mysql_common import MysqlColType, MysqlColAddReq
+from ai4stocks.constants.meta import META_COLS
+from ai4stocks.constants.table import STK_LS
+from ai4stocks.download.mysql.types import ColType, AddReqType
 from test.common.base_test import BaseTest
 from test.common.db_sweeper import DbSweeper
 
 
 class TestDbSweeper(BaseTest):
     def test_sweep(self):
-        self.__create_table__()
+        self._create_table()
         DbSweeper.cleanup()
-        data = self.op.get_table(STOCK_LIST_TABLE)
+        data = self.operator.get_table(STK_LS)
         assert data.empty
 
-    def __create_table__(self):
-        data = [['code', MysqlColType.STOCK_CODE, MysqlColAddReq.KEY],
-                ['name', MysqlColType.STOCK_NAME, MysqlColAddReq.NONE]]
+    def _create_table(self):
+        data = [['code', ColType.STOCK_CODE, AddReqType.KEY],
+                ['name', ColType.STOCK_NAME, AddReqType.NONE]]
         df = DataFrame(data=data, columns=META_COLS)
-        self.op.create_table(STOCK_LIST_TABLE, df, True)
+        self.operator.create_table(STK_LS, df, True)

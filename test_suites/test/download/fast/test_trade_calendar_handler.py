@@ -6,10 +6,10 @@ from test.common.base_test import BaseTest
 
 class TradeCalendarHandlerTest(BaseTest):
     def test_download(self):
-        hdl = TradeCalendarHandler(operator=self.op)
-        tbl = hdl.__download__()
-        hdl.__save_to_database__(tbl)
-        db = hdl.get_table()
+        hdl = TradeCalendarHandler(operator=self.operator)
+        tbl = hdl._download()
+        hdl._save_to_database(tbl)
+        db = hdl.get_data()
         assert tbl.shape[0] == db.shape[0]
 
 

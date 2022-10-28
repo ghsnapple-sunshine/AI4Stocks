@@ -2,14 +2,14 @@ import time
 
 from pendulum import DateTime
 
-from ai4stocks.download.connect import MysqlOperator
+from ai4stocks.download.mysql import Operator
 from ai4stocks.task import BaseTask
 
 
 class TaskScheduler:
     def __init__(
             self,
-            op: MysqlOperator,
+            op: Operator,
             tasks: list
     ):
         self.op = op

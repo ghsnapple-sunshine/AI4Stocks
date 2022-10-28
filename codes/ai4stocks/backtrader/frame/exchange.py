@@ -12,16 +12,17 @@ from ai4stocks.backtrader.frame.stock_info_manager import StockInfoManager as St
     StockInfoManagerBuilder as SMBuilder
 from ai4stocks.backtrader.interface.time_sequence import ITimeSequence as Sequence
 from ai4stocks.backtrader.tools import ChargeCalculator as Calc
-from ai4stocks.common import StockCode as Code, ColType as CType
+from ai4stocks.common import Code as Code
 from ai4stocks.common.pendelum import DateSpan as Span
 from ai4stocks.common.wrapper import Wrapper
-from ai4stocks.download import HandlerBase as Handler
-from ai4stocks.download.connect import MysqlOperator as Operator
+from ai4stocks.download import Handler as Handler
+from ai4stocks.download.mysql import Operator as Operator
+from ai4stocks.download.types import HeadType
 
 
 class Exchange(Sequence):
     def __init__(self):
-        self._clock = Clock()
+        super().__init__()
         self._clock_man: ClockMan = ClockMan()
         self._stock_man: StockMan = StockMan()
         self._order_man: OrderMan = OrderMan()
@@ -30,9 +31,9 @@ class Exchange(Sequence):
 
     def run(self):
         # self._stock_man.run()     # 1. 更新StockInfo(分段载入）
-        self._order_man.run()       # 2. 分发（和处理）委托单
-        self._account.run()         # 3. 时刻末计算
-        self._clock_man.run()       # 4. 时刻前进
+        self._order_man.run()  # 2. 分发（和处理）委托单
+        self._account.run()  # 3. 时刻末计算
+        self._clock_man.run()  # 4. 时刻前进
 
     def get_holding(self, code: int) -> int:
         return self._account.get_holding(code)
@@ -41,6 +42,7 @@ class Exchange(Sequence):
 class ExchangeBuilder:
     class ExchangeUnderBuilt(Exchange):
         def __init__(self):
+            super().__init__()
             self.stock_man_builder = SMBuilder()
             self.order_man_builder = OMBuilder()
             self.accounting_man_builder = AMBuilder()
@@ -97,7 +99,7 @@ class ExchangeBuilder:
             operator: Operator,
             stock_list: list[Code],
             datespan: Span,
-            add_cols: dict[CType, Type[Handler]]
+            add_cols: dict[HeadType, Type[Handler]]
     ):
         """
         初始化StockInfoManager（依赖于ClockManager）

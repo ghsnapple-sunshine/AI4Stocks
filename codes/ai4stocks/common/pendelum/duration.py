@@ -3,6 +3,10 @@ from pendulum import Duration as PDuration
 
 class Duration(PDuration):
     """
-    对pendulum包中的类进行一层封装
+    封装Duration
     """
-    pass
+    def __add__(self, other):
+        result = super(Duration, self).__add__(other)
+        result.__class__ = Duration
+        return result
+

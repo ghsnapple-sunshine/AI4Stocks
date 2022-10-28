@@ -1,4 +1,4 @@
-from ai4stocks.backtrader.strategy.strategy_base import StrategyBase, StrategyBaseUnderBuilt
+from ai4stocks.backtrader.strategy.strategy import StrategyBase, StrategyBaseUnderBuilt
 from ai4stocks.common.wrapper import Wrapper
 
 BUILT_CLASS_DICT: dict[type, type] = {

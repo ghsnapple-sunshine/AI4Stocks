@@ -1,10 +1,10 @@
 from backtrader import Strategy
-from backtrader.indicators import MovingAverageSimple
+from backtrader.indicators.sma import MovingAverageSimple
 
 
-class StrategyForks(Strategy):
+class StrategySMA20(Strategy):
     def log(self, txt, dt=None):
-        """ Logging function fot this strategy_sample"""
+        """ Logging function fot this strategy"""
         dt = dt or self.datas[0].datetime.date(0)
         print('%s, %s' % (dt.isoformat(), txt))
 
@@ -18,7 +18,7 @@ class StrategyForks(Strategy):
         self.buy_comm = None
         self.bar_executed = None
 
-        self.sma20 = MovingAverageSimple(self.data, period=20)
+        self.sma20 = MovingAverageSimple(self.data_close, period=20)
 
     def notify_order(self, order):
         if order._status in [order.Submitted, order.Accepted]:
@@ -81,6 +81,7 @@ class StrategyForks(Strategy):
                     self.order = self.buy(size=100)
             '''
             if self.data_close[0] > self.sma20[0]:  # 执行买入条件判断：收盘价格上涨突破20日均线
+                self.log('Event close(%.2f) > sma(%.2f)' % (self.data_close[0], self.sma20[0]))
                 self.order = self.buy(size=100)  # 执行买入
         else:
             '''
@@ -93,4 +94,5 @@ class StrategyForks(Strategy):
                 self.order = self.sell(size=100)
             '''
             if self.data_close[0] < self.sma20[0]:  # 执行卖出条件判断：收盘价格跌破20日均线
+                self.log('Event close(%.2f) < sma(%.2f)' % (self.data_close[0], self.sma20[0]))
                 self.order = self.sell(size=100)  # 执行卖出

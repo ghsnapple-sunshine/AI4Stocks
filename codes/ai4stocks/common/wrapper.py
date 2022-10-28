@@ -1,6 +1,3 @@
-from typing import Type
-
-
 class Wrapper:
     def __init__(self, attr=None):
         if callable(attr):

@@ -1,6 +1,8 @@
 import numpy as np
-from pandas import Timestamp
-from pendulum import DateTime, Duration
+from pandas import Timestamp, DataFrame
+
+from ai4stocks.common.pendelum import DateTime, Duration
+from ai4stocks.constants.meta import META_COLS
 
 
 def tuple_to_array(tup: tuple) -> np.array:
@@ -9,17 +11,6 @@ def tuple_to_array(tup: tuple) -> np.array:
     return arr
 
 
-def timestamp_to_datetime(ts: Timestamp) -> DateTime:
-    dt = DateTime(
-        year=ts.year,
-        month=ts.month,
-        day=ts.day,
-        hour=ts.hour,
-        minute=ts.minute,
-        second=ts.second,
-        microsecond=ts.microsecond,
-        tzinfo=ts.tzinfo)
-    return dt
 
 
 def get_now_shift(du: Duration, minus=False) -> DateTime:
@@ -35,3 +26,7 @@ def datetime_to_date(datetime: DateTime) -> DateTime:
         month=datetime.month,
         day=datetime.day
     )
+
+
+def create_meta(meta_list: list) -> DataFrame:
+    return DataFrame(data=meta_list, columns=META_COLS)

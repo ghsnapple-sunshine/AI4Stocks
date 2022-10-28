@@ -1,25 +1,25 @@
 import pymysql
 from pandas import DataFrame
-
-from ai4stocks.download.connect.mysql_common import MysqlRole
 from pymysql.err import DatabaseError, ProgrammingError, DataError
 
+from ai4stocks.download.mysql.types import RoleType
 
-class MysqlConnector:
+
+class Connector:
     def __init__(self, role):
-        if role == MysqlRole.DbStock:
+        if role == RoleType.DbStock:
             self.user = 'stock'
             self.db = 'stocks'
             self.password = 'Changeme_1234'
-        elif role == MysqlRole.DbTest:
+        elif role == RoleType.DbTest:
             self.user = 'test'
             self.db = 'stockstest'
             self.password = 'Changeme_1234'
-        elif role == MysqlRole.DbInfo:
+        elif role == RoleType.DbInfo:
             self.user = 'prosecutor'
             self.db = 'information_schema'
             self.password = 'Changeme_1234'
-        elif role == MysqlRole.ROOT:
+        elif role == RoleType.ROOT:
             self.user = 'root'
             self.db = 'stocks'
             self.password = input('请输入root@localhost的密码')
@@ -45,11 +45,10 @@ class MysqlConnector:
             self.cursor.close()
             self.cursor = None
 
-    def execute(
-            self,
-            sql: str,
-            commit: bool = False,
-            fetch: bool = False):
+    def execute(self,
+                sql: str,
+                commit: bool = False,
+                fetch: bool = False):
         self.connect()
         try:
             res = self.cursor.execute(sql)
@@ -72,11 +71,10 @@ class MysqlConnector:
             print(sql)
             raise e
 
-    def execute_many(
-            self,
-            sql: str,
-            vals: list,
-            commit: bool = False):
+    def execute_many(self,
+                     sql: str,
+                     vals: list,
+                     commit: bool = False):
         self.connect()
         try:
             res = self.cursor.executemany(sql, vals)

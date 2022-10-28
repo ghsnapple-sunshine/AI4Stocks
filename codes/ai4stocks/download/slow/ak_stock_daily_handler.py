@@ -1,75 +1,61 @@
 import akshare as ak
 from pandas import DataFrame
-from pendulum import DateTime
 
-from ai4stocks.common import META_COLS, COL_DATE as DATE, StockCode as Code, FuquanType as FType
+from ai4stocks.common import create_meta
 from ai4stocks.common.pendelum import to_my_date
-from ai4stocks.download.connect import MysqlColType, MysqlColAddReq, MysqlOperator
-from ai4stocks.download.slow.slow_handler_base import SlowHandlerBase
+from ai4stocks.constants.col import DATE, OPEN, CLOSE, HIGH, LOW, CJL, CJE, ZF, ZDF, ZDE, HSL
+from ai4stocks.download import Para
+from ai4stocks.download.mysql import ColType, AddReqType, Operator
+from ai4stocks.download.slow.handler import SlowHandler
+from ai4stocks.download.types import FuquanType
+
+_RENAME = {'日期': DATE,
+           '开盘': OPEN,
+           '收盘': CLOSE,
+           '最高': HIGH,
+           '最低': LOW,
+           '成交量': CJL,
+           '成交额': CJE,
+           '振幅': ZF,
+           '涨跌幅': ZDF,
+           '涨跌额': ZDE,
+           '换手率': HSL}
+
+_META = create_meta(meta_list=[
+    [DATE, ColType.DATE, AddReqType.KEY],
+    [OPEN, ColType.FLOAT, AddReqType.NONE],
+    [CLOSE, ColType.FLOAT, AddReqType.NONE],
+    [HIGH, ColType.FLOAT, AddReqType.NONE],
+    [LOW, ColType.FLOAT, AddReqType.NONE],
+    [CJL, ColType.INT32, AddReqType.NONE],
+    [CJE, ColType.FLOAT, AddReqType.NONE],
+    [ZF, ColType.FLOAT, AddReqType.NONE],
+    [ZDF, ColType.FLOAT, AddReqType.NONE],
+    [ZDE, ColType.FLOAT, AddReqType.NONE],
+    [HSL, ColType.FLOAT, AddReqType.NONE]])
 
 
-class AkStockDailyHandler(SlowHandlerBase):
-    def __init__(self, operator: MysqlOperator):
+class AkStockDailyHandler(SlowHandler):
+    def __init__(self, operator: Operator):
         super().__init__(operator=operator)
-        self.fuquans = [FType.NONE, FType.QIANFUQIAN, FType.HOUFUQIAN]
+        self._fuquans = [FuquanType.BFQ, FuquanType.QFQ, FuquanType.HFQ]
 
-    """
-    def download_and_save(
-            self,
-            start_time: DateTime,
-            end_time: DateTime
-    ) -> list:
-        return super().download_and_save(
-            start_time=start_time,
-            end_time=end_time
-        )
-
-    def get_table(
-            self,
-            code: StockCode,
-            fuquan: FuquanType
-    ) -> DataFrame:
-        return super().get_table(
-            code=code,
-            fuquan=fuquan
-        )
-    """
-
-    def __download__(
-            self,
-            code: Code,
-            fuquan: FType,
-            start_time: DateTime,
-            end_time: DateTime
-    ) -> DataFrame:
+    def _download(self, para: Para) -> DataFrame:
         # 使用接口（stock_zh_a_hist，源：东财）,code为Str6
         # 备用接口（stock_zh_a_daily，源：新浪，未实现）
-        start_time = start_time.format('YYYYMMDD')
-        end_time = end_time.format('YYYYMMDD')
-        daily_info = ak.stock_zh_a_hist(
-            symbol=code.to_code6(),
-            period='daily',
-            start_date=start_time,
-            end_date=end_time,
-            adjust=fuquan.to_req()
-        )
+        start_date = para.span.start.format('YYYYMMDD')
+        end_date = para.span.end.format('YYYYMMDD')
+        daily_info = ak.stock_zh_a_hist(symbol=para.stock.code.to_code6(),
+                                        period='daily',
+                                        start_date=start_date,
+                                        end_date=end_date,
+                                        adjust=para.comb.fuquan.ak_format())
 
         # 重命名
-        DAILY_NAME_DICT = {'日期': 'date',
-                           '开盘': 'open',
-                           '收盘': 'close',
-                           '最高': 'high',
-                           '最低': 'low',
-                           '成交量': 'chengjiaoliang',
-                           '成交额': 'chengjiaoe',
-                           '振幅': 'zhenfu',
-                           '涨跌幅': 'zhangdiefu',
-                           '涨跌额': 'zhangdiee',
-                           '换手率': 'huanshoulv'}
-        daily_info.rename(columns=DAILY_NAME_DICT, inplace=True)
+        daily_info.rename(columns=_RENAME, inplace=True)
         return daily_info
 
-    def __save_to_database__(
+    def _save_to_database(
             self,
             name: str,
             data: DataFrame
@@ -77,33 +63,26 @@ class AkStockDailyHandler(SlowHandlerBase):
         if (not isinstance(data, DataFrame)) or data.empty:
             return
 
-        cols = [
-            ['date', MysqlColType.DATE, MysqlColAddReq.KEY],
-            ['open', MysqlColType.FLOAT, MysqlColAddReq.NONE],
-            ['close', MysqlColType.FLOAT, MysqlColAddReq.NONE],
-            ['high', MysqlColType.FLOAT, MysqlColAddReq.NONE],
-            ['low', MysqlColType.FLOAT, MysqlColAddReq.NONE],
-            ['chengjiaoliang', MysqlColType.INT32, MysqlColAddReq.NONE],
-            ['chengjiaoe', MysqlColType.FLOAT, MysqlColAddReq.NONE],
-            ['zhenfu', MysqlColType.FLOAT, MysqlColAddReq.NONE],
-            ['zhangdiefu', MysqlColType.FLOAT, MysqlColAddReq.NONE],
-            ['zhangdiee', MysqlColType.FLOAT, MysqlColAddReq.NONE],
-            ['huanshoulv', MysqlColType.FLOAT, MysqlColAddReq.NONE]
-        ]
-        table_meta = DataFrame(data=cols, columns=META_COLS)
-        self.operator.create_table(name, table_meta, if_not_exist=True)
-        self.operator.insert_data(name, data)
+        self._operator.create_table(name=name,
+                                    meta=_META,
+                                    if_not_exist=True)
+        self._operator.insert_data(name, data)
+        self._operator.disconnect()
 
-    def get_table(self, code: Code, fuquan: FType) -> DataFrame:
+    def get_data(self, para: Para) -> DataFrame:
         """
         查询某支股票以某种复权方式的全部数据
 
-        :param code:        股票代码
-        :param fuquan:      股票复权方式
+        :param para:        下载参数
         :return:
         """
-        tbl = super().get_table(code=code, fuquan=fuquan)
-        tbl[DATE] = tbl[DATE].apply(lambda x: to_my_date(x))
-        tbl.index = tbl[DATE]
-        del tbl[DATE]
-        return tbl
+        spara = para.clone().with_freq(self._freq).with_source(self._source)
+        table_name = AkStockDailyHandler._get_table_name(para=spara)
+        df = self._operator.get_table(table_name)
+        if (not isinstance(df, DataFrame)) or df.empty:
+            return DataFrame()
+
+        df[DATE] = df[DATE].apply(lambda x: to_my_date(x))
+        df.index = df[DATE]
+        del df[DATE]
+        return df

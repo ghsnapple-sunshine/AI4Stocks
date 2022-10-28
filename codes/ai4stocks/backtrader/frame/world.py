@@ -1,14 +1,16 @@
+from __future__ import annotations
+
 from ai4stocks.backtrader.frame.clock_manager import Clock
 from ai4stocks.backtrader.frame.exchange import ExchangeBuilder as EBuilder, Exchange as Exchange
 from ai4stocks.backtrader.interface import ITimeSequence as Sequence
 from ai4stocks.backtrader.strategy import StrategyBase as Strat, StrategyBuilder as SBuilder
 from ai4stocks.backtrader.tools import ChargeCalculator as Calc
-from ai4stocks.common import StockCode as Code
+from ai4stocks.common import Code as Code
 from ai4stocks.common.pendelum import DateSpan as Span
-from ai4stocks.download.connect import MysqlOperator as Operator
+from ai4stocks.download.mysql import Operator as Operator
 
 
-class TheWorldParameter:
+class Para:
     def __init__(
             self,
             operator: Operator,
@@ -38,6 +40,7 @@ class TheWorldParameter:
 
 class TheWorld(Sequence):
     def __init__(self):
+        super().__init__()
         self._strat: Strat = Strat()
         self._exchange: Exchange = Exchange()
 
@@ -64,7 +67,7 @@ class TheWorldBuilder:
     def __init__(self):
         self.item = TheWorldBuilder.TheWorldUnderBuilt()
 
-    def with_clock_n_exchange(self, para: TheWorldParameter):
+    def with_clock_n_exchange(self, para: Para) -> TheWorldBuilder:
         """
         设置Clock和Exchange（调用次序：1）
 
@@ -74,24 +77,25 @@ class TheWorldBuilder:
         clock = Clock()
         self.item.set_clock(clock=clock)
 
-        exchange = EBuilder() \
-            .with_clock_man(operator=para.operator,
-                            datespan=para.datespan,
-                            clock=clock) \
-            .with_account(stock_num=len(para.stock_list),
-                          init_cash=para.init_cash) \
-            .with_accounting_man(charge_calc=para.charge_calc) \
-            .with_order_man() \
-            .with_stock_man(operator=para.operator,
-                            stock_list=para.stock_list,
-                            datespan=para.datespan,
-                            add_cols=para.strat_cls.col_request()) \
-            .build()
-        self.item.set_exchange(exchange=exchange)
+        exchange = EBuilder().with_clock_man(
+            operator=para.operator,
+            datespan=para.datespan,
+            clock=clock
+        ).with_account(
+            stock_num=len(para.stock_list),
+            init_cash=para.init_cash).with_accounting_man(
+            charge_calc=para.charge_calc
+        ).with_order_man().with_stock_man(
+            operator=para.operator,
+            stock_list=para.stock_list,
+            datespan=para.datespan,
+            add_cols=para.strat_cls.col_request()
+        ).build()
 
+        self.item.set_exchange(exchange=exchange)
         return self
 
-    def with_strategy(self, para: TheWorldParameter):
+    def with_strategy(self, para: Para) -> TheWorldBuilder:
         """
         设置策略（调用次序2）
 
@@ -104,6 +108,7 @@ class TheWorldBuilder:
         self.item.set_strat(strat=strat)
         return self
 
-    def build(self):
+    def build(self) -> TheWorld:
         self.item.__class__ = TheWorld
         return self.item
+

@@ -1,3 +1,4 @@
+"""
 COL_META_COLUMN = 'column'
 COL_META_TYPE = 'type'
 COL_META_ADDREQ = 'addreq'
@@ -26,3 +27,4 @@ FLOAT_MIN_VALUE = -3.4028234663852886e+38
 
 
 MIN_TRADE_UNIT = 100  # 最小交易单位
+"""

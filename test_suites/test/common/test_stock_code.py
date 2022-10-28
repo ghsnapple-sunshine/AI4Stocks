@@ -1,17 +1,17 @@
 import unittest
 
-from ai4stocks.common.stock_code import StockCode
+from ai4stocks.common.stock import Code
 
 
 class TestStockCode(unittest.TestCase):
     def test_equal(self):
-        cd1 = StockCode('000001')
-        cd2 = StockCode('000001')
+        cd1 = Code('000001')
+        cd2 = Code('000001')
         assert cd1 == cd2
 
     def test_not_equal(self):
-        cd1 = StockCode('000001')
-        cd2 = StockCode('000002')
+        cd1 = Code('000001')
+        cd2 = Code('000002')
         assert cd1 != cd2
 
 

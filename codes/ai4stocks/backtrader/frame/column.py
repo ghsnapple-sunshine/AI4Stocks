@@ -4,6 +4,7 @@ from ai4stocks.backtrader.interface import ITimeSequence as Sequence
 
 class Column(Sequence):
     def __init__(self, data: list, clock: Clock):
+        super().__init__()
         self._data: list = data
         self._clock: Clock = clock
 

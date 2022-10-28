@@ -1,7 +1,7 @@
 from pendulum import DateTime, Duration
 
 from ai4stocks.download.fast import StockListHandler
-from ai4stocks.download.connect import MysqlRole, MysqlOperator
+from ai4stocks.download.mysql import RoleType, Operator
 from ai4stocks.task import DownloadTask
 
 
@@ -11,7 +11,7 @@ class StockListTask(DownloadTask):
             plan_time: DateTime = None
     ):
         super().__init__(
-            obj=StockListHandler(operator=MysqlOperator(MysqlRole.DbStock)),
+            obj=StockListHandler(operator=Operator(RoleType.DbStock)),
             method_name='download_and_save',
             plan_time=plan_time
         )

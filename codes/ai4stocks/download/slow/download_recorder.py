@@ -1,54 +1,53 @@
 from pandas import DataFrame
-from pendulum import DateTime
 
-from ai4stocks.common import DOWNLOAD_RECORD_TABLE, META_COLS, StockCode, DataFreqType, FuquanType, DataSourceType
-from ai4stocks.download.connect import MysqlColAddReq, MysqlColType, MysqlOperator
+from ai4stocks.common import Code
+from ai4stocks.common.pendelum.tools import timestamp_to_datetime
+from ai4stocks.common.tools import create_meta
+from ai4stocks.constants.col import FREQ, FUQUAN, SOURCE, START_DATE, END_DATE
+from ai4stocks.constants.col.stock import CODE
+from ai4stocks.constants.table import DL_RCD
+from ai4stocks.download import Para
+from ai4stocks.download.mysql import AddReqType, ColType, Operator
+from ai4stocks.download.types import FreqType, FuquanType, SourceType
+
+_META = create_meta(meta_list=[
+    [CODE, ColType.STOCK_CODE, AddReqType.KEY],
+    [FREQ, ColType.ENUM, AddReqType.UNSIGNED_KEY],
+    [FUQUAN, ColType.ENUM, AddReqType.UNSIGNED_KEY],
+    [SOURCE, ColType.ENUM, AddReqType.UNSIGNED_KEY],
+    [START_DATE, ColType.DATETIME, AddReqType.NONE],
+    [END_DATE, ColType.DATETIME, AddReqType.NONE]])
 
 
 class DownloadRecorder:
-    def __init__(self, op: MysqlOperator):
-        self.exist = False
-        self.op = op
-        cols = [
-            ['code', MysqlColType.STOCK_CODE, MysqlColAddReq.KEY],
-            ['freq', MysqlColType.ENUM, MysqlColAddReq.UNSIGNED_KEY],
-            ['fuquan', MysqlColType.ENUM, MysqlColAddReq.UNSIGNED_KEY],
-            ['source', MysqlColType.ENUM, MysqlColAddReq.UNSIGNED_KEY],
-            ['start_date', MysqlColType.DATETIME, MysqlColAddReq.NONE],
-            ['end_date', MysqlColType.DATETIME, MysqlColAddReq.NONE]
-        ]
-        self.col_meta = DataFrame(data=cols, columns=META_COLS)
+    def __init__(self, operator: Operator):
+        self._operator = operator
+        self._exist = False
 
-    def save(
-            self,
-            code: str,
-            freq: DataFreqType,
-            fuquan: FuquanType,
-            source: DataSourceType,
-            start_time: DateTime,
-            end_time: DateTime
-    ):
-        ls = [[code, freq, fuquan, source, start_time, end_time]]
-        cols = ['code', 'freq', 'fuquan', 'source', 'start_date', 'end_date']
+    def save(self, para: Para):
+        ls = [
+            [para.stock.code, para.comb.freq, para.comb.fuquan, para.comb.source, para.span.start, para.span.end]
+        ]
+        cols = [CODE, FREQ, FUQUAN, SOURCE, START_DATE, END_DATE]
         data = DataFrame(data=ls, columns=cols)
         self.save_to_database(data=data)
 
     def save_to_database(self, data: DataFrame):
-        table_name = DOWNLOAD_RECORD_TABLE
+        if not self._exist:
+            self._operator.create_table(DL_RCD, _META, if_not_exist=True)
+            self._exist = True
 
-        if not self.exist:
-            self.op.create_table(table_name, self.col_meta, if_not_exist=True)
-            self.exist = True
+        self._operator.try_insert_data(DL_RCD, data, _META, update=True)  # 如果原纪录已存在，则更新
 
-        self.op.try_insert_data(table_name, data, self.col_meta, update=True)  # 如果原纪录已存在，则更新
+    def get_data(self) -> DataFrame:
+        df = self._operator.get_table(DL_RCD)
+        if (not isinstance(df, DataFrame)) or df.empty:
+            return DataFrame()
 
-    def get_table(self):
-        table_name = DOWNLOAD_RECORD_TABLE
-        df = self.op.get_table(table_name)
-        if df.empty:
-            return DataFrame(columns=['code', 'freq', 'fuquan', 'source', 'start_date', 'end_date'])
-        df['code'] = df.apply(lambda x: StockCode(x['code']), axis=1)
-        df['freq'] = df.apply(lambda x: DataFreqType(x['freq']), axis=1)
-        df['fuquan'] = df.apply(lambda x: FuquanType(x['fuquan']), axis=1)
-        df['source'] = df.apply(lambda x: DataSourceType(x['source']), axis=1)
+        df[CODE] = df[CODE].apply(lambda x: Code(x))
+        df[FREQ] = df[FREQ].apply(lambda x: FreqType(x))
+        df[FUQUAN] = df[FUQUAN].apply(lambda x: FuquanType(x))
+        df[SOURCE] = df[SOURCE].apply(lambda x: SourceType(x))
+        # df[START_DATE] = df[START_DATE].apply(lambda x: timestamp_to_datetime(x))
+        # df[END_DATE] = df[END_DATE].apply(lambda x: timestamp_to_datetime(x))
         return df

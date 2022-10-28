@@ -2,58 +2,58 @@ import unittest
 
 from pandas import DataFrame
 
-from ai4stocks.common.constants import META_COLS
-from ai4stocks.download.connect.mysql_common import MysqlColType, MysqlColAddReq
+from ai4stocks.constants.meta import META_COLS
+from ai4stocks.download.mysql.types import ColType, AddReqType
 from test.common.base_test import BaseTest
 
 
 class TestMysqlOperator(BaseTest):
     def test_all(self):
-        meta = self.__create_table__()
-        self.__insert_data__()
-        self.__try_insert_data__(meta)
-        self.__insert_null_data__()
-        self.__get_table__()
+        meta = self._create_table()
+        self._insert_data()
+        self._try_insert_data(meta)
+        self._insert_null_data__()
+        self._get_table()
 
-    def __create_table__(self):
-        data = [['code', MysqlColType.STOCK_CODE, MysqlColAddReq.KEY],
-                ['name', MysqlColType.STOCK_NAME, MysqlColAddReq.NONE]]
+    def _create_table(self):
+        data = [['code', ColType.STOCK_CODE, AddReqType.KEY],
+                ['name', ColType.STOCK_NAME, AddReqType.NONE]]
         meta = DataFrame(data=data, columns=META_COLS)
-        self.op.create_table(self.table_name, meta, False)
+        self.operator.create_table(self.table_name, meta, False)
         return meta
 
-    def __insert_data__(self):
+    def _insert_data(self):
         data = [['000001', '平安银行'],
                 ['600000', '浦发银行'],
                 ['600001', '建设银行']]
         df = DataFrame(data=data, columns=['code', 'name'])
-        self.op.insert_data(self.table_name, df)
+        self.operator.insert_data(self.table_name, df)
 
-    def __try_insert_data__(self, col_meta: DataFrame):
+    def _try_insert_data(self, col_meta: DataFrame):
         data = [['000001', '狗狗银行'],
                 ['600000', '猪猪银行']]
         df = DataFrame(data=data, columns=['code', 'name'])
-        self.op.try_insert_data(self.table_name, df)  # 不更新数据
-        db = self.op.get_table(self.table_name)
+        self.operator.try_insert_data(self.table_name, df)  # 不更新数据
+        db = self.operator.get_table(self.table_name)
         assert db[db['code'] == '000001'].iloc[0, 1] == '平安银行'
         assert db[db['code'] == '600000'].iloc[0, 1] == '浦发银行'
         assert db[db['code'] == '600001'].iloc[0, 1] == '建设银行'
 
-        self.op.try_insert_data(self.table_name, df, col_meta=col_meta, update=True)  # 更新数据
-        db = self.op.get_table(self.table_name)
+        self.operator.try_insert_data(self.table_name, df, meta=col_meta, update=True)  # 更新数据
+        db = self.operator.get_table(self.table_name)
         assert db[db['code'] == '000001'].iloc[0, 1] == '狗狗银行'
         assert db[db['code'] == '600000'].iloc[0, 1] == '猪猪银行'
         assert db[db['code'] == '600001'].iloc[0, 1] == '建设银行'
 
-    def __insert_null_data__(self):
+    def _insert_null_data__(self):
         data = [['000002', 'xxx'],
                 ['000003', None]]
         df = DataFrame(data=data, columns=['code', 'name'])
-        self.op.insert_data(self.table_name, df)
+        self.operator.insert_data(self.table_name, df)
         assert True  # 预期：不报错
 
-    def __get_table__(self):
-        db = self.op.get_table('test')
+    def _get_table(self):
+        db = self.operator.get_table('test')
         assert type(db) == DataFrame
         assert db.empty
 

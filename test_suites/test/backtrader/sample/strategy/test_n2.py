@@ -5,10 +5,10 @@ import akshare as ak
 import pandas as pd
 
 from ai4stocks.download.slow.ak_stock_daily_handler import AkStockDailyHandler
-from ai4stocks.download.connect.mysql_common import MysqlRole
-from ai4stocks.download.connect.mysql_operator import MysqlOperator
-from test.backtrader.strategy_sample.multi_sma import Strategy
-from test.backtrader.strategy_sample.stamp import StampDutyCommissionScheme
+from ai4stocks.download.mysql.types import RoleType
+from ai4stocks.download.mysql.operator import Operator
+from test.backtrader.sample.strategy.multi_sma import Strategy
+from test.backtrader.sample.strategy.stamp import StampDutyCommissionScheme
 from backtrader_plotting import Bokeh
 from backtrader_plotting.schemes import Tradimo
 import os
@@ -69,7 +69,7 @@ for fname in datafilelist:
 '''
 
 code_list = ['000001', '000002']
-hdl = AkStockDailyHandler(MysqlOperator(MysqlRole.DbTest))
+hdl = AkStockDailyHandler(Operator(RoleType.DbTest))
 for code in code_list:
     # 利用 AKShare 获取股票的后复权数据，这里只获取前 6 列
     stock_hfq_df = ak.stock_zh_a_hist(symbol=code, adjust="hfq").iloc[:, :6]

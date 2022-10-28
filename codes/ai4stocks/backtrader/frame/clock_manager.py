@@ -2,15 +2,15 @@ from pandas import DataFrame
 
 from ai4stocks.backtrader.frame.clock import Clock
 from ai4stocks.backtrader.interface.time_sequence import ITimeSequence as Sequence
-from ai4stocks.common import COL_DATE as DATE
 from ai4stocks.common.pendelum import DateSpan as Span
-from ai4stocks.download.connect import MysqlOperator as Operator
+from ai4stocks.constants.col import DATE
 from ai4stocks.download.fast import TradeCalendarHandler as Handler
+from ai4stocks.download.mysql import Operator as Operator
 
 
 class ClockManager(Sequence):
     def __init__(self):
-        self._clock: Clock = Clock()
+        super().__init__()
         self._calendar: DataFrame = DataFrame()
 
     @property
@@ -43,8 +43,9 @@ class ClockManagerBuilder:
         self.item = ClockManagerBuilder.ClockManagerUnderBuilt()
 
     def with_calendar(self, operator: Operator, datespan: Span):
-        tbl = Handler(operator=operator).get_table()
+        tbl = Handler(operator=operator).get_data()
         calendar = tbl[tbl[DATE].apply(lambda x: datespan.start <= x <= datespan.end)]
+        # calendar = tbl[datespan.start <= tbl[DATE] <= datespan.end] Error
         self.item.set_calendar(calendar=calendar)
         return self
 

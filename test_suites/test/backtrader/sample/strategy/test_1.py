@@ -4,8 +4,7 @@ import akshare as ak
 import pandas as pd
 from backtrader_plotting import Bokeh
 from backtrader_plotting.schemes import Tradimo
-from test.backtrader.strategy_sample.sma20 import StrategySMA20
-from test.backtrader.strategy_sample.forks import StrategyForks
+from test.backtrader.sample.strategy.forks import StrategyForks
 import os
 
 

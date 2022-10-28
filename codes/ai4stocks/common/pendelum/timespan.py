@@ -1,14 +1,24 @@
 from ai4stocks.common.pendelum.datespan import DateSpan
 from ai4stocks.common.pendelum.datetime import DateTime
+from ai4stocks.common.pendelum.tools import datetime_to_date
 
 
 class TimeSpan:
     # TimeSpan所描述的范围为[start, end]
     def __init__(self, start: DateTime, end: DateTime):
+        """
+        初始化TimeSpan
+
+        :param start:       开始日期
+        :param end:         结束日期
+        """
+        if not isinstance(start, DateTime):
+            raise ValueError('Invalid start for datespan')
+        if not isinstance(end, DateTime):
+            raise ValueError('Invalid end for datespan')
         if start > end:
-            err_msg = 'Invalid timespan [{0}, {1})'.format(
-                start.format('YYYY-MM-DD'), end.format('YYYY-MM-DD'))
-            raise ValueError(err_msg)
+            raise ValueError('Invalid datespan when start earlier than end')
+
         self._start = start
         self._end = end
 
@@ -21,6 +31,5 @@ class TimeSpan:
         return self._end
 
     def to_datespan(self) -> DateSpan:
-        start = self._start.to_date()
-        end = self._end.to_date()
-        return DateSpan(start=start, end=end)
+        return DateSpan(start=datetime_to_date(self._start),
+                        end=datetime_to_date(self._end))

@@ -35,7 +35,7 @@ class InnerC:
 class TestTaskScheduler(BaseTest):
     def test_all(self):
         sch = TaskScheduler(
-            op=self.op,
+            op=self.operator,
             tasks=[
                 BaseTask(obj=InnerA(), method_name='run', plan_time=DateTime.now() - Duration(seconds=1)),
                 BaseTask(obj=InnerB(), method_name='run', plan_time=DateTime.now() - Duration(seconds=2)),
@@ -48,7 +48,7 @@ class TestTaskScheduler(BaseTest):
     def test_delay(self):
         start = DateTime.now()
         sch = TaskScheduler(
-            op=self.op,
+            op=self.operator,
             tasks=[
                 BaseTask(obj=InnerA(), method_name='run', plan_time=DateTime.now() + Duration(seconds=10)),
                 BaseTask(obj=InnerB(), method_name='run', plan_time=DateTime.now() + Duration(seconds=20)),

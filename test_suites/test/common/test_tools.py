@@ -1,50 +1,52 @@
 from pandas import DataFrame
 
-from ai4stocks.common import META_COLS, STOCK_LIST_TABLE, StockCode
-from ai4stocks.download.connect import MysqlColType, MysqlColAddReq, MysqlOperator
+from ai4stocks.common import Code
+from ai4stocks.common.pendelum import Date, DateSpan
+from ai4stocks.constants.meta import META_COLS
+from ai4stocks.constants.table import STK_LS
+from ai4stocks.download import Para
+from ai4stocks.download.mysql import ColType, AddReqType, Operator
 
 
-def create_stock_list_1(op: MysqlOperator) -> DataFrame:
-    op.drop_table(STOCK_LIST_TABLE)
+def create_stock_list_1(operator: Operator) -> DataFrame:
+    operator.drop_table(STK_LS)
     cols = [
-        ['code', MysqlColType.STOCK_CODE, MysqlColAddReq.KEY],
-        ['name', MysqlColType.STOCK_NAME, MysqlColAddReq.NONE]
+        ['code', ColType.STOCK_CODE, AddReqType.KEY],
+        ['name', ColType.STOCK_NAME, AddReqType.NONE]
     ]
     table_meta = DataFrame(data=cols, columns=META_COLS)
-    op.create_table(STOCK_LIST_TABLE, table_meta)
+    operator.create_table(STK_LS, table_meta)
     data = [['000001', '平安银行']]
     df = DataFrame(data=data, columns=['code', 'name'])
-    op.insert_data(STOCK_LIST_TABLE, df)
+    operator.insert_data(STK_LS, df)
     return df
 
 
-def create_stock_list_2(op: MysqlOperator) -> DataFrame:
-    op.drop_table(STOCK_LIST_TABLE)
+def create_stock_list_2(operator: Operator) -> DataFrame:
+    operator.drop_table(STK_LS)
     cols = [
-        ['code', MysqlColType.STOCK_CODE, MysqlColAddReq.KEY],
-        ['name', MysqlColType.STOCK_NAME, MysqlColAddReq.NONE]
+        ['code', ColType.STOCK_CODE, AddReqType.KEY],
+        ['name', ColType.STOCK_NAME, AddReqType.NONE]
     ]
     table_meta = DataFrame(data=cols, columns=META_COLS)
-    op.create_table(STOCK_LIST_TABLE, table_meta)
+    operator.create_table(STK_LS, table_meta)
     data = [['000001', '平安银行'],
             ['600000', '浦发银行']]
     df = DataFrame(data=data, columns=['code', 'name'])
-    op.insert_data(STOCK_LIST_TABLE, df)
+    operator.insert_data(STK_LS, df)
     return df
 
 
-def create_stock_list_ex(
-        op: MysqlOperator,
-        code: StockCode
-) -> DataFrame:
-    op.drop_table(STOCK_LIST_TABLE)
+def create_stock_list_ex(operator: Operator, code: Code) -> DataFrame:
+    operator.drop_table(STK_LS)
     cols = [
-        ['code', MysqlColType.STOCK_CODE, MysqlColAddReq.KEY],
-        ['name', MysqlColType.STOCK_NAME, MysqlColAddReq.NONE]
+        ['code', ColType.STOCK_CODE, AddReqType.KEY],
+        ['name', ColType.STOCK_NAME, AddReqType.NONE]
     ]
     table_meta = DataFrame(data=cols, columns=META_COLS)
-    op.create_table(STOCK_LIST_TABLE, table_meta)
+    operator.create_table(STK_LS, table_meta)
     data = [[code.to_code6(), '']]
     df = DataFrame(data=data, columns=['code', 'name'])
-    op.insert_data(STOCK_LIST_TABLE, df)
+    operator.insert_data(STK_LS, df)
     return df
+

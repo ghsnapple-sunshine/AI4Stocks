@@ -7,11 +7,11 @@ from ai4stocks.common.wrapper import Wrapper
 
 class AccountingManager(Sequence):
     def __init__(self):
+        super().__init__()
         self._charge_calc: Calc = Calc()
         self._listeners: list[ITSN] = []
         self._get_holding: Wrapper = Wrapper()
         self._get_curr_olhc: Wrapper = Wrapper()
-        # self._clock: Clock = Clock()
 
     def run(self):
         pass
