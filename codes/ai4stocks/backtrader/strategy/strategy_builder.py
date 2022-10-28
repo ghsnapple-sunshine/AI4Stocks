@@ -1,7 +1,6 @@
 from ai4stocks.backtrader.strategy.strategy import StrategyBase, StrategyBaseUnderBuilt
-from ai4stocks.common.wrapper import Wrapper
 
-BUILT_CLASS_DICT: dict[type, type] = {
+_BUILT_CLASS_DICT: dict[type, type] = {
     StrategyBase: StrategyBaseUnderBuilt
 }
 
@@ -9,7 +8,7 @@ BUILT_CLASS_DICT: dict[type, type] = {
 class StrategyBuilder:
     def __init__(self, origin_cls: type):
         self._origin_cls = origin_cls
-        under_built_cls = BUILT_CLASS_DICT[origin_cls]
+        under_built_cls = _BUILT_CLASS_DICT[origin_cls]
         self.item = under_built_cls()
 
     """

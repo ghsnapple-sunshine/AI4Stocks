@@ -2,7 +2,8 @@ import logging
 import traceback
 import unittest
 
-from ai4stocks.task.download_task import DownloadTask, TaskStatus
+from ai4stocks.common.pendelum import Duration
+from ai4stocks.task.download_task import DownloadTask
 
 
 class InnerA:
@@ -21,32 +22,33 @@ class InnerB:
         raise ValueError('error')
 
 
+def _cycle(self):
+    return Duration(days=1)
+
+
+def _error_cycle(self):
+    return Duration(days=1)
+
+
 class TestDownloadTask(unittest.TestCase):
+    def setUp(self) -> None:
+        DownloadTask.cycle = _cycle
+        DownloadTask.error_cycle = _error_cycle
+
     def test_run(self):
-        task = DownloadTask(
-            obj=InnerA(),
-            method_name='run')
+        task = DownloadTask(InnerA().run)
 
-        status, res, task = task.run()
-        assert status == TaskStatus.PartialSuccess
+        success, res, task = task.run()
+        assert not success
         assert res is None
 
-        status, res, task = task.run()
-        assert status == TaskStatus.Success
+        success, res, task = task.run()
+        assert success
         assert res == 2
-
-        task = DownloadTask(
-            obj=InnerA(),
-            method_name='jump')
-        status, res, task = task.run()
-        assert status == TaskStatus.Fail
-        assert res is None
 
     def test_catchError(self):
         try:
-            task = DownloadTask(
-                obj=InnerB(),
-                method_name='run')
+            task = DownloadTask(InnerB().run)
             task.run()
             assert True
         except ValueError as e:

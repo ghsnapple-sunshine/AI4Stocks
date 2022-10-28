@@ -1,6 +1,5 @@
-from pendulum import DateTime, Duration
-
-from ai4stocks.task.base_task import BaseTask
+from ai4stocks.common.pendelum import DateTime, Duration
+from ai4stocks.task.task import Task
 from ai4stocks.task.task_scheduler import TaskScheduler
 from test.common.base_test import BaseTest
 
@@ -35,26 +34,19 @@ class InnerC:
 class TestTaskScheduler(BaseTest):
     def test_all(self):
         sch = TaskScheduler(
-            op=self.operator,
-            tasks=[
-                BaseTask(obj=InnerA(), method_name='run', plan_time=DateTime.now() - Duration(seconds=1)),
-                BaseTask(obj=InnerB(), method_name='run', plan_time=DateTime.now() - Duration(seconds=2)),
-                BaseTask(obj=InnerC('C'), method_name='run', plan_time=DateTime.now()),
-                BaseTask(obj=InnerC('C'), method_name='run2', plan_time=DateTime.now())
-            ]
-        )
+            operator=self.operator,
+            tasks=[Task(attr=InnerA().run, start_time=DateTime.now() - Duration(seconds=1)),
+                   Task(attr=InnerB().run, start_time=DateTime.now() - Duration(seconds=2)),
+                   Task(attr=InnerC('C').run, start_time=DateTime.now())])
         sch.run()
 
     def test_delay(self):
         start = DateTime.now()
         sch = TaskScheduler(
-            op=self.operator,
-            tasks=[
-                BaseTask(obj=InnerA(), method_name='run', plan_time=DateTime.now() + Duration(seconds=10)),
-                BaseTask(obj=InnerB(), method_name='run', plan_time=DateTime.now() + Duration(seconds=20)),
-                BaseTask(obj=InnerC('C'), method_name='run', plan_time=DateTime.now())
-            ]
-        )
+            operator=self.operator,
+            tasks=[Task(attr=InnerA().run, start_time=DateTime.now() + Duration(seconds=10)),
+                   Task(attr=InnerB().run, start_time=DateTime.now() + Duration(seconds=20)),
+                   Task(attr=InnerC('C').run, start_time=DateTime.now())])
         sch.run()
         end = DateTime.now()
         assert end - start >= Duration(seconds=20)  # 预期至少20s才能执行完

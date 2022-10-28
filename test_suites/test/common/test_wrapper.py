@@ -1,6 +1,6 @@
 import unittest
 
-from ai4stocks.common.wrapper import Wrapper, WrapperFactory
+from ai4stocks.common.wrapper import WrapperFactory
 
 
 class InnerA:
@@ -47,4 +47,3 @@ class WrapperTest(unittest.TestCase):
         wrapper = WrapperFactory.from_method_ref(obj.run)
         assert wrapper.run() == 1
         assert wrapper.run(obj=1) == 2
-

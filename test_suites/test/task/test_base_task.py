@@ -2,7 +2,7 @@ import logging
 import traceback
 import unittest
 
-from ai4stocks.task.base_task import BaseTask
+from ai4stocks.task.task import Task
 
 
 class InnerA:
@@ -28,33 +28,33 @@ class InnerB:
 
 class TestBaseTask(unittest.TestCase):
     def test_func1(self):
-        task = BaseTask(obj=InnerA(), method_name='func1', args=('a', 'b'))
+        task = Task(attr=InnerA().func1, args=('a', 'b'))
         var = task.run()[1]
         assert var == 'print a b'
 
     def test_func2_1(self):
-        task = BaseTask(obj=InnerA(), method_name='func2', args=('a', 'b'))
+        task = Task(attr=InnerA().func2, args=('a', 'b'))
         var = task.run()[1]
         assert var == 'print a b  '
 
     def test_func2_2(self):
-        task = BaseTask(obj=InnerA(), method_name='func2', args=('a', 'b'), kwargs={'var3': 'c'})
+        task = Task(attr=InnerA().func2, args=('a', 'b'), kwargs={'var3': 'c'})
         var = task.run()[1]
         assert var == 'print a b c '
 
     def test_func2_3(self):
-        task = BaseTask(obj=InnerA(), method_name='func2', args=('a', 'b'), kwargs={'var4': 'd'})
+        task = Task(attr=InnerA().func2, args=('a', 'b'), kwargs={'var4': 'd'})
         var = task.run()[1]
         assert var == 'print a b  d'
 
     def test_func2_4(self):
-        task = BaseTask(obj=InnerA(), method_name='func2', args=('a', 'b'), kwargs={'var3': 'c', 'var4': 'd'})
+        task = Task(attr=InnerA().func2, args=('a', 'b'), kwargs={'var3': 'c', 'var4': 'd'})
         var = task.run()[1]
         assert var == 'print a b c d'
 
     def test_func2_5(self):
-        task = BaseTask(obj=InnerA(), method_name='func2', args=('a', 'b'),
-                        kwargs={'var3': 'c', 'var4': 'd', 'val5': 'e'})
+        task = Task(attr=InnerA().func2, args=('a', 'b'),
+                    kwargs={'var3': 'c', 'var4': 'd', 'val5': 'e'})
         try:
             var = task.run()[1]
             assert False
@@ -63,9 +63,7 @@ class TestBaseTask(unittest.TestCase):
 
     def test_catch_error(self):
         try:
-            task = BaseTask(
-                obj=InnerB(),
-                method_name='run')
+            task = Task(InnerB().run)
             task.run()
             assert False
         except ValueError as e:

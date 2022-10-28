@@ -1,12 +1,13 @@
 from __future__ import annotations
 
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 from typing import Optional, Union
 
 from pendulum import DateTime as PDateTime
 from pendulum.tz.timezone import Timezone
 
-from ai4stocks.common.pendelum import Date
+from ai4stocks.common.pendelum.date import Date
+from ai4stocks.common.pendelum.duration import Duration
 
 
 class DateTime(PDateTime, Date):
@@ -59,9 +60,12 @@ class DateTime(PDateTime, Date):
 
     __radd__ = __add__
 
-    def __sub__(self, other) -> DateTime:
+    def __sub__(self, other) -> DateTime | Duration:
         result = super(DateTime, self).__sub__(other)
-        result.__class__ = DateTime
+        if isinstance(other, timedelta):
+            result.__class__ = DateTime
+        elif isinstance(other, datetime):
+            result.__class__ = Duration
         return result
 
     def add(self,

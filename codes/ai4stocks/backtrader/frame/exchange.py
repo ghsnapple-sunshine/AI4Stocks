@@ -87,10 +87,12 @@ class ExchangeBuilder:
             datespan: Span,
             clock: Clock):
         self.item.set_clock(clock=clock)
-        clock_man = CMBuilder() \
-            .with_calendar(operator=operator, datespan=datespan) \
-            .with_clock(clock=clock) \
-            .build()
+        clock_man = CMBuilder().with_calendar(
+            operator=operator,
+            datespan=datespan
+        ).with_clock(
+            clock=clock
+        ).build()
         self.item.set_clock_man(clock_man=clock_man)
         return self
 
@@ -111,13 +113,14 @@ class ExchangeBuilder:
         :return:                self
         """
         calendar = self.item.get_calendar()
-        stock_man_builder = SMBuilder() \
-            .with_stock_list(stock_list=stock_list) \
-            .with_infos(operator=operator,
-                        add_cols=add_cols,
-                        calendar=calendar,
-                        datespan=datespan,
-                        clock=self.item.get_clock())
+        stock_man_builder = SMBuilder().with_stock_list(
+            stock_list=stock_list
+        ).with_infos(
+            operator=operator,
+            add_cols=add_cols,
+            calendar=calendar,
+            datespan=datespan,
+            clock=self.item.get_clock())
         self.item.stock_man_builder = stock_man_builder
         return self
 
@@ -127,9 +130,9 @@ class ExchangeBuilder:
 
         :return:                self
         """
-        order_man = OMBuilder() \
-            .with_clock(clock=self.item.get_clock()) \
-            .build()
+        order_man = OMBuilder().with_clock(
+            clock=self.item.get_clock()
+        ).build()
         self.item.set_order_man(order_man=order_man)
         return self
 
@@ -155,11 +158,12 @@ class ExchangeBuilder:
         :return:
         """
         max_tick = self.item.get_tick_num()
-        account_builder = AccBuilder() \
-            .with_holdings_and_cash(stock_num=stock_num,
-                                    max_tick=max_tick,
-                                    init_cash=init_cash) \
-            .with_clock(clock=self.item.get_clock())
+        account_builder = AccBuilder().with_holdings_and_cash(
+            stock_num=stock_num,
+            max_tick=max_tick,
+            init_cash=init_cash
+        ).with_clock(
+            clock=self.item.get_clock())
         self.item.account_builder = account_builder
         return self
 

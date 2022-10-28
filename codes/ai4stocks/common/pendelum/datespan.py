@@ -13,11 +13,11 @@ class DateSpan:
         :param end:         结束日期
         """
         if not isinstance(start, Date):
-            raise ValueError('Invalid start for datespan')
+            raise ValueError("'start' is not a date item.")
         if not isinstance(end, Date):
-            raise ValueError('Invalid end for datespan')
+            raise ValueError("'end' is not a date item.")
         if start > end:
-            raise ValueError('Invalid datespan when start later than end')
+            raise ValueError("Invalid datespan when 'start' later than 'end'")
 
         self._start = start
         self._end = end

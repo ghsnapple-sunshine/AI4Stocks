@@ -1,4 +1,4 @@
-from ai4stocks.task.base_task import BaseTask
+from ai4stocks.task.task import Task
 from ai4stocks.task.download_task import DownloadTask
 from ai4stocks.task.stock_daily_task import StockDailyTask
 from ai4stocks.task.stock_list_task import StockListTask
