@@ -2,7 +2,7 @@ import unittest
 
 from numpy import ndarray
 
-from ai4stocks.common.tools import tuple_to_array
+from buffett.common.tools import tuple_to_array
 
 
 class TestTypeConverter(unittest.TestCase):

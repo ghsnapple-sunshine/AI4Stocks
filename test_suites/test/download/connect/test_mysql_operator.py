@@ -2,8 +2,8 @@ import unittest
 
 from pandas import DataFrame
 
-from ai4stocks.constants.meta import META_COLS
-from ai4stocks.download.mysql.types import ColType, AddReqType
+from buffett.constants.meta import META_COLS
+from buffett.download.mysql.types import ColType, AddReqType
 from test.common.base_test import BaseTest
 
 

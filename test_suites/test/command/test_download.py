@@ -2,10 +2,10 @@ import logging
 
 from pandas import DataFrame
 
-from ai4stocks.common.pendelum import DateTime, Duration
-from ai4stocks.constants.col.stock import CODE, NAME
-from ai4stocks.download.fast import StockListHandler as SHandler
-from ai4stocks.task import StockDailyTask, StockMinuteTask
+from buffett.common.pendelum import DateTime, Duration
+from buffett.constants.col.stock import CODE, NAME
+from buffett.download.fast import StockListHandler as SHandler
+from buffett.task import StockDailyTask, StockMinuteTask
 from test.common import BaseTest
 
 

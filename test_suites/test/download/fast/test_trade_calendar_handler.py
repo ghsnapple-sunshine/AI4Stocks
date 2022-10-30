@@ -1,6 +1,6 @@
 import unittest
 
-from ai4stocks.download.fast import TradeCalendarHandler
+from buffett.download.fast import TradeCalendarHandler
 from test.common.base_test import BaseTest
 
 

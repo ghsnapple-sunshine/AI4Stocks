@@ -2,7 +2,7 @@ import logging
 import traceback
 import unittest
 
-from ai4stocks.task.task import Task
+from buffett.task.task import Task
 
 
 class InnerA:

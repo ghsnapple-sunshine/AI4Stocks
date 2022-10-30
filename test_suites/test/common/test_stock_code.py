@@ -1,6 +1,6 @@
 import unittest
 
-from ai4stocks.common.stock import Code
+from buffett.common.stock import Code
 
 
 class TestStockCode(unittest.TestCase):

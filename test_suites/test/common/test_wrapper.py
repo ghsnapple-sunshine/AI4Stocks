@@ -1,6 +1,6 @@
 import unittest
 
-from ai4stocks.common.wrapper import WrapperFactory
+from buffett.common.wrapper import WrapperFactory
 
 
 class InnerA:

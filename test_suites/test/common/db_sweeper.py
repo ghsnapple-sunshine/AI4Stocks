@@ -1,5 +1,5 @@
 # 仅用于测试环境
-from ai4stocks.download.mysql import RoleType, Operator
+from buffett.download.mysql import RoleType, Operator
 
 
 class DbSweeper:

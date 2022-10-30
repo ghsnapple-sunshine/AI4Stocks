@@ -2,8 +2,8 @@ import unittest
 
 from pandas import DataFrame
 
-from ai4stocks.constants.table import STK_LS
-from ai4stocks.download.fast.stock_list_handler import StockListHandler
+from buffett.constants.table import STK_LS
+from buffett.download.fast.stock_list_handler import StockListHandler
 from test.common.base_test import BaseTest
 
 

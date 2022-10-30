@@ -6,9 +6,9 @@ import quantstats
 import webbrowser
 import warnings
 
-from ai4stocks.download.slow.ak_stock_daily_handler import AkStockDailyHandler
-from ai4stocks.download.mysql.types import RoleType
-from ai4stocks.download.mysql.operator import Operator
+from buffett.download.slow.ak_daily_handler import AkDailyHandler
+from buffett.download.mysql.types import RoleType
+from buffett.download.mysql.operator import Operator
 from test.backtrader.sample.strategy.stamp import StampDutyCommissionScheme
 from test.backtrader.sample.strategy.multi_forks import StrategyMultiForks
 
@@ -21,7 +21,7 @@ cerebro.addstrategy(StrategyMultiForks)
 
 # code_list = ['000001', '000002', '000004'] '000004'有未知问题，暂时屏蔽
 code_list = ['000001', '000002']
-hdl = AkStockDailyHandler(Operator(RoleType.DbTest))
+hdl = AkDailyHandler(Operator(RoleType.DbTest))
 for code in code_list:
     # 利用 AKShare 获取股票的后复权数据，这里只获取前 6 列
     stock_hfq_df = ak.stock_zh_a_hist(symbol=code, adjust="hfq").iloc[:, :6]

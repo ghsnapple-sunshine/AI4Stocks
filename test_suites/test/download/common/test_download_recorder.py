@@ -1,12 +1,12 @@
 from pandas import DataFrame
 
-from ai4stocks.common import Code
-from ai4stocks.common.pendelum import Date
-from ai4stocks.constants.col import FREQ, FUQUAN, SOURCE, START_DATE, END_DATE
-from ai4stocks.constants.col.stock import CODE
-from ai4stocks.download import Para
-from ai4stocks.download.slow.download_recorder import DownloadRecorder
-from ai4stocks.download.types import FuquanType, FreqType, SourceType
+from buffett.common import Code
+from buffett.common.pendelum import Date
+from buffett.constants.col import FREQ, FUQUAN, SOURCE, START_DATE, END_DATE
+from buffett.constants.col.stock import CODE
+from buffett.download import Para
+from buffett.download.slow.download_recorder import DownloadRecorder
+from buffett.download.types import FuquanType, FreqType, SourceType
 from test.common.base_test import BaseTest
 
 

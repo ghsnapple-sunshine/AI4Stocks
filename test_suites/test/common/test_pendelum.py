@@ -3,7 +3,7 @@ from datetime import date
 
 import pendulum
 
-from ai4stocks.common.pendelum import Date, DateSpan, DateTime, TimeSpan, Duration
+from buffett.common.pendelum import Date, DateSpan, DateTime, TimeSpan, Duration
 
 
 class PendelumTest(unittest.TestCase):

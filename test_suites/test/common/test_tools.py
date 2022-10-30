@@ -1,11 +1,11 @@
 from pandas import DataFrame
 
-from ai4stocks.common import Code
-from ai4stocks.common.pendelum import Date, DateSpan
-from ai4stocks.constants.meta import META_COLS
-from ai4stocks.constants.table import STK_LS
-from ai4stocks.download import Para
-from ai4stocks.download.mysql import ColType, AddReqType, Operator
+from buffett.common import Code
+from buffett.common.pendelum import Date, DateSpan
+from buffett.constants.meta import META_COLS
+from buffett.constants.table import STK_LS
+from buffett.download import Para
+from buffett.download.mysql import ColType, AddReqType, Operator
 
 
 def create_stock_list_1(operator: Operator) -> DataFrame:

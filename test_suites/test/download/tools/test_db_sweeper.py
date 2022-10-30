@@ -1,8 +1,9 @@
 from pandas import DataFrame
 
-from ai4stocks.constants.meta import META_COLS
-from ai4stocks.constants.table import STK_LS
-from ai4stocks.download.mysql.types import ColType, AddReqType
+from buffett.constants.col.stock import CODE, NAME
+from buffett.constants.meta import META_COLS
+from buffett.constants.table import STK_LS
+from buffett.download.mysql.types import ColType, AddReqType
 from test.common.base_test import BaseTest
 from test.common.db_sweeper import DbSweeper
 
@@ -15,7 +16,7 @@ class TestDbSweeper(BaseTest):
         assert data.empty
 
     def _create_table(self):
-        data = [['code', ColType.STOCK_CODE, AddReqType.KEY],
-                ['name', ColType.STOCK_NAME, AddReqType.NONE]]
+        data = [[CODE, ColType.STOCK_CODE, AddReqType.KEY],
+                [NAME, ColType.STOCK_NAME, AddReqType.NONE]]
         df = DataFrame(data=data, columns=META_COLS)
         self.operator.create_table(STK_LS, df, True)

@@ -2,8 +2,8 @@ import logging
 import traceback
 import unittest
 
-from ai4stocks.common.pendelum import Duration
-from ai4stocks.task.download_task import DownloadTask
+from buffett.common.pendelum import Duration
+from buffett.task.download_task import DownloadTask
 
 
 class InnerA:

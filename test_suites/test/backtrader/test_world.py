@@ -1,14 +1,14 @@
 from pandas import DataFrame
 
-from ai4stocks.backtrader.frame import Para as WPara, TheWorldBuilder as Builder
-from ai4stocks.backtrader.strategy import StrategyBase as Strat
-from ai4stocks.common import Code as Code
-from ai4stocks.common.pendelum import Date, DateSpan as Span
-from ai4stocks.constants.col import DATE
-from ai4stocks.constants.col.stock import CODE, NAME
-from ai4stocks.download import Para as HPara
-from ai4stocks.download.fast import TradeCalendarHandler as CHandler, StockListHandler as SHandler
-from ai4stocks.download.slow import AkStockDailyHandler as DHandler
+from buffett.backtrader.frame import Para as WPara, TheWorldBuilder as Builder
+from buffett.backtrader.strategy import StrategyBase as Strat
+from buffett.common import Code as Code
+from buffett.common.pendelum import Date, DateSpan as Span
+from buffett.constants.col import DATE
+from buffett.constants.col.stock import CODE, NAME
+from buffett.download import Para as HPara
+from buffett.download.fast import TradeCalendarHandler as CHandler, StockListHandler as SHandler
+from buffett.download.slow import AkDailyHandler as DHandler
 from test.common import BaseTest, DbSweeper
 
 

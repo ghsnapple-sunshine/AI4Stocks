@@ -1,6 +1,6 @@
-from ai4stocks.common.pendelum import DateTime, Duration
-from ai4stocks.task.task import Task
-from ai4stocks.task.task_scheduler import TaskScheduler
+from buffett.common.pendelum import DateTime, Duration
+from buffett.task.task import Task
+from buffett.task.task_scheduler import TaskScheduler
 from test.common.base_test import BaseTest
 
 
