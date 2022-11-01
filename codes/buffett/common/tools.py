@@ -17,5 +17,14 @@ def get_now_shift(du: Duration, minus=False) -> DateTime:
         return now - du
     return now + du
 
+
 def create_meta(meta_list: list) -> DataFrame:
     return DataFrame(data=meta_list, columns=META_COLS)
+
+
+def dataframe_is_valid(df: DataFrame) -> bool:
+    return isinstance(df, DataFrame) and not df.empty
+
+
+def dataframe_not_valid(df: DataFrame) -> bool:
+    return not isinstance(df, DataFrame) or df.empty

@@ -1,10 +1,14 @@
-from datetime import date, datetime
+from datetime import date
+from datetime import datetime
+from typing import Union, Optional
 
-from pandas import Timestamp
-
+from buffett.common.error import ParamTypeError
 from buffett.common.pendelum import Date, DateTime
 
 
+
+
+'''
 def to_my_datetime(dt):
     """
     将datetime进行封装
@@ -16,6 +20,7 @@ def to_my_datetime(dt):
         return DateTime(dt.year, dt.month, dt.day, dt.hour, dt.minute, dt.second, dt.microsecond)
     else:
         return
+'''
 
 
 def to_my_date(dt):
@@ -31,17 +36,9 @@ def to_my_date(dt):
         return
 
 
-def date_to_datetime(dt: Date) -> DateTime:
-    """
-    Date转换成DateTime
-
-    :param dt:          待转换的Date
-    :return:            转换后的DateTime
-    """
-    return DateTime(dt.year, dt.month, dt.day)
 
 
-def datetime_to_date(dt: DateTime) -> Date:
+def dt2d(dt: DateTime) -> Date:
     """
     DateTime转换为Date
 
@@ -49,16 +46,3 @@ def datetime_to_date(dt: DateTime) -> Date:
     :return:            转换后的Date
     """
     return Date(dt.year, dt.month, dt.day)
-
-
-def timestamp_to_datetime(timestamp: Timestamp) -> DateTime:
-    dt = DateTime(
-        year=timestamp.year,
-        month=timestamp.month,
-        day=timestamp.day,
-        hour=timestamp.hour,
-        minute=timestamp.minute,
-        second=timestamp.second,
-        microsecond=timestamp.microsecond,
-        tzinfo=timestamp.tzinfo)
-    return dt

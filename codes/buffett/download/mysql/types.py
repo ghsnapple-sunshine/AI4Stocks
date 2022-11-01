@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from enum import Enum
 
 
@@ -9,6 +11,18 @@ class RoleType(Enum):
 
 
 class ColType(Enum):
+    @classmethod
+    def create(cls, col_type: str) -> ColType:
+        COL_TYPE_DICT = {'VARCHAR(6)': 1,           # ColType.STOCK_CODE,
+                         'VARCHAR(8)': 2,           # ColType.LONG_STOCK_CODE,
+                         'VARCHAR(4)': 3,           # ColType.STOCK_NAME,
+                         'FLOAT': 4,                # ColType.FLOAT,
+                         'INT': 5,                  # ColType.INT32,
+                         'DATE': 10,                # ColType.DATE,
+                         'DATETIME': 11,            # ColType.DATETIME,
+                         'TINYINT UNSIGNED': 100}   # ColType.ENUM
+        return ColType(COL_TYPE_DICT[col_type.upper()])
+
     STOCK_CODE = 1  # 股票代码（6位）
     LONG_STOCK_CODE = 2  # 股票代码（8位）
     STOCK_NAME = 3  # 股票名字
@@ -19,39 +33,32 @@ class ColType(Enum):
     ENUM = 100  # 记录类型
 
     def sql_format(self):
-        COL_TYPE_DICT = {
-            ColType.STOCK_CODE: 'VARCHAR(6)',
-            ColType.LONG_STOCK_CODE: 'VARCHAR(8)',
-            ColType.STOCK_NAME: 'VARCHAR(4)',
-            ColType.FLOAT: 'FLOAT',
-            ColType.INT32: 'INT',
-            ColType.DATE: 'DATE',
-            ColType.DATETIME: 'DATETIME',
-            ColType.ENUM: 'TINYINT'
-        }
+        COL_TYPE_DICT = {ColType.STOCK_CODE: 'VARCHAR(6)',
+                         ColType.LONG_STOCK_CODE: 'VARCHAR(8)',
+                         ColType.STOCK_NAME: 'VARCHAR(4)',
+                         ColType.FLOAT: 'FLOAT',
+                         ColType.INT32: 'INT',
+                         ColType.DATE: 'DATE',
+                         ColType.DATETIME: 'DATETIME',
+                         ColType.ENUM: 'TINYINT UNSIGNED'}
         return COL_TYPE_DICT[self]
 
 
 class AddReqType(Enum):
     NONE = 1
     KEY = 2
-    UNSIGNED = 3
-    UNSIGNED_KEY = 4
+
+    # UNSIGNED = 3
+    # UNSIGNED_KEY = 4
 
     def sql_format(self):
-        COL_ADDREQ_DICT = {
-            AddReqType.NONE: '',
-            AddReqType.KEY: 'NOT NULL',
-            AddReqType.UNSIGNED: 'UNSIGNED',
-            AddReqType.UNSIGNED_KEY: 'UNSIGNED NOT NULL'
-        }
+        COL_ADDREQ_DICT = {AddReqType.NONE: '',
+                           AddReqType.KEY: 'NOT NULL'}
         return COL_ADDREQ_DICT[self]
 
     def is_key(self):
-        COL_ADDREQ_DICT = {
-            AddReqType.NONE: False,
-            AddReqType.KEY: True,
-            AddReqType.UNSIGNED: False,
-            AddReqType.UNSIGNED_KEY: True
-        }
-        return COL_ADDREQ_DICT[self]
+        return self == AddReqType.KEY
+
+    def not_key(self):
+        return self != AddReqType.KEY
+

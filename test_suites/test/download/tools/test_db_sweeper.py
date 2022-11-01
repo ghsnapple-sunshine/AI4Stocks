@@ -4,15 +4,15 @@ from buffett.constants.col.stock import CODE, NAME
 from buffett.constants.meta import META_COLS
 from buffett.constants.table import STK_LS
 from buffett.download.mysql.types import ColType, AddReqType
-from test.common.base_test import BaseTest
-from test.common.db_sweeper import DbSweeper
+from test.tester import Tester
+from test.db_sweeper import DbSweeper
 
 
-class TestDbSweeper(BaseTest):
+class TestDbSweeper(Tester):
     def test_sweep(self):
         self._create_table()
         DbSweeper.cleanup()
-        data = self.operator.get_table(STK_LS)
+        data = self.operator.get_data(STK_LS)
         assert data.empty
 
     def _create_table(self):

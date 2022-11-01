@@ -1,14 +1,18 @@
 from pandas import DataFrame
 
 from buffett.common import Code
-from buffett.common.pendelum import Date, DateSpan
 from buffett.constants.meta import META_COLS
 from buffett.constants.table import STK_LS
-from buffett.download import Para
 from buffett.download.mysql import ColType, AddReqType, Operator
 
 
-def create_stock_list_1(operator: Operator) -> DataFrame:
+def create_1stock(operator: Operator) -> DataFrame:
+    """
+    创建只有一支股票的StockList
+
+    :param operator:
+    :return:
+    """
     operator.drop_table(STK_LS)
     cols = [
         ['code', ColType.STOCK_CODE, AddReqType.KEY],
@@ -22,7 +26,13 @@ def create_stock_list_1(operator: Operator) -> DataFrame:
     return df
 
 
-def create_stock_list_2(operator: Operator) -> DataFrame:
+def create_2stocks(operator: Operator) -> DataFrame:
+    """
+    创建有两支股票的StockList
+
+    :param operator:
+    :return:
+    """
     operator.drop_table(STK_LS)
     cols = [
         ['code', ColType.STOCK_CODE, AddReqType.KEY],
@@ -37,7 +47,14 @@ def create_stock_list_2(operator: Operator) -> DataFrame:
     return df
 
 
-def create_stock_list_ex(operator: Operator, code: Code) -> DataFrame:
+def create_ex_1stock(operator: Operator, code: Code) -> DataFrame:
+    """
+    创建只有一支股票的StockList，股票代码需指定
+
+    :param operator:
+    :param code:
+    :return:
+    """
     operator.drop_table(STK_LS)
     cols = [
         ['code', ColType.STOCK_CODE, AddReqType.KEY],
@@ -49,4 +66,3 @@ def create_stock_list_ex(operator: Operator, code: Code) -> DataFrame:
     df = DataFrame(data=data, columns=['code', 'name'])
     operator.insert_data(STK_LS, df)
     return df
-

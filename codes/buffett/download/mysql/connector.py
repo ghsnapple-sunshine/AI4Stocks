@@ -1,4 +1,5 @@
 import pymysql
+from numpy import array
 from pandas import DataFrame
 from pymysql.err import DatabaseError, ProgrammingError, DataError
 
@@ -73,7 +74,7 @@ class Connector:
 
     def execute_many(self,
                      sql: str,
-                     vals: list,
+                     vals: array,
                      commit: bool = False):
         self.connect()
         try:

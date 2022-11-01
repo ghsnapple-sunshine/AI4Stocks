@@ -1,7 +1,7 @@
 from buffett.common.pendelum import DateTime, Duration
 from buffett.task.task import Task
 from buffett.task.task_scheduler import TaskScheduler
-from test.common.base_test import BaseTest
+from test.tester import Tester
 
 
 class InnerA:
@@ -31,7 +31,7 @@ class InnerC:
         return self.charm
 
 
-class TestTaskScheduler(BaseTest):
+class TestTaskScheduler(Tester):
     def test_all(self):
         sch = TaskScheduler(
             operator=self.operator,

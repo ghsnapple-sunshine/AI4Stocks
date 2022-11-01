@@ -3,7 +3,7 @@ import unittest
 from buffett.common.stock import Code
 
 
-class TestStockCode(unittest.TestCase):
+class TestStock(unittest.TestCase):
     def test_equal(self):
         cd1 = Code('000001')
         cd2 = Code('000001')

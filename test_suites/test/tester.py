@@ -4,10 +4,10 @@ from pendulum import DateTime
 
 from buffett.download.mysql.types import RoleType
 from buffett.download.mysql.operator import Operator
-from test.common.db_sweeper import DbSweeper
+from test.db_sweeper import DbSweeper
 
 
-class BaseTest(unittest.TestCase):
+class Tester(unittest.TestCase):
     def setUp(self) -> None:
         self.operator = Operator(role=RoleType.DbTest)
         self.operator.connect()

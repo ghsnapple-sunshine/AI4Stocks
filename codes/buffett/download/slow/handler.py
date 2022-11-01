@@ -3,19 +3,20 @@ from abc import abstractmethod
 
 from pandas import DataFrame
 
+from buffett.common.error import ParamTypeError
 from buffett.common.pendelum import DateSpan, Date
-from buffett.common.pendelum.tools import timestamp_to_datetime
 from buffett.constants.col import FREQ, FUQUAN, SOURCE, START_DATE, END_DATE
 from buffett.constants.col.stock import CODE, NAME
 from buffett.download.fast.stock_list_handler import StockListHandler as SHandler
 from buffett.download.handler import Handler
 from buffett.download.mysql import Operator
 from buffett.download.para import Para
-from buffett.download.slow.download_recorder import DownloadRecorder as Recorder
+from buffett.download.slow.recorder import DownloadRecorder as Recorder
+from buffett.download.slow.table_name import TableName
 from buffett.download.types import FreqType, SourceType, FuquanType
 
 
-class SlowHandler(Handler):
+class SlowHandler(Handler, TableName):
     """
     实现多张表的下载，存储
     """
@@ -30,9 +31,9 @@ class SlowHandler(Handler):
     # region 公共方法
     def obtain_data(self, para: Para):
         if not isinstance(para.span, DateSpan):
-            raise ValueError('An invalid datespan received.')
+            raise ParamTypeError('para.span', DateSpan)
 
-        para.with_end(Date.yesterday(), para.span.end > Date.yesterday()) \
+        para = para.clone().with_end(Date.today(), para.span.end > Date.today()) \
             .with_source(self._source) \
             .with_freq(self._freq)
 
@@ -43,7 +44,7 @@ class SlowHandler(Handler):
         for index, row in stocks.iterrows():
             for fuquan in self._fuquans:
                 spara = para.clone().with_code(row[CODE]).with_name(row[NAME]).with_fuquan(fuquan)
-                table_name = SlowHandler._get_table_name(para=spara)
+                table_name = SlowHandler._get_table_name_by_code(para=spara)
                 record = DataFrame() if records.empty else SlowHandler._filter_record(
                     para=spara, records=records)
                 if record.empty:
@@ -72,8 +73,9 @@ class SlowHandler(Handler):
                           para: Para,
                           record: DataFrame,
                           table_name: str) -> None:
-        cur_start_time = timestamp_to_datetime(record[START_DATE].iloc[0])  # datetime类型在DateFrame会被转为Timestamp
-        cur_end_time = timestamp_to_datetime(record[END_DATE].iloc[0])
+        '''
+        cur_start_time = DateFactory.create(record[START_DATE].iloc[0])  # datetime类型在DateFrame会被转为Timestamp
+        cur_end_time = DateFactory.create(record[END_DATE].iloc[0])
         if para.span.start < cur_start_time:
             spara = para.clone().with_end(cur_start_time - self._freq.to_duration())
             self._download_and_save_a_stock(para=spara, table_name=table_name)
@@ -85,12 +87,19 @@ class SlowHandler(Handler):
             self._download_and_save_a_stock(para=spara, table_name=table_name)
         else:
             para.with_end(end=cur_end_time)
+        '''
+        done_span = DateSpan(record[START_DATE].iloc[0], record[END_DATE].iloc[0])
+        todo_span_ls = para.span.subtract(done_span)
+        for span in todo_span_ls:
+            self._download_and_save_a_stock(para=para.clone().with_span(span=span),
+                                            table_name=table_name)
+        para.with_span(span=para.span.add(done_span))
 
     def _download_and_save_a_stock(self,
                                    para: Para,
                                    table_name: str) -> None:
         data = self._download(para=para)
-        self._save_to_database(name=table_name, data=data)
+        self._save_to_database(table_name=table_name, df=data)
 
     @abstractmethod
     def _download(self, para: Para) -> DataFrame:
@@ -98,17 +107,9 @@ class SlowHandler(Handler):
 
     @abstractmethod
     def _save_to_database(self,
-                          name: str,
-                          data: DataFrame) -> None:
+                          table_name: str,
+                          df: DataFrame) -> None:
         pass
-
-    @classmethod
-    def _get_table_name(cls, para: Para) -> str:
-        table_name = '{0}_stock_{1}info_{2}_{3}'.format(para.comb.source.sql_format(),
-                                                        para.comb.freq,
-                                                        para.stock.code,
-                                                        para.comb.fuquan.ak_format())
-        return table_name
 
     @classmethod
     def _log_success_download(cls, para: Para):

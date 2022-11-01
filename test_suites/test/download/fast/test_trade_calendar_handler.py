@@ -1,10 +1,10 @@
 import unittest
 
 from buffett.download.fast import TradeCalendarHandler
-from test.common.base_test import BaseTest
+from test.tester import Tester
 
 
-class TradeCalendarHandlerTest(BaseTest):
+class TradeCalendarHandlerTest(Tester):
     def test_download(self):
         hdl = TradeCalendarHandler(operator=self.operator)
         tbl = hdl._download()

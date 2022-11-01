@@ -31,9 +31,9 @@ class Exchange(Sequence):
 
     def run(self):
         # self._stock_man.run()     # 1. 更新StockInfo(分段载入）
-        self._order_man.run()  # 2. 分发（和处理）委托单
-        self._account.run()  # 3. 时刻末计算
-        self._clock_man.run()  # 4. 时刻前进
+        self._order_man.run()       # 2. 分发（和处理）委托单
+        self._account.run()         # 3. 时刻末计算
+        self._clock_man.run()       # 4. 时刻前进
 
     def get_holding(self, code: int) -> int:
         return self._account.get_holding(code)

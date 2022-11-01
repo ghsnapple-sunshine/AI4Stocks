@@ -1,17 +1,22 @@
 from __future__ import annotations
 
+from datetime import date
+from typing import Optional, Union
+
+from pandas import Timestamp
+
 from buffett.common import Code
-from buffett.common.pendelum import DateSpan, Date
+from buffett.common.pendelum import DateSpan, Date, DateTime
 from buffett.common.stock import Stock
 from buffett.download.types import HeadType, CombType, FuquanType, FreqType, SourceType
 
 
 class Para:
     def __init__(self,
-                 stock: Stock = None,
-                 comb: CombType = None,
-                 span: DateSpan = None,
-                 heads: list[HeadType] = None):
+                 stock: Optional[Stock] = None,
+                 comb: Optional[CombType] = None,
+                 span: Optional[DateSpan] = None,
+                 heads: Optional[list[HeadType]] = None):
         """
         初始化Para for Handler
 
@@ -124,19 +129,23 @@ class Para:
                 self._comb.with_freq(freq)
         return self
 
-    def with_span(self, datespan: DateSpan, condition: bool = True) -> Para:
+    def with_span(self,
+                  span: DateSpan,
+                  condition: bool = True) -> Para:
         """
         条件设置datespan并返回自身
 
-        :param datespan:    指定的时间周期
+        :param span:    指定的时间周期
         :param condition:   条件设置
         :return:            Self
         """
         if condition:
-            self._span = datespan
+            self._span = span
         return self
 
-    def with_start(self, start: Date, condition: bool = True) -> Para:
+    def with_start(self,
+                   start: Optional[date],
+                   condition: bool = True) -> Para:
         """
         条件设置datespan.start并返回自身
 
@@ -146,12 +155,14 @@ class Para:
         """
         if condition:
             if self._span is None:
-                raise ValueError('Datespan is None and start cannot be set.')
+                self._span = DateSpan(start=start)
             else:
                 self._span.with_start(start)
         return self
 
-    def with_end(self, end: Date, condition: bool = True) -> Para:
+    def with_end(self,
+                 end: Optional[date],
+                 condition: bool = True) -> Para:
         """
         条件设置datespan.end并返回自身
 
@@ -161,12 +172,15 @@ class Para:
         """
         if condition:
             if self._span is None:
-                raise ValueError('Datespan is None and end cannot be set.')
+                self._span = DateSpan(end=end)
             else:
                 self._span.with_end(end)
         return self
 
-    def with_start_n_end(self, start: Date, end: Date, condition: bool = True):
+    def with_start_n_end(self,
+                         start: Optional[date],
+                         end: Optional[date],
+                         condition: bool = True):
         """
         条件设置datespan.start和datespan.end并返回自身
 
@@ -203,17 +217,17 @@ class Para:
                     heads=None if self._heads is None else self._heads.copy())
 
     @property
-    def stock(self) -> Stock:
+    def stock(self) -> Optional[Stock]:
         return self._stock
 
     @property
-    def comb(self) -> CombType:
+    def comb(self) -> Optional[CombType]:
         return self._comb
 
     @property
-    def span(self) -> DateSpan:
+    def span(self) -> Optional[DateSpan]:
         return self._span
 
     @property
-    def heads(self) -> list[HeadType]:
+    def heads(self) -> Optional[list[HeadType]]:
         return self._heads

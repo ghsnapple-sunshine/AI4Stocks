@@ -5,7 +5,6 @@ from pandas import DataFrame
 from pendulum import DateTime
 
 from buffett.common import create_meta
-from buffett.common.pendelum import to_my_date
 from buffett.constants.col import DATE
 from buffett.constants.table import TRA_CAL
 from buffett.download import Para
@@ -52,11 +51,11 @@ class TradeCalendarHandler(FastHandler):
 
     def _save_to_database(self, df: DataFrame):
         self._operator.create_table(name=TRA_CAL, meta=_META)
-        self._operator.try_insert_data(name=TRA_CAL, data=df)  # 忽略重复Insert
+        self._operator.try_insert_data(name=TRA_CAL, df=df)  # 忽略重复Insert
         self._operator.disconnect()
 
     def get_data(self, para: Para = None) -> DataFrame:
-        df = self._operator.get_table(TRA_CAL)
-        df[DATE] = df[DATE].apply(lambda x: to_my_date(x))
+        df = self._operator.get_data(TRA_CAL)
+        # df[DATE] = df[DATE].apply(lambda x: to_my_date(x))
         df.index = df[DATE]
         return df

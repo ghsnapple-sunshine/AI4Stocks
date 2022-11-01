@@ -6,10 +6,10 @@ from buffett.common.pendelum import DateTime, Duration
 from buffett.constants.col.stock import CODE, NAME
 from buffett.download.fast import StockListHandler as SHandler
 from buffett.task import StockDailyTask, StockMinuteTask
-from test.common import BaseTest
+from test.common import Test
 
 
-class TestDownload(BaseTest):
+class TestDownload(Test):
     def setUp(self) -> None:
         super().setUp()
         # 初始化StockList

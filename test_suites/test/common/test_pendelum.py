@@ -3,7 +3,7 @@ from datetime import date
 
 import pendulum
 
-from buffett.common.pendelum import Date, DateSpan, DateTime, TimeSpan, Duration
+from buffett.common.pendelum import Date, DateSpan, DateTime, Duration
 
 
 class PendelumTest(unittest.TestCase):
@@ -50,10 +50,12 @@ class PendelumTest(unittest.TestCase):
         assert span._end.day == 5
 
     def test_timespan(self):
-        span = TimeSpan(DateTime(2022, 1, 4), DateTime(2022, 1, 5))
+        span = DateSpan(DateTime(2022, 1, 4, 9, 30), DateTime(2022, 1, 5))
         assert span.start.year == 2022
         assert span.start.month == 1
         assert span.start.day == 4
+        assert span.start.hour == 9
+        assert span.start.minute == 30
         assert span.end.year == 2022
         assert span.end.month == 1
         assert span.end.day == 5
@@ -92,3 +94,15 @@ class PendelumTest(unittest.TestCase):
         now2 = pendulum.DateTime.now()
         assert now1.year == now2.year
         assert now1.month == now2.month
+
+    def test_span_add_sub(self):
+        span1 = DateSpan(Date(2022, 1, 1), Date(2022, 1, 4))
+        span2 = DateSpan(Date(2022, 1, 4), Date(2022, 1, 5))
+        span3 = DateSpan(Date(2022, 1, 1), Date(2022, 1, 5))
+        span4 = DateSpan(Date(2022, 1, 3), Date(2022, 1, 8))
+        span5 = DateSpan(Date(2022, 1, 1), Date(2022, 1, 8))
+        assert span1.add(span2) == span3
+        assert span2.add(span1) == span3
+        assert span3.subtract(span1)[0] == span2
+        assert span3.subtract(span2)[0] == span1
+        assert span1.add(span4) == span5

@@ -44,7 +44,8 @@ class ClockManagerBuilder:
 
     def with_calendar(self, operator: Operator, datespan: Span):
         tbl = Handler(operator=operator).get_data()
-        calendar = tbl[tbl[DATE].apply(lambda x: datespan.start <= x <= datespan.end)]
+        calendar = tbl[tbl[DATE].apply(lambda x: datespan.is_in_span(x))]
+        # calendar = tbl[tbl[DATE].apply(lambda x: datespan.start <= x <= datespan.end)] dataSpan definition changed
         # calendar = tbl[datespan.start <= tbl[DATE] <= datespan.end] Error
         self.item.set_calendar(calendar=calendar)
         return self

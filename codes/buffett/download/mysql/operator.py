@@ -1,9 +1,13 @@
 from datetime import date, datetime
 from enum import Enum
+from typing import Optional
 
 import pandas as pd
 from pandas import DataFrame, Timestamp
 
+from buffett.common.pendelum import DateSpan
+from buffett.common.tools import dataframe_not_valid
+from buffett.constants.col import DATE, DATETIME
 from buffett.constants.meta import COLUMN, TYPE, ADDREQ
 from buffett.download.mysql.connector import Connector
 
@@ -27,10 +31,10 @@ class Operator(Connector):
         """
         在Mysql中创建表
 
-        :param name:            名称
-        :param meta:            元数据
-        :param if_not_exist:    检查表格是否已经存在，如果已经存在则不继续创建
-        :return:                None
+        :param name:                表名
+        :param meta:                表元数据
+        :param if_not_exist:        检查表是否存在，不存在则创建
+        :return:
         """
         cols = []
         for index, row in meta.iterrows():
@@ -52,70 +56,127 @@ class Operator(Connector):
 
     def insert_data(self,
                     name: str,
-                    data: DataFrame) -> None:
-        if (data is None) or (isinstance(data, DataFrame) & data.empty):
+                    df: DataFrame) -> None:
+        """
+        插入数据到Mysql表
+
+        :param name:                表名
+        :param df:                  数据
+        :return:
+        """
+        if dataframe_not_valid(df):
             return
 
-        inQ = ['%s'] * data.columns.size
+        inQ = ['%s'] * df.columns.size
         inQ = ', '.join(inQ)
-        cols = data.columns
+        cols = df.columns
         cols = ', '.join(cols)
         sql = "insert into `{0}`({1}) values({2})".format(name, cols, inQ)
-        vals = data.values.tolist()
+        vals = df.values.tolist()
         self.execute_many(sql, vals, True)
 
     def try_insert_data(self,
                         name: str,
-                        data: DataFrame,
+                        df: DataFrame,
                         meta: DataFrame = None,
                         update: bool = False):
-        if (data is None) or (isinstance(data, DataFrame) & data.empty):
+        """
+        尝试插入数据到Mysql表
+
+        :param name:                表名
+        :param df:                  数据
+        :param meta:                表元数据
+        :param update:              True: 插入失败则更新; False: 插入失败则跳过
+        :return:
+        """
+        if dataframe_not_valid(df):
             return
 
         if update:
-            self._try_insert_data_and_update(name=name, data=data, meta=meta)
+            self._try_insert_n_update_data(name=name, df=df, meta=meta)
             return
 
         sql = "insert ignore into `{0}`({1}) values({2})".format(
             name,
-            ', '.join(data.columns),
-            ', '.join(['%s'] * data.columns.size)
+            ', '.join(df.columns),
+            ', '.join(['%s'] * df.columns.size)
         )
-        vals = data.values.tolist()
+        vals = df.values.tolist()
         self.execute_many(sql, vals, True)
 
-    def _try_insert_data_and_update(self,
-                                    name: str,
-                                    data: DataFrame,
-                                    meta: DataFrame):
-        normal_cols = meta[ADDREQ].apply(lambda x: not x.is_key())
+    def _try_insert_n_update_data(self,
+                                  name: str,
+                                  df: DataFrame,
+                                  meta: DataFrame):
+        """
+        尝试插入数据到Mysql表（插入失败则更新）
+
+        :param name:                表名
+        :param df:                  数据
+        :param meta:                表元数据
+        :return:
+        """
+        normal_cols = meta[ADDREQ].apply(lambda x: x.not_key())
         normal_cols = meta[normal_cols][COLUMN]
         inQ2 = [x + '=%s' for x in normal_cols]
 
         sql = "insert into `{0}`({1}) values({2}) on duplicate key update {3}".format(
             name,
-            ', '.join(data.columns),
-            ', '.join(['%s'] * data.columns.size),
+            ', '.join([str(x) for x in df.columns]),  # 避免data.columns中有非str类型导致报错
+            ', '.join(['%s'] * df.columns.size),
             ', '.join(inQ2))
-        data = pd.concat([data, data[normal_cols]], axis=1)
-        for index, row in data.iterrows():
-            ser = row.apply(
-                lambda x: _obj_format(x)
-            )
+        df = pd.concat([df, df[normal_cols]], axis=1)
+        for index, row in df.iterrows():
+            ser = row.apply(lambda x: _obj_format(x))
             sql2 = sql % tuple(ser)
             self.execute(sql2)
         self.conn.commit()
 
     def drop_table(self, name: str):
-        sql = "drop table if exists `{0}`".format(name)
+        """
+        在Mysql中删除表
+
+        :param name:                表名
+        :return:
+        """
+        sql = f"drop table if exists `{name}`"
         self.execute(sql)
 
-    def get_record_cnt(self, name: str):
-        sql = "select count(*) from {0}".format(name)
-        res = self.execute(sql, fetch=True)
-        return res.iloc[0, 0]
+    def get_row_num(self, name: str) -> int:
+        """
+        获取表格的行数
 
-    def get_table(self, name: str):
-        sql = "select * from {0}".format(name)
+        :param name:            表名
+        :return:                表格行数
+        """
+        sql = f"select count(*) from `{name}`"
         res = self.execute(sql, fetch=True)
-        return res
+        return 0 if dataframe_not_valid(res) else res.iloc[0, 0]
+
+    def get_data(self,
+                 name: str,
+                 span: DateSpan = None) -> Optional[DataFrame]:
+        """
+        按照条件查询表格数据
+
+        :param name:            表名
+        :param span:            时间条件
+        :return:
+        """
+        if span is None:
+            sql = f"select * from `{name}`"
+            res = self.execute(sql, fetch=True)
+            return res
+        elif isinstance(span, DateSpan):
+            sql = f"select * from `{name}` limit 0,1"
+            res = self.execute(sql, fetch=True)
+            if dataframe_not_valid(res):
+                return res
+
+            key = DATE if any([x == DATE for x in res.columns]) else DATETIME
+            sql = f"select * from `{name}` where `{key}` >= '{span.start.format('YYYY-MM-DD')}' " \
+                  f"and `{key}` < '{span.end.format('YYYY-MM-DD')}'"
+            res = self.execute(sql, fetch=True)
+            return res
+        else:
+            return

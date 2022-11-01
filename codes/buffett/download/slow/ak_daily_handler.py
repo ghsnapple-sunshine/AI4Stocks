@@ -2,7 +2,8 @@ import akshare as ak
 from pandas import DataFrame
 
 from buffett.common import create_meta
-from buffett.common.pendelum import to_my_date
+from buffett.common.pendelum import Duration
+from buffett.common.tools import dataframe_not_valid
 from buffett.constants.col import DATE, OPEN, CLOSE, HIGH, LOW, CJL, CJE, ZF, ZDF, ZDE, HSL
 from buffett.download import Para
 from buffett.download.mysql import ColType, AddReqType, Operator
@@ -44,7 +45,7 @@ class AkDailyHandler(SlowHandler):
         # 使用接口（stock_zh_a_hist，源：东财）,code为Str6
         # 备用接口（stock_zh_a_daily，源：新浪，未实现）
         start_date = para.span.start.format('YYYYMMDD')
-        end_date = para.span.end.format('YYYYMMDD')
+        end_date = para.span.end.subtract(days=1).format('YYYYMMDD')
         daily_info = ak.stock_zh_a_hist(symbol=para.stock.code.to_code6(),
                                         period='daily',
                                         start_date=start_date,
@@ -57,32 +58,32 @@ class AkDailyHandler(SlowHandler):
 
     def _save_to_database(
             self,
-            name: str,
-            data: DataFrame
+            table_name: str,
+            df: DataFrame
     ) -> None:
-        if (not isinstance(data, DataFrame)) or data.empty:
+        if (not isinstance(df, DataFrame)) or df.empty:
             return
 
-        self._operator.create_table(name=name,
+        self._operator.create_table(name=table_name,
                                     meta=_META,
                                     if_not_exist=True)
-        self._operator.insert_data(name, data)
+        self._operator.insert_data(table_name, df)
         self._operator.disconnect()
 
     def get_data(self, para: Para) -> DataFrame:
         """
         查询某支股票以某种复权方式的全部数据
 
-        :param para:        下载参数
+        :param para:        code, fuquan
         :return:
         """
-        spara = para.clone().with_freq(self._freq).with_source(self._source)
-        table_name = AkDailyHandler._get_table_name(para=spara)
-        df = self._operator.get_table(table_name)
-        if (not isinstance(df, DataFrame)) or df.empty:
+        para = para.clone().with_freq(self._freq).with_source(self._source)
+        table_name = AkDailyHandler._get_table_name_by_code(para=para)
+        df = self._operator.get_data(table_name)
+        if dataframe_not_valid(df):
             return DataFrame()
 
-        df[DATE] = df[DATE].apply(lambda x: to_my_date(x))
+        # df[DATE] = df[DATE].apply(lambda x: to_my_date(x))
         df.index = df[DATE]
         del df[DATE]
         return df

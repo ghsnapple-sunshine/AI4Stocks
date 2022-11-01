@@ -9,17 +9,17 @@ from buffett.constants.col.stock import CODE, NAME
 from buffett.download import Para as HPara
 from buffett.download.fast import TradeCalendarHandler as CHandler, StockListHandler as SHandler
 from buffett.download.slow import AkDailyHandler as DHandler
-from test.common import BaseTest, DbSweeper
+from test import Tester, DbSweeper
 
 
-class WorldTest(BaseTest):
+class WorldTest(Tester):
     def setUp(self) -> None:
         super().setUp()
         # 清理数据库
         DbSweeper.cleanup()
         # 指定测试周期
         start = Date(2022, 1, 4)
-        end = Date(2022, 1, 5)
+        end = Date(2022, 1, 6)
         # 初始化交易日历
         data = [[start.format('YYYY-MM-DD')],
                 [end.format('YYYY-MM-DD')]]
@@ -37,7 +37,7 @@ class WorldTest(BaseTest):
     def test_world_flow(self):
         para = WPara(operator=self.operator,
                      stock_list=[Code('000001'), Code('600000')],
-                     datespan=Span(start=Date(2022, 1, 4), end=Date(2022, 1, 5)),
+                     datespan=Span(start=Date(2022, 1, 4), end=Date(2022, 1, 6)),
                      strat_cls=Strat)
         world = Builder().with_clock_n_exchange(para=para) \
             .with_strategy(para=para) \

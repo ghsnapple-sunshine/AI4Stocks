@@ -4,10 +4,10 @@ from pandas import DataFrame
 
 from buffett.constants.meta import META_COLS
 from buffett.download.mysql.types import ColType, AddReqType
-from test.common.base_test import BaseTest
+from test.tester import Tester
 
 
-class TestMysqlOperator(BaseTest):
+class TestOperator(Tester):
     def test_all(self):
         meta = self._create_table()
         self._insert_data()
@@ -34,13 +34,13 @@ class TestMysqlOperator(BaseTest):
                 ['600000', '猪猪银行']]
         df = DataFrame(data=data, columns=['code', 'name'])
         self.operator.try_insert_data(self.table_name, df)  # 不更新数据
-        db = self.operator.get_table(self.table_name)
+        db = self.operator.get_data(self.table_name)
         assert db[db['code'] == '000001'].iloc[0, 1] == '平安银行'
         assert db[db['code'] == '600000'].iloc[0, 1] == '浦发银行'
         assert db[db['code'] == '600001'].iloc[0, 1] == '建设银行'
 
         self.operator.try_insert_data(self.table_name, df, meta=col_meta, update=True)  # 更新数据
-        db = self.operator.get_table(self.table_name)
+        db = self.operator.get_data(self.table_name)
         assert db[db['code'] == '000001'].iloc[0, 1] == '狗狗银行'
         assert db[db['code'] == '600000'].iloc[0, 1] == '猪猪银行'
         assert db[db['code'] == '600001'].iloc[0, 1] == '建设银行'
@@ -53,7 +53,7 @@ class TestMysqlOperator(BaseTest):
         assert True  # 预期：不报错
 
     def _get_table(self):
-        db = self.operator.get_table('test')
+        db = self.operator.get_data('test')
         assert type(db) == DataFrame
         assert db.empty
 

@@ -1,8 +1,8 @@
 from buffett.common.pendelum.datespan import DateSpan
 from buffett.common.pendelum.datetime import DateTime
-from buffett.common.pendelum.tools import datetime_to_date
+from buffett.common.pendelum.tools import dt2d
 
-
+'''
 class TimeSpan:
     # TimeSpan所描述的范围为[start, end]
     def __init__(self, start: DateTime, end: DateTime):
@@ -31,5 +31,6 @@ class TimeSpan:
         return self._end
 
     def to_datespan(self) -> DateSpan:
-        return DateSpan(start=datetime_to_date(self._start),
-                        end=datetime_to_date(self._end))
+        return DateSpan(start=dt2d(self._start),
+                        end=dt2d(self._end))
+'''

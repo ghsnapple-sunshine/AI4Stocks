@@ -5,12 +5,12 @@ from buffett.common.pendelum import Date
 from buffett.constants.col import FREQ, FUQUAN, SOURCE, START_DATE, END_DATE
 from buffett.constants.col.stock import CODE
 from buffett.download import Para
-from buffett.download.slow.download_recorder import DownloadRecorder
+from buffett.download.slow.recorder import DownloadRecorder
 from buffett.download.types import FuquanType, FreqType, SourceType
-from test.common.base_test import BaseTest
+from test.tester import Tester
 
 
-class TestDownloadRecorder(BaseTest):
+class TestDownloadRecorder(Tester):
     def setUp(self):
         super().setUp()
         self.recorder = DownloadRecorder(self.operator)

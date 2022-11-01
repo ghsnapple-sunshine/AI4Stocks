@@ -1,12 +1,14 @@
 from __future__ import annotations
 
 from enum import Enum
+from typing import Optional
 
+from buffett.common import ComparableEnum
 from buffett.common.pendelum import Duration
 from buffett.constants.col import DATETIME, DATE, OPEN, CLOSE, HIGH, LOW, CJL
 
 
-class HeadType(Enum):
+class HeadType(ComparableEnum):
     """
     列头的类型
     """
@@ -31,7 +33,7 @@ class HeadType(Enum):
         return HEAD_TYPE_DICT[self]
 
 
-class FuquanType(Enum):
+class FuquanType(ComparableEnum):
     """
     Fuquan类型
     baostock adjustFlag中后复权为1，前复权为2，不复权为3
@@ -62,7 +64,7 @@ class FuquanType(Enum):
         return FUQIAN_TYPE_DICT[self]
 
 
-class FreqType(Enum):
+class FreqType(ComparableEnum):
     DAY = 1
     MIN5 = 2
 
@@ -90,7 +92,7 @@ class FreqType(Enum):
         return RECORD_TYPE_DICT[self]
 
 
-class SourceType(Enum):
+class SourceType(ComparableEnum):
     BAOSTOCK = 1
     AKSHARE_DONGCAI = 10
 
@@ -115,9 +117,9 @@ class CombType:
     """
 
     def __init__(self,
-                 fuquan: FuquanType = None,
-                 source: SourceType = None,
-                 freq: FreqType = None):
+                 fuquan: Optional[FuquanType] = None,
+                 source: Optional[SourceType] = None,
+                 freq: Optional[FreqType] = None):
         self._fuquan = fuquan
         self._source = source
         self._freq = freq
@@ -162,14 +164,22 @@ class CombType:
                         fuquan=self._fuquan,
                         freq=self._freq)
 
+    def __eq__(self, other):
+        if isinstance(other, CombType):
+            return self._freq == other.freq and self._source == other.source and self._fuquan == other.fuquan
+        return False
+
+    def __hash__(self) -> int:
+        return hash(self._freq) ^ hash(self._source) ^ hash(self._fuquan)
+
     @property
-    def source(self) -> SourceType:
+    def source(self) -> Optional[SourceType]:
         return self._source
 
     @property
-    def fuquan(self) -> FuquanType:
+    def fuquan(self) -> Optional[FuquanType]:
         return self._fuquan
 
     @property
-    def freq(self) -> FreqType:
+    def freq(self) -> Optional[FreqType]:
         return self._freq

@@ -29,11 +29,11 @@ class StockListHandler(FastHandler):
             return
 
         self._operator.create_table(name=STK_LS, meta=_META)
-        self._operator.try_insert_data(name=STK_LS, data=df)  # 忽略重复Insert
+        self._operator.try_insert_data(name=STK_LS, df=df)  # 忽略重复Insert
         self._operator.disconnect()
 
     def get_data(self, para: Para = None) -> DataFrame:
-        df = self._operator.get_table(STK_LS)
+        df = self._operator.get_data(STK_LS)
         if (not isinstance(df, DataFrame)) or df.empty:
             return DataFrame()
 

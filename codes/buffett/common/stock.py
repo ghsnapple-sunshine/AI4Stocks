@@ -34,7 +34,9 @@ class Code(str):
 
 
 class Stock:
-    def __init__(self, code: Optional[Code] = None, name: Optional[str] = None):
+    def __init__(self,
+                 code: Optional[Code] = None,
+                 name: Optional[str] = None):
         self._code = code
         self._name = name
 
@@ -67,9 +69,9 @@ class Stock:
         return Stock(code=self._code, name=self._name)
 
     @property
-    def code(self):
+    def code(self) -> Optional[Code]:
         return self._code
 
     @property
-    def name(self):
+    def name(self) -> Optional[str]:
         return self._name

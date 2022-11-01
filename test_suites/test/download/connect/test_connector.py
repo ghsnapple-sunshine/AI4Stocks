@@ -1,9 +1,9 @@
 import unittest
 
-from test.common.base_test import BaseTest
+from test.tester import Tester
 
 
-class TestMysqlConnect(BaseTest):
+class TestConnector(Tester):
     def test_all(self):
         self.__create_table__()
         self.__insert_data__()
