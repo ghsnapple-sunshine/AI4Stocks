@@ -190,7 +190,7 @@ class ReformHandler(TableName):
         month_start = DateTime(start.year, start.month, 1)
 
         dates = []
-        while month_start <= end:
+        while month_start < end:
             month_end = month_start.add(months=1)
             dates.append([start, end, max(month_start, start), min(month_end, end), month_start])
             month_start = month_start.add(months=1)
