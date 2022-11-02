@@ -1,22 +1,15 @@
 import logging
 
-from pandas import DataFrame
-
 from buffett.common.pendelum import DateTime, Duration
-from buffett.constants.col.stock import CODE, NAME
-from buffett.download.fast import StockListHandler as SHandler
 from buffett.task import StockDailyTask, StockMinuteTask
-from test.common import Test
+from test import Tester, create_2stocks
 
 
-class TestDownload(Test):
+class SlowDownloadTest(Tester):
     def setUp(self) -> None:
         super().setUp()
         # 初始化StockList
-        data = [['000001', '平安银行'],
-                ['600000', '浦发银行']]
-        SHandler(operator=self.operator) \
-            ._save_to_database(df=DataFrame(data=data, columns=[CODE, NAME]))
+        create_2stocks(operator=self.operator)
 
     def test_download(self):
         """
