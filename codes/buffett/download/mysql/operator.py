@@ -1,9 +1,9 @@
-from datetime import date, datetime
 from enum import Enum
 from typing import Optional
 
+import numpy as np
 import pandas as pd
-from pandas import DataFrame, Timestamp
+from pandas import DataFrame
 
 from buffett.common.pendelum import DateSpan
 from buffett.common.tools import dataframe_not_valid
@@ -13,14 +13,18 @@ from buffett.download.mysql.connector import Connector
 
 
 def _obj_format(obj):
-    if obj is None:
+    """
+    将对象转换成可被sql插入的格式
+
+    :param obj:             待插入的对象
+    :return:
+    """
+    if pd.isna(obj):
         return 'NULL'
-    # 注意到DateTime类型在DateFrame中被封装为TimeSpan类型
-    if isinstance(obj, (str, date, datetime, Timestamp)):
-        return '\'{0}\''.format(obj)  # 增加引号
     if isinstance(obj, Enum):
-        return obj.value
-    return obj
+        return str(obj.value)
+    # 注意到DateTime类型在DateFrame中被封装为TimeSpan类型
+    return f'\'{obj}\''  # 增加引号
 
 
 class Operator(Connector):
@@ -67,11 +71,11 @@ class Operator(Connector):
         if dataframe_not_valid(df):
             return
 
-        inQ = ['%s'] * df.columns.size
-        inQ = ', '.join(inQ)
-        cols = df.columns
-        cols = ', '.join(cols)
-        sql = "insert into `{0}`({1}) values({2})".format(name, cols, inQ)
+        sql = "insert into `{0}`({1}) values({2})".format(
+            name,
+            ', '.join(df.columns),
+            ', '.join(['%s'] * df.columns.size))
+        df.replace(np.NAN, None, inplace=True)
         vals = df.values.tolist()
         self.execute_many(sql, vals, True)
 
@@ -79,7 +83,7 @@ class Operator(Connector):
                         name: str,
                         df: DataFrame,
                         meta: DataFrame = None,
-                        update: bool = False):
+                        update: bool = False) -> None:
         """
         尝试插入数据到Mysql表
 
@@ -99,15 +103,15 @@ class Operator(Connector):
         sql = "insert ignore into `{0}`({1}) values({2})".format(
             name,
             ', '.join(df.columns),
-            ', '.join(['%s'] * df.columns.size)
-        )
+            ', '.join(['%s'] * df.columns.size))
+        df.replace(np.NAN, None, inplace=True)
         vals = df.values.tolist()
         self.execute_many(sql, vals, True)
 
     def _try_insert_n_update_data(self,
                                   name: str,
                                   df: DataFrame,
-                                  meta: DataFrame):
+                                  meta: DataFrame) -> None:
         """
         尝试插入数据到Mysql表（插入失败则更新）
 

@@ -1,8 +1,11 @@
+import logging
+
 import pandas as pd
 from pandas import DataFrame, Series
+from pymysql import IntegrityError
 
 from buffett.common import create_meta
-from buffett.common.pendelum import Date, DateSpan, convert_datetime, DateTime
+from buffett.common.pendelum import DateSpan, convert_datetime, DateTime
 from buffett.common.tools import dataframe_not_valid, dataframe_is_valid
 from buffett.constants import NAN
 from buffett.constants.col import FREQ, FUQUAN, SOURCE, START_DATE, END_DATE
@@ -18,15 +21,11 @@ from buffett.download.types import CombType
 _ADD_META = create_meta(meta_list=[
     [CODE, ColType.STOCK_CODE, AddReqType.KEY]])
 
-_LS_START = 'ls_start'
-_LS_END = 'ls_end'
+_LS_START, _LS_END = 'ls_start', 'ls_end'
 _MONTH_START = 'month_start'
-_TDLS_START = 'todo_list_start'
-_TDLS_END = 'todo_list_end'
-_DOLS_START = 'done_list_start'
-_DOLS_END = 'done_list_end'
-_TDRCD_START = 'todo_record_start'
-_TDRCD_END = 'todo_record_end'
+_TDLS_START, _TDLS_END = 'todo_list_start', 'todo_list_end'
+_DOLS_START, _DOLS_END = 'done_list_start', 'done_list_end'
+_TDRCD_START, _TDRCD_END = 'todo_record_start', 'todo_record_end'
 
 
 class ReformHandler(TableName):
@@ -37,7 +36,9 @@ class ReformHandler(TableName):
     def __init__(self, operator: Operator):
         self._operator = operator
         self._dl_recorder = DRecorder(operator=operator)
+        self._dl_records = DataFrame()
         self._rf_recorder = RRecorder(operator=operator)
+        self._meta_cache: dict[CombType, DataFrame] = {}
 
     # region 公共方法
     def reform_data(self) -> None:
@@ -56,15 +57,15 @@ class ReformHandler(TableName):
         if dataframe_not_valid(todo_records):
             return
 
+        self._dl_records = dl_records
         todo_list, done_list = ReformHandler._get_todo_list(done_records=done_records,
                                                             todo_records=todo_records)
-        self._create_tables(dl_records=dl_records,
-                            done_list=done_list,
+        self._create_tables(done_list=done_list,
                             todo_list=todo_list)
         comb_list = ReformHandler._get_comb_list(todo_list=todo_list,
                                                  done_list=done_list)
-        comb_list.groupby(by=[CODE, FREQ, SOURCE, FUQUAN, START_DATE, END_DATE]) \
-            .apply(lambda x: self._reform_n_save_date(x))
+        comb_list.groupby(by=[CODE, FREQ, SOURCE, FUQUAN, START_DATE, END_DATE]).apply(
+            lambda x: self._reform_n_save_data(x))
 
         # endregion
 
@@ -109,13 +110,11 @@ class ReformHandler(TableName):
         return todo_list, done_list
 
     def _create_tables(self,
-                       dl_records: DataFrame,
                        done_list: DataFrame,
                        todo_list: DataFrame) -> None:
         """
         根据待下载记录和已下载记录，生成Mysql表
 
-        :param dl_records               下载记录
         :param done_list:               待转换记录
         :param todo_list:               已转换记录
         :return:                        None
@@ -125,19 +124,29 @@ class ReformHandler(TableName):
             done_tables = done_list[[FREQ, SOURCE, FUQUAN, _LS_START, _LS_END]].drop_duplicates()
             todo_tables = pd.concat([todo_tables, done_tables, done_tables]).drop_duplicates(keep=False)
 
-        meta_cache: dict[CombType, DataFrame] = {}
         for index, row in todo_tables.iterrows():
             para = Para().with_freq(row[FREQ]) \
                 .with_source(row[SOURCE]) \
                 .with_fuquan(row[FUQUAN]) \
                 .with_start_n_end(start=row[_LS_START], end=row[_LS_END])
             table_name = ReformHandler._get_table_name_by_date(para=para)
-            if para.comb in meta_cache.keys():
-                meta = meta_cache[para.comb]
-            else:
-                meta = self._create_meta(dl_records=dl_records, para=para)
-                meta_cache[para.comb] = meta
+            meta = self._get_meta_cache(para=para)
             self._operator.create_table(name=table_name, meta=meta)
+
+    def _get_meta_cache(self,
+                        para: Para) -> DataFrame:
+        """
+        获取表格元数据
+
+        :param para:            freq, source, fuquan
+        :return:
+        """
+        if para.comb in self._meta_cache.keys():
+            meta = self._meta_cache[para.comb]
+        else:
+            meta = self._create_meta(para=para)
+            self._meta_cache[para.comb] = meta
+        return meta
 
     @classmethod
     def _split_record(cls, records: DataFrame) -> DataFrame:
@@ -149,14 +158,13 @@ class ReformHandler(TableName):
         """
         spans = records[[START_DATE, END_DATE]].drop_duplicates()
         ls = pd.concat([ReformHandler._create_date_series(row) for index, row in spans.iterrows()])
-        ls = pd.merge(records, ls, how='cross', suffixes=('', '_r'))
-        del ls[START_DATE + '_r'], ls[END_DATE + '_r']
+        ls = pd.merge(records, ls, how='left')
         return ls
 
     @classmethod
     def _get_comb_list(cls,
                        todo_list: DataFrame,
-                       done_list: DataFrame):
+                       done_list: DataFrame) -> DataFrame:
         """
         将todo_list, todo_record, done_list进行拼接
 
@@ -197,16 +205,15 @@ class ReformHandler(TableName):
         return DataFrame(dates, columns=[START_DATE, END_DATE, _LS_START, _LS_END, _MONTH_START])
 
     def _create_meta(self,
-                     dl_records: DataFrame,
                      para: Para) -> DataFrame:
         """
         按照原表的结构创建Meta
 
-        :param dl_records:              下载记录
         :param para:                    freq, source, fuquan
         :return:                        meta
         """
         para = para.clone()
+        dl_records = self._dl_records
         record = dl_records[(dl_records[FREQ] == para.comb.freq) &
                             (dl_records[SOURCE] == para.comb.source) &
                             (dl_records[FUQUAN] == para.comb.fuquan)].iloc[0, :]
@@ -216,11 +223,16 @@ class ReformHandler(TableName):
         meta = pd.concat([meta, _ADD_META])
         return meta
 
-    def _reform_n_save_date(self, group: DataFrame) -> None:
+    def _reform_n_save_data(self, group: DataFrame) -> None:
         for index, row in group.iterrows():
             self._get_n_reform_data(row)
         df = group[[CODE, FREQ, SOURCE, FUQUAN, START_DATE, END_DATE]].head(1)
         self._rf_recorder.save_to_database(df=df)
+        """
+        ser = df.iloc[0]
+        logging.info('Successfully convert stock {0} {1} {2} ({3}, {4})'.format(
+            ser[FREQ], ser[CODE], ser[FUQUAN], ser[START_DATE], ser[END_DATE]))
+        """
 
     def _get_n_reform_data(self, row: Series) -> None:
         """
@@ -241,6 +253,11 @@ class ReformHandler(TableName):
         else:
             done_dt = DateSpan(start=row[_DOLS_START], end=row[_DOLS_END])
             todo_ls = todo_dt.subtract(done_dt)
+            logging.info('Should convert stock {0} {1} {2} {3}'.format(
+                para.comb.fuquan,
+                para.stock.code,
+                para.comb.fuquan,
+                todo_ls))
         for dt in todo_ls:
             para.with_span(span=dt)
             self._get_n_reform_cut(para=para, table_name_by_code=table_name_by_code)
@@ -261,6 +278,21 @@ class ReformHandler(TableName):
 
         data[CODE] = para.stock.code  # 增加code列
         table_name_by_date = ReformHandler._get_table_name_by_date(para=para)
-        self._operator.insert_data(name=table_name_by_date, df=data)
 
+        try:
+            self._operator.insert_data(name=table_name_by_date, df=data)
+        except IntegrityError as e:
+            """
+            logging.warning('Direct insert {0} {1} {2} {3} failed, use try insert mode.'.format(
+                para.comb.freq,
+                para.stock.code,
+                para.comb.fuquan,
+                para.span))
+            """
+            logging.warning(e)
+            if e.args[0] == 1062:
+                meta = self._get_meta_cache(para=para)
+                self._operator.try_insert_data(name=table_name_by_date, df=data, meta=meta)
+            else:
+                raise e
     # endregion

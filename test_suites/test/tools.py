@@ -13,7 +13,6 @@ def create_1stock(operator: Operator) -> DataFrame:
     :param operator:
     :return:
     """
-    operator.drop_table(STK_LS)
     cols = [
         ['code', ColType.STOCK_CODE, AddReqType.KEY],
         ['name', ColType.STOCK_NAME, AddReqType.NONE]

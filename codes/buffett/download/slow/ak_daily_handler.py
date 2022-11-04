@@ -2,7 +2,6 @@ import akshare as ak
 from pandas import DataFrame
 
 from buffett.common import create_meta
-from buffett.common.pendelum import Duration
 from buffett.common.tools import dataframe_not_valid
 from buffett.constants.col import DATE, OPEN, CLOSE, HIGH, LOW, CJL, CJE, ZF, ZDF, ZDE, HSL
 from buffett.download import Para

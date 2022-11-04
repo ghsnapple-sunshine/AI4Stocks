@@ -1,12 +1,10 @@
 from __future__ import annotations
 
 from datetime import date
-from typing import Optional, Union
-
-from pandas import Timestamp
+from typing import Optional
 
 from buffett.common import Code
-from buffett.common.pendelum import DateSpan, Date, DateTime
+from buffett.common.pendelum import DateSpan
 from buffett.common.stock import Stock
 from buffett.download.types import HeadType, CombType, FuquanType, FreqType, SourceType
 

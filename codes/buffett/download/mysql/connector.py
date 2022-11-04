@@ -95,5 +95,5 @@ class Connector:
                 print(vals[row - 1: row + 1])
             raise e
         except DatabaseError as e:
-            print(sql)
+            # print(sql)
             raise e

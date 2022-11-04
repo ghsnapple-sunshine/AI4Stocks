@@ -28,7 +28,7 @@ class DateSpan:
         if start is None and end is None:
             raise ValueError("param 'start' and 'end' cannot be None at the mean time.")
         elif is_start_date and is_end_date and start >= end:
-            raise ValueError("Invalid datespan when 'start' later than or equals 'end'")
+            raise ValueError(f"Invalid datespan when 'start:{start}' later than or equals 'end:{end}'")
 
         self._start = convert_date(start)
         self._end = convert_date(end)

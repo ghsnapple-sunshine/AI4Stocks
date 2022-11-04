@@ -18,8 +18,7 @@ class TaskScheduler:
             now = DateTime.now()
             if now < tasks[0].start_time:
                 delay = tasks[0].start_time - now
-                logging.info('{0}>>>Next task will be executed in {1}(Start at: {2})'.format(
-                    now.format('YYYY-MM-DD HH:mm'),
+                logging.info('Next task will be executed in {0}(Start at: {1})'.format(
                     delay.in_words(),
                     tasks[0].start_time.format('YYYY-MM-DD HH:mm')))
 

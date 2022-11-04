@@ -3,7 +3,7 @@ import traceback
 from abc import abstractmethod
 
 from buffett.common.pendelum import Duration, DateTime
-from buffett.task import Task
+from buffett.task.task import Task
 
 
 class DownloadTask(Task):
