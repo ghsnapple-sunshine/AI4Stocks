@@ -22,9 +22,9 @@ class DateSpan:
         is_start_date = isinstance(start, date)
         is_end_date = isinstance(end, date)
         if not is_start_date and start is not None:
-            raise ParamTypeError('start', Union[date, None])
+            raise ParamTypeError('start', Optional[date])
         if not is_end_date and end is not None:
-            raise ParamTypeError('end', Union[date, None])
+            raise ParamTypeError('end', Optional[date])
         if start is None and end is None:
             raise ValueError("param 'start' and 'end' cannot be None at the mean time.")
         elif is_start_date and is_end_date and start >= end:
@@ -65,15 +65,15 @@ class DateSpan:
             self._end = convert_date(end)
         return self
 
-    def is_in_span(self, date: Date) -> bool:
+    def is_in_span(self, dt: Date) -> bool:
         """
         判断日期是否在span内
 
-        :param date:            日期
+        :param dt:            日期
         :return:                是否在span内
         """
-        condition1 = True if self._start is None else self._start <= date
-        condition2 = True if self._start is None else date < self._start
+        condition1 = True if self._start is None else self._start <= dt
+        condition2 = True if self._end is None else dt < self._end
         return condition1 and condition2
 
     def is_cross(self, other: DateSpan) -> bool:
@@ -109,6 +109,12 @@ class DateSpan:
                 DateSpan(start=other.end, end=self._end)]
 
     def add(self, other: DateSpan) -> DateSpan:
+        """
+        求两个dataspan的交集
+
+        :param other:
+        :return:
+        """
         if (other.end >= self._start) == (other.start <= self._end):
             return DateSpan(min(self._start, other.start), max(self._end, other.end))
         raise ValueError('self and other is separated and cannot be added.')
