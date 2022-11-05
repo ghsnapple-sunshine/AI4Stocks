@@ -50,10 +50,7 @@ class DateSpan:
         :return:                Self
         """
         if condition:
-            if isinstance(start, Date):
-                self._start = start
-            else:
-                raise ValueError('\'start\' is required as a Date object.')
+            self._start = convert_date(start)
         return self
 
     def with_end(self, end: Optional[date], condition: bool = True) -> DateSpan:
@@ -65,10 +62,7 @@ class DateSpan:
         :return:                Self
         """
         if condition:
-            if isinstance(end, Date):
-                self._end = end
-            else:
-                raise ValueError('\'end\' is required as a Date object.')
+            self._end = convert_date(end)
         return self
 
     def is_in_span(self, date: Date) -> bool:
