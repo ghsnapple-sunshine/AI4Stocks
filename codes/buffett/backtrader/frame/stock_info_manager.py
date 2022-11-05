@@ -16,7 +16,7 @@ from buffett.download.types import FuquanType, HeadType
 
 def _create_stock_info(code: Code,
                        cols: list[HeadType],
-                       sources: dict[Handler, list[HeadType]],
+                       sources: dict[Type[Handler], list[HeadType]],
                        datespan: DateSpan,
                        calendar: DataFrame,
                        operator: Operator,
@@ -34,22 +34,22 @@ def _create_stock_info(code: Code,
     :return:            一个StockInfo
     """
     info: dict[HeadType, Column] = {}
-    data = __fetch__(code=code,
-                     sources=sources,
-                     datespan=datespan,
-                     calendar=calendar,
-                     operator=operator)
+    data = _fetch(code=code,
+                  sources=sources,
+                  datespan=datespan,
+                  calendar=calendar,
+                  operator=operator)
     for ctype in cols:
         info[ctype] = Column(data=list(data[str(ctype)]),
                              clock=clock)
     return StockInfo(data=info)
 
 
-def __fetch__(code: Code,
-              sources: dict[Handler, list[HeadType]],
-              datespan: DateSpan,
-              calendar: DataFrame,
-              operator: Operator) -> DataFrame:
+def _fetch(code: Code,
+           sources: dict[Type[Handler], list[HeadType]],
+           datespan: DateSpan,
+           calendar: DataFrame,
+           operator: Operator) -> DataFrame:
     """
     查询某支股票的历史行情数据
 
@@ -62,7 +62,7 @@ def __fetch__(code: Code,
     """
     base = calendar.copy(deep=True)
     for Hdl, cols in sources.items():
-        data = Hdl(operator=operator).get_data(
+        data = Hdl(operator=operator).select_data(
             para=Para().with_code(code).with_fuquan(FuquanType.BFQ).with_span(datespan))
         base = base.join(data)
     return base
@@ -164,7 +164,7 @@ class StockInfoManagerBuilder:
             datespan: DateSpan,
             clock: Clock
     ):
-        cols, sources = StockInfoManagerBuilder.__group_handler__(add_cols=add_cols)
+        cols, sources = StockInfoManagerBuilder._group_handler(add_cols=add_cols)
         infos = self.__create_stock_infos__(cols=cols,
                                             sources=sources,
                                             calendar=calendar,
@@ -179,9 +179,8 @@ class StockInfoManagerBuilder:
         return self.item
 
     @staticmethod
-    def __group_handler__(
-            add_cols: dict[HeadType, Type[Handler]]
-    ) -> tuple[list[HeadType], dict[Handler, list[HeadType]]]:
+    def _group_handler(add_cols: dict[HeadType, Type[Handler]]
+                       ) -> tuple[list[HeadType], dict[Type[Handler], list[HeadType]]]:
         """
         基于基础列和策略指定的额外列，对数据源进行分类
 
@@ -195,9 +194,8 @@ class StockInfoManagerBuilder:
             HeadType.CLOSE: DHandler,
             HeadType.CJL: DHandler
         }
-        sources: dict[Handler, list[HeadType]] = {
-            DHandler: [HeadType.OPEN, HeadType.CLOSE, HeadType.HIGH, HeadType.LOW, HeadType.CJL]
-        }
+        sources: dict[Type[Handler], list[HeadType]] = {
+            DHandler: [HeadType.OPEN, HeadType.CLOSE, HeadType.HIGH, HeadType.LOW, HeadType.CJL]}
         for ctype, Thdl in add_cols.items():
             cols[ctype] = Thdl
             if Thdl in cols.keys:
@@ -209,7 +207,7 @@ class StockInfoManagerBuilder:
     def __create_stock_infos__(
             self,
             cols: list[HeadType],
-            sources: dict[Handler, list[HeadType]],
+            sources: dict[Type[Handler], list[HeadType]],
             datespan: DateSpan,
             calendar: DataFrame,
             operator: Operator,
