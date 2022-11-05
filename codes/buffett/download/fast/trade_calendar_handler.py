@@ -9,7 +9,8 @@ from buffett.constants.col import DATE
 from buffett.constants.table import TRA_CAL
 from buffett.download import Para
 from buffett.download.fast.handler import FastHandler
-from buffett.download.mysql import ColType, AddReqType, Operator as Operator
+from buffett.download.mysql import Operator
+from buffett.download.mysql.types import ColType, AddReqType
 
 _RENAME_DICT = {'calendar_date': DATE}
 
@@ -54,8 +55,7 @@ class TradeCalendarHandler(FastHandler):
         self._operator.try_insert_data(name=TRA_CAL, df=df)  # 忽略重复Insert
         self._operator.disconnect()
 
-    def get_data(self, para: Para = None) -> DataFrame:
-        df = self._operator.get_data(TRA_CAL)
-        # df[DATE] = df[DATE].apply(lambda x: to_my_date(x))
+    def select_data(self, para: Para = None) -> DataFrame:
+        df = self._operator.select_data(TRA_CAL)
         df.index = df[DATE]
         return df

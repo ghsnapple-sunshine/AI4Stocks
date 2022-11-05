@@ -5,3 +5,4 @@ from buffett.download.slow.bs_minute_handler import BsMinuteHandler
 from buffett.download.slow.recorder import DownloadRecorder
 from buffett.download.slow.rf_handler import ReformHandler
 from buffett.download.slow.rf_recorder import ReformRecorder
+from buffett.download.slow.table_name import TableName

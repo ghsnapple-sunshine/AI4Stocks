@@ -12,7 +12,7 @@ class TestDbSweeper(Tester):
     def test_sweep(self):
         self._create_table()
         DbSweeper.cleanup()
-        data = self.operator.get_data(STK_LS)
+        data = self.operator.select_data(STK_LS)
         assert data.empty
 
     def _create_table(self):

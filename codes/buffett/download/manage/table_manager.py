@@ -2,7 +2,8 @@ from pandas import DataFrame
 
 from buffett.common.tools import dataframe_not_valid
 from buffett.constants.meta import COLUMN, TYPE, ADDREQ
-from buffett.download.mysql import Operator, RoleType, ColType, AddReqType
+from buffett.download.mysql import Operator
+from buffett.download.mysql.types import RoleType, ColType, AddReqType
 
 
 class TableManager:

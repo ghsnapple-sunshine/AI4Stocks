@@ -13,5 +13,5 @@ class Handler:
         pass
 
     @abstractmethod
-    def get_data(self, para: Para):
+    def select_data(self, para: Para):
         pass

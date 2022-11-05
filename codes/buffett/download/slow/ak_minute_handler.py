@@ -3,9 +3,11 @@ from pandas import DataFrame
 
 from buffett.common import create_meta
 from buffett.common.pendelum import convert_datetime
+from buffett.common.tools import dataframe_not_valid
 from buffett.constants.col import DATETIME, OPEN, CLOSE, HIGH, LOW, CJL, CJE, ZF, ZDF, ZDE, HSL
 from buffett.download import Para
-from buffett.download.mysql import ColType, AddReqType, Operator
+from buffett.download.mysql import Operator
+from buffett.download.mysql.types import ColType, AddReqType
 from buffett.download.slow.handler import SlowHandler
 from buffett.download.types import SourceType, FuquanType, FreqType
 
@@ -66,17 +68,17 @@ class AkMinuteHandler(SlowHandler):
         self._operator.create_table(name=table_name, meta=_META)
         self._operator.insert_data(name=table_name, df=df)
 
-    def get_data(self, para: Para) -> DataFrame:
+    def select_data(self, para: Para) -> DataFrame:
         """
         查询某支股票以某种复权方式的全部数据
 
         :param para:        code, fuquan
         :return:
         """
-        spara = para.clone().with_source(self._source).with_freq(self._freq)
-        table_name = AkMinuteHandler._get_table_name_by_code(para=spara)
-        df = self._operator.get_data(table_name)
-        if (not isinstance(df, DataFrame)) or df.empty:
+        para = para.clone().with_source(self._source).with_freq(self._freq)
+        table_name = AkMinuteHandler._get_table_name_by_code(para=para)
+        df = self._operator.select_data(table_name)
+        if dataframe_not_valid(df):
             return DataFrame()
 
         df.index = df[DATETIME]

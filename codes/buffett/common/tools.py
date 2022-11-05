@@ -1,7 +1,7 @@
 import numpy as np
 from pandas import DataFrame
 
-from buffett.common.pendelum import DateTime, Duration
+from buffett.common.pendelum import DateTime, Duration, DateSpan
 from buffett.constants.meta import META_COLS
 
 
@@ -28,3 +28,19 @@ def dataframe_is_valid(df: DataFrame) -> bool:
 
 def dataframe_not_valid(df: DataFrame) -> bool:
     return not isinstance(df, DataFrame) or df.empty
+
+
+def span_is_valid(span: DateSpan) -> bool:
+    return isinstance(span, DateSpan)
+
+
+def span_not_valid(span: DateSpan) -> bool:
+    return not isinstance(span, DateSpan)
+
+
+def list_not_valid(ls: list) -> bool:
+    return not (isinstance(ls, list) and len(ls) > 0)
+
+
+def list_is_valid(ls: list) -> bool:
+    return isinstance(ls, list) and len(ls) > 0

@@ -6,7 +6,8 @@ from buffett.constants.col import FREQ, FUQUAN, SOURCE, START_DATE, END_DATE
 from buffett.constants.col.stock import CODE
 from buffett.constants.table import DL_RCD
 from buffett.download import Para
-from buffett.download.mysql import AddReqType, ColType, Operator
+from buffett.download.mysql import Operator
+from buffett.download.mysql.types import ColType, AddReqType
 from buffett.download.types import FreqType, FuquanType, SourceType
 
 _META = create_meta(meta_list=[
@@ -39,7 +40,7 @@ class DownloadRecorder:
         self._operator.try_insert_data(DL_RCD, data, _META, update=True)  # 如果原纪录已存在，则更新
 
     def get_data(self) -> DataFrame:
-        df = self._operator.get_data(DL_RCD)
+        df = self._operator.select_data(DL_RCD)
         if (not isinstance(df, DataFrame)) or df.empty:
             return DataFrame()
 

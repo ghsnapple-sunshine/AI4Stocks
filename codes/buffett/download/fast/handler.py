@@ -19,7 +19,7 @@ class FastHandler(Handler):
         return df
 
     @abstractmethod
-    def get_data(self, para: Para = None) -> DataFrame:
+    def select_data(self, para: Para = None) -> DataFrame:
         pass
 
     # endregion

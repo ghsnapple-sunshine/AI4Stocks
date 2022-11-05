@@ -1,5 +1,6 @@
 # 仅用于测试环境
-from buffett.download.mysql import RoleType, Operator
+from buffett.download.mysql import Operator
+from buffett.download.mysql.types import RoleType
 
 
 class DbSweeper:

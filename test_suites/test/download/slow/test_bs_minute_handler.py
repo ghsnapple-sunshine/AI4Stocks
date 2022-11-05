@@ -41,7 +41,7 @@ class BsStockMinuteHandlerTest(Tester):
                                        end=DateTime(year=2022, month=9, day=30, hour=17))
         hdl.obtain_data(para=para)
         para = Para().with_code(Code('000795')).with_fuquan(FuquanType.BFQ)
-        data = hdl.get_data(para=para)
+        data = hdl.select_data(para=para)
         assert convert_date(data.index.max()) == DateTime(year=2022, month=9, day=30, hour=15)
 
     def test_download_in_a_day2(self) -> None:
@@ -53,7 +53,7 @@ class BsStockMinuteHandlerTest(Tester):
                                        end=DateTime(year=2022, month=9, day=30, hour=18))
         hdl.obtain_data(para=para)
         para = Para().with_code(Code('000795')).with_fuquan(FuquanType.BFQ)
-        data = hdl.get_data(para=para)
+        data = hdl.select_data(para=para)
         assert data.empty
 
     def test_download_in_a_day3(self) -> None:

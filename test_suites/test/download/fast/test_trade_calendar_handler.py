@@ -9,7 +9,7 @@ class TradeCalendarHandlerTest(Tester):
         hdl = TradeCalendarHandler(operator=self.operator)
         tbl = hdl._download()
         hdl._save_to_database(tbl)
-        db = hdl.get_data()
+        db = hdl.select_data()
         assert tbl.shape[0] == db.shape[0]
 
 

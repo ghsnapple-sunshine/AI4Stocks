@@ -12,7 +12,8 @@ from buffett.constants import NAN
 from buffett.constants.col import FREQ, FUQUAN, SOURCE, START_DATE, END_DATE, DATE, DATETIME
 from buffett.constants.col.stock import CODE
 from buffett.download.manage.table_manager import TableManager
-from buffett.download.mysql import Operator, ColType, AddReqType
+from buffett.download.mysql import Operator
+from buffett.download.mysql.types import ColType, AddReqType
 from buffett.download.para import Para
 from buffett.download.slow.recorder import DownloadRecorder as DRecorder
 from buffett.download.slow.rf_recorder import ReformRecorder as RRecorder
@@ -246,7 +247,7 @@ class ReformHandler(TableName):
         else:
             done_span = DateSpan(start=row[_DORCD_START], end=row[_DORCD_END])
             todo_ls = todo_span.subtract(done_span)
-        data = pd.concat([self._operator.get_data(name=table_name_by_code, span=span)
+        data = pd.concat([self._operator.select_data(name=table_name_by_code, span=span)
                           for span in todo_ls])
         data[CODE] = para.stock.code
         return data

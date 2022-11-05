@@ -40,9 +40,9 @@ class ReformHandlerTest(Tester):
         RHandler(operator=self.operator).reform_data()
         # 3. 比较结果
         dl_table_names = dl_table_names if isinstance(dl_table_names, list) else [dl_table_names]
-        dl_data = np.sum([self.operator.get_row_num(x) for x in dl_table_names])
+        dl_data = np.sum([self.operator.select_row_num(x) for x in dl_table_names])
         rf_table_names = rf_table_names if isinstance(rf_table_names, list) else [rf_table_names]
-        rf_data = np.sum([self.operator.get_row_num(x) for x in rf_table_names])
+        rf_data = np.sum([self.operator.select_row_num(x) for x in rf_table_names])
         assert dl_data == rf_data
         dl_record = DRecorder(operator=self.operator).get_data()
         rf_record = RRecorder(operator=self.operator).get_data()

@@ -6,7 +6,8 @@ from buffett.constants.col import DATETIME, OPEN, CLOSE, HIGH, LOW, CJL, CJE, ZF
 from buffett.constants.table import STK_RT
 from buffett.download import Para
 from buffett.download.fast.handler import FastHandler
-from buffett.download.mysql import ColType, AddReqType, Operator
+from buffett.download.mysql import Operator
+from buffett.download.mysql.types import ColType, AddReqType
 
 _META = create_meta(meta_list=[
     [DATETIME, ColType.DATETIME, AddReqType.KEY],
@@ -40,8 +41,8 @@ class StockCurrHandler(FastHandler):
         self._operator.try_insert_data(name=STK_RT, df=df)
         self._operator.disconnect()
 
-    def get_data(self, para: Para = None) -> DataFrame:
-        df = self._operator.get_data(STK_RT)
+    def select_data(self, para: Para = None) -> DataFrame:
+        df = self._operator.select_data(STK_RT)
         if (not isinstance(df, DataFrame)) or df.empty:
             return DataFrame()
 

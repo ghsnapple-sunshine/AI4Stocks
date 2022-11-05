@@ -37,7 +37,7 @@ class SlowHandler(Handler, TableName):
             .with_source(self._source) \
             .with_freq(self._freq)
 
-        stocks = SHandler(self._operator).get_data()
+        stocks = SHandler(self._operator).select_data()
         records = self._recorder.get_data()
         # 遍历股票清单和复权方式
         tbs = []
@@ -62,7 +62,7 @@ class SlowHandler(Handler, TableName):
         return tbs
 
     @abstractmethod
-    def get_data(self, para: Para) -> DataFrame:
+    def select_data(self, para: Para) -> DataFrame:
         pass
 
     # endregion

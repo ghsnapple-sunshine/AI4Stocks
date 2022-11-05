@@ -5,7 +5,8 @@ from buffett.common import create_meta
 from buffett.common.pendelum import convert_datetime
 from buffett.constants.col import DATETIME, OPEN, CLOSE, HIGH, LOW, CJL, CJE
 from buffett.download import Para
-from buffett.download.mysql import ColType, AddReqType, Operator
+from buffett.download.mysql import Operator
+from buffett.download.mysql.types import ColType, AddReqType
 from buffett.download.slow.handler import SlowHandler
 from buffett.download.slow.table_name import TableName
 from buffett.download.tools.tools import bs_result_to_dataframe, bs_str_to_datetime, bs_check_float, bs_check_int
@@ -72,7 +73,7 @@ class BsMinuteHandler(SlowHandler, TableName):
         self._operator.create_table(name=table_name, meta=_META)
         self._operator.insert_data(table_name, df)
 
-    def get_data(self, para: Para) -> DataFrame:
+    def select_data(self, para: Para) -> DataFrame:
         """
         查询某支股票以某种复权方式的全部数据
 
@@ -81,7 +82,7 @@ class BsMinuteHandler(SlowHandler, TableName):
         """
         spara = para.clone().with_source(self._source).with_freq(self._freq)
         table_name = BsMinuteHandler._get_table_name_by_code(para=spara)
-        df = self._operator.get_data(table_name)
+        df = self._operator.select_data(table_name)
         if (not isinstance(df, DataFrame)) or df.empty:
             return DataFrame()
 

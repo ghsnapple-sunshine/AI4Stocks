@@ -7,7 +7,8 @@ from buffett.constants.col.stock import CODE, NAME
 from buffett.constants.table import STK_LS
 from buffett.download import Para
 from buffett.download.fast.handler import FastHandler
-from buffett.download.mysql import Operator, ColType, AddReqType
+from buffett.download.mysql import Operator
+from buffett.download.mysql.types import ColType, AddReqType
 
 _META = create_meta(meta_list=[
     [CODE, ColType.STOCK_CODE, AddReqType.KEY],
@@ -32,8 +33,8 @@ class StockListHandler(FastHandler):
         self._operator.try_insert_data(name=STK_LS, df=df)  # 忽略重复Insert
         self._operator.disconnect()
 
-    def get_data(self, para: Para = None) -> DataFrame:
-        df = self._operator.get_data(STK_LS)
+    def select_data(self, para: Para = None) -> DataFrame:
+        df = self._operator.select_data(STK_LS)
         if (not isinstance(df, DataFrame)) or df.empty:
             return DataFrame()
 

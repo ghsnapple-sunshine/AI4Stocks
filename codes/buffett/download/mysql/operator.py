@@ -1,15 +1,18 @@
+from datetime import date
 from enum import Enum
-from typing import Optional
+from typing import Optional, Union
 
 import numpy as np
 import pandas as pd
 from pandas import DataFrame
 
 from buffett.common.pendelum import DateSpan
-from buffett.common.tools import dataframe_not_valid
+from buffett.common.tools import dataframe_not_valid, list_not_valid
 from buffett.constants.col import DATE, DATETIME
+from buffett.constants.dbcol import FIELD
 from buffett.constants.meta import COLUMN, TYPE, ADDREQ
 from buffett.download.mysql.connector import Connector
+from buffett.download.mysql.reqcol import ReqCol
 
 
 def _obj_format(obj):
@@ -23,8 +26,9 @@ def _obj_format(obj):
         return 'NULL'
     if isinstance(obj, Enum):
         return str(obj.value)
-    # 注意到DateTime类型在DateFrame中被封装为TimeSpan类型
-    return f'\'{obj}\''  # 增加引号
+    if isinstance(obj, date):
+        return str(obj)
+    return obj
 
 
 class Operator(Connector):
@@ -40,13 +44,15 @@ class Operator(Connector):
         :param if_not_exist:        检查表是否存在，不存在则创建
         :return:
         """
+        """
         cols = []
         for index, row in meta.iterrows():
             s = '{0} {1} {2}'.format(row[COLUMN], row[TYPE].sql_format(), row[ADDREQ].sql_format())
             cols.append(s)
-
-        is_key = meta[ADDREQ].apply(lambda x: x.is_key())
-        prim_key = meta[is_key][COLUMN]
+        """
+        cols = [f'{row[COLUMN]} {row[TYPE].sql_format()} {row[ADDREQ].sql_format()}'
+                for index, row in meta.iterrows()]
+        prim_key = meta[meta[ADDREQ].apply(lambda x: x.is_key())][COLUMN]
 
         if not prim_key.empty:
             apd = ','.join(prim_key)
@@ -97,7 +103,7 @@ class Operator(Connector):
             return
 
         if update:
-            self._try_insert_n_update_data(name=name, df=df, meta=meta)
+            self._try_insert_n_update_data_ex(name=name, df=df, meta=meta)
             return
 
         sql = "insert ignore into `{0}`({1}) values({2})".format(
@@ -122,7 +128,7 @@ class Operator(Connector):
         """
         normal_cols = meta[ADDREQ].apply(lambda x: x.not_key())
         normal_cols = meta[normal_cols][COLUMN]
-        inQ2 = [x + '=%s' for x in normal_cols]
+        inQ2 = [f'{x}=%s' for x in normal_cols]
 
         sql = "insert into `{0}`({1}) values({2}) on duplicate key update {3}".format(
             name,
@@ -136,6 +142,31 @@ class Operator(Connector):
             self.execute(sql2)
         self.conn.commit()
 
+    def _try_insert_n_update_data_ex(self,
+                                     name: str,
+                                     df: DataFrame,
+                                     meta: DataFrame) -> None:
+        """
+        尝试插入数据到Mysql表（插入失败则更新）(性能优化版）
+
+        :param name:                表名
+        :param df:                  数据
+        :param meta:                表元数据
+        :return:
+        """
+        normal_cols = meta[ADDREQ].apply(lambda x: x.not_key())
+        normal_cols = meta[normal_cols][COLUMN]
+        inQ2 = [f'{x}=values({x})' for x in normal_cols]
+
+        sql = "insert into `{0}`({1}) values({2}) on duplicate key update {3}".format(
+            name,
+            ', '.join([str(x) for x in df.columns]),  # 避免data.columns中有非str类型导致报错
+            ', '.join(['%s'] * df.columns.size),
+            ', '.join(inQ2))
+        df = df.apply(lambda row: row.apply(lambda obj: _obj_format(obj)))
+        vals = df.values.tolist()
+        self.execute_many(sql, vals, True)
+
     def drop_table(self, name: str):
         """
         在Mysql中删除表
@@ -146,41 +177,98 @@ class Operator(Connector):
         sql = f"drop table if exists `{name}`"
         self.execute(sql)
 
-    def get_row_num(self, name: str) -> int:
+    def select_row_num(self,
+                       name: str,
+                       span: Optional[DateSpan] = None,
+                       groupby: Optional[list[str]] = None) -> Union[int, DataFrame]:
         """
-        获取表格的行数
+        查询表格的行数
 
         :param name:            表名
+        :param span:            时间范围
+        :param groupby:         聚合条件
         :return:                表格行数
         """
-        sql = f"select count(*) from `{name}`"
+        groupby = [] if groupby is None else [ReqCol(x) for x in groupby]
+        sql = self._assemble_sql(name, [ReqCol.ROW_NUM()], span, groupby)
         res = self.execute(sql, fetch=True)
-        return 0 if dataframe_not_valid(res) else res.iloc[0, 0]
+        if list_not_valid(groupby):
+            return 0 if dataframe_not_valid(res) else res.iloc[0, 0]
+        return res
 
-    def get_data(self,
-                 name: str,
-                 span: DateSpan = None) -> Optional[DataFrame]:
+    def select_data(self,
+                    name: str,
+                    span: Optional[DateSpan] = None) -> Optional[DataFrame]:
         """
-        按照条件查询表格数据
+        查询表格的数据
 
         :param name:            表名
-        :param span:            时间条件
+        :param span:            时间范围
+        :return:                表格行数
+        """
+        groupby = []
+        sql = self._assemble_sql(name, [ReqCol.ALL()], span, groupby)
+        res = self.execute(sql, fetch=True)
+        return res
+
+    def _assemble_sql(self,
+                      name,
+                      cols: list[ReqCol],
+                      span: DateSpan,
+                      groupby: list[ReqCol]):
+        """
+        组装sql语句for select
+
+        :param name:            表名
+        :param cols:            列名
+        :param span:            时间区间
+        :param groupby:         分组
+        :return:
+        """
+        cols.extend(groupby)
+        cols_str = ','.join([x.sql_format() for x in cols])
+        where_str = self._span_ext(name, span)
+        groupby_str = self._groupby_ext(groupby)
+        sql = f"select {cols_str} from `{name}` {where_str} {groupby_str}"
+        return sql
+
+    def _span_ext(self,
+                  name: str,
+                  span: Optional[DateSpan]) -> str:
+        """
+        扩展sql: where
+
+        :param name:            表名
+        :param span:            时间区间
         :return:
         """
         if span is None:
-            sql = f"select * from `{name}`"
-            res = self.execute(sql, fetch=True)
-            return res
-        elif isinstance(span, DateSpan):
-            sql = f"select * from `{name}` limit 0,1"
-            res = self.execute(sql, fetch=True)
-            if dataframe_not_valid(res):
-                return res
+            return ''
 
-            key = DATE if any([x == DATE for x in res.columns]) else DATETIME
-            sql = f"select * from `{name}` where `{key}` >= '{span.start.format('YYYY-MM-DD')}' " \
-                  f"and `{key}` < '{span.end.format('YYYY-MM-DD')}'"
-            res = self.execute(sql, fetch=True)
-            return res
-        else:
-            return
+        sql = f"desc `{name}`"
+        res = self.execute(sql, fetch=True)
+        key = DATE if DATE in res[FIELD].values else DATETIME
+        start_valid = span.start is not None
+        end_valid = span.end is not None
+        if start_valid and end_valid:
+            return f"where `{key}` >= '{span.start}' and `{key}` < '{span.end}'"
+        elif start_valid:
+            return f"where `{key}` >= '{span.start}'"
+        elif end_valid:
+            return f"where `{key}` < '{span.end}'"
+        return ''
+
+    def _groupby_ext(self,
+                     groupby: list[ReqCol]):
+        """
+        扩展sql：groupby
+
+        :param groupby:         需要groupby的列
+        :return:
+        """
+        if len(groupby) == 0:
+            return ''
+
+        sql = ','.join([x.simple_format() for x in groupby])
+        sql = f'group by {sql}'
+        return sql
