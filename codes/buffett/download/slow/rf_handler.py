@@ -75,10 +75,10 @@ class ReformHandler(TableName):
         todo_records = self._dl_recorder.get_data()
         if dataframe_not_valid(todo_records):
             return
-        todo_records = todo_records.drop_duplicates()
+        # todo_records = todo_records.drop_duplicates()
         done_records = self._rf_recorder.get_data()
         if dataframe_is_valid(done_records):
-            self._done_records = done_records.drop_duplicates()
+            # self._done_records = done_records.drop_duplicates()
             todo_records = pd.concat([todo_records, self._done_records, self._done_records]).drop_duplicates(keep=False)
         self._todo_records = todo_records
 
