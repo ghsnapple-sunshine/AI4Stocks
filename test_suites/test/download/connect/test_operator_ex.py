@@ -44,15 +44,29 @@ class TestOperatorEx(Tester):
     def test_select_with_span(self):
         span = DateSpan(start=Date(2022, 1, 1), end=Date(2022, 1, 4))
         db = self.operator.select_data(name=self.table_name, span=span)
-        df = self.df[self.df[DATETIME].apply(lambda x: span.is_in_span(x))]
+        df = self.df[self.df[DATETIME].apply(lambda x: span.is_inside(x))]
         cmp = pd.concat([db, df]).drop_duplicates(keep=False)
         assert cmp.empty
 
-    def test_select_row_num_with_group(self):
+    def test_select_row_num_with_groupby(self):
         db = self.operator.select_row_num(name=self.table_name, groupby=[CODE, DATETIME])
         df = self.df.groupby(by=[CODE, DATETIME]).apply(
-            lambda x: DataFrame([[x[CODE].iloc[0], x[DATETIME].iloc[0], x.shape[0]]],
-                                columns=[CODE, DATETIME, ROW_NUM]))
+            lambda x: DataFrame({CODE: [x[CODE].iloc[0]],
+                                 DATETIME: [x[DATETIME].iloc[0]],
+                                 ROW_NUM: [x.shape[0]]}))
+        df.reset_index(inplace=True, drop=True)
+        cmp = pd.concat([db, df]).drop_duplicates(keep=False)
+        assert cmp.empty
+
+    def test_select_row_num_with_groupby_n_where(self):
+        span = DateSpan(start=Date(2022, 1, 1), end=Date(2022, 1, 3))
+        db = self.operator.select_row_num(name=self.table_name,
+                                          groupby=[CODE],
+                                          span=span)
+        df = self.df[self.df[DATETIME].apply(lambda x: span.is_inside(x))] \
+            .groupby(by=[CODE]).apply(
+            lambda x: DataFrame({CODE: [x[CODE].iloc[0]],
+                                 ROW_NUM: [x.shape[0]]}))
         df.reset_index(inplace=True, drop=True)
         cmp = pd.concat([db, df]).drop_duplicates(keep=False)
         assert cmp.empty

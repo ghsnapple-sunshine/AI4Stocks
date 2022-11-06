@@ -65,7 +65,7 @@ class DateSpan:
             self._end = convert_date(end)
         return self
 
-    def is_in_span(self, dt: Date) -> bool:
+    def is_inside(self, dt: Date) -> bool:
         """
         判断日期是否在span内
 
