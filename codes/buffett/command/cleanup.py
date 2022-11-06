@@ -1,6 +1,7 @@
 from pandas import DataFrame
 
-from buffett.download.mysql import Operator, RoleType
+from buffett.download.mysql import Operator
+from buffett.download.mysql.types import RoleType
 
 
 def cleanup() -> None:
