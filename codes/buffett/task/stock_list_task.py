@@ -1,7 +1,7 @@
 from buffett.common.pendelum import DateTime, Duration
 from buffett.download.fast import StockListHandler
 from buffett.download.mysql import Operator
-from buffett.task import DownloadTask
+from buffett.task.download_task import DownloadTask
 
 
 class StockListTask(DownloadTask):
