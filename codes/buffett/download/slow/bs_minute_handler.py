@@ -26,7 +26,7 @@ _META = create_meta(meta_list=[
     [CJE, ColType.FLOAT, AddReqType.NONE]])
 
 
-class BsMinuteHandler(SlowHandler, TableNameTool):
+class BsMinuteHandler(SlowHandler):
     def __init__(self, operator: Operator):
         super().__init__(operator)
         self._source = SourceType.BAOSTOCK
@@ -80,8 +80,8 @@ class BsMinuteHandler(SlowHandler, TableNameTool):
         :param para:        code, fuquan
         :return:
         """
-        spara = para.clone().with_source(self._source).with_freq(self._freq)
-        table_name = BsMinuteHandler.get_by_code(para=spara)
+        para = para.clone().with_source(self._source).with_freq(self._freq)
+        table_name = TableNameTool.get_by_code(para=para)
         df = self._operator.select_data(table_name)
         if (not isinstance(df, DataFrame)) or df.empty:
             return DataFrame()

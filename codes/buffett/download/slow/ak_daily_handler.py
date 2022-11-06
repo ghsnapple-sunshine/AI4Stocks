@@ -9,6 +9,7 @@ from buffett.constants.col import DATE, OPEN, CLOSE, HIGH, LOW, CJL, CJE, ZF, ZD
 from buffett.download import Para
 from buffett.download.mysql import Operator
 from buffett.download.mysql.types import ColType, AddReqType
+from buffett.download.slow.table_name import TableNameTool
 from buffett.download.slow.handler import SlowHandler
 from buffett.download.types import FuquanType
 
@@ -80,7 +81,7 @@ class AkDailyHandler(SlowHandler):
         :return:
         """
         para = para.clone().with_freq(self._freq).with_source(self._source)
-        table_name = AkDailyHandler._get_table_name_by_code(para=para)
+        table_name = TableNameTool.get_by_code(para=para)
         df = self._operator.select_data(table_name)
         if dataframe_not_valid(df):
             return

@@ -3,9 +3,15 @@ from __future__ import annotations
 from datetime import date
 from typing import Optional
 
+import numpy as np
+import pandas as pd
+from pandas import Series, DataFrame
+
 from buffett.common import Code
 from buffett.common.pendelum import DateSpan
 from buffett.common.stock import Stock
+from buffett.constants.col import FREQ, SOURCE, FUQUAN, START_DATE, END_DATE
+from buffett.constants.col.stock import CODE, NAME
 from buffett.download.types import HeadType, CombType, FuquanType, FreqType, SourceType
 
 
@@ -21,12 +27,30 @@ class Para:
         :param stock:       股票信息
         :param comb:        复合类型
         :param span:        指定的时间周期
-        :param heads:        指定的数据列
+        :param heads:       指定的数据列
         """
         self._stock = stock
         self._comb = comb
         self._span = span
         self._heads = heads
+
+    @classmethod
+    def from_series(cls, series: Series):
+        """
+        从Series中创建para
+
+        :param series:
+        :return:
+        """
+        left = DataFrame(index=[CODE, NAME, FREQ, SOURCE, FUQUAN, START_DATE, END_DATE])
+        right = DataFrame({0: series})
+        merge = pd.merge(left, right, how='left', left_index=True, right_index=True)
+        merge.replace(np.NAN, None, inplace=True)
+        code, name, freq, source, fuquan, start_date, end_date = merge[0]
+        stock = Stock(code, name) if any([code, name]) else None
+        comb = CombType(freq=freq, source=source, fuquan=fuquan) if any([freq, source, fuquan]) else None
+        span = DateSpan(start=start_date, end=end_date) if any([start_date, end_date]) else None
+        return Para(stock=stock, comb=comb, span=span)
 
     def with_stock(self, stock: Stock, condition: bool = True) -> Para:
         """

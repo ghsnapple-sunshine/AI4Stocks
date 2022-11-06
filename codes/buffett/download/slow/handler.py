@@ -12,11 +12,11 @@ from buffett.download.handler import Handler
 from buffett.download.mysql import Operator
 from buffett.download.para import Para
 from buffett.download.slow.recorder import DownloadRecorder as Recorder
-from buffett.download.slow.table_name import TableName
+from buffett.download.slow.table_name import TableNameTool
 from buffett.download.types import FreqType, SourceType, FuquanType
 
 
-class SlowHandler(Handler, TableName):
+class SlowHandler(Handler):
     """
     实现多张表的下载，存储
     """
@@ -44,7 +44,7 @@ class SlowHandler(Handler, TableName):
         for index, row in stocks.iterrows():
             for fuquan in self._fuquans:
                 spara = para.clone().with_code(row[CODE]).with_name(row[NAME]).with_fuquan(fuquan)
-                table_name = SlowHandler._get_table_name_by_code(para=spara)
+                table_name = TableNameTool.get_by_code(para=spara)
                 record = DataFrame() if records.empty else SlowHandler._filter_record(
                     para=spara, records=records)
                 if record.empty:

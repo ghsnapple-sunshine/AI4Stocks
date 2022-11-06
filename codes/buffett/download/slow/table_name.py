@@ -1,9 +1,15 @@
+import pandas as pd
+from pandas import DataFrame, Series
+
+from buffett.common.pendelum import convert_datetime, DateTime
+from buffett.constants.col import FREQ, SOURCE, FUQUAN, START_DATE, END_DATE
+from buffett.constants.col.my import MONTH_START, TABLE_NAME
 from buffett.download import Para
 
 
-class TableName:
+class TableNameTool:
     @classmethod
-    def _get_table_name_by_code(cls, para: Para) -> str:
+    def get_by_code(cls, para: Para) -> str:
         """
         获取按Code索引的Mysql表名
 
@@ -17,7 +23,7 @@ class TableName:
         return table_name
 
     @classmethod
-    def _get_table_name_by_date(cls, para: Para) -> str:
+    def get_by_date(cls, para: Para) -> str:
         """
         获取按时间索引的Mysql表名
 
@@ -29,3 +35,39 @@ class TableName:
                                                         para.span.start.format('YYYY_MM'),
                                                         para.comb.fuquan.ak_format())
         return table_name
+
+    @classmethod
+    def get_multi_by_date(cls,
+                          records: DataFrame) -> DataFrame:
+        """
+        生成已下载记录/待下载记录的Mysql表名
+
+        :param records:             已下载记录/待下载记录
+        :return:
+        """
+        records = records.groupby(by=[FREQ, SOURCE, FUQUAN]).aggregate(
+            {START_DATE: 'min', END_DATE: 'max'}).reset_index()
+        spans = records[[START_DATE, END_DATE]].drop_duplicates()
+        series = pd.concat([TableNameTool._create_single_series(span) for index, span in spans.iterrows()])
+        tables = pd.merge(records, series, how='left', on=[START_DATE, END_DATE])
+        tables[TABLE_NAME] = tables.apply(
+            lambda row: TableNameTool.get_by_date(para=Para.from_series(row).with_start(row[MONTH_START])), axis=1)
+        return tables
+
+    @classmethod
+    def _create_single_series(cls, spans: Series) -> DataFrame:
+        """
+        获取指定时间范围内的时间分段清单
+
+        :param spans:               时间范围
+        :return:                    时间分段清单
+        """
+        start = convert_datetime(spans[START_DATE])
+        end = convert_datetime(spans[END_DATE])
+        month_start = DateTime(start.year, start.month, 1)
+
+        dates = []
+        while month_start < end:
+            dates.append([start, end, month_start])
+            month_start = month_start.add(months=1)
+        return DataFrame(dates, columns=[START_DATE, END_DATE, MONTH_START])
