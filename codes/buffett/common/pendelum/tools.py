@@ -1,12 +1,6 @@
 from datetime import date
-from datetime import datetime
-from typing import Union, Optional
 
-from buffett.common.error import ParamTypeError
 from buffett.common.pendelum import Date, DateTime
-
-
-
 
 '''
 def to_my_datetime(dt):
@@ -34,8 +28,6 @@ def to_my_date(dt):
         return Date(dt.year, dt.month, dt.day)
     else:
         return
-
-
 
 
 def dt2d(dt: DateTime) -> Date:
