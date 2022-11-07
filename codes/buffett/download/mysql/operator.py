@@ -81,7 +81,7 @@ class Operator(Connector):
             name,
             ', '.join(df.columns),
             ', '.join(['%s'] * df.columns.size))
-        df.replace(np.NAN, None, inplace=True)
+        df = df.replace(np.NAN, None)
         vals = df.values.tolist()
         self.execute_many(sql, vals, True)
 
@@ -110,7 +110,7 @@ class Operator(Connector):
             name,
             ', '.join(df.columns),
             ', '.join(['%s'] * df.columns.size))
-        df.replace(np.NAN, None, inplace=True)
+        df = df.replace(np.NAN, None)
         vals = df.values.tolist()
         self.execute_many(sql, vals, True)
 
