@@ -13,6 +13,12 @@ ZDF = 'zhangdiefu'
 ZDE = 'zhangdiee'
 HSL = 'huanshoulv'
 #
+LB = 'liangbi'
+DSYL = 'dongtaishiyinglv'
+SJL = 'shijinglv'
+ZSZ = 'zongshizhi'
+LTSZ = 'liutongshizhi'
+#
 FREQ = 'freq'
 FUQUAN = 'fuquan'
 SOURCE = 'source'

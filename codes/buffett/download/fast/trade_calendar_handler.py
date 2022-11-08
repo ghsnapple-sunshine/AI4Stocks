@@ -5,6 +5,7 @@ from pandas import DataFrame
 from pendulum import DateTime
 
 from buffett.common import create_meta
+from buffett.common.pendelum import Date
 from buffett.constants.col import DATE
 from buffett.constants.table import TRA_CAL
 from buffett.download import Para
@@ -33,7 +34,7 @@ class TradeCalendarHandler(FastHandler):
         #### 获取交易日信息 ####
         rs = bs.query_trade_dates(
             start_date='2000-01-01',
-            end_date=DateTime.now().format('YYYY-MM-DD'))
+            end_date=Date.today().add(months=2).format('YYYY-MM-01'))
 
         #### 打印结果集 ####
         data_list = []

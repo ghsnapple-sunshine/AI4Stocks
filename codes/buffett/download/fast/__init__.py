@@ -1,3 +1,3 @@
-from buffett.download.fast.stock_curr_handler import StockCurrHandler
+from buffett.download.fast.ak_curr_handler import AkCurrHandler
 from buffett.download.fast.stock_list_handler import StockListHandler
 from buffett.download.fast.trade_calendar_handler import TradeCalendarHandler
