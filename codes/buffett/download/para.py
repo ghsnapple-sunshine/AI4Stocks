@@ -10,6 +10,7 @@ from pandas import Series, DataFrame
 from buffett.common import Code
 from buffett.common.pendelum import DateSpan
 from buffett.common.stock import Stock
+from buffett.constants import NAN
 from buffett.constants.col import FREQ, SOURCE, FUQUAN, START_DATE, END_DATE
 from buffett.constants.col.stock import CODE, NAME
 from buffett.download.types import HeadType, CombType, FuquanType, FreqType, SourceType
@@ -45,7 +46,7 @@ class Para:
         left = DataFrame(index=[CODE, NAME, FREQ, SOURCE, FUQUAN, START_DATE, END_DATE])
         right = DataFrame({0: series})
         merge = pd.merge(left, right, how='left', left_index=True, right_index=True)
-        merge.replace(np.NAN, None, inplace=True)
+        merge = merge.replace({NAN: None})
         code, name, freq, source, fuquan, start_date, end_date = merge[0]
         stock = Stock(code, name) if any([code, name]) else None
         comb = CombType(freq=freq, source=source, fuquan=fuquan) if any([freq, source, fuquan]) else None
