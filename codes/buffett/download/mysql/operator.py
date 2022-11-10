@@ -50,7 +50,7 @@ class Operator(Connector):
             s = '{0} {1} {2}'.format(row[COLUMN], row[TYPE].sql_format(), row[ADDREQ].sql_format())
             cols.append(s)
         """
-        cols = [f'{row[COLUMN]} {row[TYPE].sql_format()} {row[ADDREQ].sql_format()}'
+        cols = [f'`{row[COLUMN]}` {row[TYPE].sql_format()} {row[ADDREQ].sql_format()}'
                 for index, row in meta.iterrows()]
         prim_key = meta[meta[ADDREQ].apply(lambda x: x.is_key())][COLUMN]
 
