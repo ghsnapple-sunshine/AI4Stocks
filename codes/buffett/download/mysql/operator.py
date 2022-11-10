@@ -79,7 +79,7 @@ class Operator(Connector):
 
         sql = "insert into `{0}`({1}) values({2})".format(
             name,
-            ', '.join(df.columns),
+            ', '.join([f'`{x}`' for x in df.columns]),
             ', '.join(['%s'] * df.columns.size))
         df = df.replace(np.NAN, None)
         vals = df.values.tolist()
@@ -108,7 +108,7 @@ class Operator(Connector):
 
         sql = "insert ignore into `{0}`({1}) values({2})".format(
             name,
-            ', '.join(df.columns),
+            ', '.join([f'`{x}`' for x in df.columns]),
             ', '.join(['%s'] * df.columns.size))
         df = df.replace(np.NAN, None)
         vals = df.values.tolist()
@@ -126,13 +126,12 @@ class Operator(Connector):
         :param meta:                表元数据
         :return:
         """
-        normal_cols = meta[ADDREQ].apply(lambda x: x.not_key())
-        normal_cols = meta[normal_cols][COLUMN]
+        normal_cols = meta[meta.apply(lambda x: x[ADDREQ].not_key() and x[COLUMN] in df.columns, axis=1)][COLUMN]
         inQ2 = [f'{x}=%s' for x in normal_cols]
 
         sql = "insert into `{0}`({1}) values({2}) on duplicate key update {3}".format(
             name,
-            ', '.join([str(x) for x in df.columns]),  # 避免data.columns中有非str类型导致报错
+            ', '.join([f'`{x}`' for x in df.columns]),  # 避免data.columns中有非str类型导致报错
             ', '.join(['%s'] * df.columns.size),
             ', '.join(inQ2))
         df = pd.concat([df, df[normal_cols]], axis=1)
@@ -154,13 +153,12 @@ class Operator(Connector):
         :param meta:                表元数据
         :return:
         """
-        normal_cols = meta[ADDREQ].apply(lambda x: x.not_key())
-        normal_cols = meta[normal_cols][COLUMN]
-        inQ2 = [f'{x}=values({x})' for x in normal_cols]
+        normal_cols = meta[meta.apply(lambda x: x[ADDREQ].not_key() and x[COLUMN] in df.columns, axis=1)][COLUMN]
+        inQ2 = [f'`{x}`=values(`{x}`)' for x in normal_cols]
 
         sql = "insert into `{0}`({1}) values({2}) on duplicate key update {3}".format(
             name,
-            ', '.join([str(x) for x in df.columns]),  # 避免data.columns中有非str类型导致报错
+            ', '.join([f'`{x}`' for x in df.columns]),  # 避免data.columns中有非str类型导致报错
             ', '.join(['%s'] * df.columns.size),
             ', '.join(inQ2))
         df = df.apply(lambda row: row.apply(lambda obj: _obj_format(obj)))
