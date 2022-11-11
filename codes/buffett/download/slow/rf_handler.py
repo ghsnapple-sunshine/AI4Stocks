@@ -77,7 +77,9 @@ class ReformHandler:
         done_records = self._rf_recorder.get_data()
         if dataframe_is_valid(done_records):
             # self._done_records = done_records.drop_duplicates()
+            self._done_records = done_records
             todo_records = pd.concat([todo_records, self._done_records, self._done_records]).drop_duplicates(keep=False)
+
         self._todo_records = todo_records
 
     def _get_group(self) -> None:
