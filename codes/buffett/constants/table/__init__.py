@@ -6,3 +6,5 @@ STK_RT = 'stock_realtime'
 COL_DF = 'columns'
 #
 MONEY_SPLY = 'money_supply'
+#
+TASK_RCD = 'task_record'

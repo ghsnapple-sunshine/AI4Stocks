@@ -1,22 +1,24 @@
-from pendulum import DateTime, Duration
-
-from buffett.common.pendelum import Date
+from buffett.common.pendelum import Date, DateTime
+from buffett.common.wrapper import Wrapper
 from buffett.download import Para
 from buffett.download.mysql import Operator
 from buffett.download.slow import BsMinuteHandler
-from buffett.task.download_task import DownloadTask
+from buffett.task.task import Task
 
 
-class StockMinuteTask(DownloadTask):
+class StockMinuteTask(Task):
     def __init__(self,
                  operator: Operator,
                  start_time: DateTime = None):
-        super().__init__(attr=BsMinuteHandler(operator=operator).obtain_data,
+        super().__init__(wrapper=Wrapper(BsMinuteHandler(operator=operator).obtain_data),
                          args=(Para().with_start_n_end(start=Date(2000, 1, 1), end=Date.today()),),
                          start_time=start_time)
+        self._operator = operator
 
-    def cycle(self) -> Duration:
-        return Duration(days=1)
-
-    def error_cycle(self) -> Duration:
-        return Duration(minutes=5)
+    def get_subsequent_task(self, success: bool):
+        if success:
+            return StockMinuteTask(operator=self._operator,
+                                   start_time=self._start_time.add(days=1))
+        else:
+            return StockMinuteTask(operator=self._operator,
+                                   start_time=self._start_time.add(minutes=5))

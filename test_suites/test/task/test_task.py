@@ -2,6 +2,7 @@ import logging
 import traceback
 import unittest
 
+from buffett.common.wrapper import Wrapper
 from buffett.task.task import Task
 
 
@@ -26,49 +27,46 @@ class InnerB:
         raise ValueError('error')
 
 
-class TestBaseTask(unittest.TestCase):
+class TestTask(unittest.TestCase):
     def test_func1(self):
-        task = Task(attr=InnerA().func1, args=('a', 'b'))
+        task = Task(wrapper=Wrapper(InnerA().func1), args=('a', 'b'))
         var = task.run()[1]
         assert var == 'print a b'
 
     def test_func2_1(self):
-        task = Task(attr=InnerA().func2, args=('a', 'b'))
+        task = Task(wrapper=Wrapper(InnerA().func2), args=('a', 'b'))
         var = task.run()[1]
         assert var == 'print a b  '
 
     def test_func2_2(self):
-        task = Task(attr=InnerA().func2, args=('a', 'b'), kwargs={'var3': 'c'})
+        task = Task(wrapper=Wrapper(InnerA().func2), args=('a', 'b'), kwargs={'var3': 'c'})
         var = task.run()[1]
         assert var == 'print a b c '
 
     def test_func2_3(self):
-        task = Task(attr=InnerA().func2, args=('a', 'b'), kwargs={'var4': 'd'})
+        task = Task(wrapper=Wrapper(InnerA().func2), args=('a', 'b'), kwargs={'var4': 'd'})
         var = task.run()[1]
         assert var == 'print a b  d'
 
     def test_func2_4(self):
-        task = Task(attr=InnerA().func2, args=('a', 'b'), kwargs={'var3': 'c', 'var4': 'd'})
+        task = Task(wrapper=Wrapper(InnerA().func2), args=('a', 'b'), kwargs={'var3': 'c', 'var4': 'd'})
         var = task.run()[1]
         assert var == 'print a b c d'
 
     def test_func2_5(self):
-        task = Task(attr=InnerA().func2, args=('a', 'b'),
+        task = Task(wrapper=Wrapper(InnerA().func2), args=('a', 'b'),
                     kwargs={'var3': 'c', 'var4': 'd', 'val5': 'e'})
-        try:
-            var = task.run()[1]
-            assert False
-        except TypeError as e:
-            assert True
+        success = task.run()[1]
+        assert not success
 
     def test_catch_error(self):
         try:
-            task = Task(InnerB().run)
-            task.run()
-            assert False
+            task = Task(wrapper=Wrapper(InnerB().run))
+            success = task.run()[0]
+            assert not success
         except ValueError as e:
             logging.error('\n' + traceback.format_exc())
-            assert True
+            assert False
 
 
 if __name__ == '__main__':

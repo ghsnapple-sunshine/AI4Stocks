@@ -1,3 +1,6 @@
+from buffett.constants.magic import get_name, get_self
+
+
 class Wrapper:
     def __init__(self, attr=None):
         if callable(attr):
@@ -6,8 +9,26 @@ class Wrapper:
             self._attr = None
 
     def run(self, *args, **kwargs):
-        if callable(self._attr):
-            return self._attr(*args, **kwargs)
+        valid_args = isinstance(args, tuple)
+        valid_kwargs = isinstance(kwargs, dict)
+
+        if valid_args & valid_kwargs:
+            res = self._attr(*args, **kwargs)
+        elif valid_args:
+            res = self._attr(*args)
+        elif valid_kwargs:
+            res = self._attr(**kwargs)
+        else:
+            res = self._attr()
+        return res
+
+    @property
+    def caller(self):
+        return get_self(self._attr)
+
+    @property
+    def func_name(self):
+        return get_name(self._attr)
 
 
 class WrapperFactory:

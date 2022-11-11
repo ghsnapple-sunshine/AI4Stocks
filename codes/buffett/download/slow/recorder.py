@@ -12,9 +12,9 @@ from buffett.download.types import FreqType, FuquanType, SourceType
 
 _META = create_meta(meta_list=[
     [CODE, ColType.STOCK_CODE, AddReqType.KEY],
-    [FREQ, ColType.ENUM, AddReqType.KEY],
-    [FUQUAN, ColType.ENUM, AddReqType.KEY],
-    [SOURCE, ColType.ENUM, AddReqType.KEY],
+    [FREQ, ColType.ENUM_BOOL, AddReqType.KEY],
+    [FUQUAN, ColType.ENUM_BOOL, AddReqType.KEY],
+    [SOURCE, ColType.ENUM_BOOL, AddReqType.KEY],
     [START_DATE, ColType.DATETIME, AddReqType.NONE],
     [END_DATE, ColType.DATETIME, AddReqType.NONE]])
 
