@@ -17,8 +17,7 @@ def convert_date(dt: Optional[date]) -> Union[Date, DateTime, None]:
         return DateTime(dt.year, dt.month, dt.day,
                         dt.hour, dt.minute, dt.second,
                         microsecond=dt.microsecond,
-                        tzinfo=dt.tzinfo,
-                        fold=dt.fold)
+                        tzinfo=dt.tzinfo)
     elif isinstance(dt, date):
         return Date(dt.year, dt.month, dt.day)
     elif dt is None:

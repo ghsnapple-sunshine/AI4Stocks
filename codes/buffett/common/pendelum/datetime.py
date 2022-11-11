@@ -1,16 +1,30 @@
 from __future__ import annotations
 
 from datetime import date, datetime, timedelta
-from typing import Optional, Union
+from datetime import tzinfo as PTzInfo
+from typing import Optional
 
 from pendulum import DateTime as PDateTime
-from pendulum.tz.timezone import Timezone
 
 from buffett.common.pendelum.date import Date
 from buffett.common.pendelum.duration import Duration
 
 
 class DateTime(PDateTime, Date):
+    def __new__(cls,
+                year: int,
+                month: int,
+                day: int,
+                hour: int = 0,
+                minute: int = 0,
+                second: int = 0,
+                microsecond: int = 0,
+                tzinfo: Optional[PTzInfo] = None,
+                fold: int = 0):
+        return super(DateTime, cls).__new__(
+            cls, year, month, day, hour=hour, minute=minute, second=second,
+            microsecond=microsecond, tzinfo=None)
+
     def __lt__(self, other) -> bool:
         if isinstance(other, date) & (not isinstance(other, datetime)):
             _other = DateTime(other.year, other.month, other.day)
@@ -91,16 +105,45 @@ class DateTime(PDateTime, Date):
                  seconds=0,
                  microseconds=0) -> DateTime:
         result = super(DateTime, self).subtract(years, months, weeks, days, hours, minutes, seconds, microseconds)
-        result.__class__ = DateTime
-        return result
+        return DateTime(year=result.year,
+                        month=result.month,
+                        day=result.day,
+                        hour=result.hour,
+                        minute=result.minute,
+                        second=result.second,
+                        microsecond=result.microsecond,
+                        tzinfo=None)
 
     @classmethod
-    def now(cls, tz: Optional[Union[str, Timezone]] = None) -> DateTime:
+    def now(cls,
+            tzinfo: Optional[PTzInfo] = None) -> DateTime:
         """
         获取当前时间
 
         :return:    当前时间
         """
-        result = PDateTime.now()
-        result.__class__ = DateTime
-        return result
+        # now()获取计算机时间，默认带时区，为了避免问题转换成东8区。
+        result = PDateTime.now().in_timezone('Asia/Shanghai')
+        return DateTime(year=result.year,
+                        month=result.month,
+                        day=result.day,
+                        hour=result.hour,
+                        minute=result.minute,
+                        second=result.second,
+                        microsecond=result.microsecond,
+                        tzinfo=None)
+
+    def format_YMDHms(self,
+                      ymd_sep: str = '-',
+                      joiner: str = ' ',
+                      hms_sep: str = ':') -> str:
+        """
+        按照YYYYMMDD HHmmss进行格式化
+
+        :param ymd_sep:         年，月，日间的分割字符串
+        :param joiner:          日，小时间的分割字符串
+        :param hms_sep:         小时，分钟，秒间的分割字符串
+        :return:
+        """
+        format_str = f'YYYY{ymd_sep}MM{ymd_sep}DD{joiner}HH{hms_sep}mm{hms_sep}ss'
+        return self.format(format_str)

@@ -2,6 +2,7 @@ import unittest
 from datetime import date
 
 import pendulum
+from pandas import DataFrame
 
 from buffett.common.pendelum import Date, DateSpan, DateTime, Duration
 
@@ -106,3 +107,17 @@ class PendelumTest(unittest.TestCase):
         assert span3.subtract(span1)[0] == span2
         assert span3.subtract(span2)[0] == span1
         assert span1.add(span4) == span5
+
+    def test_timestamp(self):
+        dt = DateTime(2022, 1, 1)
+        dt.timestamp()
+        assert True  # when dt.timestamp works, assert true
+
+    def test_compatible_2_pandas(self):
+        try:
+            dt = DateTime(2022, 1, 1)
+            df = DataFrame({'dt': [dt]})
+            ts = df.loc[0, 'dt']
+            assert True  # when DataFrame() works, assert True
+        except Exception as e:
+            assert False

@@ -58,8 +58,7 @@ class Date(PDate):
 
     def __add__(self, other) -> Date:
         result = super(Date, self).__add__(other)
-        result.__class__ = Date
-        return result
+        return Date(result.year, result.month, result.day)
 
     def __sub__(self, other) -> Date:
         result = super(Date, self).__sub__(other)
