@@ -1,8 +1,7 @@
 from datetime import date
 from enum import Enum
-from typing import Optional, Union
+from typing import Optional, Union, Any
 
-import numpy as np
 import pandas as pd
 from pandas import DataFrame
 
@@ -15,7 +14,7 @@ from buffett.download.mysql.connector import Connector
 from buffett.download.mysql.reqcol import ReqCol
 
 
-def _obj_format(obj):
+def _obj_format(obj: Any) -> Any:
     """
     将对象转换成可被sql插入的格式
 
@@ -23,12 +22,37 @@ def _obj_format(obj):
     :return:
     """
     if pd.isna(obj):
-        return 'NULL'
+        return None
     if isinstance(obj, Enum):
         return str(obj.value)
     if isinstance(obj, date):
         return str(obj)
     return obj
+
+
+def _dataframe_2_format_list(df: DataFrame) -> list[list[Any]]:
+    """
+    将dataframe转成可被pymsql写入的list
+
+    :param df:
+    :return:
+    """
+    return [[_obj_format(y) for y in x] for x in df.values]
+
+
+def _groupby_ext(groupby: list[ReqCol]):
+    """
+    扩展sql：groupby
+
+    :param groupby:         需要groupby的列
+    :return:
+    """
+    if len(groupby) == 0:
+        return ''
+
+    sql = ','.join([x.simple_format() for x in groupby])
+    sql = f'group by {sql}'
+    return sql
 
 
 class Operator(Connector):
@@ -81,8 +105,7 @@ class Operator(Connector):
             name,
             ', '.join([f'`{x}`' for x in df.columns]),
             ', '.join(['%s'] * df.columns.size))
-        df = df.replace(np.NAN, None)
-        vals = df.values.tolist()
+        vals = _dataframe_2_format_list(df)  # 应用过obj_format处无需再df.replace
         self.execute_many(sql, vals, True)
 
     def try_insert_data(self,
@@ -110,36 +133,8 @@ class Operator(Connector):
             name,
             ', '.join([f'`{x}`' for x in df.columns]),
             ', '.join(['%s'] * df.columns.size))
-        df = df.replace(np.NAN, None)
-        vals = df.values.tolist()
+        vals = _dataframe_2_format_list(df)  # 应用过obj_format处无需再df.replace
         self.execute_many(sql, vals, True)
-
-    def _try_insert_n_update_data(self,
-                                  name: str,
-                                  df: DataFrame,
-                                  meta: DataFrame) -> None:
-        """
-        尝试插入数据到Mysql表（插入失败则更新）
-
-        :param name:                表名
-        :param df:                  数据
-        :param meta:                表元数据
-        :return:
-        """
-        normal_cols = meta[meta.apply(lambda x: x[ADDREQ].not_key() and x[COLUMN] in df.columns, axis=1)][COLUMN]
-        inQ2 = [f'{x}=%s' for x in normal_cols]
-
-        sql = "insert into `{0}`({1}) values({2}) on duplicate key update {3}".format(
-            name,
-            ', '.join([f'`{x}`' for x in df.columns]),  # 避免data.columns中有非str类型导致报错
-            ', '.join(['%s'] * df.columns.size),
-            ', '.join(inQ2))
-        df = pd.concat([df, df[normal_cols]], axis=1)
-        for index, row in df.iterrows():
-            ser = row.apply(lambda x: _obj_format(x))
-            sql2 = sql % tuple(ser)
-            self.execute(sql2)
-        self.conn.commit()
 
     def _try_insert_n_update_data_ex(self,
                                      name: str,
@@ -161,8 +156,7 @@ class Operator(Connector):
             ', '.join([f'`{x}`' for x in df.columns]),  # 避免data.columns中有非str类型导致报错
             ', '.join(['%s'] * df.columns.size),
             ', '.join(inQ2))
-        df = df.apply(lambda row: row.apply(lambda obj: _obj_format(obj)))
-        vals = df.values.tolist()
+        vals = _dataframe_2_format_list(df)  # 应用过obj_format处无需再df.replace
         self.execute_many(sql, vals, True)
 
     def drop_table(self, name: str):
@@ -226,7 +220,7 @@ class Operator(Connector):
         cols.extend(groupby)
         cols_str = ','.join([x.sql_format() for x in cols])
         where_str = self._span_ext(name, span)
-        groupby_str = self._groupby_ext(groupby)
+        groupby_str = _groupby_ext(groupby)
         sql = f"select {cols_str} from `{name}` {where_str} {groupby_str}"
         return sql
 
@@ -255,18 +249,3 @@ class Operator(Connector):
         elif end_valid:
             return f"where `{key}` < '{span.end}'"
         return ''
-
-    def _groupby_ext(self,
-                     groupby: list[ReqCol]):
-        """
-        扩展sql：groupby
-
-        :param groupby:         需要groupby的列
-        :return:
-        """
-        if len(groupby) == 0:
-            return ''
-
-        sql = ','.join([x.simple_format() for x in groupby])
-        sql = f'group by {sql}'
-        return sql

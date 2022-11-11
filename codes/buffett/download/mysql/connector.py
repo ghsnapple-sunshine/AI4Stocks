@@ -8,33 +8,39 @@ from buffett.download.mysql.types import RoleType
 
 class Connector:
     def __init__(self, role):
+        # self._role = role
         if role == RoleType.DbStock:
-            self.user = 'stock'
-            self.db = 'stocks'
-            self.password = 'Changeme_1234'
+            self._user = 'stock'
+            self._db = 'stocks'
+            self._pwd = 'Changeme_1234'
         elif role == RoleType.DbTest:
-            self.user = 'test'
-            self.db = 'stockstest'
-            self.password = 'Changeme_1234'
+            self._user = 'test'
+            self._db = 'stockstest'
+            self._pwd = 'Changeme_1234'
         elif role == RoleType.DbInfo:
-            self.user = 'prosecutor'
-            self.db = 'information_schema'
-            self.password = 'Changeme_1234'
+            self._user = 'prosecutor'
+            self._db = 'information_schema'
+            self._pwd = 'Changeme_1234'
         elif role == RoleType.ROOT:
-            self.user = 'root'
-            self.db = 'stocks'
-            self.password = input('请输入root@localhost的密码')
+            self._user = 'root'
+            self._db = 'stocks'
+            self._pwd = input('请输入root@localhost的密码')
 
         self.conn = None
         self.cursor = None
+
+    # TODO: 待清理属性
+    @property
+    def db(self):
+        return self._db
 
     def connect(self):
         if self.conn is None:
             config = {'host': '127.0.0.1',
                       'port': 3306,
-                      'user': self.user,
-                      'passwd': self.password,
-                      'db': self.db,
+                      'user': self._user,
+                      'passwd': self._pwd,
+                      'db': self._db,
                       'charset': 'utf8mb4'}
             self.conn = pymysql.connect(**config)
             self.cursor = self.conn.cursor()
@@ -94,6 +100,6 @@ class Connector:
                 print(sql)
                 print(vals[row - 1: row + 1])
             raise e
-        except DatabaseError as e:
-            # print(sql)
-            raise e
+        # except DatabaseError as e:
+        #     # print(sql)
+        #     raise e

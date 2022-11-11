@@ -70,3 +70,4 @@ class TestOperatorEx(Tester):
         df.reset_index(inplace=True, drop=True)
         cmp = pd.concat([db, df]).drop_duplicates(keep=False)
         assert cmp.empty
+
