@@ -41,7 +41,7 @@ class TaskScheduler(Singleton):
                  tasks: list[Task]):
         super(TaskScheduler, self).__init__()
         self._operator = operator
-        operator.create_table(name=TASK_RCD, meta=_META, if_not_exist=False)
+        operator.create_table(name=TASK_RCD, meta=_META)
         self._add_tasks(tasks)
 
     def _create_task(self,

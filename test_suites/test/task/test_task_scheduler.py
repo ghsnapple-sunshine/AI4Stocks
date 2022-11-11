@@ -1,6 +1,7 @@
 import pandas as pd
 from pandas import DataFrame
 
+from buffett.common.interface import Singleton
 from buffett.common.pendelum import DateTime, Duration
 from buffett.common.wrapper import Wrapper
 from buffett.constants.col.task import ERR_MSG, TASK_ID, PARENT_ID, CLASS, MODULE, CREATE_TIME, START_TIME, END_TIME, \
@@ -68,7 +69,7 @@ class PerfectTask(OneOffTaskA):
 
 
 class TestTaskScheduler(Tester):
-    def test_run_once(self):
+    def test_run_with_oneoff_task(self):
         """
         测试不会生成新Task的场景
 
@@ -103,12 +104,13 @@ class TestTaskScheduler(Tester):
         cmp = pd.concat([actual, expect]).drop_duplicates(keep=False)
         assert cmp.empty
 
-    def test_run_once_with_delay(self):
+    def test_run_with_oneoff_task_n_delay(self):
         """
         测试Task的延期执行是否生效
 
         :return:
         """
+        DbSweeper.cleanup()
         start = DateTime.now()
         sch = TaskScheduler(
             operator=self.operator,
@@ -120,13 +122,23 @@ class TestTaskScheduler(Tester):
         # delay为20s，但是实际只用了19.xs，原因是存入数据库时未保存microseconds，产生了误差。
         assert end - start >= Duration(seconds=19)
 
-    def test_run_twice_with_error(self):
+    def test_run_with_new_task_n_error(self):
+        DbSweeper.cleanup()
+        self._run_with_new_task()
+        actual = self.operator.select_data(name=TASK_RCD)
+        assert actual[actual[SUCCESS] == 0].shape[0] == 1
+        assert actual.shape[0] == 5
+
+    def test_run_2times(self):
+        DbSweeper.cleanup()
+        self._run_with_new_task()
+        self._run_with_new_task()
+
+    def _run_with_new_task(self):
+        InnerD.COUNT = 0
         sch = TaskScheduler(
             operator=self.operator,
             tasks=[OneOffTaskA(start_time=DateTime.now() - Duration(seconds=1)),
                    OneOffTaskB(start_time=DateTime.now() - Duration(seconds=2)),
                    PerfectTask(start_time=DateTime.now())])
         sch.run()
-        actual = self.operator.select_data(name=TASK_RCD)
-        assert actual[actual[SUCCESS] == 0].shape[0] == 1
-        assert actual.shape[0] == 5
