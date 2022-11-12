@@ -42,3 +42,7 @@ def load_class(module: str, cls: str) -> Type:
 
 def empty_init(self) -> None:
     return
+
+
+def empty_method(*args, **kwargs) -> None:
+    return

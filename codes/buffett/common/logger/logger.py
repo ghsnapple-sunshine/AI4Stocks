@@ -1,15 +1,14 @@
 import logging
 
+from buffett.common.logger.type import LogType
+
 
 class Logger:
-    DEBUG = 0
-    INFO = 1
-    WARNING = 2
-    ERROR = 3
+    Level = LogType.INFO
 
     def __init__(self):
         logging.basicConfig(level=logging.INFO,
-                            format='%(asctime)s.%(msecs)03d [%(levelname)s] [%(filename)s:%(lineno)d] %(message)s',
+                            format='%(asctime)s.%(msecs)03d %(message)s',
                             datefmt='## %Y-%m-%d %H:%M:%S')
 
     @classmethod
@@ -27,3 +26,5 @@ class Logger:
     @classmethod
     def error(cls, msg: str):
         logging.error(msg)
+
+
