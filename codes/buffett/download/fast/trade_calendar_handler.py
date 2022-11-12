@@ -3,7 +3,6 @@ from typing import Optional
 
 import baostock as bs
 from pandas import DataFrame
-from pendulum import DateTime
 
 from buffett.common import create_meta
 from buffett.common.pendelum import Date

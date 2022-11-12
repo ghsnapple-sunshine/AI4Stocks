@@ -1,10 +1,9 @@
 import unittest
 
-from pendulum import DateTime
-
-from buffett.download.mysql.operator import Operator
+from buffett.common.pendelum import DateTime
+from buffett.download.mysql import Operator
 from buffett.download.mysql.types import RoleType
-from test.db_sweeper import DbSweeper
+from test import DbSweeper
 
 
 class Tester(unittest.TestCase):
