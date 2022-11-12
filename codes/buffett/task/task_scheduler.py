@@ -9,7 +9,7 @@ from pandas import DataFrame, Series
 from buffett.common import create_meta
 from buffett.common.interface import Singleton
 from buffett.common.pendelum import DateTime, convert_datetime
-from buffett.common.tools import dataframe_not_valid
+from buffett.common.tools import dataframe_not_valid, list_is_valid
 from buffett.constants.col.task import TASK_ID, PARENT_ID, SUCCESS, ERR_MSG, MODULE, CLASS, START_TIME, \
     CREATE_TIME, END_TIME
 from buffett.constants.magic import load_class
@@ -33,16 +33,17 @@ _META = create_meta(meta_list=[
 class TaskScheduler(Singleton):
     def __new__(cls,
                 operator: Operator,
-                tasks: list[Task]):
+                tasks: Optional[list[Task]] = None):
         return super(TaskScheduler, cls).__new__(cls, operator, tasks)
 
     def __init__(self,
                  operator: Operator,
-                 tasks: list[Task]):
+                 tasks: Optional[list[Task]] = None):
         super(TaskScheduler, self).__init__()
         self._operator = operator
         operator.create_table(name=TASK_RCD, meta=_META)
-        self._add_tasks(tasks)
+        if list_is_valid(tasks):
+            self._add_tasks(tasks)
 
     def _create_task(self,
                      series: Series) -> Task:
