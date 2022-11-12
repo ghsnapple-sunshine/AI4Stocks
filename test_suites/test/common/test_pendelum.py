@@ -70,25 +70,22 @@ class PendelumTest(unittest.TestCase):
         assert _hash1 == _hash2
 
     def test_add_sub(self):
-        dt1 = DateTime(2022, 1, 1)
         du = Duration(days=1)
-        # test add
-        dt2 = dt1 + du
+        dt1 = DateTime(2022, 1, 1)
         dt3 = DateTime(2022, 1, 2)
-        assert type(dt2) == DateTime
-        assert dt2 == dt3
-        dt2 = dt1.add(days=1)
-        assert type(dt2) == DateTime
-        assert dt2 == dt3
-        # test sub
         # test add
-        dt2 = dt1 - du
+        assert type(dt1 + du) == DateTime
+        assert dt1 + du == dt3
+        assert du + dt1 == dt3
+        assert type(dt1.add(days=1)) == DateTime
+        assert dt1.add(days=1) == dt3
+        # test sub
         dt3 = DateTime(2021, 12, 31)
-        assert type(dt2) == DateTime
-        assert dt2 == dt3
-        dt2 = dt1.subtract(days=1)
-        assert type(dt2) == DateTime
-        assert dt2 == dt3
+        assert type(dt1 - du) == DateTime
+        assert dt1 - du == dt3
+        assert dt1 - dt3 == du
+        assert type(dt1.subtract(days=1)) == DateTime
+        assert dt1.subtract(days=1) == dt3
 
     def test_now(self):
         now1 = DateTime.now()

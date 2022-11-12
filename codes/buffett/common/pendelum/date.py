@@ -1,8 +1,10 @@
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from pendulum import Date as PDate
+
+from buffett.common.pendelum.duration import Duration
 
 
 class Date(PDate):
@@ -62,7 +64,10 @@ class Date(PDate):
 
     def __sub__(self, other) -> Date:
         result = super(Date, self).__sub__(other)
-        result.__class__ = Date
+        if isinstance(other, timedelta):
+            result.__class__ = Date
+        elif isinstance(other, datetime):
+            result.__class__ = Duration
         return result
 
     def add(self, years=0, months=0, weeks=0, days=0) -> Date:
