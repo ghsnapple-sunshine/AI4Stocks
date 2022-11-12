@@ -3,7 +3,7 @@ import os
 import pandas as pd
 from pandas import Series, DataFrame
 
-from buffett.common import Logger
+from buffett.common.logger import Logger
 from buffett.common.pendelum import DateSpan, DateTime
 from buffett.common.tools import dataframe_not_valid
 from buffett.constants.col import FREQ, SOURCE, FUQUAN, START_DATE, END_DATE

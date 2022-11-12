@@ -1,8 +1,8 @@
 import unittest
 
-from buffett.common import Logger
-from buffett.common.logger.builder import LoggerBuilder
-from buffett.common.logger.type import LogType
+from buffett.common.logger import Logger
+from buffett.common.logger import LoggerBuilder
+from buffett.common.logger import LogType
 
 
 def my_init(self, v):
