@@ -18,8 +18,8 @@ class TestOperator(Tester):
         self._get_table()
 
     def _create_table(self):
-        data = [[CODE, ColType.STOCK_CODE, AddReqType.KEY],
-                [NAME, ColType.STOCK_NAME, AddReqType.NONE]]
+        data = [[CODE, ColType.STOCK_CODE_NAME, AddReqType.KEY],
+                [NAME, ColType.STOCK_CODE_NAME, AddReqType.NONE]]
         meta = DataFrame(data=data, columns=META_COLS)
         self.operator.create_table(self.table_name, meta, False)
         return meta

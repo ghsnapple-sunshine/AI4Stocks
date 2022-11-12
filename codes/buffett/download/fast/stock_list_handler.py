@@ -14,8 +14,8 @@ from buffett.download.mysql import Operator
 from buffett.download.mysql.types import ColType, AddReqType
 
 _META = create_meta(meta_list=[
-    [CODE, ColType.STOCK_CODE, AddReqType.KEY],
-    [NAME, ColType.STOCK_NAME, AddReqType.NONE]])
+    [CODE, ColType.STOCK_CODE_NAME, AddReqType.KEY],
+    [NAME, ColType.STOCK_CODE_NAME, AddReqType.NONE]])
 
 
 class StockListHandler(FastHandler):

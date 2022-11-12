@@ -6,9 +6,8 @@ from enum import Enum
 class ColType(Enum):
     @classmethod
     def create(cls, col_type: str) -> ColType:
-        COL_TYPE_DICT = {'VARCHAR(6)': 1,  # ColType.STOCK_CODE,
+        COL_TYPE_DICT = {'VARCHAR(6)': 1,  # ColType.STOCK_CODE_NAME,
                          'VARCHAR(8)': 2,  # ColType.LONG_STOCK_CODE,
-                         'VARCHAR(5)': 3,  # ColType.STOCK_NAME,
                          'FLOAT': 4,  # ColType.FLOAT
                          'INT': 5,  # ColType.INT32
                          'DATE': 10,  # ColType.DATE
@@ -18,9 +17,8 @@ class ColType(Enum):
                          'VARCHAR(10000)': 200}  # ColType.LONG_DESC
         return ColType(COL_TYPE_DICT[col_type.upper()])
 
-    STOCK_CODE = 1  # 股票代码（6位）
+    STOCK_CODE_NAME = 1  # 股票代码（6位）/股票名字
     LONG_STOCK_CODE = 2  # 股票代码（8位）
-    STOCK_NAME = 3  # 股票名字
     FLOAT = 4
     INT32 = 5
     DATE = 10  # 日期
@@ -30,9 +28,8 @@ class ColType(Enum):
     LONG_DESC = 200
 
     def sql_format(self):
-        COL_TYPE_DICT = {ColType.STOCK_CODE: 'VARCHAR(6)',
+        COL_TYPE_DICT = {ColType.STOCK_CODE_NAME: 'VARCHAR(6)',
                          ColType.LONG_STOCK_CODE: 'VARCHAR(8)',
-                         ColType.STOCK_NAME: 'VARCHAR(4)',
                          ColType.FLOAT: 'FLOAT',
                          ColType.INT32: 'INT',
                          ColType.DATE: 'DATE',

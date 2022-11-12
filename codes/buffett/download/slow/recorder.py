@@ -11,7 +11,7 @@ from buffett.download.mysql.types import ColType, AddReqType
 from buffett.download.types import FreqType, FuquanType, SourceType
 
 _META = create_meta(meta_list=[
-    [CODE, ColType.STOCK_CODE, AddReqType.KEY],
+    [CODE, ColType.STOCK_CODE_NAME, AddReqType.KEY],
     [FREQ, ColType.ENUM_BOOL, AddReqType.KEY],
     [FUQUAN, ColType.ENUM_BOOL, AddReqType.KEY],
     [SOURCE, ColType.ENUM_BOOL, AddReqType.KEY],

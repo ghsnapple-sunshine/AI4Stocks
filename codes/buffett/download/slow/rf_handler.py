@@ -22,7 +22,7 @@ from buffett.download.types import CombType
 from buffett.constants.col.my import MONTH_START, TDRCD_START, TDRCD_END, DORCD_START, DORCD_END
 
 _ADD_META = create_meta(meta_list=[
-    [CODE, ColType.STOCK_CODE, AddReqType.KEY]])
+    [CODE, ColType.STOCK_CODE_NAME, AddReqType.KEY]])
 
 _GROUP = 'group_id'
 _GROUP_SIZE = 30

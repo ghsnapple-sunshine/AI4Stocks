@@ -34,7 +34,7 @@ _RENAME = {'代码': CODE,
            '流通市值': LTSZ}
 
 _META = create_meta(meta_list=[
-    [CODE, ColType.STOCK_CODE, AddReqType.KEY],
+    [CODE, ColType.STOCK_CODE_NAME, AddReqType.KEY],
     [DATETIME, ColType.DATETIME, AddReqType.KEY],
     [OPEN, ColType.FLOAT, AddReqType.NONE],
     [CLOSE, ColType.FLOAT, AddReqType.NONE],

@@ -16,7 +16,7 @@ class TestDbSweeper(Tester):
         assert data.empty
 
     def _create_table(self):
-        data = [[CODE, ColType.STOCK_CODE, AddReqType.KEY],
-                [NAME, ColType.STOCK_NAME, AddReqType.NONE]]
+        data = [[CODE, ColType.STOCK_CODE_NAME, AddReqType.KEY],
+                [NAME, ColType.STOCK_CODE_NAME, AddReqType.NONE]]
         df = DataFrame(data=data, columns=META_COLS)
         self.operator.create_table(STK_LS, df, True)
