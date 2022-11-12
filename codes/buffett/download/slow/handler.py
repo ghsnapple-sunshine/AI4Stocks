@@ -1,3 +1,4 @@
+'''
 import logging
 from abc import abstractmethod
 
@@ -124,33 +125,34 @@ class SlowHandler(Handler):
                          (records[SOURCE] == para.comb.source)]
         return record
 # endregion
-
-
 '''
+
 import logging
 from abc import abstractmethod
+from typing import Optional
 
 import pandas as pd
 from pandas import DataFrame, Series
 
 from buffett.common.error import ParamTypeError
-from buffett.common.pendelum import DateSpan, Date
+from buffett.common.pendelum import DateSpan, Date, convert_datetime, Duration
 from buffett.common.tools import dataframe_not_valid
-from buffett.constants.col import FREQ, FUQUAN, SOURCE, START_DATE, END_DATE
+from buffett.constants.col import FREQ, FUQUAN, SOURCE, START_DATE, END_DATE, DATE
 from buffett.constants.col.stock import CODE
+from buffett.download.fast import TradeCalendarHandler
 from buffett.download.fast.stock_list_handler import StockListHandler as SHandler
 from buffett.download.handler import Handler
 from buffett.download.mysql import Operator
 from buffett.download.para import Para
 from buffett.download.slow.recorder import DownloadRecorder as Recorder
-from buffett.download.slow.table_name import TableName
+from buffett.download.slow.table_name import TableNameTool
 from buffett.download.types import FreqType, SourceType, FuquanType
 
 _TDRCD_START, _TDRCD_END = 'todo_record_start', 'todo_record_end'
 _DORCD_START, _DORCD_END = 'done_record_start', 'done_record_end'
 
 
-class SlowHandler(Handler, TableName):
+class SlowHandler(Handler):
     """
     实现多张表的下载，存储
     """
@@ -167,9 +169,9 @@ class SlowHandler(Handler, TableName):
         if not isinstance(para.span, DateSpan):
             raise ParamTypeError('para.span', DateSpan)
 
-        para = para.clone().with_end(Date.today(), para.span.end > Date.today())
+        para = self._fix_para(para)
 
-        stock_list = SHandler(self._operator).get_data()
+        stock_list = SHandler(self._operator).select_data()
         done_records = self._recorder.get_data()
 
         todo_records = self._get_todo_records(stock_list=stock_list,
@@ -177,16 +179,45 @@ class SlowHandler(Handler, TableName):
                                               para=para)
         comb_records = SlowHandler._get_comb_records(todo_records=todo_records,
                                                      done_records=done_records)
-        tbs = [self._download_n_save_a_stock(row) for index, row in comb_records.iterrows()]
+        tbs = [self._download_n_save_1stock(row) for index, row in comb_records.iterrows()]
         return tbs
 
     @abstractmethod
-    def get_data(self, para: Para) -> DataFrame:
+    def select_data(self, para: Para) -> DataFrame:
         pass
 
     # endregion
 
     # region 私有方法
+    def _fix_para(self,
+                  para: Para) -> Optional[Para]:
+        """
+        修正para中的start和end
+
+        :param para:
+        :return:
+        """
+        start, end = para.span.start, para.span.end
+        end = end if end > Date.today() else Date.today()
+
+        calendar = TradeCalendarHandler(operator=self._operator).select_data()
+        if dataframe_not_valid(calendar) or end - start > Duration(days=7):  # 未获取到calendar则不做额外处理
+            return para
+
+        start_date = Date(start.year, start.month, start.day)
+        dates = []
+        while start_date < end:
+            dates.append(start_date)
+            start_date.add(days=1)
+        dates = DataFrame({DATE: dates})
+
+        dates = dates.join(calendar, how='inner', on=[DATE], rsuffix='_r')
+        if dataframe_not_valid(dates):
+            return
+
+        start = convert_datetime(dates[DATE].min())
+        end = convert_datetime(dates[DATE].max().add(days=1)).add(days=1)
+        return para.clone().with_start_n_end(start, end)
 
     def _get_todo_records(self,
                           stock_list: DataFrame,
@@ -201,7 +232,7 @@ class SlowHandler(Handler, TableName):
         :return:                    待下载记录
         """
         fuquan_df = DataFrame(self._fuquans, columns=[FUQUAN])
-        todo_records = pd.merge(stock_list[[CODE]], fuquan_df, how='cross')
+        todo_records = pd.merge(stock_list, fuquan_df, how='cross')
         todo_records[FREQ] = self._freq
         todo_records[SOURCE] = self._source
         todo_records[START_DATE] = para.span.start
@@ -230,41 +261,49 @@ class SlowHandler(Handler, TableName):
         todo_records = pd.merge(todo_records, done_records, how='left', on=[CODE, FREQ, SOURCE, FUQUAN])
         return todo_records
 
-    def _download_n_save_a_stock(self,
-                                 row: Series) -> None:
-        para = Para().with_code(row[CODE]) \
-            .with_freq(row[FREQ]) \
-            .with_source(row[SOURCE]) \
-            .with_fuquan(row[FUQUAN])
+    def _download_n_save_1stock(self,
+                                row: Series) -> None:
+        para = Para.from_series(series=row)
 
         todo_span = DateSpan(row[START_DATE], row[END_DATE])
-        done_span = None
         if pd.isna(row[_DORCD_START]):
+            done_span = None
             data = self._download(para=para.with_span(todo_span))
         else:
             done_span = DateSpan(row[_DORCD_START], row[_DORCD_END])
             todo_ls = todo_span.subtract(done_span)
+            if len(todo_ls) == 0:
+                self._log_already_downloaded(para=para)
+                return
             data = pd.concat([self._download(para=para.with_span(span)) for span in todo_ls])
 
-        table_name = SlowHandler._get_table_name_by_code(para=para)
+        table_name = TableNameTool.get_by_code(para=para)
         self._save_to_database(table_name=table_name, df=data)
         total_span = todo_span if done_span is None else todo_span.add(done_span)
         self._recorder.save(para=para.with_span(total_span))
-        """
-        logging.info('Should download {0} for {1} {2} {3}'.format(para.span,
-                                                                  para.comb.freq,
-                                                                  para.stock.code,
-                                                                  para.comb.fuquan))
-        """
+        self._log_success_download(para=para)
 
     @abstractmethod
     def _download(self, para: Para) -> DataFrame:
+        """
+        根据para中指定的条件下载数据
+
+        :param para:
+        :return:
+        """
         pass
 
     @abstractmethod
     def _save_to_database(self,
                           table_name: str,
                           df: DataFrame) -> None:
+        """
+        将下载的数据存放到数据库
+
+        :param table_name:
+        :param df:
+        :return:
+        """
         pass
 
     @classmethod
@@ -275,5 +314,12 @@ class SlowHandler(Handler, TableName):
             para.stock.name,
             para.comb.fuquan))
 
+    @classmethod
+    def _log_already_downloaded(cls, para: Para):
+        logging.info('Have already Downloaded Stock {0} {1} {2} {3}'.format(
+            para.comb.freq,
+            para.stock.code,
+            para.stock.name,
+            para.comb.fuquan))
+
 # endregion
-'''
