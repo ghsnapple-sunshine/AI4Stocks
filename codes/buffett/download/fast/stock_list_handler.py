@@ -1,8 +1,11 @@
 # 下载沪深股票列表
+from typing import Optional
+
 import akshare as ak
 from pandas import DataFrame
 
 from buffett.common import Code, create_meta
+from buffett.common.tools import dataframe_not_valid
 from buffett.constants.col.stock import CODE, NAME
 from buffett.constants.table import STK_LS
 from buffett.download import Para
@@ -26,17 +29,18 @@ class StockListHandler(FastHandler):
         return stocks
 
     def _save_to_database(self, df: DataFrame) -> None:
-        if (not isinstance(df, DataFrame)) or df.empty:
+        if dataframe_not_valid(df):
             return
 
         self._operator.create_table(name=STK_LS, meta=_META)
-        self._operator.try_insert_data(name=STK_LS, df=df)  # 忽略重复Insert
+        self._operator.try_insert_data(name=STK_LS, df=df, update=True, meta=_META)
         self._operator.disconnect()
 
-    def select_data(self, para: Para = None) -> DataFrame:
+    def select_data(self,
+                    para: Para = None) -> Optional[DataFrame]:
         df = self._operator.select_data(STK_LS)
-        if (not isinstance(df, DataFrame)) or df.empty:
-            return DataFrame()
+        if dataframe_not_valid(df):
+            return
 
         df[CODE] = df[CODE].apply(lambda x: Code(x))
         return df

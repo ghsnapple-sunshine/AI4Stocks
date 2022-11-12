@@ -8,7 +8,7 @@ class ColType(Enum):
     def create(cls, col_type: str) -> ColType:
         COL_TYPE_DICT = {'VARCHAR(6)': 1,  # ColType.STOCK_CODE,
                          'VARCHAR(8)': 2,  # ColType.LONG_STOCK_CODE,
-                         'VARCHAR(4)': 3,  # ColType.STOCK_NAME,
+                         'VARCHAR(5)': 3,  # ColType.STOCK_NAME,
                          'FLOAT': 4,  # ColType.FLOAT
                          'INT': 5,  # ColType.INT32
                          'DATE': 10,  # ColType.DATE
