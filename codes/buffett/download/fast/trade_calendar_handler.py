@@ -1,4 +1,5 @@
 import logging
+from typing import Optional
 
 import baostock as bs
 from pandas import DataFrame
@@ -6,6 +7,7 @@ from pendulum import DateTime
 
 from buffett.common import create_meta
 from buffett.common.pendelum import Date
+from buffett.common.tools import dataframe_not_valid
 from buffett.constants.col import DATE
 from buffett.constants.table import TRA_CAL
 from buffett.download import Para
@@ -51,12 +53,17 @@ class TradeCalendarHandler(FastHandler):
 
         return res
 
-    def _save_to_database(self, df: DataFrame):
+    def _save_to_database(self,
+                          df: DataFrame):
         self._operator.create_table(name=TRA_CAL, meta=_META)
         self._operator.try_insert_data(name=TRA_CAL, df=df)  # 忽略重复Insert
         self._operator.disconnect()
 
-    def select_data(self, para: Para = None) -> DataFrame:
+    def select_data(self,
+                    para: Para = None) -> Optional[DataFrame]:
         df = self._operator.select_data(TRA_CAL)
+        if dataframe_not_valid(df):
+            return
+
         df.index = df[DATE]
         return df
