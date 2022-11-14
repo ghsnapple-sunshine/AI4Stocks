@@ -9,7 +9,7 @@ from buffett.download.mysql import Operator
 from buffett.task.task import Task
 from buffett.task.task_scheduler import TaskScheduler
 from test import DbSweeper
-from test.tester import Tester
+from test import Tester
 
 
 class InnerA:
@@ -121,21 +121,39 @@ class TestTaskScheduler(Tester):
 
     def test_run_with_new_task_n_error(self):
         DbSweeper.cleanup()
-        self._run_with_new_task()
+        self._run_with_3tasks()
         actual = self.operator.select_data(name=TASK_RCD)
         assert actual[actual[SUCCESS] == 0].shape[0] == 1
         assert actual.shape[0] == 5
 
     def test_run_2times(self):
         DbSweeper.cleanup()
-        self._run_with_new_task()
-        self._run_with_new_task()
+        self._run_with_3tasks()
+        self._run_with_3tasks()
+        actual = self.operator.select_data(name=TASK_RCD)
+        assert actual.shape[0] == 5
 
-    def _run_with_new_task(self):
+    def test_run_2times_add_task(self):
+        DbSweeper.cleanup()
+        self._run_with_1task()
+        actual = self.operator.select_data(name=TASK_RCD)
+        assert actual.shape[0] == 1
+        self._run_with_3tasks()
+        actual = self.operator.select_data(name=TASK_RCD)
+        assert actual.shape[0] == 5
+
+    def _run_with_3tasks(self):
         InnerD.COUNT = 0
         sch = TaskScheduler(
             operator=self.operator,
             tasks=[OneOffTaskA(start_time=DateTime.now() - Duration(seconds=1)),
                    OneOffTaskB(start_time=DateTime.now() - Duration(seconds=2)),
                    PerfectTask(start_time=DateTime.now())])
+        sch.run()
+
+    def _run_with_1task(self):
+        InnerD.COUNT = 0
+        sch = TaskScheduler(
+            operator=self.operator,
+            tasks=[OneOffTaskA(start_time=DateTime.now() - Duration(seconds=1))])
         sch.run()

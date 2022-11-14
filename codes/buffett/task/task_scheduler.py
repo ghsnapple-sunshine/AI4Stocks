@@ -2,12 +2,12 @@ from typing import Optional
 
 from buffett.adapter import logging
 from buffett.adapter.numpy import np
-from buffett.adapter.pandas import DataFrame, Series, pd
+from buffett.adapter.pandas import Series, DataFrame, pd
 from buffett.adapter.wellknown import sleep
 from buffett.common import create_meta
 from buffett.common.interface import Singleton
 from buffett.common.pendelum import DateTime, convert_datetime
-from buffett.common.tools import dataframe_not_valid, list_is_valid
+from buffett.common.tools import dataframe_not_valid, list_is_valid, dataframe_is_valid
 from buffett.constants.col.task import TASK_ID, PARENT_ID, SUCCESS, ERR_MSG, MODULE, CLASS, START_TIME, \
     CREATE_TIME, END_TIME
 from buffett.constants.magic import load_class
@@ -45,6 +45,12 @@ class TaskScheduler(Singleton):
 
     def _create_task(self,
                      series: Series) -> Task:
+        """
+        根据数据库记录创建Task
+
+        :param series:
+        :return:
+        """
         task_cls = load_class(series[MODULE], series[CLASS])
         task = task_cls(operator=self._operator,
                         start_time=convert_datetime(series[START_TIME]))
@@ -52,6 +58,11 @@ class TaskScheduler(Singleton):
         return task
 
     def run(self):
+        """
+        任务调度器运行
+
+        :return:
+        """
         task = self._load_task()
         while task is not None:
             now = DateTime.now()
@@ -67,6 +78,12 @@ class TaskScheduler(Singleton):
 
     def _save_to_database(self,
                           df: DataFrame) -> None:
+        """
+        将df写入数据库
+
+        :param df:
+        :return:
+        """
         if dataframe_not_valid(df):
             return
 
@@ -75,9 +92,23 @@ class TaskScheduler(Singleton):
 
     def _add_tasks(self,
                    tasks: list[Task]) -> None:
+        """
+        任务调度器启动时新增多个任务
+
+        :param tasks:
+        :return:
+        """
         task_infos = DataFrame([x.info for x in tasks])
+
+        df = self._operator.select_data(name=TASK_RCD)
+        if dataframe_is_valid(df):
+            df = df[[CLASS, MODULE]]
+            task_filter = task_infos[[CLASS, MODULE]]
+            task_filter = pd.concat([df, task_filter]).drop_duplicates(keep=False)
+            task_infos = pd.merge(task_filter, task_infos, how='left', on=[CLASS, MODULE])
+
         start = self._operator.select_row_num(name=TASK_RCD) + 1
-        task_infos[TASK_ID] = np.arange(start=start, stop=start + len(tasks), dtype=int)
+        task_infos[TASK_ID] = np.arange(start=start, stop=start + len(task_infos), dtype=int)
         now = DateTime.now()
         task_infos[CREATE_TIME] = now
         self._save_to_database(task_infos)
@@ -85,6 +116,13 @@ class TaskScheduler(Singleton):
     def _add_task(self,
                   task: Task,
                   parent_id: int) -> None:
+        """
+        任务调度器运行时新增一个任务
+
+        :param task:
+        :param parent_id:
+        :return:
+        """
         task_info = task.info
         task_info[TASK_ID] = self._operator.select_row_num(name=TASK_RCD) + 1
         now = DateTime.now()
@@ -94,6 +132,12 @@ class TaskScheduler(Singleton):
 
     def _run_n_update_task(self,
                            task: Task):
+        """
+        任务调度器运行并且更新数据库记录
+
+        :param task:
+        :return:
+        """
         success, res, new_task, err_msg = task.run()
         now = DateTime.now()
         task_info = DataFrame([{TASK_ID: task.task_id,
@@ -106,6 +150,11 @@ class TaskScheduler(Singleton):
             self._add_task(new_task, parent_id=task.task_id)
 
     def _load_task(self) -> Optional[Task]:
+        """
+        从数据库加载待运行的下一个任务
+
+        :return:
+        """
         df = self._operator.select_data(name=TASK_RCD)
         if dataframe_not_valid(df):
             return
