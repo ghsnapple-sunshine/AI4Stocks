@@ -1,13 +1,12 @@
-import unittest
-from datetime import date
+from test import Tester
 
-import pendulum
-from pandas import DataFrame
-
+from buffett.adapter import pendulum
+from buffett.adapter.pandas import DataFrame
+from buffett.adapter.pendulum import date
 from buffett.common.pendelum import Date, DateSpan, DateTime, Duration
 
 
-class PendelumTest(unittest.TestCase):
+class PendelumTest(Tester):
     def test_date_compare(self):
         date1 = Date(2022, 1, 4)
         date2 = Date(2022, 1, 5)

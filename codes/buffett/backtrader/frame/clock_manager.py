@@ -1,5 +1,4 @@
-from pandas import DataFrame
-
+from buffett.adapter.pandas import DataFrame
 from buffett.backtrader.frame.clock import Clock
 from buffett.backtrader.interface.time_sequence import ITimeSequence as Sequence
 from buffett.common.pendelum import DateSpan as Span, convert_date

@@ -1,5 +1,4 @@
-from pandas import DataFrame
-
+from buffett.adapter.pandas import DataFrame
 from buffett.common import Code
 from buffett.constants.meta import META_COLS
 from buffett.constants.table import STK_LS

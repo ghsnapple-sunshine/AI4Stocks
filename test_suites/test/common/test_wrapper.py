@@ -1,4 +1,4 @@
-import unittest
+from test import Tester
 
 from buffett.common.wrapper import WrapperFactory
 
@@ -24,7 +24,7 @@ class InnerC:
         return self.val + obj
 
 
-class WrapperTest(unittest.TestCase):
+class WrapperTest(Tester):
     def test_method_no_para(self):
         obj = InnerA()
         wrapper = WrapperFactory.from_method_name(obj, 'run')

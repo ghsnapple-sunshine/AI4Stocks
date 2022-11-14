@@ -1,5 +1,3 @@
-from typing import Type
-
 from buffett.backtrader.frame.exchange import Exchange
 from buffett.backtrader.interface.time_sequence import ITimeSequence as Sequence
 from buffett.download.handler import Handler
@@ -11,7 +9,7 @@ class StrategyBase(Sequence):
         self._exchange: Exchange = Exchange()
 
     @staticmethod
-    def col_request() -> dict[HeadType, Type[Handler]]:
+    def col_request() -> dict[HeadType, type[Handler]]:
         return dict()
 
     # 订单结算

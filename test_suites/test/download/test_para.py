@@ -1,7 +1,6 @@
-import unittest
+from test import Tester
 
-from pandas import Series
-
+from buffett.adapter.pandas import Series
 from buffett.common import Code
 from buffett.common.pendelum import Date
 from buffett.constants.col import FREQ, SOURCE, FUQUAN, START_DATE, END_DATE
@@ -10,7 +9,7 @@ from buffett.download import Para
 from buffett.download.types import FuquanType, FreqType, SourceType
 
 
-class TestPara(unittest.TestCase):
+class TestPara(Tester):
     def test_from_series_partial(self):
         freq = FreqType.DAY
         source = SourceType.BAOSTOCK

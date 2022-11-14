@@ -1,9 +1,8 @@
 # 下载沪深股票列表
 from typing import Optional
 
-import akshare as ak
-from pandas import DataFrame
-
+from buffett.adapter.akshare import ak
+from buffett.adapter.pandas import DataFrame
 from buffett.common import Code, create_meta
 from buffett.common.tools import dataframe_not_valid
 from buffett.constants.col.stock import CODE, NAME

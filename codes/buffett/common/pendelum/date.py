@@ -1,9 +1,6 @@
 from __future__ import annotations
 
-from datetime import datetime, timedelta
-
-from pendulum import Date as PDate
-
+from buffett.adapter.pendulum import Date as PDate, datetime, timedelta
 from buffett.common.pendelum.duration import Duration
 
 

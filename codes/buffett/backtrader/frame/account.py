@@ -1,6 +1,4 @@
-import numpy as np
-from numpy import ndarray
-
+from buffett.adapter.numpy import ndarray, np
 from buffett.backtrader.frame.clock import Clock
 from buffett.backtrader.frame.order import Order
 from buffett.backtrader.interface import ITimeSequence as Sequence
@@ -17,7 +15,7 @@ class Account(Sequence):
         self._init_cash: float = 0
         self._cash: ndarray = ndarray(shape=(1,))
         self._stock_value: ndarray = ndarray(shape=(1,))
-        self._get_all_close: Wrapper = Wrapper()            # 获取当前时刻所有股票的收盘价
+        self._get_all_close: Wrapper = Wrapper()  # 获取当前时刻所有股票的收盘价
 
     def get_holding(self, code: int) -> int:
         return self._holdings[self.curr_tick, code]

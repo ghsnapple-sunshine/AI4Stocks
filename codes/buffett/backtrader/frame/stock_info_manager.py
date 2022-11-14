@@ -1,7 +1,6 @@
 from typing import Type
 
-from pandas import DataFrame
-
+from buffett.adapter.pandas import DataFrame
 from buffett.backtrader.frame.clock import Clock
 from buffett.backtrader.frame.column import Column
 from buffett.backtrader.frame.stock_info import StockInfo

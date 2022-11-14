@@ -1,7 +1,4 @@
-import pandas as pd
-from pandas import DataFrame
-
-from buffett.common.interface import Singleton
+from buffett.adapter.pandas import DataFrame, pd
 from buffett.common.pendelum import DateTime, Duration
 from buffett.common.wrapper import Wrapper
 from buffett.constants.col.task import ERR_MSG, TASK_ID, PARENT_ID, CLASS, MODULE, CREATE_TIME, START_TIME, END_TIME, \

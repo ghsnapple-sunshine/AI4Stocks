@@ -1,5 +1,4 @@
-from pandas import DataFrame
-
+from buffett.adapter.pandas import DataFrame
 from buffett.common import create_meta, Code
 from buffett.constants.col import FREQ, FUQUAN, SOURCE, START_DATE, END_DATE
 from buffett.constants.col.stock import CODE

@@ -131,12 +131,11 @@ import logging
 from abc import abstractmethod
 from typing import Optional
 
-import pandas as pd
-from pandas import DataFrame, Series
-
+from buffett.adapter.pandas import DataFrame, pd, Series
 from buffett.common.error import ParamTypeError
 from buffett.common.pendelum import DateSpan, Date, convert_datetime, Duration
 from buffett.common.tools import dataframe_not_valid
+from buffett.constants import NAN
 from buffett.constants.col import FREQ, FUQUAN, SOURCE, START_DATE, END_DATE, DATE
 from buffett.constants.col.stock import CODE
 from buffett.download.fast import TradeCalendarHandler
@@ -172,7 +171,7 @@ class SlowHandler(Handler):
         para = self._fix_para(para)
 
         stock_list = SHandler(self._operator).select_data()
-        done_records = self._recorder.get_data()
+        done_records = self._recorder.select_data()
 
         todo_records = self._get_todo_records(stock_list=stock_list,
                                               done_records=done_records,
@@ -252,8 +251,8 @@ class SlowHandler(Handler):
         :return:
         """
         if dataframe_not_valid(done_records):
-            todo_records[_DORCD_START] = pd.NA
-            todo_records[_DORCD_END] = pd.NA
+            todo_records[_DORCD_START] = NAN
+            todo_records[_DORCD_END] = NAN
             return todo_records
 
         done_records.rename(columns={START_DATE: _DORCD_START,

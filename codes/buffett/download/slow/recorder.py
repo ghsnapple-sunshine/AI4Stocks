@@ -1,7 +1,8 @@
-from pandas import DataFrame
+from typing import Optional
 
+from buffett.adapter.pandas import DataFrame
 from buffett.common import Code
-from buffett.common.tools import create_meta
+from buffett.common.tools import create_meta, dataframe_not_valid
 from buffett.constants.col import FREQ, FUQUAN, SOURCE, START_DATE, END_DATE
 from buffett.constants.col.stock import CODE
 from buffett.constants.table import DL_RCD
@@ -24,25 +25,24 @@ class DownloadRecorder:
         self._operator = operator
         self._exist = False
 
-    def save(self, para: Para):
-        ls = [
-            [para.stock.code, para.comb.freq, para.comb.fuquan, para.comb.source, para.span.start, para.span.end]
-        ]
+    def save(self, para: Para) -> None:
+        ls = [[para.stock.code, para.comb.freq, para.comb.fuquan, para.comb.source, para.span.start, para.span.end]]
         cols = [CODE, FREQ, FUQUAN, SOURCE, START_DATE, END_DATE]
         data = DataFrame(data=ls, columns=cols)
         self.save_to_database(data=data)
 
-    def save_to_database(self, data: DataFrame):
+    def save_to_database(self,
+                         data: DataFrame) -> None:
         if not self._exist:
             self._operator.create_table(DL_RCD, _META, if_not_exist=True)
             self._exist = True
 
         self._operator.try_insert_data(DL_RCD, data, _META, update=True)  # 如果原纪录已存在，则更新
 
-    def get_data(self) -> DataFrame:
+    def select_data(self) -> Optional[DataFrame]:
         df = self._operator.select_data(DL_RCD)
-        if (not isinstance(df, DataFrame)) or df.empty:
-            return DataFrame()
+        if dataframe_not_valid(df):
+            return
 
         df[CODE] = df[CODE].apply(lambda x: Code(x))
         df[FREQ] = df[FREQ].apply(lambda x: FreqType(x))

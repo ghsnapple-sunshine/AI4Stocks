@@ -1,7 +1,8 @@
 from __future__ import annotations
 
-from enum import Enum
 from typing import Optional
+
+from buffett.adapter.enum import Enum
 
 
 class CodeType(Enum):

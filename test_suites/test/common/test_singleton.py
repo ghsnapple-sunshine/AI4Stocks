@@ -1,4 +1,4 @@
-import unittest
+from test import Tester
 
 from buffett.common.interface import Singleton
 
@@ -13,7 +13,7 @@ SingletonSubClass = type('SingletonSubClass',
                          {'__init__': init_method})
 
 
-class TestSingleton(unittest.TestCase):
+class TestSingleton(Tester):
     def test_singleton(self):
         obj1 = Singleton()
         obj2 = Singleton()

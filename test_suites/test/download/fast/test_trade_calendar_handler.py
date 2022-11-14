@@ -1,9 +1,6 @@
-import unittest
-
 from buffett.common.tools import dataframe_not_valid
 from buffett.download.fast import TradeCalendarHandler
-from test import DbSweeper
-from test.tester import Tester
+from test import DbSweeper, Tester
 
 
 class TradeCalendarHandlerTest(Tester):
@@ -20,7 +17,3 @@ class TradeCalendarHandlerTest(Tester):
         hdl = TradeCalendarHandler(operator=self.operator)
         db = hdl.select_data()
         assert dataframe_not_valid(db)
-
-
-if __name__ == '__main__':
-    unittest.main()

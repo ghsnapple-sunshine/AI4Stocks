@@ -1,4 +1,4 @@
-import unittest
+from test import Tester
 
 from buffett.common.logger import Logger
 from buffett.common.logger import LoggerBuilder
@@ -19,7 +19,7 @@ DLogger = type('DLogger',
                 'other': lambda self, x: x + 100})
 
 
-class TestLogger(unittest.TestCase):
+class TestLogger(Tester):
     def test_no_build(self):
         logger = DLogger(5)
         assert logger.v == 5

@@ -1,12 +1,9 @@
 from __future__ import annotations
 
-from datetime import date
 from typing import Optional
 
-import numpy as np
-import pandas as pd
-from pandas import Series, DataFrame
-
+from buffett.adapter.pandas import Series, DataFrame, pd
+from buffett.adapter.pendulum import date
 from buffett.common import Code
 from buffett.common.pendelum import DateSpan
 from buffett.common.stock import Stock
@@ -36,7 +33,8 @@ class Para:
         self._heads = heads
 
     @classmethod
-    def from_series(cls, series: Series):
+    def from_series(cls,
+                    series: Series) -> Para:
         """
         从Series中创建para
 
@@ -53,7 +51,9 @@ class Para:
         span = DateSpan(start=start_date, end=end_date) if any([start_date, end_date]) else None
         return Para(stock=stock, comb=comb, span=span)
 
-    def with_stock(self, stock: Stock, condition: bool = True) -> Para:
+    def with_stock(self,
+                   stock: Stock,
+                   condition: bool = True) -> Para:
         """
         条件设置stock并返回自身
 
@@ -65,7 +65,9 @@ class Para:
             self._stock = stock
         return self
 
-    def with_code(self, code: Code, condition: bool = True) -> Para:
+    def with_code(self,
+                  code: Code,
+                  condition: bool = True) -> Para:
         """
         条件设置stock.code并返回自身
 
@@ -80,7 +82,9 @@ class Para:
                 self._stock.with_code(code)
         return self
 
-    def with_name(self, name: str, condition: bool = True) -> Para:
+    def with_name(self,
+                  name: str,
+                  condition: bool = True) -> Para:
         """
         条件设置stock.name并返回自身
 
@@ -95,7 +99,9 @@ class Para:
                 self._stock.with_name(name)
         return self
 
-    def with_comb(self, comb: CombType, condition: bool = True) -> Para:
+    def with_comb(self,
+                  comb: CombType,
+                  condition: bool = True) -> Para:
         """
         条件设置comb并返回自身
 
@@ -107,7 +113,9 @@ class Para:
             self._comb = comb
         return self
 
-    def with_fuquan(self, fuquan: FuquanType, condition: bool = True) -> Para:
+    def with_fuquan(self,
+                    fuquan: FuquanType,
+                    condition: bool = True) -> Para:
         """
         条件设置comb.fuquan并返回自身
 
@@ -122,7 +130,9 @@ class Para:
                 self._comb.with_fuquan(fuquan)
         return self
 
-    def with_source(self, source: SourceType, condition: bool = True) -> Para:
+    def with_source(self,
+                    source: SourceType,
+                    condition: bool = True) -> Para:
         """
         条件设置comb.source并返回自身
 
@@ -137,7 +147,9 @@ class Para:
                 self._comb.with_source(source)
         return self
 
-    def with_freq(self, freq: FreqType, condition: bool = True) -> Para:
+    def with_freq(self,
+                  freq: FreqType,
+                  condition: bool = True) -> Para:
         """
         条件设置comb.freq并返回自身
 
@@ -216,7 +228,9 @@ class Para:
             self._span = DateSpan(start=start, end=end)
         return self
 
-    def with_heads(self, heads: list[HeadType], condition: bool = True) -> Para:
+    def with_heads(self,
+                   heads: list[HeadType],
+                   condition: bool = True) -> Para:
         """
         条件设置heads并返回自身
 

@@ -1,11 +1,11 @@
-import unittest
+from test import Tester
 
 from buffett.common.pendelum import Date, Duration
 from buffett.common.stock import Code
 from buffett.download import Para
 from buffett.download.slow.ak_daily_handler import AkDailyHandler
 from buffett.download.types import FuquanType
-from test.tester import Tester
+from test import Tester
 from test.tools import create_1stock, create_2stocks
 
 
@@ -69,7 +69,3 @@ class AkDailyHandlerTest(Tester):
         tbls = hdl.obtain_data(para=Para()
                                .with_start_n_end(start=start_date, end=end_date))
         assert stocks.shape[0] * 3 == len(tbls)
-
-
-if __name__ == '__main__':
-    unittest.main()

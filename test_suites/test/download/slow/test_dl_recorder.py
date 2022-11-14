@@ -7,7 +7,7 @@ from buffett.constants.col.stock import CODE
 from buffett.download import Para
 from buffett.download.slow.recorder import DownloadRecorder
 from buffett.download.types import FuquanType, FreqType, SourceType
-from test.tester import Tester
+from test import Tester
 
 
 class TestDownloadRecorder(Tester):
@@ -45,7 +45,7 @@ class TestDownloadRecorder(Tester):
         self.recorder.save(para=para)
 
     def __get_table__(self):
-        data = self.recorder.get_data()
+        data = self.recorder.select_data()
         assert type(data) == DataFrame
         # 验证数据正确
         assert data[data[CODE] == '000001'][FREQ][0] == FreqType.DAY

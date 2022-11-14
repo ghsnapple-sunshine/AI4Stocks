@@ -1,13 +1,13 @@
 from typing import Optional
 
-from baostock.data.resultset import ResultData
-from pandas import DataFrame
 
+from buffett.adapter.baostock import ResultData
+from buffett.adapter.pandas import DataFrame
 from buffett.common.pendelum import DateTime
 from buffett.constants import INT_MAX_VALUE, INT_MIN_VALUE, FLOAT_MAX_VALUE, FLOAT_MIN_VALUE
 
 
-def bs_result_to_dataframe(rs: ResultData):
+def bs_result_to_dataframe(rs: ResultData) -> DataFrame:
     """
     将baostock返回的ResultData转换为DataFrame
 

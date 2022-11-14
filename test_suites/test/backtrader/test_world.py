@@ -1,5 +1,4 @@
-from pandas import DataFrame
-
+from buffett.adapter.pandas import DataFrame
 from buffett.backtrader.frame import Para as WPara, TheWorldBuilder as Builder
 from buffett.backtrader.strategy import StrategyBase as Strat
 from buffett.common import Code as Code

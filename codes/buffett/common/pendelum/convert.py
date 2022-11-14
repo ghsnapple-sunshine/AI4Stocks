@@ -1,6 +1,6 @@
-from datetime import datetime, date
 from typing import Optional, Union
 
+from buffett.adapter.pendulum import date, datetime
 from buffett.common.error import ParamTypeError
 from buffett.common.pendelum.date import Date
 from buffett.common.pendelum.datetime import DateTime

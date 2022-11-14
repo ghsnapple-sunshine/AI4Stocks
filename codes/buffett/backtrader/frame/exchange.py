@@ -1,7 +1,6 @@
 from typing import Type
 
-from pandas import DataFrame
-
+from buffett.adapter.pandas import DataFrame
 from buffett.backtrader.frame.account import Account as Acc, AccountBuilder as AccBuilder
 from buffett.backtrader.frame.accounting_manager import AccountingManager as AccMan, \
     AccountManagerBuilder as AMBuilder

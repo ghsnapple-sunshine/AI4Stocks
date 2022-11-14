@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from enum import Enum
+from buffett.adapter.enum import Enum
 
 
 class ColType(Enum):

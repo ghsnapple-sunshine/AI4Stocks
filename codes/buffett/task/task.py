@@ -1,9 +1,9 @@
-import logging
-import traceback
 from abc import abstractmethod
 from types import MappingProxyType
 from typing import Any, Optional
 
+from buffett.adapter import logging
+from buffett.adapter.wellknown import format_exc
 from buffett.common.pendelum import DateTime
 from buffett.common.wrapper import Wrapper
 from buffett.constants.col.task import CLASS, MODULE, START_TIME
@@ -45,7 +45,7 @@ class Task:
             new_task = self.get_subsequent_task(success=True)
         except Exception as e:
             logging.error(f"---------------Error occurred when running {self._wrapper.func_name}---------------")
-            err_msg = traceback.format_exc()
+            err_msg = format_exc()
             logging.error(err_msg)
             success = False
             new_task = self.get_subsequent_task(success=False)

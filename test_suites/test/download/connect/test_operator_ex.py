@@ -1,6 +1,4 @@
-import pandas as pd
-from pandas import DataFrame
-
+from buffett.adapter.pandas import DataFrame, pd
 from buffett.common import create_meta
 from buffett.common.pendelum import Date, DateSpan, DateTime
 from buffett.constants.col import DATETIME, OPEN, CLOSE

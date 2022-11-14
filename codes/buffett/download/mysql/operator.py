@@ -1,10 +1,8 @@
-from datetime import date
-from enum import Enum
 from typing import Optional, Union, Any
 
-import pandas as pd
-from pandas import DataFrame
-
+from buffett.adapter.enum import Enum
+from buffett.adapter.pandas import pd, DataFrame
+from buffett.adapter.pendulum import date
 from buffett.common.pendelum import DateSpan
 from buffett.common.tools import dataframe_not_valid, list_not_valid
 from buffett.constants.col import DATE, DATETIME
@@ -67,12 +65,6 @@ class Operator(Connector):
         :param meta:                表元数据
         :param if_not_exist:        检查表是否存在，不存在则创建
         :return:
-        """
-        """
-        cols = []
-        for index, row in meta.iterrows():
-            s = '{0} {1} {2}'.format(row[COLUMN], row[TYPE].sql_format(), row[ADDREQ].sql_format())
-            cols.append(s)
         """
         cols = [f'`{row[COLUMN]}` {row[TYPE].sql_format()} {row[ADDREQ].sql_format()}'
                 for index, row in meta.iterrows()]

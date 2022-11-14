@@ -1,10 +1,8 @@
-from datetime import datetime
+from typing import Optional
 
-import akshare as ak
-import pandas as pd
-from pandas import DataFrame
-
-from buffett.common import create_meta
+from buffett.adapter.akshare import ak
+from buffett.adapter.pandas import pd, DataFrame
+from buffett.common import create_meta, Code
 from buffett.common.pendelum import DateTime
 from buffett.common.tools import dataframe_not_valid
 from buffett.constants.col import DATETIME, OPEN, CLOSE, HIGH, LOW, CJL, CJE, ZF, ZDF, ZDE, HSL, LB, DSYL, SJL, ZSZ, \
@@ -67,7 +65,8 @@ class AkCurrHandler(FastHandler):
         curr_info[DATETIME] = pd.to_datetime(now.format('YYYY-MM-DDTHH:mm:ss'))
         return curr_info
 
-    def _save_to_database(self, df: DataFrame) -> None:
+    def _save_to_database(self,
+                          df: DataFrame) -> None:
         if dataframe_not_valid(df):
             return
 
@@ -75,9 +74,11 @@ class AkCurrHandler(FastHandler):
         self._operator.try_insert_data(name=STK_RT, df=df)
         self._operator.disconnect()
 
-    def select_data(self, para: Para = None) -> DataFrame:
+    def select_data(self,
+                    para: Para = None) -> Optional[DataFrame]:
         df = self._operator.select_data(STK_RT)
-        if (not isinstance(df, DataFrame)) or df.empty:
-            return DataFrame()
+        if dataframe_not_valid(df):
+            return
 
+        df[CODE] = df[CODE].apply(lambda x: Code(x))
         return df

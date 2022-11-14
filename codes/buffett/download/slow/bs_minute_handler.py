@@ -1,6 +1,5 @@
-import baostock as bs
-from pandas import DataFrame
-
+from buffett.adapter.baostock import bs
+from buffett.adapter.pandas import DataFrame
 from buffett.common import create_meta
 from buffett.common.pendelum import convert_datetime
 from buffett.constants.col import DATETIME, OPEN, CLOSE, HIGH, LOW, CJL, CJE
@@ -73,7 +72,8 @@ class BsMinuteHandler(SlowHandler):
         self._operator.create_table(name=table_name, meta=_META)
         self._operator.insert_data(table_name, df)
 
-    def select_data(self, para: Para) -> DataFrame:
+    def select_data(self,
+                    para: Para) -> DataFrame:
         """
         查询某支股票以某种复权方式的全部数据
 

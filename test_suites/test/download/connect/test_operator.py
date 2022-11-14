@@ -1,12 +1,8 @@
-import unittest
-
-import pandas as pd
-from pandas import DataFrame
-
+from buffett.adapter.pandas import DataFrame, pd
 from buffett.constants.col.stock import CODE, NAME
 from buffett.constants.meta import META_COLS
 from buffett.download.mysql.types import ColType, AddReqType
-from test.tester import Tester
+from test import Tester
 
 
 class TestOperator(Tester):
@@ -69,5 +65,3 @@ class TestOperator(Tester):
         assert db.empty
 
 
-if __name__ == '__main__':
-    unittest.main()

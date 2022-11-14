@@ -44,7 +44,7 @@ class ReformHandlerTest(Tester):
         rf_table_names = rf_table_names if isinstance(rf_table_names, list) else [rf_table_names]
         rf_data = np.sum([self.operator.select_row_num(x) for x in rf_table_names])
         assert dl_data == rf_data
-        dl_record = DRecorder(operator=self.operator).get_data()
+        dl_record = DRecorder(operator=self.operator).select_data()
         rf_record = RRecorder(operator=self.operator).get_data()
         assert pd.concat([dl_record, rf_record]).drop_duplicates(keep=False).empty
 

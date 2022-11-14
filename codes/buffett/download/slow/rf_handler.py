@@ -1,8 +1,7 @@
 import logging
 
 import numpy as np
-import pandas as pd
-from pandas import DataFrame, Series
+from buffett.adapter.pandas import DataFrame, pd, Series
 from pymysql import IntegrityError
 
 from buffett.common import create_meta
@@ -70,7 +69,7 @@ class ReformHandler:
 
         :return:                    待转换记录
         """
-        todo_records = self._dl_recorder.get_data()
+        todo_records = self._dl_recorder.select_data()
         if dataframe_not_valid(todo_records):
             return
         # todo_records = todo_records.drop_duplicates()

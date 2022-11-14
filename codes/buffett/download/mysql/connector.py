@@ -26,10 +26,11 @@ class Connector:
             self._db = 'stocks'
             self._pwd = input('请输入root@localhost的密码')
 
+        # TODO: 应改为私有属性
         self.conn = None
         self.cursor = None
 
-    # TODO: 待清理属性
+    # TODO: 待删除属性
     @property
     def db(self):
         return self._db

@@ -1,5 +1,4 @@
-import logging
-
+from buffett.adapter import logging
 from buffett.common.pendelum import DateTime
 from buffett.task import StockListTask
 from test import Tester

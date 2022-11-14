@@ -1,7 +1,6 @@
 from abc import abstractmethod
 
-from pandas import DataFrame
-
+from buffett.adapter.pandas import DataFrame
 from buffett.download.handler import Handler, Para
 
 

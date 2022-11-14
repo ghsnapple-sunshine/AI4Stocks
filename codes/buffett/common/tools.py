@@ -1,6 +1,5 @@
-import numpy as np
-from pandas import DataFrame
-
+from buffett.adapter.numpy import np
+from buffett.adapter.pandas import DataFrame
 from buffett.common.pendelum import DateTime, Duration, DateSpan
 from buffett.constants.meta import META_COLS
 

@@ -1,6 +1,7 @@
 #
-from importlib import import_module
 from typing import Type
+
+from buffett.adapter.importlib import import_module
 
 
 # MODULE = '__module__'

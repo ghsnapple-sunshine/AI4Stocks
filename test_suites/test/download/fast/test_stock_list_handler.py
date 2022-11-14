@@ -1,10 +1,7 @@
-import unittest
-
-from pandas import DataFrame
-
+from buffett.adapter.pandas import DataFrame
 from buffett.constants.table import STK_LS
 from buffett.download.fast.stock_list_handler import StockListHandler
-from test.tester import Tester
+from test import Tester
 
 
 class StockListHandlerTest(Tester):
@@ -18,7 +15,3 @@ class StockListHandlerTest(Tester):
 
     def test_2(self):
         self.test_1()  # 重复执行，测试重复插入不报错
-
-
-if __name__ == '__main__':
-    unittest.main()

@@ -1,6 +1,4 @@
-import pandas as pd
-from pandas import DataFrame
-
+from buffett.adapter.pandas import DataFrame, pd
 from buffett.common import Code
 from buffett.common.pendelum import Date
 from buffett.constants.col.stock import CODE, NAME

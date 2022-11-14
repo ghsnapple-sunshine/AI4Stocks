@@ -1,4 +1,4 @@
-import unittest
+from test import Tester
 
 
 class InnerA:
@@ -42,7 +42,7 @@ class InnerD:
             li.notify()
 
 
-class ListenerTest(unittest.TestCase):
+class ListenerTest(Tester):
     def test_add_listener(self):
         a, b, c, d = InnerA(), InnerB(), InnerC(), InnerD()
         a.b = b

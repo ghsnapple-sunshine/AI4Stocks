@@ -4,7 +4,7 @@ from buffett.constants.col.stock import CODE, NAME
 from buffett.constants.meta import META_COLS
 from buffett.constants.table import STK_LS
 from buffett.download.mysql.types import ColType, AddReqType
-from test.tester import Tester
+from test import Tester
 from test.db_sweeper import DbSweeper
 
 

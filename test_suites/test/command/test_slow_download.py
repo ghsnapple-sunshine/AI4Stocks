@@ -1,5 +1,4 @@
-import logging
-
+from buffett.adapter import logging
 from buffett.common.pendelum import DateTime, Date
 from buffett.common.wrapper import Wrapper
 from buffett.constants.magic import empty_init

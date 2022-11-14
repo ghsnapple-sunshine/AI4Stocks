@@ -1,8 +1,7 @@
 from typing import Optional
 
-import baostock as bs
-from pandas import DataFrame
-
+from buffett.adapter.baostock import bs
+from buffett.adapter.pandas import DataFrame
 from buffett.common import create_meta
 from buffett.common.pendelum import Date
 from buffett.common.tools import dataframe_not_valid
@@ -57,7 +56,8 @@ class BsMoneySupplyHandler(FastHandler):
         bs.logout()
         return money_supply
 
-    def _save_to_database(self, df: DataFrame) -> None:
+    def _save_to_database(self,
+                          df: DataFrame) -> None:
         if dataframe_not_valid(df):
             return
 
@@ -65,7 +65,8 @@ class BsMoneySupplyHandler(FastHandler):
         self._operator.try_insert_data(name=MONEY_SPLY, df=df)  # 忽略重复Insert
         self._operator.disconnect()
 
-    def select_data(self, para: Para = None) -> Optional[DataFrame]:
+    def select_data(self,
+                    para: Para = None) -> Optional[DataFrame]:
         df = self._operator.select_data(MONEY_SPLY)
         if dataframe_not_valid(df):
             return

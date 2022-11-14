@@ -1,11 +1,9 @@
-import logging
-import time
 from typing import Optional
 
-import pandas as pd
-from numpy import arange
-from pandas import DataFrame, Series
-
+from buffett.adapter import logging
+from buffett.adapter.numpy import np
+from buffett.adapter.pandas import DataFrame, Series, pd
+from buffett.adapter.wellknown import sleep
 from buffett.common import create_meta
 from buffett.common.interface import Singleton
 from buffett.common.pendelum import DateTime, convert_datetime
@@ -62,7 +60,7 @@ class TaskScheduler(Singleton):
                 logging.info('Next task will be executed in {0}(Start at: {1})'.format(
                     delay.in_words(),
                     task.start_time.format_YMDHms()))
-                time.sleep(delay.total_seconds())
+                sleep(delay.total_seconds())
             self._run_n_update_task(task)
             task = self._load_task()
         logging.info('All tasks are successfully executed.')
@@ -79,7 +77,7 @@ class TaskScheduler(Singleton):
                    tasks: list[Task]) -> None:
         task_infos = DataFrame([x.info for x in tasks])
         start = self._operator.select_row_num(name=TASK_RCD) + 1
-        task_infos[TASK_ID] = arange(start=start, stop=start + len(tasks), dtype=int)
+        task_infos[TASK_ID] = np.arange(start=start, stop=start + len(tasks), dtype=int)
         now = DateTime.now()
         task_infos[CREATE_TIME] = now
         self._save_to_database(task_infos)

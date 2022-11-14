@@ -1,13 +1,9 @@
-import unittest
-
 from buffett.common.pendelum import Date, DateTime, convert_date
 from buffett.common.stock import Code
 from buffett.download import Para
 from buffett.download.slow.bs_minute_handler import BsMinuteHandler
 from buffett.download.types import FuquanType
-from test.db_sweeper import DbSweeper
-from test.tester import Tester
-from test.tools import create_2stocks, create_ex_1stock
+from test import Tester, DbSweeper, create_2stocks, create_ex_1stock
 
 
 class BsStockMinuteHandlerTest(Tester):
@@ -72,7 +68,3 @@ class BsStockMinuteHandlerTest(Tester):
         hdl = BsMinuteHandler(operator=self.operator)
         para = Para().with_start_n_end(Date(2000, 1, 1), Date.today())
         hdl.obtain_data(para=para)
-
-
-if __name__ == '__main__':
-    unittest.main()

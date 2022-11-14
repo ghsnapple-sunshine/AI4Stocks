@@ -1,6 +1,4 @@
-from datetime import date
-
-from pendulum import Duration as PDuration
+from buffett.adapter.pendulum import Duration as PDuration, date
 
 
 class Duration(PDuration):

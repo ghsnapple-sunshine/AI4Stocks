@@ -1,9 +1,8 @@
-import logging
 from typing import Optional
 
-import baostock as bs
-from pandas import DataFrame
-
+from buffett.adapter import logging
+from buffett.adapter.baostock import bs
+from buffett.adapter.pandas import DataFrame
 from buffett.common import create_meta
 from buffett.common.pendelum import Date
 from buffett.common.tools import dataframe_not_valid

@@ -1,4 +1,4 @@
-import unittest
+from unittest import TestCase
 
 from buffett.common.pendelum import DateTime
 from buffett.download.mysql import Operator
@@ -6,7 +6,7 @@ from buffett.download.mysql.types import RoleType
 from test import DbSweeper
 
 
-class Tester(unittest.TestCase):
+class Tester(TestCase):
     def setUp(self) -> None:
         self.operator = Operator(role=RoleType.DbTest)
         self.operator.connect()

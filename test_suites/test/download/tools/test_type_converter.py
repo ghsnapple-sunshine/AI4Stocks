@@ -1,11 +1,9 @@
-import unittest
-
-from numpy import ndarray
-
+from buffett.adapter.numpy import ndarray
 from buffett.common.tools import tuple_to_array
+from test import Tester
 
 
-class TestTypeConverter(unittest.TestCase):
+class TestTypeConverter(Tester):
     def test_tuple_to_array(self):
         tup = 1, 2, 3
         arr = tuple_to_array(tup)
@@ -13,7 +11,3 @@ class TestTypeConverter(unittest.TestCase):
         assert arr[0, 0] == 1
         assert arr[0, 1] == 2
         assert arr[0, 2] == 3
-
-
-if __name__ == '__main__':
-    unittest.main()

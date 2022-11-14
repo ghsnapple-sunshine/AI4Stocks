@@ -1,17 +1,15 @@
-#!/usr/bin/python
-# encoding=utf-8
-import datetime
-import os
-import threading
+from buffett.adapter.os import system
+from buffett.adapter.pendulum import datetime
+from buffett.adapter.threading import Thread
 
 
 def execCmd(cmd):
     try:
-        print("命令%s开始运行%s" % (cmd, datetime.datetime.now()))
-        os.system(cmd)
-        print("命令%s结束运行%s" % (cmd, datetime.datetime.now()))
+        print("命令%s开始运行%s" % (cmd, datetime.now()))
+        system(cmd)
+        print("命令%s结束运行%s" % (cmd, datetime.now()))
     except:
-        print('%s\t 运行失败' % (cmd))
+        print('%s\t 运行失败' % (cmd,))
 
 
 if __name__ == '__main__':
@@ -26,7 +24,7 @@ if __name__ == '__main__':
         # 并行
         threads = []
         for cmd in cmds:
-            th = threading.Thread(target=execCmd, args=(cmd,))
+            th = Thread(target=execCmd, args=(cmd,))
             th.start()
             threads.append(th)
 
@@ -37,10 +35,8 @@ if __name__ == '__main__':
         # 串行
         for cmd in cmds:
             try:
-                print("命令%s开始运行%s" % (cmd, datetime.datetime.now()))
-                os.system(cmd)
-                print("命令%s结束运行%s" % (cmd, datetime.datetime.now()))
+                print("命令%s开始运行%s" % (cmd, datetime.now()))
+                system(cmd)
+                print("命令%s结束运行%s" % (cmd, datetime.now()))
             except:
-                print('%s\t 运行失败' % (cmd))
-
-
+                print('%s\t 运行失败' % (cmd,))

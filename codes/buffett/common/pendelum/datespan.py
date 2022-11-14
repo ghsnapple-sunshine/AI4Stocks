@@ -1,8 +1,8 @@
 from __future__ import annotations
 
-from datetime import date
-from typing import Union, Optional
+from typing import Optional
 
+from buffett.adapter.pendulum import date
 from buffett.common.error import ParamTypeError
 from buffett.common.pendelum.date import Date
 from buffett.common.pendelum.convert import convert_date

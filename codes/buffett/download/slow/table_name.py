@@ -1,6 +1,4 @@
-import pandas as pd
-from pandas import DataFrame, Series
-
+from buffett.adapter.pandas import DataFrame, pd, Series
 from buffett.common.pendelum import convert_datetime, DateTime
 from buffett.constants.col import FREQ, SOURCE, FUQUAN, START_DATE, END_DATE
 from buffett.constants.col.my import MONTH_START, TABLE_NAME
@@ -55,7 +53,8 @@ class TableNameTool:
         return tables
 
     @classmethod
-    def _create_single_series(cls, spans: Series) -> DataFrame:
+    def _create_single_series(cls,
+                              spans: Series) -> DataFrame:
         """
         获取指定时间范围内的时间分段清单
 

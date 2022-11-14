@@ -1,6 +1,5 @@
-import akshare as ak
-from pandas import DataFrame
-
+from buffett.adapter.akshare import ak
+from buffett.adapter.pandas import DataFrame
 from buffett.common import create_meta
 from buffett.common.pendelum import convert_datetime
 from buffett.common.tools import dataframe_not_valid

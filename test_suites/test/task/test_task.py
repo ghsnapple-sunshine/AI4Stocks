@@ -1,9 +1,7 @@
-import logging
-import traceback
-import unittest
-
+from buffett.adapter import logging
 from buffett.common.wrapper import Wrapper
 from buffett.task.task import Task
+from test import Tester
 
 
 class InnerA:
@@ -27,7 +25,7 @@ class InnerB:
         raise ValueError('error')
 
 
-class TestTask(unittest.TestCase):
+class TestTask(Tester):
     def test_func1(self):
         task = Task(wrapper=Wrapper(InnerA().func1), args=('a', 'b'))
         var = task.run()[1]
@@ -67,7 +65,3 @@ class TestTask(unittest.TestCase):
         except ValueError as e:
             logging.error('\n' + traceback.format_exc())
             assert False
-
-
-if __name__ == '__main__':
-    unittest.main()

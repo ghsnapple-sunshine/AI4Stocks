@@ -1,4 +1,4 @@
-import unittest
+from test import Tester
 
 
 class A:
@@ -21,7 +21,7 @@ class D:
         a.v += 1
 
 
-class NoListenerTest(unittest.TestCase):
+class NoListenerTest(Tester):
     def test_no_listener(self):
         a1, a2 = A(1), A(3)
         b = B(a1)
