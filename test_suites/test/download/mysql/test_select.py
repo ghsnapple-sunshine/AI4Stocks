@@ -8,7 +8,7 @@ from buffett.download.mysql.types import ColType, AddReqType
 from test import Tester
 
 
-class TestOperatorEx(Tester):
+class TestSelect(Tester):
     def setUp(self) -> None:
         super().setUp()
         meta = create_meta(meta_list=[

@@ -1,16 +1,16 @@
 import logging
 
 import numpy as np
-from buffett.adapter.pandas import DataFrame, pd, Series
 from pymysql import IntegrityError
 
+from buffett.adapter.pandas import DataFrame, pd, Series
 from buffett.common import create_meta
 from buffett.common.pendelum import DateSpan, convert_datetime, DateTime
 from buffett.common.tools import dataframe_not_valid, dataframe_is_valid
 from buffett.constants import NAN
 from buffett.constants.col import FREQ, FUQUAN, SOURCE, START_DATE, END_DATE, DATE, DATETIME
+from buffett.constants.col.my import MONTH_START, DORCD_START, DORCD_END
 from buffett.constants.col.stock import CODE
-from buffett.download.manage.table_manager import TableManager
 from buffett.download.mysql import Operator
 from buffett.download.mysql.types import ColType, AddReqType
 from buffett.download.para import Para
@@ -18,7 +18,6 @@ from buffett.download.slow.recorder import DownloadRecorder as DRecorder
 from buffett.download.slow.rf_recorder import ReformRecorder as RRecorder
 from buffett.download.slow.table_name import TableNameTool
 from buffett.download.types import CombType
-from buffett.constants.col.my import MONTH_START, TDRCD_START, TDRCD_END, DORCD_START, DORCD_END
 
 _ADD_META = create_meta(meta_list=[
     [CODE, ColType.STOCK_CODE_NAME, AddReqType.KEY]])
@@ -195,7 +194,7 @@ class ReformHandler:
                          (records[FUQUAN] == para.comb.fuquan)].iloc[0, :]
         para.with_code(code=record[CODE])
         table_name = TableNameTool.get_by_code(para=para)
-        meta = TableManager(operator=self._operator).get_meta(name=table_name)
+        meta = self._operator.get_meta(name=table_name)
         meta = pd.concat([meta, _ADD_META])
         return meta
 

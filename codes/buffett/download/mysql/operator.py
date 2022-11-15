@@ -1,84 +1,44 @@
-from typing import Optional, Union, Any
+from typing import Optional, Union
 
-from buffett.adapter.enum import Enum
-from buffett.adapter.pandas import pd, DataFrame
-from buffett.adapter.pendulum import date
+from buffett.adapter.pandas import DataFrame
 from buffett.common.pendelum import DateSpan
-from buffett.common.tools import dataframe_not_valid, list_not_valid
-from buffett.constants.col import DATE, DATETIME
+from buffett.common.tools import dataframe_not_valid, list_not_valid, dataframe_is_valid
 from buffett.constants.dbcol import FIELD
-from buffett.constants.meta import COLUMN, TYPE, ADDREQ
+from buffett.constants.meta import COLUMN, TYPE, ADDREQ, KEY, PRI
 from buffett.download.mysql.connector import Connector
+from buffett.download.mysql.create_parser import CreateSqlTools
+from buffett.download.mysql.insert_parser import InsertSqlParser
 from buffett.download.mysql.reqcol import ReqCol
-
-
-def _obj_format(obj: Any) -> Any:
-    """
-    将对象转换成可被sql插入的格式
-
-    :param obj:             待插入的对象
-    :return:
-    """
-    if pd.isna(obj):
-        return None
-    if isinstance(obj, Enum):
-        return str(obj.value)
-    if isinstance(obj, date):
-        return str(obj)
-    return obj
-
-
-def _dataframe_2_format_list(df: DataFrame) -> list[list[Any]]:
-    """
-    将dataframe转成可被pymsql写入的list
-
-    :param df:
-    :return:
-    """
-    return [[_obj_format(y) for y in x] for x in df.values]
-
-
-def _groupby_ext(groupby: list[ReqCol]):
-    """
-    扩展sql：groupby
-
-    :param groupby:         需要groupby的列
-    :return:
-    """
-    if len(groupby) == 0:
-        return ''
-
-    sql = ','.join([x.simple_format() for x in groupby])
-    sql = f'group by {sql}'
-    return sql
+from buffett.download.mysql.select_parser import SelectSqlParser
+from buffett.download.mysql.types import ColType, AddReqType
 
 
 class Operator(Connector):
     def create_table(self,
                      name: str,
                      meta: DataFrame,
-                     if_not_exist=True) -> None:
+                     if_not_exist=True,
+                     update=False) -> None:
         """
         在Mysql中创建表
 
         :param name:                表名
         :param meta:                表元数据
-        :param if_not_exist:        检查表是否存在，不存在则创建
+        :param if_not_exist:        检查：表不存在才创建
+        :param update:              检查：表存在时需更新
         :return:
         """
-        cols = [f'`{row[COLUMN]}` {row[TYPE].sql_format()} {row[ADDREQ].sql_format()}'
-                for index, row in meta.iterrows()]
-        prim_key = meta[meta[ADDREQ].apply(lambda x: x.is_key())][COLUMN]
-
-        if not prim_key.empty:
-            apd = ','.join(prim_key)
-            apd = 'primary key ({0})'.format(apd)
-            cols.append(apd)
-
-        joinCols = ','.join(cols)
-        str_if_exist = 'if not exists ' if if_not_exist else ''
-        sql = 'create table {0}`{1}` ({2})'.format(str_if_exist, name, joinCols)
-        self.execute(sql)
+        sql = None
+        not_exist = True
+        if update:
+            curr_meta = self.get_meta(name)
+            if dataframe_is_valid(curr_meta):
+                not_exist = False
+                sql = CreateSqlTools.alter(name=name, curr_meta=curr_meta, new_meta=meta)
+        if not_exist:
+            sql = CreateSqlTools.create(name=name, meta=meta, if_not_exist=if_not_exist)
+        if sql is not None:
+            self.execute(sql)
 
     def insert_data(self,
                     name: str,
@@ -92,18 +52,13 @@ class Operator(Connector):
         """
         if dataframe_not_valid(df):
             return
-
-        sql = "insert into `{0}`({1}) values({2})".format(
-            name,
-            ', '.join([f'`{x}`' for x in df.columns]),
-            ', '.join(['%s'] * df.columns.size))
-        vals = _dataframe_2_format_list(df)  # 应用过obj_format处无需再df.replace
-        self.execute_many(sql, vals, True)
+        sql, vals = InsertSqlParser.insert(name=name, df=df, ignore=False)
+        self.execute_many(sql, vals, commit=True)
 
     def try_insert_data(self,
                         name: str,
                         df: DataFrame,
-                        meta: DataFrame = None,
+                        meta: Optional[DataFrame] = None,
                         update: bool = False) -> None:
         """
         尝试插入数据到Mysql表
@@ -116,39 +71,10 @@ class Operator(Connector):
         """
         if dataframe_not_valid(df):
             return
-
         if update:
-            self._try_insert_n_update_data_ex(name=name, df=df, meta=meta)
-            return
-
-        sql = "insert ignore into `{0}`({1}) values({2})".format(
-            name,
-            ', '.join([f'`{x}`' for x in df.columns]),
-            ', '.join(['%s'] * df.columns.size))
-        vals = _dataframe_2_format_list(df)  # 应用过obj_format处无需再df.replace
-        self.execute_many(sql, vals, True)
-
-    def _try_insert_n_update_data_ex(self,
-                                     name: str,
-                                     df: DataFrame,
-                                     meta: DataFrame) -> None:
-        """
-        尝试插入数据到Mysql表（插入失败则更新）(性能优化版）
-
-        :param name:                表名
-        :param df:                  数据
-        :param meta:                表元数据
-        :return:
-        """
-        normal_cols = meta[meta.apply(lambda x: x[ADDREQ].not_key() and x[COLUMN] in df.columns, axis=1)][COLUMN]
-        inQ2 = [f'`{x}`=values(`{x}`)' for x in normal_cols]
-
-        sql = "insert into `{0}`({1}) values({2}) on duplicate key update {3}".format(
-            name,
-            ', '.join([f'`{x}`' for x in df.columns]),  # 避免data.columns中有非str类型导致报错
-            ', '.join(['%s'] * df.columns.size),
-            ', '.join(inQ2))
-        vals = _dataframe_2_format_list(df)  # 应用过obj_format处无需再df.replace
+            sql, vals = InsertSqlParser.insert_n_update(name=name, df=df, meta=meta)
+        else:
+            sql, vals = InsertSqlParser.insert(name=name, df=df, ignore=True)
         self.execute_many(sql, vals, True)
 
     def drop_table(self, name: str):
@@ -163,18 +89,26 @@ class Operator(Connector):
 
     def select_row_num(self,
                        name: str,
+                       meta: Optional[DataFrame] = None,
                        span: Optional[DateSpan] = None,
                        groupby: Optional[list[str]] = None) -> Union[int, DataFrame]:
         """
         查询表格的行数
 
         :param name:            表名
+        :param meta:            表元数据
         :param span:            时间范围
         :param groupby:         聚合条件
         :return:                表格行数
         """
+        meta = self.get_meta(name) if meta is None and span is not None else meta
         groupby = [] if groupby is None else [ReqCol(x) for x in groupby]
-        sql = self._assemble_sql(name, [ReqCol.ROW_NUM()], span, groupby)
+
+        sql = SelectSqlParser.select(name=name,
+                                     cols=[ReqCol.ROW_NUM],  # Don't worry, it works.
+                                     meta=meta,
+                                     span=span,
+                                     groupby=groupby)
         res = self.execute(sql, fetch=True)
         if list_not_valid(groupby):
             return 0 if dataframe_not_valid(res) else res.iloc[0, 0]
@@ -182,62 +116,42 @@ class Operator(Connector):
 
     def select_data(self,
                     name: str,
+                    meta: Optional[DataFrame] = None,
                     span: Optional[DateSpan] = None) -> Optional[DataFrame]:
         """
         查询表格的数据
 
         :param name:            表名
+        :param meta:            表元数据
         :param span:            时间范围
         :return:                表格行数
         """
+        meta = self.get_meta(name) if meta is None and span is not None else meta
         groupby = []
-        sql = self._assemble_sql(name, [ReqCol.ALL()], span, groupby)
+        sql = SelectSqlParser.select(name=name,
+                                     cols=[ReqCol.ALL],  # Don't worry, it works.
+                                     meta=meta,
+                                     span=span,
+                                     groupby=groupby)
         res = self.execute(sql, fetch=True)
         return res
 
-    def _assemble_sql(self,
-                      name,
-                      cols: list[ReqCol],
-                      span: DateSpan,
-                      groupby: list[ReqCol]):
+    def get_meta(self,
+                 name: str) -> Optional[DataFrame]:
         """
-        组装sql语句for select
+        获取表格的元数据
 
-        :param name:            表名
-        :param cols:            列名
-        :param span:            时间区间
-        :param groupby:         分组
+        :param name:            获取表格的元数据
         :return:
         """
-        cols.extend(groupby)
-        cols_str = ','.join([x.sql_format() for x in cols])
-        where_str = self._span_ext(name, span)
-        groupby_str = _groupby_ext(groupby)
-        sql = f"select {cols_str} from `{name}` {where_str} {groupby_str}"
-        return sql
+        sql = f'desc {name}'
+        data = self.execute(sql=sql, fetch=True)
 
-    def _span_ext(self,
-                  name: str,
-                  span: Optional[DateSpan]) -> str:
-        """
-        扩展sql: where
+        if dataframe_not_valid(data):
+            return
 
-        :param name:            表名
-        :param span:            时间区间
-        :return:
-        """
-        if span is None:
-            return ''
-
-        sql = f"desc `{name}`"
-        res = self.execute(sql, fetch=True)
-        key = DATE if DATE in res[FIELD].values else DATETIME
-        start_valid = span.start is not None
-        end_valid = span.end is not None
-        if start_valid and end_valid:
-            return f"where `{key}` >= '{span.start}' and `{key}` < '{span.end}'"
-        elif start_valid:
-            return f"where `{key}` >= '{span.start}'"
-        elif end_valid:
-            return f"where `{key}` < '{span.end}'"
-        return ''
+        data.columns = [x.lower() for x in data.columns]
+        df = DataFrame({COLUMN: data[FIELD],
+                        TYPE: data[TYPE].apply(lambda x: ColType.create(x)),
+                        ADDREQ: data[KEY].apply(lambda x: AddReqType.KEY if x.lower() == PRI else AddReqType.NONE)})
+        return df

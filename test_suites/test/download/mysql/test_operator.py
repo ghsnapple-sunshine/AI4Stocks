@@ -63,5 +63,3 @@ class TestOperator(Tester):
         db = self.operator.select_data('test')
         assert type(db) == DataFrame
         assert db.empty
-
-

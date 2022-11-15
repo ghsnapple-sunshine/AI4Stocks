@@ -1,10 +1,9 @@
-from buffett.adapter.pandas import DataFrame, pd
+from buffett.adapter.pandas import DataFrame
 from buffett.common import Code
 from buffett.common.pendelum import Date
 from buffett.constants.col.stock import CODE, NAME
 from buffett.download import Para
 from buffett.download.fast import StockListHandler as SHandler
-from buffett.download.manage.table_manager import TableManager
 from buffett.download.slow import AkDailyHandler as AHandler, BsMinuteHandler as BHandler
 from buffett.download.slow.ak_daily_handler import _META as A_META
 from buffett.download.slow.bs_minute_handler import _META as B_META
@@ -13,9 +12,9 @@ from buffett.download.types import FreqType, SourceType, FuquanType
 from test import Tester, DbSweeper
 
 
-class TableManagerTest(Tester):
+class TestGetMeta(Tester):
     def setUp(self) -> None:
-        super(TableManagerTest, self).setUp()
+        super(TestGetMeta, self).setUp()
         # 清理数据库
         DbSweeper.cleanup()
         # 初始化StockList
@@ -32,9 +31,8 @@ class TableManagerTest(Tester):
             .with_source(SourceType.AKSHARE_DONGCAI) \
             .with_fuquan(FuquanType.BFQ)
         table_name = TableNameTool.get_by_code(para=para)
-        meta_get = TableManager(self.operator).get_meta(name=table_name)
-        rem = pd.concat([meta_get, A_META]).drop_duplicates(keep=False)
-        assert rem.empty
+        meta_get = self.operator.get_meta(name=table_name)
+        assert self.compare_dataframe(meta_get, A_META)
 
     def test_bs_minute(self):
         # 下载分钟线数据
@@ -45,6 +43,5 @@ class TableManagerTest(Tester):
             .with_source(SourceType.BAOSTOCK) \
             .with_fuquan(FuquanType.BFQ)
         table_name = TableNameTool.get_by_code(para=para)
-        meta_get = TableManager(self.operator).get_meta(name=table_name)
-        rem = pd.concat([meta_get, B_META]).drop_duplicates(keep=False)
-        assert rem.empty
+        meta_get = self.operator.get_meta(name=table_name)
+        assert self.compare_dataframe(meta_get, B_META)
