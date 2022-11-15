@@ -94,18 +94,21 @@ class FreqType(ComparableEnum):
 class SourceType(ComparableEnum):
     BAOSTOCK = 1
     AKSHARE_DONGCAI = 10
+    AKSHARE_TONGHUASHUN = 11
 
     def sql_format(self):
         SOURCE_TYPE_DICT = {
             SourceType.BAOSTOCK: 'bs',
-            SourceType.AKSHARE_DONGCAI: 'dc'
+            SourceType.AKSHARE_DONGCAI: 'dc',
+            SourceType.AKSHARE_TONGHUASHUN: 'ths'
         }
         return SOURCE_TYPE_DICT[self]
 
     def __str__(self):
         SOURCE_TYPE_DICT = {
             SourceType.BAOSTOCK: 'bs',
-            SourceType.AKSHARE_DONGCAI: 'ak(东财)'
+            SourceType.AKSHARE_DONGCAI: 'ak(东财)',
+            SourceType.AKSHARE_TONGHUASHUN: 'ak(同花顺)'
         }
         return SOURCE_TYPE_DICT[self]
 

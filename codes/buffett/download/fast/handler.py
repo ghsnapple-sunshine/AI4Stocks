@@ -1,4 +1,5 @@
 from abc import abstractmethod
+from typing import Optional
 
 from buffett.adapter.pandas import DataFrame
 from buffett.download.handler import Handler, Para
@@ -18,7 +19,7 @@ class FastHandler(Handler):
         return df
 
     @abstractmethod
-    def select_data(self, para: Para = None) -> DataFrame:
+    def select_data(self, para: Para = None) -> Optional[DataFrame]:
         pass
 
     # endregion

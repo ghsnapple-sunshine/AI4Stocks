@@ -91,16 +91,16 @@ class Connector:
             return res
         except ProgrammingError as e:
             if e.args[0] == 1146:
-                return DataFrame()
+                return
             else:
                 print(sql)
                 raise e
         except DataError as e:
-            if e.args[0] == 1264:
+            print(sql)
+            if e.args[0] in [1264, 1406]:
                 row = int(e.args[1].split(' ')[-1])
-                print(sql)
                 print(vals[row - 1: row + 1])
             raise e
-        # except DatabaseError as e:
-        #     # print(sql)
-        #     raise e
+        except DatabaseError as e:
+            print(sql)
+            raise e

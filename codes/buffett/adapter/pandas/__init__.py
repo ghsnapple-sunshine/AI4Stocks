@@ -18,3 +18,16 @@ class pd:
     isna = pd_isna
     merge = pd_merge
     to_datetime = pd_to_datetime
+
+    # new_add_methods
+    @staticmethod
+    def subtract(df1: DataFrame,
+                 df2: DataFrame) -> DataFrame:
+        """
+        df1 - df2
+
+        :param df1:
+        :param df2:
+        :return:
+        """
+        return pd.concat([df1, df2, df2]).drop_duplicates(keep=False)

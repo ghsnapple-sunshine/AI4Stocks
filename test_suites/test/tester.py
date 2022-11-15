@@ -27,6 +27,5 @@ class Tester(TestCase):
         """
         return pd.concat([df1, df2]).drop_duplicates(keep=False).empty
 
-
     def tearDown(self) -> None:
         self.operator.disconnect()
