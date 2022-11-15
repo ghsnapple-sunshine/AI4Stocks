@@ -1,14 +1,13 @@
 from buffett.adapter.logging import basicConfig, INFO, info, warning, error
 from buffett.common.logger.type import LogType
 
+basicConfig(level=INFO,
+            format='%(asctime)s.%(msecs)03d %(message)s',
+            datefmt='## %Y-%m-%d %H:%M:%S')
+
 
 class Logger:
     Level = LogType.INFO
-
-    def __init__(self):
-        basicConfig(level=INFO,
-                    format='%(asctime)s.%(msecs)03d %(message)s',
-                    datefmt='## %Y-%m-%d %H:%M:%S')
 
     @classmethod
     def debug(cls, msg: str):

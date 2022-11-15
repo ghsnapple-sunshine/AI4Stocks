@@ -3,7 +3,7 @@ from test import Tester
 
 
 class TestStockCurrHandler(Tester):
-    def test_run(self):
+    def test_download(self):
         hdl = AkCurrHandler(operator=self.operator)
         tbl = hdl.obtain_data()
         db = hdl.select_data()

@@ -1,12 +1,11 @@
-from test import Tester
-
-from buffett.download.fast.bs_money_supply_handler import BsMoneySupplyHandler
+from buffett.download.fast import BsMoneySupplyHandler
 from test import Tester
 
 
 class BsMoneySupplyHandlerTest(Tester):
     def test_download(self):
+        # 货币供应数值有精度问题，暂时只考虑比较写入行数
         hdl = BsMoneySupplyHandler(operator=self.operator)
-        tbl = hdl.obtain_data()
-        db = hdl.select_data()
-        assert tbl.shape[0] == db.shape[0]
+        df1 = hdl.obtain_data()
+        df2 = hdl.select_data()
+        assert df1.shape[0] == df2.shape[0]

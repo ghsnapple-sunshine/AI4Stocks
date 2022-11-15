@@ -1,4 +1,5 @@
 from buffett.common.tools import dataframe_not_valid
+from buffett.constants.col import DATE
 from buffett.download.fast import TradeCalendarHandler
 from test import DbSweeper, Tester
 
@@ -7,10 +8,10 @@ class TradeCalendarHandlerTest(Tester):
     def test_download(self):
         DbSweeper.cleanup()
         hdl = TradeCalendarHandler(operator=self.operator)
-        tbl = hdl._download()
-        hdl._save_to_database(tbl)
-        db = hdl.select_data()
-        assert tbl.shape[0] == db.shape[0]
+        df1 = hdl.obtain_data()
+        df2 = hdl.select_data()
+        df2[DATE] = df2[DATE].apply(lambda x: str(x))
+        assert self.compare_dataframe(df1, df2)
 
     def test_no_download(self):
         DbSweeper.cleanup()
