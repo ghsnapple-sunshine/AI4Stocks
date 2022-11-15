@@ -2,7 +2,7 @@ from buffett.common.pendelum import Date, DateTime
 from buffett.common.wrapper import Wrapper
 from buffett.download import Para
 from buffett.download.mysql import Operator
-from buffett.download.slow import BsMinuteHandler
+from buffett.download.handler.stock import BsMinuteHandler
 from buffett.task.task import Task
 
 

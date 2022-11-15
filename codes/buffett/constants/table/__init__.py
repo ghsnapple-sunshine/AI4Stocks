@@ -1,8 +1,9 @@
 # fast类
 CNCP_LS = 'concept_list'
 CNCP_CONS_LS = 'concept_cons_list'
-IND_LS = 'industry_list'
-IND_CONS_LS = 'industry_cons_list'
+INDUS_LS = 'industry_list'
+INDUS_CONS_LS = 'industry_cons_list'
+INDEX_LS = 'index_list'
 MONEY_SPLY = 'money_supply'
 STK_LS = 'stock_list'
 STK_RT = 'stock_realtime'

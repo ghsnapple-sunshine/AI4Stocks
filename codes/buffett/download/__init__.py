@@ -1,1 +1,1 @@
-from buffett.download.handler import Handler, Para
+from buffett.download.para import Para

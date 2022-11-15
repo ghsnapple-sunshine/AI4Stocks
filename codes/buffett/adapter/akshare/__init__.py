@@ -1,3 +1,4 @@
+from akshare import index_stock_info as ak_index_stock_info
 from akshare import stock_board_concept_cons_em as ak_stock_board_concept_cons_em
 from akshare import stock_board_concept_name_em as ak_stock_board_concept_name_em
 from akshare import stock_board_industry_cons_em as ak_stock_board_industry_cons_em
@@ -10,6 +11,7 @@ from akshare import stock_zh_a_spot_em as ak_stock_zh_a_spot_em
 
 
 class ak:
+    index_stock_info = ak_index_stock_info
     stock_board_concept_cons_em = ak_stock_board_concept_cons_em
     stock_board_concept_name_em = ak_stock_board_concept_name_em
     stock_board_industry_cons_em = ak_stock_board_industry_cons_em

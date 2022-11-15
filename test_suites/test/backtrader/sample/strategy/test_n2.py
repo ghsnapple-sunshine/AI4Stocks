@@ -4,7 +4,7 @@ import backtrader as bt
 import akshare as ak
 import pandas as pd
 
-from buffett.download.slow.ak_daily_handler import AkDailyHandler
+from buffett.download.handler.stock.ak_daily import AkDailyHandler
 from buffett.download.mysql.types import RoleType
 from buffett.download.mysql.operator import Operator
 from test.backtrader.sample.strategy.multi_sma import Strategy

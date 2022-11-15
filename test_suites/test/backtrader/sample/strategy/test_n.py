@@ -6,7 +6,7 @@ import quantstats
 import webbrowser
 import warnings
 
-from buffett.download.slow.ak_daily_handler import AkDailyHandler
+from buffett.download.handler.stock.ak_daily import AkDailyHandler
 from buffett.download.mysql.types import RoleType
 from buffett.download.mysql.operator import Operator
 from test.backtrader.sample.strategy.stamp import StampDutyCommissionScheme

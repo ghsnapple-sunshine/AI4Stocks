@@ -6,8 +6,8 @@ from buffett.common.pendelum import Date, DateSpan as Span
 from buffett.constants.col import DATE
 from buffett.constants.col.stock import CODE, NAME
 from buffett.download import Para as HPara
-from buffett.download.fast import TradeCalendarHandler as CHandler, StockListHandler as SHandler
-from buffett.download.slow import AkDailyHandler as DHandler
+from buffett.download.handler.calendar import CalendarHandler as CHandler
+from buffett.download.handler.stock import StockListHandler as SHandler, AkDailyHandler as DHandler
 from test import Tester, DbSweeper
 
 

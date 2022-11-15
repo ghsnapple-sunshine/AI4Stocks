@@ -1,7 +1,9 @@
 from buffett.common import Code
 from buffett.common.pendelum import Date
 from buffett.download import Para
-from buffett.download.slow import AkDailyHandler, ReformHandler
+from buffett.download.handler.reform import ReformHandler
+from buffett.download.handler.stock import AkDailyHandler
+
 from buffett.maintain import ReformMaintain
 from test import Tester, create_2stocks, create_ex_1stock
 

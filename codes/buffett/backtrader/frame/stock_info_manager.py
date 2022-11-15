@@ -5,11 +5,12 @@ from buffett.backtrader.frame.clock import Clock
 from buffett.backtrader.frame.column import Column
 from buffett.backtrader.frame.stock_info import StockInfo
 from buffett.backtrader.interface import ITimeSequence
-from buffett.common import Code as Code
+from buffett.common import Code
 from buffett.common.pendelum import DateSpan
-from buffett.download.handler import Handler, Para
+from buffett.download import Para
+from buffett.download.handler import Handler
+from buffett.download.handler.stock import AkDailyHandler
 from buffett.download.mysql import Operator
-from buffett.download.slow import AkDailyHandler as DHandler
 from buffett.download.types import FuquanType, HeadType
 
 
@@ -187,14 +188,14 @@ class StockInfoManagerBuilder:
         :return:            StockInfo需要涵盖的列（多个），数据来源
         """
         cols = {
-            HeadType.OPEN: DHandler,
-            HeadType.LOW: DHandler,
-            HeadType.HIGH: DHandler,
-            HeadType.CLOSE: DHandler,
-            HeadType.CJL: DHandler
+            HeadType.OPEN: AkDailyHandler,
+            HeadType.LOW: AkDailyHandler,
+            HeadType.HIGH: AkDailyHandler,
+            HeadType.CLOSE: AkDailyHandler,
+            HeadType.CJL: AkDailyHandler
         }
         sources: dict[Type[Handler], list[HeadType]] = {
-            DHandler: [HeadType.OPEN, HeadType.CLOSE, HeadType.HIGH, HeadType.LOW, HeadType.CJL]}
+            AkDailyHandler: [HeadType.OPEN, HeadType.CLOSE, HeadType.HIGH, HeadType.LOW, HeadType.CJL]}
         for ctype, Thdl in add_cols.items():
             cols[ctype] = Thdl
             if Thdl in cols.keys:

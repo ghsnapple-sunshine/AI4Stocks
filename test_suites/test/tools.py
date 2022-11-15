@@ -14,8 +14,8 @@ def create_1stock(operator: Operator) -> DataFrame:
     :return:
     """
     cols = [
-        ['code', ColType.STOCK_CODE_NAME, AddReqType.KEY],
-        ['name', ColType.STOCK_CODE_NAME, AddReqType.NONE]
+        ['code', ColType.CODE, AddReqType.KEY],
+        ['name', ColType.CODE, AddReqType.NONE]
     ]
     table_meta = DataFrame(data=cols, columns=META_COLS)
     operator.create_table(STK_LS, table_meta)
@@ -34,8 +34,8 @@ def create_2stocks(operator: Operator) -> DataFrame:
     """
     operator.drop_table(STK_LS)
     cols = [
-        ['code', ColType.STOCK_CODE_NAME, AddReqType.KEY],
-        ['name', ColType.STOCK_CODE_NAME, AddReqType.NONE]
+        ['code', ColType.CODE, AddReqType.KEY],
+        ['name', ColType.CODE, AddReqType.NONE]
     ]
     table_meta = DataFrame(data=cols, columns=META_COLS)
     operator.create_table(STK_LS, table_meta)
@@ -56,8 +56,8 @@ def create_ex_1stock(operator: Operator, code: Code) -> DataFrame:
     """
     operator.drop_table(STK_LS)
     cols = [
-        ['code', ColType.STOCK_CODE_NAME, AddReqType.KEY],
-        ['name', ColType.STOCK_CODE_NAME, AddReqType.NONE]
+        ['code', ColType.CODE, AddReqType.KEY],
+        ['name', ColType.CODE, AddReqType.NONE]
     ]
     table_meta = DataFrame(data=cols, columns=META_COLS)
     operator.create_table(STK_LS, table_meta)

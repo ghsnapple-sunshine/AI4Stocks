@@ -1,7 +1,7 @@
 from buffett.common.pendelum import DateTime
 from buffett.common.wrapper import Wrapper
 from buffett.download.mysql import Operator
-from buffett.download.slow import ReformHandler
+from buffett.download.handler.reform import ReformHandler
 from buffett.task.task import Task
 
 

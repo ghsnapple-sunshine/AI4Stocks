@@ -11,8 +11,9 @@ from buffett.constants.col.my import TABLE_NAME, DORCD_START, DORCD_END
 from buffett.constants.col.stock import CODE
 from buffett.constants.dbcol import ROW_NUM
 from buffett.download import Para
+from buffett.download.handler.tools import TableNameTool
 from buffett.download.mysql import Operator
-from buffett.download.slow import DownloadRecorder, ReformRecorder, TableNameTool
+from buffett.download.recorder import DownloadRecorder, ReformRecorder
 
 DL_ROW_NUM = 'dl_row_num'
 

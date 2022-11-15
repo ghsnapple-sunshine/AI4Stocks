@@ -3,7 +3,7 @@ from buffett.backtrader.frame.clock import Clock
 from buffett.backtrader.interface.time_sequence import ITimeSequence as Sequence
 from buffett.common.pendelum import DateSpan as Span, convert_date
 from buffett.constants.col import DATE
-from buffett.download.fast import TradeCalendarHandler as Handler
+from buffett.download.handler.calendar import CalendarHandler
 from buffett.download.mysql import Operator
 
 
@@ -42,7 +42,7 @@ class ClockManagerBuilder:
         self.item = ClockManagerBuilder.ClockManagerUnderBuilt()
 
     def with_calendar(self, operator: Operator, datespan: Span):
-        tbl = Handler(operator=operator).select_data()
+        tbl = CalendarHandler(operator=operator).select_data()
         calendar = tbl[tbl[DATE].apply(lambda x: datespan.is_inside(x))]
         # calendar = tbl[tbl[DATE].apply(lambda x: datespan.start <= x <= datespan.end)] dataSpan definition changed
         # calendar = tbl[datespan.start <= tbl[DATE] <= datespan.end] Error

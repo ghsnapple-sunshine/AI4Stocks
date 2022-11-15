@@ -1,8 +1,7 @@
-import pymysql
-from numpy import array
-from pandas import DataFrame
-from pymysql.err import DatabaseError, ProgrammingError, DataError
+from typing import Any
 
+from buffett.adapter.pandas import DataFrame
+from buffett.adapter.pymysql import connect, DatabaseError, ProgrammingError, DataError
 from buffett.download.mysql.types import RoleType
 
 
@@ -43,7 +42,7 @@ class Connector:
                       'passwd': self._pwd,
                       'db': self._db,
                       'charset': 'utf8mb4'}
-            self.conn = pymysql.connect(**config)
+            self.conn = connect(**config)
             self.cursor = self.conn.cursor()
 
     def disconnect(self):
@@ -81,7 +80,7 @@ class Connector:
 
     def execute_many(self,
                      sql: str,
-                     vals: array,
+                     vals: list[list[Any]],
                      commit: bool = False):
         self.connect()
         try:

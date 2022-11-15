@@ -12,7 +12,7 @@ class TestSelect(Tester):
     def setUp(self) -> None:
         super().setUp()
         meta = create_meta(meta_list=[
-            [CODE, ColType.STOCK_CODE_NAME, AddReqType.KEY],
+            [CODE, ColType.CODE, AddReqType.KEY],
             [DATETIME, ColType.DATETIME, AddReqType.KEY],
             [OPEN, ColType.FLOAT, AddReqType.NONE],
             [CLOSE, ColType.FLOAT, AddReqType.NONE]])

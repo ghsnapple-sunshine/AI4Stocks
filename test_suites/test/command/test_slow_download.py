@@ -3,7 +3,7 @@ from buffett.common.pendelum import DateTime, Date
 from buffett.common.wrapper import Wrapper
 from buffett.constants.magic import empty_init
 from buffett.download import Para
-from buffett.download.slow import AkDailyHandler, BsMinuteHandler
+from buffett.download.handler.stock import AkDailyHandler, BsMinuteHandler
 from buffett.task import StockDailyTask, StockReformTask, StockMinuteTask
 from test import Tester, create_2stocks
 
