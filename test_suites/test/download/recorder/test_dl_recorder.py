@@ -2,8 +2,8 @@ from pandas import DataFrame
 
 from buffett.common import Code
 from buffett.common.pendelum import Date
-from buffett.constants.col import FREQ, FUQUAN, SOURCE, START_DATE, END_DATE
-from buffett.constants.col.stock import CODE
+from buffett.common.constants.col import FREQ, FUQUAN, SOURCE, START_DATE, END_DATE
+from buffett.common.constants.col.stock import CODE
 from buffett.download import Para
 from buffett.download.recorder import DownloadRecorder
 from buffett.download.types import FuquanType, FreqType, SourceType

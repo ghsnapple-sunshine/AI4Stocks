@@ -1,10 +1,10 @@
 from buffett.adapter.pandas import DataFrame, pd
 from buffett.common.pendelum import DateTime, Duration
 from buffett.common.wrapper import Wrapper
-from buffett.constants.col.task import ERR_MSG, TASK_ID, PARENT_ID, CLASS, MODULE, CREATE_TIME, START_TIME, END_TIME, \
+from buffett.common.constants.col.task import ERR_MSG, TASK_ID, PARENT_ID, CLASS, MODULE, CREATE_TIME, START_TIME, END_TIME, \
     SUCCESS
-from buffett.constants.magic import get_module_name, get_name
-from buffett.constants.table import TASK_RCD
+from buffett.common.magic import get_module_name, get_name
+from buffett.common.constants.table import TASK_RCD
 from buffett.download.mysql import Operator
 from buffett.task.task import Task
 from buffett.task.task_scheduler import TaskScheduler

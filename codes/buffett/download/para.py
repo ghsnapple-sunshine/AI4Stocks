@@ -2,14 +2,14 @@ from __future__ import annotations
 
 from typing import Optional
 
+from buffett.adapter.numpy import NAN
 from buffett.adapter.pandas import Series, DataFrame, pd
 from buffett.adapter.pendulum import date
 from buffett.common import Code
+from buffett.common.constants.col import FREQ, SOURCE, FUQUAN, START_DATE, END_DATE
+from buffett.common.constants.col.stock import CODE, NAME
 from buffett.common.pendelum import DateSpan
 from buffett.common.stock import Stock
-from buffett.constants import NAN
-from buffett.constants.col import FREQ, SOURCE, FUQUAN, START_DATE, END_DATE
-from buffett.constants.col.stock import CODE, NAME
 from buffett.download.types import HeadType, CombType, FuquanType, FreqType, SourceType
 
 

@@ -2,13 +2,13 @@ from abc import abstractmethod
 from typing import Optional
 
 from buffett.adapter import logging
+from buffett.adapter.numpy import NAN
 from buffett.adapter.pandas import DataFrame, pd, Series
+from buffett.common.constants.col import FREQ, FUQUAN, SOURCE, START_DATE, END_DATE, DATE
+from buffett.common.constants.col.stock import CODE
 from buffett.common.error import ParamTypeError
 from buffett.common.pendelum import DateSpan, Date, convert_datetime, Duration
 from buffett.common.tools import dataframe_not_valid
-from buffett.constants import NAN
-from buffett.constants.col import FREQ, FUQUAN, SOURCE, START_DATE, END_DATE, DATE
-from buffett.constants.col.stock import CODE
 from buffett.download.handler import Handler
 from buffett.download.handler.calendar import CalendarHandler
 from buffett.download.handler.stock.ak_list import StockListHandler

@@ -1,4 +1,4 @@
-from buffett.constants.magic import get_name, get_self
+from buffett.common.magic import get_name, get_self
 
 
 class Wrapper:

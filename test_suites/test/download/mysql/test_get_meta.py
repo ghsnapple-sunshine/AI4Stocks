@@ -1,7 +1,7 @@
 from buffett.adapter.pandas import DataFrame
 from buffett.common import Code
 from buffett.common.pendelum import Date
-from buffett.constants.col.stock import CODE, NAME
+from buffett.common.constants.col.stock import CODE, NAME
 from buffett.download import Para
 from buffett.download.handler.stock import StockListHandler, AkDailyHandler, BsMinuteHandler
 from buffett.download.handler.stock.ak_daily import _META as A_META

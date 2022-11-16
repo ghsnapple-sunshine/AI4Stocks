@@ -1,9 +1,7 @@
-from typing import Type
-
 from buffett.common.error import ParamTypeError
 from buffett.common.logger.logger import Logger
 from buffett.common.logger.type import LogType
-from buffett.constants.magic import empty_method, get_name
+from buffett.common.magic import empty_method, get_name
 
 
 class LoggerBuilder:

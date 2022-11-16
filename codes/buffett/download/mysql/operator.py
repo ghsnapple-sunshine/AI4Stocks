@@ -3,8 +3,8 @@ from typing import Optional, Union
 from buffett.adapter.pandas import DataFrame
 from buffett.common.pendelum import DateSpan
 from buffett.common.tools import dataframe_not_valid, list_not_valid, dataframe_is_valid
-from buffett.constants.dbcol import FIELD
-from buffett.constants.meta import COLUMN, TYPE, ADDREQ, KEY, PRI
+from buffett.common.constants.col.mysql import FIELD
+from buffett.common.constants.col.meta import COLUMN, TYPE, ADDREQ, KEY, PRI
 from buffett.download.mysql.connector import Connector
 from buffett.download.mysql.create_parser import CreateSqlTools
 from buffett.download.mysql.insert_parser import InsertSqlParser

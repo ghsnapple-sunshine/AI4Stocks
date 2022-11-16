@@ -4,7 +4,7 @@ from typing import Optional
 
 from buffett.common import ComparableEnum
 from buffett.common.pendelum import Duration
-from buffett.constants.col import DATETIME, DATE, OPEN, CLOSE, HIGH, LOW, CJL
+from buffett.common.constants.col import DATETIME, DATE, OPEN, CLOSE, HIGH, LOW, CJL
 
 
 class HeadType(ComparableEnum):

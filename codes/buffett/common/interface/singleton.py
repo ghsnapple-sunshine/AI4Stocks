@@ -1,4 +1,4 @@
-from buffett.constants.magic import get_class
+from buffett.common.magic import get_class
 
 
 class Singleton:

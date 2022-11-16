@@ -4,7 +4,7 @@ from typing import Optional
 from buffett.adapter.baostock import ResultData
 from buffett.adapter.pandas import DataFrame
 from buffett.common.pendelum import DateTime
-from buffett.constants import INT_MAX_VALUE, INT_MIN_VALUE, FLOAT_MAX_VALUE, FLOAT_MIN_VALUE
+from buffett.common.constants import INT_MAX_VALUE, INT_MIN_VALUE, FLOAT_MAX_VALUE, FLOAT_MIN_VALUE
 
 
 def bs_result_to_dataframe(rs: ResultData) -> DataFrame:

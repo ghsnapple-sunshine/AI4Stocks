@@ -1,7 +1,7 @@
 from buffett.adapter.numpy import np
 from buffett.adapter.pandas import DataFrame
 from buffett.common.pendelum import DateTime, Duration, DateSpan
-from buffett.constants.meta import META_COLS
+from buffett.common.constants.col.meta import META_COLS
 
 
 def tuple_to_array(tup: tuple) -> np.array:

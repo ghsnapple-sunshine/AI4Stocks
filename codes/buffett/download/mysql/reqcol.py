@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Optional
 
-from buffett.constants.dbcol import ALL, ROW_NUM
+from buffett.common.constants.col.mysql import ALL, ROW_NUM
 from buffett.download.mysql.types import AggType
 
 

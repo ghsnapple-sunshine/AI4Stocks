@@ -1,4 +1,4 @@
-from buffett.constants.col.stock import CODE
+from buffett.common.constants.col.stock import CODE
 from buffett.download.handler.stock.ak_list import StockListHandler
 from test import Tester
 

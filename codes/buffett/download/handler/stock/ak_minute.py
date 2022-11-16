@@ -3,7 +3,7 @@ from buffett.adapter.pandas import DataFrame
 from buffett.common import create_meta
 from buffett.common.pendelum import convert_datetime
 from buffett.common.tools import dataframe_not_valid
-from buffett.constants.col import DATETIME, OPEN, CLOSE, HIGH, LOW, CJL, CJE, ZF, ZDF, ZDE, HSL
+from buffett.common.constants.col import DATETIME, OPEN, CLOSE, HIGH, LOW, CJL, CJE, ZF, ZDF, ZDE, HSL
 from buffett.download import Para
 from buffett.download.mysql import Operator
 from buffett.download.mysql.types import ColType, AddReqType

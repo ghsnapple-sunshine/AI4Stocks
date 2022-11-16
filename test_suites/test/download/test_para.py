@@ -3,8 +3,8 @@ from test import Tester
 from buffett.adapter.pandas import Series
 from buffett.common import Code
 from buffett.common.pendelum import Date
-from buffett.constants.col import FREQ, SOURCE, FUQUAN, START_DATE, END_DATE
-from buffett.constants.col.stock import CODE, NAME
+from buffett.common.constants.col import FREQ, SOURCE, FUQUAN, START_DATE, END_DATE
+from buffett.common.constants.col.stock import CODE, NAME
 from buffett.download import Para
 from buffett.download.types import FuquanType, FreqType, SourceType
 

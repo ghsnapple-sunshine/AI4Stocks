@@ -4,7 +4,7 @@ import itertools
 import pickle
 
 from buffett.adapter.importlib import import_module
-from buffett.constants.magic import TYPE, MTD, BM, OBJ, DICT, CMPLX, NoneType, ME, SOURCE, LIST, TUPLE, SET, RTYPE, \
+from buffett.common.magic import TYPE, MTD, BM, OBJ, DICT, CMPLX, NoneType, ME, SOURCE, LIST, TUPLE, SET, RTYPE, \
     get_name, get_class, get_module_name, get_self
 
 

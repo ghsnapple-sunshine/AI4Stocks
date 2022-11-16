@@ -3,7 +3,7 @@ from typing import Any
 from buffett.adapter.enum import Enum
 from buffett.adapter.pandas import DataFrame, pd
 from buffett.adapter.pendulum import date
-from buffett.constants.meta import ADDREQ, COLUMN
+from buffett.common.constants.col.meta import ADDREQ, COLUMN
 
 
 class InsertSqlParser:

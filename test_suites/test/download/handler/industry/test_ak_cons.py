@@ -1,5 +1,5 @@
-from buffett.constants.col.stock import INDUSTRY_CODE
-from buffett.constants.table import INDUS_LS
+from buffett.common.constants.col.stock import INDUSTRY_CODE
+from buffett.common.constants.table import INDUS_LS
 from buffett.download.handler.stock import StockListHandler
 from buffett.download.handler.industry import IndustryListHandler, IndustryConsHandler
 from test import Tester

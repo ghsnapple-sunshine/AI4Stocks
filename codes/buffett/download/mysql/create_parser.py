@@ -1,7 +1,7 @@
 from typing import Optional
 
 from buffett.adapter.pandas import DataFrame, pd, Series
-from buffett.constants.meta import COLUMN, TYPE, ADDREQ
+from buffett.common.constants.col.meta import COLUMN, TYPE, ADDREQ
 
 CURR_TYPE = TYPE + '_l'
 CURR_ADDREQ = ADDREQ + '_l'

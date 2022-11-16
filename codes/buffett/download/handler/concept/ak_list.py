@@ -4,8 +4,8 @@ from buffett.adapter.akshare import ak
 from buffett.adapter.pandas import DataFrame
 from buffett.common import create_meta
 from buffett.common.tools import dataframe_not_valid
-from buffett.constants.col.stock import CONCEPT_CODE, CONCEPT_NAME
-from buffett.constants.table import CNCP_LS
+from buffett.common.constants.col.stock import CONCEPT_CODE, CONCEPT_NAME
+from buffett.common.constants.table import CNCP_LS
 from buffett.download import Para
 from buffett.download.handler.fast.handler import FastHandler
 from buffett.download.mysql import Operator

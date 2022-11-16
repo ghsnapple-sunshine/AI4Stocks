@@ -1,7 +1,7 @@
 from buffett.adapter.pandas import DataFrame
 from buffett.common import Code
-from buffett.constants.meta import META_COLS
-from buffett.constants.table import STK_LS
+from buffett.common.constants.col.meta import META_COLS
+from buffett.common.constants.table import STK_LS
 from buffett.download.mysql import Operator
 from buffett.download.mysql.types import ColType, AddReqType
 

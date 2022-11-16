@@ -6,10 +6,10 @@ from pandas import Series, DataFrame
 from buffett.common.logger import Logger
 from buffett.common.pendelum import DateSpan, DateTime
 from buffett.common.tools import dataframe_not_valid
-from buffett.constants.col import FREQ, SOURCE, FUQUAN, START_DATE, END_DATE
-from buffett.constants.col.my import TABLE_NAME, DORCD_START, DORCD_END
-from buffett.constants.col.stock import CODE
-from buffett.constants.dbcol import ROW_NUM
+from buffett.common.constants.col import FREQ, SOURCE, FUQUAN, START_DATE, END_DATE
+from buffett.common.constants.col.my import TABLE_NAME, DORCD_START, DORCD_END
+from buffett.common.constants.col.stock import CODE
+from buffett.common.constants.col.mysql import ROW_NUM
 from buffett.download import Para
 from buffett.download.handler.tools import TableNameTool
 from buffett.download.mysql import Operator

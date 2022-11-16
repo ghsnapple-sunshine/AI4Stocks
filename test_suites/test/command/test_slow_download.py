@@ -1,7 +1,7 @@
 from buffett.adapter import logging
 from buffett.common.pendelum import DateTime, Date
 from buffett.common.wrapper import Wrapper
-from buffett.constants.magic import empty_init
+from buffett.common.magic import empty_init
 from buffett.download import Para
 from buffett.download.handler.stock import AkDailyHandler, BsMinuteHandler
 from buffett.task import StockDailyTask, StockReformTask, StockMinuteTask

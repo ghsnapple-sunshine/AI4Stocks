@@ -1,6 +1,6 @@
 from buffett.adapter.pandas import DataFrame, pd
-from buffett.constants.col.stock import CODE, NAME
-from buffett.constants.meta import META_COLS
+from buffett.common.constants.col.stock import CODE, NAME
+from buffett.common.constants.col.meta import META_COLS
 from buffett.download.mysql.types import ColType, AddReqType
 from test import Tester
 

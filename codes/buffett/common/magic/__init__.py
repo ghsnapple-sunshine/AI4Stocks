@@ -1,4 +1,4 @@
-from buffett.constants.magic.tools import get_class, get_class_name, get_self, get_module_name, get_name, load_class, \
+from buffett.common.magic.tools import get_class, get_class_name, get_self, get_module_name, get_name, load_class, \
     empty_init, empty_method
 
 # TODO: About to remove this.

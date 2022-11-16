@@ -6,8 +6,8 @@ from buffett.common import create_meta
 from buffett.common.error.pre_step import PreStepError
 from buffett.common.logger import Logger
 from buffett.common.tools import dataframe_not_valid
-from buffett.constants.col.stock import CODE, NAME, INDUSTRY_CODE, INDUSTRY_NAME
-from buffett.constants.table import INDUS_CONS_LS
+from buffett.common.constants.col.stock import CODE, NAME, INDUSTRY_CODE, INDUSTRY_NAME
+from buffett.common.constants.table import INDUS_CONS_LS
 from buffett.download import Para
 from buffett.download.handler.fast import FastHandler
 from buffett.download.handler.industry.ak_list import IndustryListHandler

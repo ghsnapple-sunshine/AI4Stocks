@@ -5,8 +5,8 @@ from buffett.adapter.akshare import ak
 from buffett.adapter.pandas import DataFrame
 from buffett.common import create_meta
 from buffett.common.tools import dataframe_not_valid
-from buffett.constants.col.stock import INDUSTRY_CODE, INDUSTRY_NAME
-from buffett.constants.table import INDUS_LS
+from buffett.common.constants.col.stock import INDUSTRY_CODE, INDUSTRY_NAME
+from buffett.common.constants.table import INDUS_LS
 from buffett.download import Para
 from buffett.download.handler.fast.handler import FastHandler
 from buffett.download.mysql import Operator

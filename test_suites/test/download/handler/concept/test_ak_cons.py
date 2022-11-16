@@ -1,5 +1,5 @@
-from buffett.constants.col.stock import CONCEPT_CODE
-from buffett.constants.table import CNCP_LS
+from buffett.common.constants.col.stock import CONCEPT_CODE
+from buffett.common.constants.table import CNCP_LS
 from buffett.download.handler.concept import ConceptConsHandler, ConceptListHandler
 from buffett.download.handler.stock import StockListHandler
 from test import Tester
