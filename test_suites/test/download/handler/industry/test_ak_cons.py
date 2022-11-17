@@ -1,7 +1,7 @@
 from buffett.common.constants.col.stock import INDUSTRY_CODE
 from buffett.common.constants.table import INDUS_LS
-from buffett.download.handler.stock import StockListHandler
 from buffett.download.handler.industry import IndustryListHandler, IndustryConsHandler
+from buffett.download.handler.stock import StockListHandler
 from test import Tester
 
 
@@ -10,7 +10,9 @@ class TestIndustryConsHandler(Tester):
         super(TestIndustryConsHandler, self).setUp()
         StockListHandler(self.operator).obtain_data()
         IndustryListHandler(self.operator).obtain_data()
-        self.operator.execute(f"DELETE FROM {INDUS_LS} WHERE {INDUSTRY_CODE} > 'BK0450'")  # 减少concept个数，提升测试性能
+        self.operator.execute(
+            f"DELETE FROM {INDUS_LS} WHERE {INDUSTRY_CODE} > 'BK0450'"
+        )  # 减少concept个数，提升测试性能
 
     def test_download(self):
         hdl = IndustryConsHandler(operator=self.operator)

@@ -1,14 +1,27 @@
 from typing import Type
 
 from buffett.adapter.pandas import DataFrame
-from buffett.backtrader.frame.account import Account as Acc, AccountBuilder as AccBuilder
-from buffett.backtrader.frame.accounting_manager import AccountingManager as AccMan, \
-    AccountManagerBuilder as AMBuilder
+from buffett.backtrader.frame.account import (
+    Account as Acc,
+    AccountBuilder as AccBuilder,
+)
+from buffett.backtrader.frame.accounting_manager import (
+    AccountingManager as AccMan,
+    AccountManagerBuilder as AMBuilder,
+)
 from buffett.backtrader.frame.clock import Clock
-from buffett.backtrader.frame.clock_manager import ClockManager as ClockMan, ClockManagerBuilder as CMBuilder
-from buffett.backtrader.frame.order_manager import OrderManager as OrderMan, OrderManagerBuilder as OMBuilder
-from buffett.backtrader.frame.stock_info_manager import StockInfoManager as StockMan, \
-    StockInfoManagerBuilder as SMBuilder
+from buffett.backtrader.frame.clock_manager import (
+    ClockManager as ClockMan,
+    ClockManagerBuilder as CMBuilder,
+)
+from buffett.backtrader.frame.order_manager import (
+    OrderManager as OrderMan,
+    OrderManagerBuilder as OMBuilder,
+)
+from buffett.backtrader.frame.stock_info_manager import (
+    StockInfoManager as StockMan,
+    StockInfoManagerBuilder as SMBuilder,
+)
 from buffett.backtrader.interface.time_sequence import ITimeSequence as Sequence
 from buffett.backtrader.tools import ChargeCalculator as Calc
 from buffett.common import Code as Code
@@ -80,27 +93,23 @@ class ExchangeBuilder:
     def __init__(self):
         self.item = ExchangeBuilder.ExchangeUnderBuilt()
 
-    def with_clock_man(
-            self,
-            operator: Operator,
-            datespan: Span,
-            clock: Clock):
+    def with_clock_man(self, operator: Operator, datespan: Span, clock: Clock):
         self.item.set_clock(clock=clock)
-        clock_man = CMBuilder().with_calendar(
-            operator=operator,
-            datespan=datespan
-        ).with_clock(
-            clock=clock
-        ).build()
+        clock_man = (
+            CMBuilder()
+            .with_calendar(operator=operator, datespan=datespan)
+            .with_clock(clock=clock)
+            .build()
+        )
         self.item.set_clock_man(clock_man=clock_man)
         return self
 
     def with_stock_man(
-            self,
-            operator: Operator,
-            stock_list: list[Code],
-            datespan: Span,
-            add_cols: dict[HeadType, Type[Handler]]
+        self,
+        operator: Operator,
+        stock_list: list[Code],
+        datespan: Span,
+        add_cols: dict[HeadType, Type[Handler]],
     ):
         """
         初始化StockInfoManager（依赖于ClockManager）
@@ -112,14 +121,17 @@ class ExchangeBuilder:
         :return:                self
         """
         calendar = self.item.get_calendar()
-        stock_man_builder = SMBuilder().with_stock_list(
-            stock_list=stock_list
-        ).with_infos(
-            operator=operator,
-            add_cols=add_cols,
-            calendar=calendar,
-            datespan=datespan,
-            clock=self.item.get_clock())
+        stock_man_builder = (
+            SMBuilder()
+            .with_stock_list(stock_list=stock_list)
+            .with_infos(
+                operator=operator,
+                add_cols=add_cols,
+                calendar=calendar,
+                datespan=datespan,
+                clock=self.item.get_clock(),
+            )
+        )
         self.item.stock_man_builder = stock_man_builder
         return self
 
@@ -129,9 +141,7 @@ class ExchangeBuilder:
 
         :return:                self
         """
-        order_man = OMBuilder().with_clock(
-            clock=self.item.get_clock()
-        ).build()
+        order_man = OMBuilder().with_clock(clock=self.item.get_clock()).build()
         self.item.set_order_man(order_man=order_man)
         return self
 
@@ -142,9 +152,11 @@ class ExchangeBuilder:
         :param charge_calc:
         :return:                self
         """
-        accounting_man_builder = AMBuilder() \
-            .with_charge_calc(charge_calc=charge_calc) \
+        accounting_man_builder = (
+            AMBuilder()
+            .with_charge_calc(charge_calc=charge_calc)
             .with_clock(clock=self.item.get_clock())
+        )
         self.item.accounting_man_builder = accounting_man_builder
         return self
 
@@ -157,37 +169,40 @@ class ExchangeBuilder:
         :return:
         """
         max_tick = self.item.get_tick_num()
-        account_builder = AccBuilder().with_holdings_and_cash(
-            stock_num=stock_num,
-            max_tick=max_tick,
-            init_cash=init_cash
-        ).with_clock(
-            clock=self.item.get_clock())
+        account_builder = (
+            AccBuilder()
+            .with_holdings_and_cash(
+                stock_num=stock_num, max_tick=max_tick, init_cash=init_cash
+            )
+            .with_clock(clock=self.item.get_clock())
+        )
         self.item.account_builder = account_builder
         return self
 
     def build(self):
         # 将AccountManager的handle_order方法传递给OrderManager
         self.item.order_man_builder.with_handle_order(
-            handle_order=Wrapper(self.item.accounting_man_builder.item.handle_order))
+            handle_order=Wrapper(self.item.accounting_man_builder.item.handle_order)
+        )
         # 将StockInfoManager的get_all_stock_close方法传递给Account
         self.item.account_builder.with_all_close(
-            get_all_close=Wrapper(self.item.stock_man_builder.item.get_all_close))
+            get_all_close=Wrapper(self.item.stock_man_builder.item.get_all_close)
+        )
         # 将StockInfoManager的get_curr_olhc方法传递给AccountingManager
         self.item.accounting_man_builder.with_olhc(
-            get_curr_olhc=Wrapper(self.item.stock_man_builder.item.get_curr_olhc))
+            get_curr_olhc=Wrapper(self.item.stock_man_builder.item.get_curr_olhc)
+        )
         # 将Account的get_holding方法传递给AccountingManager
         self.item.accounting_man_builder.with_holding(
-            get_holding=Wrapper(self.item.account_builder.item.get_holding))
+            get_holding=Wrapper(self.item.account_builder.item.get_holding)
+        )
         # build剩余四个对象
-        self.item.set_stock_man(
-            stock_man=self.item.stock_man_builder.build())
-        self.item.set_order_man(
-            order_man=self.item.order_man_builder.build())
+        self.item.set_stock_man(stock_man=self.item.stock_man_builder.build())
+        self.item.set_order_man(order_man=self.item.order_man_builder.build())
         self.item.set_accounting_man(
-            accounting_man=self.item.accounting_man_builder.build())
-        self.item.set_account(
-            account=self.item.account_builder.build())
+            accounting_man=self.item.accounting_man_builder.build()
+        )
+        self.item.set_account(account=self.item.account_builder.build())
         self.item.get_clock_man().run()  # ClockManager把时间设置为开始
         self.item.__class__ = Exchange
         return self.item

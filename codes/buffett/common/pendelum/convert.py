@@ -14,15 +14,21 @@ def convert_date(dt: Optional[date]) -> Union[Date, DateTime, None]:
     :return:
     """
     if isinstance(dt, datetime):
-        return DateTime(dt.year, dt.month, dt.day,
-                        dt.hour, dt.minute, dt.second,
-                        microsecond=dt.microsecond,
-                        tzinfo=dt.tzinfo)
+        return DateTime(
+            dt.year,
+            dt.month,
+            dt.day,
+            dt.hour,
+            dt.minute,
+            dt.second,
+            microsecond=dt.microsecond,
+            tzinfo=dt.tzinfo,
+        )
     elif isinstance(dt, date):
         return Date(dt.year, dt.month, dt.day)
     elif dt is None:
         return None
-    raise ParamTypeError('dt', Union[date, None])
+    raise ParamTypeError("dt", Union[date, None])
 
 
 def convert_datetime(dt: Optional[date]) -> Union[Date, DateTime, None]:
@@ -33,13 +39,19 @@ def convert_datetime(dt: Optional[date]) -> Union[Date, DateTime, None]:
     :return:
     """
     if isinstance(dt, datetime):
-        return DateTime(dt.year, dt.month, dt.day,
-                        dt.hour, dt.minute, dt.second,
-                        microsecond=dt.microsecond,
-                        tzinfo=dt.tzinfo,
-                        fold=dt.fold)
+        return DateTime(
+            dt.year,
+            dt.month,
+            dt.day,
+            dt.hour,
+            dt.minute,
+            dt.second,
+            microsecond=dt.microsecond,
+            tzinfo=dt.tzinfo,
+            fold=dt.fold,
+        )
     elif isinstance(dt, date):
         return DateTime(dt.year, dt.month, dt.day)
     elif dt is None:
         return None
-    raise ParamTypeError('dt', Union[date, None])
+    raise ParamTypeError("dt", Union[date, None])

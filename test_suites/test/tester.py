@@ -13,12 +13,11 @@ class Tester(TestCase):
         self.operator = Operator(role=RoleType.DbTest)
         self.operator.connect()
         self.conn = self.operator
-        self.table_name = "test_{0}".format(DateTime.now().format('YYYYMMDD_HHmmss'))
+        self.table_name = "test_{0}".format(DateTime.now().format("YYYYMMDD_HHmmss"))
         DbSweeper.cleanup()
 
     @staticmethod
-    def compare_dataframe(df1: DataFrame,
-                          df2: DataFrame):
+    def compare_dataframe(df1: DataFrame, df2: DataFrame):
         """
         比较两个dataframe是否相同
 
@@ -33,13 +32,13 @@ class Tester(TestCase):
 
 
 class SingletonTester(TestCase):
-    def __init__(self, methodName='runTest'):
+    def __init__(self, methodName="runTest"):
         super(SingletonTester, self).__init__(methodName=methodName)
-        if hasattr(self, '_prepared') and self._prepared:
+        if hasattr(self, "_prepared") and self._prepared:
             return
         self._operator = Operator(role=RoleType.DbTest)
         self._operator.connect()
-        self._table_name = "test_{0}".format(DateTime.now().format('YYYYMMDD_HHmmss'))
+        self._table_name = "test_{0}".format(DateTime.now().format("YYYYMMDD_HHmmss"))
         self._more_init()
         self._prepared = True
 
@@ -48,8 +47,7 @@ class SingletonTester(TestCase):
         pass
 
     @staticmethod
-    def compare_dataframe(df1: DataFrame,
-                          df2: DataFrame):
+    def compare_dataframe(df1: DataFrame, df2: DataFrame):
         """
         比较两个dataframe是否相同
 

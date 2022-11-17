@@ -4,8 +4,25 @@ from buffett.adapter.akshare import ak
 from buffett.adapter.pandas import DataFrame, pd
 from buffett.adapter.pendulum import Date
 from buffett.common import Code
-from buffett.common.constants.col.stock import CODE, SG, ZG, SGZG, XJ, GXL, SY, JZC, GJJ, WFP, LRZZ, ZGB, GGR, DJR, \
-    CXR, JD, ZXGGR
+from buffett.common.constants.col.stock import (
+    CODE,
+    SG,
+    ZG,
+    SGZG,
+    XJ,
+    GXL,
+    SY,
+    JZC,
+    GJJ,
+    WFP,
+    LRZZ,
+    ZGB,
+    GGR,
+    DJR,
+    CXR,
+    JD,
+    ZXGGR,
+)
 from buffett.common.constants.table import STK_DVD
 from buffett.common.pendelum import DateSpan
 from buffett.common.tools import list_not_valid, create_meta, dataframe_not_valid
@@ -14,9 +31,9 @@ from buffett.download.handler import Handler
 from buffett.download.mysql.types import ColType, AddReqType
 from buffett.download.recorder import EasyRecorder
 
-YEAR = 'year'
-MONTH = 'month'
-DAY = 'day'
+YEAR = "year"
+MONTH = "month"
+DAY = "day"
 
 """
 表头为：
@@ -41,38 +58,42 @@ DAY = 'day'
 最新公告日期
 """
 
-MC = '名称'
+MC = "名称"
 
-_RENAME = {'代码': CODE,
-           '送转股份-送转总比例': SGZG,
-           '送转股份-送转比例': SG,
-           '送转股份-转股比例': ZG,
-           '现金分红-现金分红比例': XJ,
-           '现金分红-股息率': GXL}
+_RENAME = {
+    "代码": CODE,
+    "送转股份-送转总比例": SGZG,
+    "送转股份-送转比例": SG,
+    "送转股份-转股比例": ZG,
+    "现金分红-现金分红比例": XJ,
+    "现金分红-股息率": GXL,
+}
 
-_META = create_meta(meta_list=[
-    [CODE, ColType.CODE, AddReqType.KEY],
-    [SGZG, ColType.FLOAT, AddReqType.NONE],
-    [SG, ColType.FLOAT, AddReqType.NONE],
-    [ZG, ColType.FLOAT, AddReqType.NONE],
-    [XJ, ColType.FLOAT, AddReqType.NONE],
-    [GXL, ColType.FLOAT, AddReqType.NONE],
-    [SY, ColType.FLOAT, AddReqType.NONE],
-    [JZC, ColType.FLOAT, AddReqType.NONE],
-    [GJJ, ColType.FLOAT, AddReqType.NONE],
-    [WFP, ColType.FLOAT, AddReqType.NONE],
-    [LRZZ, ColType.FLOAT, AddReqType.NONE],
-    [ZGB, ColType.FLOAT, AddReqType.NONE],
-    [GGR, ColType.DATE, AddReqType.KEY],
-    [DJR, ColType.DATE, AddReqType.NONE],
-    [CXR, ColType.DATE, AddReqType.NONE],
-    [JD, ColType.MINI_DESC, AddReqType.NONE],
-    [ZXGGR, ColType.DATE, AddReqType.NONE]])
+_META = create_meta(
+    meta_list=[
+        [CODE, ColType.CODE, AddReqType.KEY],
+        [SGZG, ColType.FLOAT, AddReqType.NONE],
+        [SG, ColType.FLOAT, AddReqType.NONE],
+        [ZG, ColType.FLOAT, AddReqType.NONE],
+        [XJ, ColType.FLOAT, AddReqType.NONE],
+        [GXL, ColType.FLOAT, AddReqType.NONE],
+        [SY, ColType.FLOAT, AddReqType.NONE],
+        [JZC, ColType.FLOAT, AddReqType.NONE],
+        [GJJ, ColType.FLOAT, AddReqType.NONE],
+        [WFP, ColType.FLOAT, AddReqType.NONE],
+        [LRZZ, ColType.FLOAT, AddReqType.NONE],
+        [ZGB, ColType.FLOAT, AddReqType.NONE],
+        [GGR, ColType.DATE, AddReqType.KEY],
+        [DJR, ColType.DATE, AddReqType.NONE],
+        [CXR, ColType.DATE, AddReqType.NONE],
+        [JD, ColType.MINI_DESC, AddReqType.NONE],
+        [ZXGGR, ColType.DATE, AddReqType.NONE],
+    ]
+)
 
 
 class AkStockDividendHandler(Handler):
-    def obtain_data(self,
-                    para: Para) -> Optional[DataFrame]:
+    def obtain_data(self, para: Para) -> Optional[DataFrame]:
         """
         获取数据
 
@@ -81,7 +102,9 @@ class AkStockDividendHandler(Handler):
         """
         # 跳过重复下载的部分
         recorder = EasyRecorder(operator=self._operator)
-        todo_span = para.span.clone().with_end(Date.today(), para.span.end > Date.today())
+        todo_span = para.span.clone().with_end(
+            Date.today(), para.span.end > Date.today()
+        )
         curr_span = recorder.select_data(cls=AkStockDividendHandler)
         todo_ls = todo_span.subtract(curr_span)
         if list_not_valid(todo_ls):
@@ -97,8 +120,10 @@ class AkStockDividendHandler(Handler):
 
         # 记录
         total_span = todo_span.add(curr_span)
-        total_span.with_end(total_span.end.subtract(months=6),
-                            total_span.end.add(months=6) > Date.today())
+        total_span.with_end(
+            total_span.end.subtract(months=6),
+            total_span.end.add(months=6) > Date.today(),
+        )
         recorder.save(cls=AkStockDividendHandler, span=total_span)
         return df
 
@@ -112,8 +137,12 @@ class AkStockDividendHandler(Handler):
         """
         if list_not_valid(time_series):
             return
-        data = pd.concat([ak.stock_fhps_em(date=x.subtract(days=1).format('YYYYMMDD'))
-                          for x in time_series])  # XXXX-[6-30|12-31]
+        data = pd.concat(
+            [
+                ak.stock_fhps_em(date=x.subtract(days=1).format("YYYYMMDD"))
+                for x in time_series
+            ]
+        )  # XXXX-[6-30|12-31]
         data.rename(columns=_RENAME, inplace=True)
         del data[MC]
         return data

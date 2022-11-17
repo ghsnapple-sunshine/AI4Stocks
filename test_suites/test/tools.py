@@ -14,13 +14,13 @@ def create_1stock(operator: Operator) -> DataFrame:
     :return:
     """
     cols = [
-        ['code', ColType.CODE, AddReqType.KEY],
-        ['name', ColType.CODE, AddReqType.NONE]
+        ["code", ColType.CODE, AddReqType.KEY],
+        ["name", ColType.CODE, AddReqType.NONE],
     ]
     table_meta = DataFrame(data=cols, columns=META_COLS)
     operator.create_table(STK_LS, table_meta)
-    data = [['000001', '平安银行']]
-    df = DataFrame(data=data, columns=['code', 'name'])
+    data = [["000001", "平安银行"]]
+    df = DataFrame(data=data, columns=["code", "name"])
     operator.insert_data(STK_LS, df)
     return df
 
@@ -34,14 +34,13 @@ def create_2stocks(operator: Operator) -> DataFrame:
     """
     operator.drop_table(STK_LS)
     cols = [
-        ['code', ColType.CODE, AddReqType.KEY],
-        ['name', ColType.CODE, AddReqType.NONE]
+        ["code", ColType.CODE, AddReqType.KEY],
+        ["name", ColType.CODE, AddReqType.NONE],
     ]
     table_meta = DataFrame(data=cols, columns=META_COLS)
     operator.create_table(STK_LS, table_meta)
-    data = [['000001', '平安银行'],
-            ['600000', '浦发银行']]
-    df = DataFrame(data=data, columns=['code', 'name'])
+    data = [["000001", "平安银行"], ["600000", "浦发银行"]]
+    df = DataFrame(data=data, columns=["code", "name"])
     operator.insert_data(STK_LS, df)
     return df
 
@@ -56,12 +55,12 @@ def create_ex_1stock(operator: Operator, code: Code) -> DataFrame:
     """
     operator.drop_table(STK_LS)
     cols = [
-        ['code', ColType.CODE, AddReqType.KEY],
-        ['name', ColType.CODE, AddReqType.NONE]
+        ["code", ColType.CODE, AddReqType.KEY],
+        ["name", ColType.CODE, AddReqType.NONE],
     ]
     table_meta = DataFrame(data=cols, columns=META_COLS)
     operator.create_table(STK_LS, table_meta)
-    data = [[code.to_code6(), '']]
-    df = DataFrame(data=data, columns=['code', 'name'])
+    data = [[code.to_code6(), ""]]
+    df = DataFrame(data=data, columns=["code", "name"])
     operator.insert_data(STK_LS, df)
     return df

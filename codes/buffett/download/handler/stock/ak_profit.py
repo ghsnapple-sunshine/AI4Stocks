@@ -5,7 +5,13 @@ from buffett.adapter.pandas import DataFrame, pd
 from buffett.adapter.pendulum import Date
 from buffett.common import create_meta, Code
 from buffett.common.constants.col import DATE
-from buffett.common.constants.col.date import YEAR2021, YEAR2022, YEAR2023, YEAR2024, YEAR2025
+from buffett.common.constants.col.date import (
+    YEAR2021,
+    YEAR2022,
+    YEAR2023,
+    YEAR2024,
+    YEAR2025,
+)
 from buffett.common.constants.col.stock import CODE
 from buffett.common.constants.table import STK_PROFIT
 from buffett.common.tools import dataframe_is_valid, dataframe_not_valid
@@ -14,31 +20,33 @@ from buffett.download.handler.fast.handler import FastHandler
 from buffett.download.mysql import Operator
 from buffett.download.mysql.types import ColType, AddReqType
 
-_META = create_meta(meta_list=[
-    [CODE, ColType.CODE, AddReqType.KEY],
-    [DATE, ColType.DATE, AddReqType.KEY],
-    [YEAR2021, ColType.FLOAT, AddReqType.NONE],
-    [YEAR2022, ColType.FLOAT, AddReqType.NONE],
-    [YEAR2023, ColType.FLOAT, AddReqType.NONE],
-    [YEAR2024, ColType.FLOAT, AddReqType.NONE],
-    [YEAR2025, ColType.FLOAT, AddReqType.NONE],
-])
+_META = create_meta(
+    meta_list=[
+        [CODE, ColType.CODE, AddReqType.KEY],
+        [DATE, ColType.DATE, AddReqType.KEY],
+        [YEAR2021, ColType.FLOAT, AddReqType.NONE],
+        [YEAR2022, ColType.FLOAT, AddReqType.NONE],
+        [YEAR2023, ColType.FLOAT, AddReqType.NONE],
+        [YEAR2024, ColType.FLOAT, AddReqType.NONE],
+        [YEAR2025, ColType.FLOAT, AddReqType.NONE],
+    ]
+)
 
-_RENAME = {'代码': CODE,
-           '2021预测每股收益': YEAR2021,
-           '2022预测每股收益': YEAR2022,
-           '2023预测每股收益': YEAR2023,
-           '2024预测每股收益': YEAR2024,
-           '2025预测每股收益': YEAR2025}
+_RENAME = {
+    "代码": CODE,
+    "2021预测每股收益": YEAR2021,
+    "2022预测每股收益": YEAR2022,
+    "2023预测每股收益": YEAR2023,
+    "2024预测每股收益": YEAR2024,
+    "2025预测每股收益": YEAR2025,
+}
 
 
 class AkProfitHandler(FastHandler):
-    def __init__(self,
-                 operator: Operator):
+    def __init__(self, operator: Operator):
         super(AkProfitHandler, self).__init__(operator=operator)
 
-    def select_data(self,
-                    para: Para = None) -> Optional[DataFrame]:
+    def select_data(self, para: Para = None) -> Optional[DataFrame]:
         data = self._operator.select_data(name=STK_PROFIT)
         if dataframe_not_valid(data):
             return

@@ -1,8 +1,8 @@
 from buffett.adapter.pandas import DataFrame
 from buffett.backtrader.frame.clock import Clock
 from buffett.backtrader.interface.time_sequence import ITimeSequence as Sequence
-from buffett.common.pendelum import DateSpan as Span, convert_date
 from buffett.common.constants.col import DATE
+from buffett.common.pendelum import DateSpan as Span, convert_date
 from buffett.download.handler.calendar import CalendarHandler
 from buffett.download.mysql import Operator
 
@@ -22,10 +22,10 @@ class ClockManager(Sequence):
 
     def run(self):
         tick = self.curr_tick + 1
-        time = 'Final Stage'
+        time = "Final Stage"
         is_end = True
         if tick < self.max_tick:
-            time = convert_date(self._calendar.iloc[tick, 0]).format('YYYY-MM-DD')
+            time = convert_date(self._calendar.iloc[tick, 0]).format("YYYY-MM-DD")
             is_end = False
         self._clock.turn_next(time, is_end=is_end)
 

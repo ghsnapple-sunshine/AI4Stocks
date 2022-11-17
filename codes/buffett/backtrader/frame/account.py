@@ -38,7 +38,9 @@ class Account(Sequence):
         :return:
         """
         close = self._get_all_close.run()
-        self._stock_value[self.curr_tick] = np.sum(np.multiply(close, self._cash[self.curr_tick]))
+        self._stock_value[self.curr_tick] = np.sum(
+            np.multiply(close, self._cash[self.curr_tick])
+        )
         if self._cash[self.curr_tick] < 0:
             self._cash[self.curr_tick] *= 2  # 持币为负时，处以惩罚
         self._holdings[self.curr_tick + 1] = self._holdings[self.curr_tick]
@@ -69,13 +71,10 @@ class AccountBuilder:
         self.item = AccountBuilder.AccountUnderBuilt()
 
     def with_holdings_and_cash(self, stock_num: int, max_tick: int, init_cash: float):
-        self.item.set_holdings(
-            holdings=np.zeros((max_tick + 1, stock_num), dtype=int))
+        self.item.set_holdings(holdings=np.zeros((max_tick + 1, stock_num), dtype=int))
         self.item.set_init_cash(init_cash=init_cash)
-        self.item.set_cash(
-            cash=np.zeros(max_tick + 1, dtype=int))
-        self.item.set_stock_value(
-            stock_value=np.zeros(max_tick + 1, dtype=int))
+        self.item.set_cash(cash=np.zeros(max_tick + 1, dtype=int))
+        self.item.set_stock_value(stock_value=np.zeros(max_tick + 1, dtype=int))
         return self
 
     def with_clock(self, clock: Clock):

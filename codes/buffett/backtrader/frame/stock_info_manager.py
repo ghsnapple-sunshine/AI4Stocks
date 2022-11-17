@@ -14,13 +14,15 @@ from buffett.download.mysql import Operator
 from buffett.download.types import FuquanType, HeadType
 
 
-def _create_stock_info(code: Code,
-                       cols: list[HeadType],
-                       sources: dict[Type[Handler], list[HeadType]],
-                       datespan: DateSpan,
-                       calendar: DataFrame,
-                       operator: Operator,
-                       clock: Clock) -> StockInfo:
+def _create_stock_info(
+    code: Code,
+    cols: list[HeadType],
+    sources: dict[Type[Handler], list[HeadType]],
+    datespan: DateSpan,
+    calendar: DataFrame,
+    operator: Operator,
+    clock: Clock,
+) -> StockInfo:
     """
     查询某支股票的行情数据，返回一个StockInfo
 
@@ -34,22 +36,25 @@ def _create_stock_info(code: Code,
     :return:            一个StockInfo
     """
     info: dict[HeadType, Column] = {}
-    data = _fetch(code=code,
-                  sources=sources,
-                  datespan=datespan,
-                  calendar=calendar,
-                  operator=operator)
+    data = _fetch(
+        code=code,
+        sources=sources,
+        datespan=datespan,
+        calendar=calendar,
+        operator=operator,
+    )
     for ctype in cols:
-        info[ctype] = Column(data=list(data[str(ctype)]),
-                             clock=clock)
+        info[ctype] = Column(data=list(data[str(ctype)]), clock=clock)
     return StockInfo(data=info)
 
 
-def _fetch(code: Code,
-           sources: dict[Type[Handler], list[HeadType]],
-           datespan: DateSpan,
-           calendar: DataFrame,
-           operator: Operator) -> DataFrame:
+def _fetch(
+    code: Code,
+    sources: dict[Type[Handler], list[HeadType]],
+    datespan: DateSpan,
+    calendar: DataFrame,
+    operator: Operator,
+) -> DataFrame:
     """
     查询某支股票的历史行情数据
 
@@ -63,7 +68,8 @@ def _fetch(code: Code,
     base = calendar.copy(deep=True)
     for Hdl, cols in sources.items():
         data = Hdl(operator=operator).select_data(
-            para=Para().with_code(code).with_fuquan(FuquanType.BFQ).with_span(datespan))
+            para=Para().with_code(code).with_fuquan(FuquanType.BFQ).with_span(datespan)
+        )
         base = base.join(data)
     return base
 
@@ -123,7 +129,7 @@ class StockInfoManager(ITimeSequence):
             self[code][HeadType.OPEN][0],
             self[code][HeadType.LOW][0],
             self[code][HeadType.HIGH][0],
-            self[code][HeadType.CJL][0]
+            self[code][HeadType.CJL][0],
         )
 
     def get_all_close(self) -> list[int]:
@@ -157,20 +163,22 @@ class StockInfoManagerBuilder:
         return self
 
     def with_infos(
-            self,
-            operator: Operator,
-            add_cols: dict[HeadType, Type[Handler]],
-            calendar: DataFrame,
-            datespan: DateSpan,
-            clock: Clock
+        self,
+        operator: Operator,
+        add_cols: dict[HeadType, Type[Handler]],
+        calendar: DataFrame,
+        datespan: DateSpan,
+        clock: Clock,
     ):
         cols, sources = StockInfoManagerBuilder._group_handler(add_cols=add_cols)
-        infos = self.__create_stock_infos__(cols=cols,
-                                            sources=sources,
-                                            calendar=calendar,
-                                            operator=operator,
-                                            datespan=datespan,
-                                            clock=clock)
+        infos = self.__create_stock_infos__(
+            cols=cols,
+            sources=sources,
+            calendar=calendar,
+            operator=operator,
+            datespan=datespan,
+            clock=clock,
+        )
         self.item.set_infos(infos=infos)
         return self
 
@@ -179,8 +187,9 @@ class StockInfoManagerBuilder:
         return self.item
 
     @staticmethod
-    def _group_handler(add_cols: dict[HeadType, Type[Handler]]
-                       ) -> tuple[list[HeadType], dict[Type[Handler], list[HeadType]]]:
+    def _group_handler(
+        add_cols: dict[HeadType, Type[Handler]]
+    ) -> tuple[list[HeadType], dict[Type[Handler], list[HeadType]]]:
         """
         基于基础列和策略指定的额外列，对数据源进行分类
 
@@ -192,10 +201,17 @@ class StockInfoManagerBuilder:
             HeadType.LOW: AkDailyHandler,
             HeadType.HIGH: AkDailyHandler,
             HeadType.CLOSE: AkDailyHandler,
-            HeadType.CJL: AkDailyHandler
+            HeadType.CJL: AkDailyHandler,
         }
         sources: dict[Type[Handler], list[HeadType]] = {
-            AkDailyHandler: [HeadType.OPEN, HeadType.CLOSE, HeadType.HIGH, HeadType.LOW, HeadType.CJL]}
+            AkDailyHandler: [
+                HeadType.OPEN,
+                HeadType.CLOSE,
+                HeadType.HIGH,
+                HeadType.LOW,
+                HeadType.CJL,
+            ]
+        }
         for ctype, Thdl in add_cols.items():
             cols[ctype] = Thdl
             if Thdl in cols.keys:
@@ -205,13 +221,13 @@ class StockInfoManagerBuilder:
         return list(cols.keys()), sources
 
     def __create_stock_infos__(
-            self,
-            cols: list[HeadType],
-            sources: dict[Type[Handler], list[HeadType]],
-            datespan: DateSpan,
-            calendar: DataFrame,
-            operator: Operator,
-            clock: Clock
+        self,
+        cols: list[HeadType],
+        sources: dict[Type[Handler], list[HeadType]],
+        datespan: DateSpan,
+        calendar: DataFrame,
+        operator: Operator,
+        clock: Clock,
     ) -> list[StockInfo]:
         """
         查询所有股票的行情数据，返回多个StockInfo
@@ -228,12 +244,14 @@ class StockInfoManagerBuilder:
         stock_list = self.item.get_stock_list()
         for idx in range(len(stock_list)):
             code = stock_list[idx]
-            info = _create_stock_info(code=code,
-                                      cols=cols,
-                                      sources=sources,
-                                      datespan=datespan,
-                                      calendar=calendar,
-                                      operator=operator,
-                                      clock=clock)
+            info = _create_stock_info(
+                code=code,
+                cols=cols,
+                sources=sources,
+                datespan=datespan,
+                calendar=calendar,
+                operator=operator,
+                clock=clock,
+            )
             infos.append(info)
         return infos

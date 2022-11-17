@@ -10,6 +10,6 @@ class PreStepError(MyError):
         return 0
 
     def msg(self) -> str:
-        return f'{self._pre_step} should run before {self._curr_step}.'
+        return f"{self._pre_step} should run before {self._curr_step}."
 
     __str__ = msg

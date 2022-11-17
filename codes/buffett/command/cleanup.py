@@ -4,12 +4,12 @@ from buffett.download.mysql.types import RoleType
 
 
 def cleanup() -> None:
-    confirm = input('确认删除stocks中的所有数据？删除后不可恢复。（y/n）')
-    if confirm == 'y':
+    confirm = input("确认删除stocks中的所有数据？删除后不可恢复。（y/n）")
+    if confirm == "y":
         db = _scan()
         op = Operator(RoleType.ROOT)
         for index, row in db.iterrows():
-            table_name = row['TABLE_NAME']
+            table_name = row["TABLE_NAME"]
             op.drop_table(name=table_name)
 
 

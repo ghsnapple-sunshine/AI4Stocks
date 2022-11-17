@@ -30,11 +30,11 @@ def set_class(obj, value: Type):
 
 
 def get_name(obj):
-    return obj.__name__ if hasattr(obj, '__name__') else 'unknown name'
+    return obj.__name__ if hasattr(obj, "__name__") else "unknown name"
 
 
 def get_self(obj):
-    return obj.__self__ if hasattr(obj, '__self__') else None
+    return obj.__self__ if hasattr(obj, "__self__") else None
 
 
 def load_class(module: str, cls: str) -> Type:

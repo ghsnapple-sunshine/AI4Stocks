@@ -10,7 +10,9 @@ class TestConceptConsHandler(Tester):
         super(TestConceptConsHandler, self).setUp()
         StockListHandler(self.operator).obtain_data()
         ConceptListHandler(self.operator).obtain_data()
-        self.operator.execute(f"DELETE FROM {CNCP_LS} WHERE {CONCEPT_CODE} > 'BK0500'")  # 减少concept个数，提升测试性能
+        self.operator.execute(
+            f"DELETE FROM {CNCP_LS} WHERE {CONCEPT_CODE} > 'BK0500'"
+        )  # 减少concept个数，提升测试性能
 
     def test_download(self):
         hdl = ConceptConsHandler(operator=self.operator)

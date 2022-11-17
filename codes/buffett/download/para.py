@@ -14,11 +14,13 @@ from buffett.download.types import HeadType, CombType, FuquanType, FreqType, Sou
 
 
 class Para:
-    def __init__(self,
-                 stock: Optional[Stock] = None,
-                 comb: Optional[CombType] = None,
-                 span: Optional[DateSpan] = None,
-                 heads: Optional[list[HeadType]] = None):
+    def __init__(
+        self,
+        stock: Optional[Stock] = None,
+        comb: Optional[CombType] = None,
+        span: Optional[DateSpan] = None,
+        heads: Optional[list[HeadType]] = None,
+    ):
         """
         初始化Para for Handler
 
@@ -33,8 +35,7 @@ class Para:
         self._heads = heads
 
     @classmethod
-    def from_series(cls,
-                    series: Series) -> Para:
+    def from_series(cls, series: Series) -> Para:
         """
         从Series中创建para
 
@@ -43,17 +44,23 @@ class Para:
         """
         left = DataFrame(index=[CODE, NAME, FREQ, SOURCE, FUQUAN, START_DATE, END_DATE])
         right = DataFrame({0: series})
-        merge = pd.merge(left, right, how='left', left_index=True, right_index=True)
+        merge = pd.merge(left, right, how="left", left_index=True, right_index=True)
         merge = merge.replace({NAN: None})
         code, name, freq, source, fuquan, start_date, end_date = merge[0]
         stock = Stock(code, name) if any([code, name]) else None
-        comb = CombType(freq=freq, source=source, fuquan=fuquan) if any([freq, source, fuquan]) else None
-        span = DateSpan(start=start_date, end=end_date) if any([start_date, end_date]) else None
+        comb = (
+            CombType(freq=freq, source=source, fuquan=fuquan)
+            if any([freq, source, fuquan])
+            else None
+        )
+        span = (
+            DateSpan(start=start_date, end=end_date)
+            if any([start_date, end_date])
+            else None
+        )
         return Para(stock=stock, comb=comb, span=span)
 
-    def with_stock(self,
-                   stock: Stock,
-                   condition: bool = True) -> Para:
+    def with_stock(self, stock: Stock, condition: bool = True) -> Para:
         """
         条件设置stock并返回自身
 
@@ -65,9 +72,7 @@ class Para:
             self._stock = stock
         return self
 
-    def with_code(self,
-                  code: Code,
-                  condition: bool = True) -> Para:
+    def with_code(self, code: Code, condition: bool = True) -> Para:
         """
         条件设置stock.code并返回自身
 
@@ -82,9 +87,7 @@ class Para:
                 self._stock.with_code(code)
         return self
 
-    def with_name(self,
-                  name: str,
-                  condition: bool = True) -> Para:
+    def with_name(self, name: str, condition: bool = True) -> Para:
         """
         条件设置stock.name并返回自身
 
@@ -99,9 +102,7 @@ class Para:
                 self._stock.with_name(name)
         return self
 
-    def with_comb(self,
-                  comb: CombType,
-                  condition: bool = True) -> Para:
+    def with_comb(self, comb: CombType, condition: bool = True) -> Para:
         """
         条件设置comb并返回自身
 
@@ -113,9 +114,7 @@ class Para:
             self._comb = comb
         return self
 
-    def with_fuquan(self,
-                    fuquan: FuquanType,
-                    condition: bool = True) -> Para:
+    def with_fuquan(self, fuquan: FuquanType, condition: bool = True) -> Para:
         """
         条件设置comb.fuquan并返回自身
 
@@ -130,9 +129,7 @@ class Para:
                 self._comb.with_fuquan(fuquan)
         return self
 
-    def with_source(self,
-                    source: SourceType,
-                    condition: bool = True) -> Para:
+    def with_source(self, source: SourceType, condition: bool = True) -> Para:
         """
         条件设置comb.source并返回自身
 
@@ -147,9 +144,7 @@ class Para:
                 self._comb.with_source(source)
         return self
 
-    def with_freq(self,
-                  freq: FreqType,
-                  condition: bool = True) -> Para:
+    def with_freq(self, freq: FreqType, condition: bool = True) -> Para:
         """
         条件设置comb.freq并返回自身
 
@@ -164,9 +159,7 @@ class Para:
                 self._comb.with_freq(freq)
         return self
 
-    def with_span(self,
-                  span: DateSpan,
-                  condition: bool = True) -> Para:
+    def with_span(self, span: DateSpan, condition: bool = True) -> Para:
         """
         条件设置datespan并返回自身
 
@@ -178,9 +171,7 @@ class Para:
             self._span = span
         return self
 
-    def with_start(self,
-                   start: Optional[date],
-                   condition: bool = True) -> Para:
+    def with_start(self, start: Optional[date], condition: bool = True) -> Para:
         """
         条件设置datespan.start并返回自身
 
@@ -195,9 +186,7 @@ class Para:
                 self._span.with_start(start)
         return self
 
-    def with_end(self,
-                 end: Optional[date],
-                 condition: bool = True) -> Para:
+    def with_end(self, end: Optional[date], condition: bool = True) -> Para:
         """
         条件设置datespan.end并返回自身
 
@@ -212,10 +201,9 @@ class Para:
                 self._span.with_end(end)
         return self
 
-    def with_start_n_end(self,
-                         start: Optional[date],
-                         end: Optional[date],
-                         condition: bool = True):
+    def with_start_n_end(
+        self, start: Optional[date], end: Optional[date], condition: bool = True
+    ):
         """
         条件设置datespan.start和datespan.end并返回自身
 
@@ -228,9 +216,7 @@ class Para:
             self._span = DateSpan(start=start, end=end)
         return self
 
-    def with_heads(self,
-                   heads: list[HeadType],
-                   condition: bool = True) -> Para:
+    def with_heads(self, heads: list[HeadType], condition: bool = True) -> Para:
         """
         条件设置heads并返回自身
 
@@ -248,10 +234,12 @@ class Para:
 
         :return:            复制的对象
         """
-        return Para(stock=None if self._stock is None else self._stock.clone(),
-                    comb=None if self._comb is None else self._comb.clone(),
-                    span=None if self._span is None else self._span.clone(),
-                    heads=None if self._heads is None else self._heads.copy())
+        return Para(
+            stock=None if self._stock is None else self._stock.clone(),
+            comb=None if self._comb is None else self._comb.clone(),
+            span=None if self._span is None else self._span.clone(),
+            heads=None if self._heads is None else self._heads.copy(),
+        )
 
     @property
     def stock(self) -> Optional[Stock]:

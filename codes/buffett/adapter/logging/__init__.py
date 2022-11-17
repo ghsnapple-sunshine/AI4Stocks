@@ -1,5 +1,15 @@
-from logging import DEBUG as logging_DEBUG, INFO as logging_INFO, WARNING as logging_WARNING, ERROR as logging_ERROR
-from logging import debug as logging_debug, info as logging_info, warning as logging_warning, error as logging_error
+from logging import (
+    DEBUG as logging_DEBUG,
+    INFO as logging_INFO,
+    WARNING as logging_WARNING,
+    ERROR as logging_ERROR,
+)
+from logging import (
+    debug as logging_debug,
+    info as logging_info,
+    warning as logging_warning,
+    error as logging_error,
+)
 from logging import basicConfig as logging_config
 
 #

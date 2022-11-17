@@ -9,8 +9,7 @@ class AddReqType(Enum):
     # UNSIGNED_KEY = 4
 
     def sql_format(self):
-        COL_ADDREQ_DICT = {AddReqType.NONE: '',
-                           AddReqType.KEY: 'NOT NULL'}
+        COL_ADDREQ_DICT = {AddReqType.NONE: "", AddReqType.KEY: "NOT NULL"}
         return COL_ADDREQ_DICT[self]
 
     def is_key(self):

@@ -22,7 +22,7 @@ class Code(str):
             return "sz." + self
         elif self[0] == "3":
             return "sz." + self
-        return 'unknown'
+        return "unknown"
 
     def to_code8(self) -> str:
         if self[0] == "6":
@@ -31,13 +31,11 @@ class Code(str):
             return "sz" + self
         elif self[0] == "3":
             return "sz" + self
-        return 'unknown'
+        return "unknown"
 
 
 class Stock:
-    def __init__(self,
-                 code: Optional[Code] = None,
-                 name: Optional[str] = None):
+    def __init__(self, code: Optional[Code] = None, name: Optional[str] = None):
         self._code = code
         self._name = name
 

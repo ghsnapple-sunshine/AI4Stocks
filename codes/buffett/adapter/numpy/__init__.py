@@ -1,12 +1,14 @@
-from numpy import NAN as np_NAN
-from numpy import arange as np_arange
-from numpy import array as np_array
-from numpy import linspace as np_linspace
-from numpy import multiply as np_multiply
-from numpy import ndarray as np_ndarray
-from numpy import reshape as np_reshape
-from numpy import sum as np_sum
-from numpy import zeros as np_zeros
+from numpy import (
+    NAN as np_NAN,
+    arange as np_arange,
+    array as np_array,
+    linspace as np_linspace,
+    multiply as np_multiply,
+    ndarray as np_ndarray,
+    reshape as np_reshape,
+    sum as np_sum,
+    zeros as np_zeros,
+)
 
 # Constants
 NAN = np_NAN
@@ -25,4 +27,3 @@ class np:
     sum = np_sum
     reshape = np_reshape
     zeros = np_zeros
-

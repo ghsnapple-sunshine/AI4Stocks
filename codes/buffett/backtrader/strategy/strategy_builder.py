@@ -1,8 +1,6 @@
 from buffett.backtrader.strategy.strategy import StrategyBase, StrategyBaseUnderBuilt
 
-_BUILT_CLASS_DICT: dict[type, type] = {
-    StrategyBase: StrategyBaseUnderBuilt
-}
+_BUILT_CLASS_DICT: dict[type, type] = {StrategyBase: StrategyBaseUnderBuilt}
 
 
 class StrategyBuilder:

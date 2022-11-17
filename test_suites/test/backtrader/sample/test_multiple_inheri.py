@@ -26,5 +26,5 @@ class C(A, B):
         print("leave C")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     c = C()

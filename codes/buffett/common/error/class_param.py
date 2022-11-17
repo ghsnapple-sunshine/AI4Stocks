@@ -10,6 +10,6 @@ class ClassParamError(MyError):
         return 1
 
     def msg(self) -> str:
-        return f'param {self._name} is not a {self._param_type} item.'
+        return f"param {self._name} is not a {self._param_type} item."
 
     __str__ = msg

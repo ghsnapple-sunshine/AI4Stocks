@@ -12,9 +12,12 @@ from buffett.download.handler.fast.handler import FastHandler
 from buffett.download.mysql import Operator
 from buffett.download.mysql.types import ColType, AddReqType
 
-_META = create_meta(meta_list=[
-    [CODE, ColType.CODE, AddReqType.KEY],
-    [NAME, ColType.CODE, AddReqType.NONE]])
+_META = create_meta(
+    meta_list=[
+        [CODE, ColType.CODE, AddReqType.KEY],
+        [NAME, ColType.CODE, AddReqType.NONE],
+    ]
+)
 
 
 class StockListHandler(FastHandler):
@@ -24,7 +27,7 @@ class StockListHandler(FastHandler):
     def _download(self) -> DataFrame:
         stocks = ak.stock_info_a_code_name()
         # 剔除三板市场的股票
-        stocks = stocks[stocks[CODE].apply(lambda x: (x[0] != '4') & (x[0] != '8'))]
+        stocks = stocks[stocks[CODE].apply(lambda x: (x[0] != "4") & (x[0] != "8"))]
         return stocks
 
     def _save_to_database(self, df: DataFrame) -> None:
@@ -35,8 +38,7 @@ class StockListHandler(FastHandler):
         self._operator.try_insert_data(name=STK_LS, df=df, update=True, meta=_META)
         self._operator.disconnect()
 
-    def select_data(self,
-                    para: Para = None) -> Optional[DataFrame]:
+    def select_data(self, para: Para = None) -> Optional[DataFrame]:
         df = self._operator.select_data(STK_LS)
         if dataframe_not_valid(df):
             return

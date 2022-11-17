@@ -4,15 +4,13 @@ from typing import Optional
 
 from buffett.adapter.pendulum import date
 from buffett.common.error import ParamTypeError
-from buffett.common.pendelum.date import Date
 from buffett.common.pendelum.convert import convert_date
+from buffett.common.pendelum.date import Date
 
 
 class DateSpan:
     # DateSpan所描述的范围为[start, end)
-    def __init__(self,
-                 start: Optional[date] = None,
-                 end: Optional[date] = None):
+    def __init__(self, start: Optional[date] = None, end: Optional[date] = None):
         """
         初始化DateSpan
 
@@ -22,13 +20,15 @@ class DateSpan:
         is_start_date = isinstance(start, date)
         is_end_date = isinstance(end, date)
         if not is_start_date and start is not None:
-            raise ParamTypeError('start', Optional[date])
+            raise ParamTypeError("start", Optional[date])
         if not is_end_date and end is not None:
-            raise ParamTypeError('end', Optional[date])
+            raise ParamTypeError("end", Optional[date])
         if start is None and end is None:
             raise ValueError("param 'start' and 'end' cannot be None at the mean time.")
         elif is_start_date and is_end_date and start >= end:
-            raise ValueError(f"Invalid datespan when 'start:{start}' later than or equals 'end:{end}'")
+            raise ValueError(
+                f"Invalid datespan when 'start:{start}' later than or equals 'end:{end}'"
+            )
 
         self._start = convert_date(start)
         self._end = convert_date(end)
@@ -107,8 +107,10 @@ class DateSpan:
             return [DateSpan(start=other._end, end=self._end)]
         if not condition1 and condition2:
             return [DateSpan(start=self._start, end=other.start)]
-        return [DateSpan(start=self._start, end=other.start),
-                DateSpan(start=other.end, end=self._end)]
+        return [
+            DateSpan(start=self._start, end=other.start),
+            DateSpan(start=other.end, end=self._end),
+        ]
 
     def add(self, other: Optional[DateSpan]) -> DateSpan:
         """
@@ -121,7 +123,7 @@ class DateSpan:
             return self
         if (other.end >= self._start) == (other.start <= self._end):
             return DateSpan(min(self._start, other.start), max(self._end, other.end))
-        raise ValueError('self and other is separated and cannot be added.')
+        raise ValueError("self and other is separated and cannot be added.")
 
     def __eq__(self, other):
         if isinstance(other, DateSpan):

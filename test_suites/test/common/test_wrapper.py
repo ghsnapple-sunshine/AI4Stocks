@@ -1,6 +1,5 @@
-from test import Tester
-
 from buffett.common.wrapper import WrapperFactory
+from test import Tester
 
 
 class InnerA:
@@ -27,21 +26,21 @@ class InnerC:
 class WrapperTest(Tester):
     def test_method_no_para(self):
         obj = InnerA()
-        wrapper = WrapperFactory.from_method_name(obj, 'run')
+        wrapper = WrapperFactory.from_method_name(obj, "run")
         assert wrapper.run() == 1
         wrapper = WrapperFactory.from_method_ref(obj.run)
         assert wrapper.run() == 1
 
     def test_method_with_positional_para(self):
         obj = InnerB()
-        wrapper = WrapperFactory.from_method_name(obj, 'run')
+        wrapper = WrapperFactory.from_method_name(obj, "run")
         assert wrapper.run(1) == 2
         wrapper = WrapperFactory.from_method_ref(obj.run)
         assert wrapper.run(1) == 2
 
     def test_method_with_optional_para(self):
         obj = InnerC()
-        wrapper = WrapperFactory.from_method_name(obj, 'run')
+        wrapper = WrapperFactory.from_method_name(obj, "run")
         assert wrapper.run() == 1
         assert wrapper.run(obj=1) == 2
         wrapper = WrapperFactory.from_method_ref(obj.run)

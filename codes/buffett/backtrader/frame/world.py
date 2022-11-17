@@ -1,9 +1,15 @@
 from __future__ import annotations
 
 from buffett.backtrader.frame.clock_manager import Clock
-from buffett.backtrader.frame.exchange import ExchangeBuilder as EBuilder, Exchange as Exchange
+from buffett.backtrader.frame.exchange import (
+    ExchangeBuilder as EBuilder,
+    Exchange as Exchange,
+)
 from buffett.backtrader.interface import ITimeSequence as Sequence
-from buffett.backtrader.strategy import StrategyBase as Strat, StrategyBuilder as SBuilder
+from buffett.backtrader.strategy import (
+    StrategyBase as Strat,
+    StrategyBuilder as SBuilder,
+)
 from buffett.backtrader.tools import ChargeCalculator as Calc
 from buffett.common import Code as Code
 from buffett.common.pendelum import DateSpan as Span
@@ -12,13 +18,13 @@ from buffett.download.mysql import Operator as Operator
 
 class Para:
     def __init__(
-            self,
-            operator: Operator,
-            stock_list: list[Code],
-            datespan: Span,
-            strat_cls: type[Strat],
-            init_cash: int = 1000000,
-            charge_calculator: Calc = Calc()
+        self,
+        operator: Operator,
+        stock_list: list[Code],
+        datespan: Span,
+        strat_cls: type[Strat],
+        init_cash: int = 1000000,
+        charge_calculator: Calc = Calc(),
     ):
         """
         初始化仿真参数
@@ -77,20 +83,20 @@ class TheWorldBuilder:
         clock = Clock()
         self.item.set_clock(clock=clock)
 
-        exchange = EBuilder().with_clock_man(
-            operator=para.operator,
-            datespan=para.datespan,
-            clock=clock
-        ).with_account(
-            stock_num=len(para.stock_list),
-            init_cash=para.init_cash).with_accounting_man(
-            charge_calc=para.charge_calc
-        ).with_order_man().with_stock_man(
-            operator=para.operator,
-            stock_list=para.stock_list,
-            datespan=para.datespan,
-            add_cols=para.strat_cls.col_request()
-        ).build()
+        exchange = (
+            EBuilder()
+            .with_clock_man(operator=para.operator, datespan=para.datespan, clock=clock)
+            .with_account(stock_num=len(para.stock_list), init_cash=para.init_cash)
+            .with_accounting_man(charge_calc=para.charge_calc)
+            .with_order_man()
+            .with_stock_man(
+                operator=para.operator,
+                stock_list=para.stock_list,
+                datespan=para.datespan,
+                add_cols=para.strat_cls.col_request(),
+            )
+            .build()
+        )
 
         self.item.set_exchange(exchange=exchange)
         return self
@@ -102,13 +108,14 @@ class TheWorldBuilder:
         :param para:
         :return:
         """
-        strat = SBuilder(origin_cls=para.strat_cls) \
-            .with_exchange(exchange=self.item.get_exchange()) \
+        strat = (
+            SBuilder(origin_cls=para.strat_cls)
+            .with_exchange(exchange=self.item.get_exchange())
             .build()
+        )
         self.item.set_strat(strat=strat)
         return self
 
     def build(self) -> TheWorld:
         self.item.__class__ = TheWorld
         return self.item
-

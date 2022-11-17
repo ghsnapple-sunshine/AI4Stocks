@@ -3,14 +3,15 @@ from __future__ import annotations
 from typing import Optional
 
 from buffett.common import ComparableEnum
-from buffett.common.pendelum import Duration
 from buffett.common.constants.col import DATETIME, DATE, OPEN, CLOSE, HIGH, LOW, CJL
+from buffett.common.pendelum import Duration
 
 
 class HeadType(ComparableEnum):
     """
     列头的类型
     """
+
     DATETIME = 1
     DATE = 2
     OPEN = 10
@@ -27,7 +28,7 @@ class HeadType(ComparableEnum):
             HeadType.CLOSE: CLOSE,
             HeadType.HIGH: HIGH,
             HeadType.LOW: LOW,
-            HeadType.CJL: CJL
+            HeadType.CJL: CJL,
         }
         return HEAD_TYPE_DICT[self]
 
@@ -45,9 +46,9 @@ class FuquanType(ComparableEnum):
 
     def ak_format(self) -> str:
         FUQUAN_TYPE_DICT = {
-            FuquanType.BFQ: '',
-            FuquanType.QFQ: 'qfq',
-            FuquanType.HFQ: 'hfq'
+            FuquanType.BFQ: "",
+            FuquanType.QFQ: "qfq",
+            FuquanType.HFQ: "hfq",
         }
         return FUQUAN_TYPE_DICT[self]
 
@@ -56,9 +57,9 @@ class FuquanType(ComparableEnum):
 
     def __str__(self):
         FUQIAN_TYPE_DICT = {
-            FuquanType.BFQ: 'bfq',
-            FuquanType.QFQ: 'qfq',
-            FuquanType.HFQ: 'hfq'
+            FuquanType.BFQ: "bfq",
+            FuquanType.QFQ: "qfq",
+            FuquanType.HFQ: "hfq",
         }
         return FUQIAN_TYPE_DICT[self]
 
@@ -79,15 +80,12 @@ class FreqType(ComparableEnum):
     def to_duration(self) -> Duration:
         RECORD_TYPE_DICT = {
             FreqType.DAY: Duration(days=1),
-            FreqType.MIN5: Duration(minutes=5)
+            FreqType.MIN5: Duration(minutes=5),
         }
         return RECORD_TYPE_DICT[self]
 
     def __str__(self):
-        RECORD_TYPE_DICT = {
-            FreqType.DAY: 'day',
-            FreqType.MIN5: 'min5'
-        }
+        RECORD_TYPE_DICT = {FreqType.DAY: "day", FreqType.MIN5: "min5"}
         return RECORD_TYPE_DICT[self]
 
 
@@ -98,17 +96,17 @@ class SourceType(ComparableEnum):
 
     def sql_format(self):
         SOURCE_TYPE_DICT = {
-            SourceType.BAOSTOCK: 'bs',
-            SourceType.AKSHARE_DONGCAI: 'dc',
-            SourceType.AKSHARE_TONGHUASHUN: 'ths'
+            SourceType.BAOSTOCK: "bs",
+            SourceType.AKSHARE_DONGCAI: "dc",
+            SourceType.AKSHARE_TONGHUASHUN: "ths",
         }
         return SOURCE_TYPE_DICT[self]
 
     def __str__(self):
         SOURCE_TYPE_DICT = {
-            SourceType.BAOSTOCK: 'bs',
-            SourceType.AKSHARE_DONGCAI: 'ak(东财)',
-            SourceType.AKSHARE_TONGHUASHUN: 'ak(同花顺)'
+            SourceType.BAOSTOCK: "bs",
+            SourceType.AKSHARE_DONGCAI: "ak(东财)",
+            SourceType.AKSHARE_TONGHUASHUN: "ak(同花顺)",
         }
         return SOURCE_TYPE_DICT[self]
 
@@ -118,10 +116,12 @@ class CombType:
     封装类型，封装了FuquanType, SourceType, FreqType
     """
 
-    def __init__(self,
-                 fuquan: Optional[FuquanType] = None,
-                 source: Optional[SourceType] = None,
-                 freq: Optional[FreqType] = None):
+    def __init__(
+        self,
+        fuquan: Optional[FuquanType] = None,
+        source: Optional[SourceType] = None,
+        freq: Optional[FreqType] = None,
+    ):
         self._fuquan = fuquan
         self._source = source
         self._freq = freq
@@ -162,13 +162,15 @@ class CombType:
 
         :return:            复制的对象
         """
-        return CombType(source=self._source,
-                        fuquan=self._fuquan,
-                        freq=self._freq)
+        return CombType(source=self._source, fuquan=self._fuquan, freq=self._freq)
 
     def __eq__(self, other):
         if isinstance(other, CombType):
-            return self._freq == other.freq and self._source == other.source and self._fuquan == other.fuquan
+            return (
+                self._freq == other.freq
+                and self._source == other.source
+                and self._fuquan == other.fuquan
+            )
         return False
 
     def __hash__(self) -> int:

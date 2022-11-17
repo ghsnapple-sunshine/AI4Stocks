@@ -7,7 +7,5 @@ class AggType(ComparableEnum):
     SUM = 2
 
     def sql_format(self) -> str:
-        SQL_FORMAT_DICT = {AggType.NONE: '',
-                           AggType.COUNT: 'count',
-                           AggType.SUM: 'sum'}
+        SQL_FORMAT_DICT = {AggType.NONE: "", AggType.COUNT: "count", AggType.SUM: "sum"}
         return SQL_FORMAT_DICT[self]

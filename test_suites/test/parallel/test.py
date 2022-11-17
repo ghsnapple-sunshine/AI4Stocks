@@ -9,16 +9,16 @@ def execCmd(cmd):
         system(cmd)
         print("命令%s结束运行%s" % (cmd, datetime.now()))
     except:
-        print('%s\t 运行失败' % (cmd,))
+        print("%s\t 运行失败" % (cmd,))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # 是否需要并行运行
     if_parallel = True
 
     # 需要执行的命令列表
-    model_list = ['yolo', 'centernet']
-    cmds = ['python main.py --model ' + i for i in model_list]
+    model_list = ["yolo", "centernet"]
+    cmds = ["python main.py --model " + i for i in model_list]
 
     if if_parallel:
         # 并行
@@ -39,4 +39,4 @@ if __name__ == '__main__':
                 system(cmd)
                 print("命令%s结束运行%s" % (cmd, datetime.now()))
             except:
-                print('%s\t 运行失败' % (cmd,))
+                print("%s\t 运行失败" % (cmd,))

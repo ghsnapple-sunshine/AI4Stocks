@@ -1,10 +1,14 @@
 from typing import Optional
 
-
 from buffett.adapter.baostock import ResultData
 from buffett.adapter.pandas import DataFrame
+from buffett.common.constants import (
+    INT_MAX_VALUE,
+    INT_MIN_VALUE,
+    FLOAT_MAX_VALUE,
+    FLOAT_MIN_VALUE,
+)
 from buffett.common.pendelum import DateTime
-from buffett.common.constants import INT_MAX_VALUE, INT_MIN_VALUE, FLOAT_MAX_VALUE, FLOAT_MIN_VALUE
 
 
 def bs_result_to_dataframe(rs: ResultData) -> DataFrame:
@@ -15,7 +19,7 @@ def bs_result_to_dataframe(rs: ResultData) -> DataFrame:
     :return:        DataFrame
     """
     data = []
-    while (rs.error_code == '0') & rs.next():
+    while (rs.error_code == "0") & rs.next():
         # 获取一条记录，将记录合并在一起
         data.append(rs.get_row_data())
     return DataFrame(data, columns=rs.fields)

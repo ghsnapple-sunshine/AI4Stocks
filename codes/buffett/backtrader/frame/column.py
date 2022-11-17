@@ -19,5 +19,5 @@ class Column(Sequence):
             raise ValueError("Detect future failed: offset is {0}".format(offset))
         want_tick = self.curr_tick + offset
         if want_tick < 0 or want_tick >= len(self._data):
-            raise ValueError('Input a incorrect offset.')
+            raise ValueError("Input a incorrect offset.")
         return self._data[want_tick]

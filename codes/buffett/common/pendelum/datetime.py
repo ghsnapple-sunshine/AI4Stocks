@@ -1,24 +1,40 @@
 from __future__ import annotations
 
-from buffett.adapter.pendulum import DateTime as PDateTime, tzinfo as PTzInfo, date, datetime, timedelta
+from buffett.adapter.pendulum import (
+    DateTime as PDateTime,
+    tzinfo as PTzInfo,
+    date,
+    datetime,
+    timedelta,
+)
 from buffett.common.pendelum.date import Date
 from buffett.common.pendelum.duration import Duration
 
 
 class DateTime(PDateTime, Date):
-    def __new__(cls,
-                year: int,
-                month: int,
-                day: int,
-                hour: int = 0,
-                minute: int = 0,
-                second: int = 0,
-                microsecond: int = 0,
-                tzinfo: Optional[PTzInfo] = None,
-                fold: int = 0):
+    def __new__(
+        cls,
+        year: int,
+        month: int,
+        day: int,
+        hour: int = 0,
+        minute: int = 0,
+        second: int = 0,
+        microsecond: int = 0,
+        tzinfo: Optional[PTzInfo] = None,
+        fold: int = 0,
+    ):
         return super(DateTime, cls).__new__(
-            cls, year, month, day, hour=hour, minute=minute, second=second,
-            microsecond=microsecond, tzinfo=None)
+            cls,
+            year,
+            month,
+            day,
+            hour=hour,
+            minute=minute,
+            second=second,
+            microsecond=microsecond,
+            tzinfo=None,
+        )
 
     def __lt__(self, other) -> bool:
         if isinstance(other, date) & (not isinstance(other, datetime)):
@@ -77,61 +93,71 @@ class DateTime(PDateTime, Date):
             result.__class__ = Duration
         return result
 
-    def add(self,
-            years=0,
-            months=0,
-            weeks=0,
-            days=0,
-            hours=0,
-            minutes=0,
-            seconds=0,
-            microseconds=0) -> DateTime:
-        result = super(DateTime, self).add(years, months, weeks, days, hours, minutes, seconds, microseconds)
+    def add(
+        self,
+        years=0,
+        months=0,
+        weeks=0,
+        days=0,
+        hours=0,
+        minutes=0,
+        seconds=0,
+        microseconds=0,
+    ) -> DateTime:
+        result = super(DateTime, self).add(
+            years, months, weeks, days, hours, minutes, seconds, microseconds
+        )
         result.__class__ = DateTime
         return result
 
-    def subtract(self,
-                 years=0,
-                 months=0,
-                 weeks=0,
-                 days=0,
-                 hours=0,
-                 minutes=0,
-                 seconds=0,
-                 microseconds=0) -> DateTime:
-        result = super(DateTime, self).subtract(years, months, weeks, days, hours, minutes, seconds, microseconds)
-        return DateTime(year=result.year,
-                        month=result.month,
-                        day=result.day,
-                        hour=result.hour,
-                        minute=result.minute,
-                        second=result.second,
-                        microsecond=result.microsecond,
-                        tzinfo=None)
+    def subtract(
+        self,
+        years=0,
+        months=0,
+        weeks=0,
+        days=0,
+        hours=0,
+        minutes=0,
+        seconds=0,
+        microseconds=0,
+    ) -> DateTime:
+        result = super(DateTime, self).subtract(
+            years, months, weeks, days, hours, minutes, seconds, microseconds
+        )
+        return DateTime(
+            year=result.year,
+            month=result.month,
+            day=result.day,
+            hour=result.hour,
+            minute=result.minute,
+            second=result.second,
+            microsecond=result.microsecond,
+            tzinfo=None,
+        )
 
     @classmethod
-    def now(cls,
-            tzinfo: Optional[PTzInfo] = None) -> DateTime:
+    def now(cls, tzinfo: Optional[PTzInfo] = None) -> DateTime:
         """
         获取当前时间
 
         :return:    当前时间
         """
         # now()获取计算机时间，默认带时区，为了避免问题转换成东8区。
-        result = PDateTime.now().in_timezone('Asia/Shanghai')
-        return DateTime(year=result.year,
-                        month=result.month,
-                        day=result.day,
-                        hour=result.hour,
-                        minute=result.minute,
-                        second=result.second,
-                        microsecond=result.microsecond,
-                        tzinfo=None)
+        result = PDateTime.now().in_timezone("Asia/Shanghai")
+        return DateTime(
+            year=result.year,
+            month=result.month,
+            day=result.day,
+            hour=result.hour,
+            minute=result.minute,
+            second=result.second,
+            microsecond=result.microsecond,
+            tzinfo=None,
+        )
 
-    def format_YMDHms(self,
-                      ymd_sep: str = '-',
-                      joiner: str = ' ',
-                      hms_sep: str = ':') -> str:
+    def format_YMDHms(
+        self, ymd_sep: str = "-", joiner: str = " ", hms_sep: str = ":"
+    ) -> str:
         """
         按照YYYYMMDD HHmmss进行格式化
 
@@ -140,5 +166,5 @@ class DateTime(PDateTime, Date):
         :param hms_sep:         小时，分钟，秒间的分割字符串
         :return:
         """
-        format_str = f'YYYY{ymd_sep}MM{ymd_sep}DD{joiner}HH{hms_sep}mm{hms_sep}ss'
+        format_str = f"YYYY{ymd_sep}MM{ymd_sep}DD{joiner}HH{hms_sep}mm{hms_sep}ss"
         return self.format(format_str)

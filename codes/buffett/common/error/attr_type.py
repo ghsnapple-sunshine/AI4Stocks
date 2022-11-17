@@ -9,6 +9,6 @@ class AttrTypeError(TypeError, MyError):
         return 0
 
     def msg(self) -> str:
-        return f'param {self._name} is not a callable item.'
+        return f"param {self._name} is not a callable item."
 
     __str__ = msg

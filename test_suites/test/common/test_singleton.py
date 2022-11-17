@@ -1,6 +1,5 @@
-from test import Tester
-
 from buffett.common.interface import Singleton
+from test import Tester
 
 
 def init_method(self, v):
@@ -8,9 +7,7 @@ def init_method(self, v):
     self.v = v
 
 
-SingletonSubClass = type('SingletonSubClass',
-                         (Singleton,),
-                         {'__init__': init_method})
+SingletonSubClass = type("SingletonSubClass", (Singleton,), {"__init__": init_method})
 
 
 class TestSingleton(Tester):

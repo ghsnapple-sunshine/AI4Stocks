@@ -8,9 +8,9 @@ from buffett.common.constants.col.meta import ADDREQ, COLUMN
 
 class InsertSqlParser:
     @staticmethod
-    def insert(name: str,
-               df: DataFrame,
-               ignore: bool = False) -> tuple[str, list[list[Any]]]:
+    def insert(
+        name: str, df: DataFrame, ignore: bool = False
+    ) -> tuple[str, list[list[Any]]]:
         """
         try into or try ignore into
 
@@ -21,16 +21,15 @@ class InsertSqlParser:
         """
         sql = "insert {3}into `{0}`({1}) values({2})".format(
             name,
-            ', '.join([f'`{x}`' for x in df.columns]),
-            ', '.join(['%s'] * df.columns.size),
-            'ignore ' if ignore else '')
+            ", ".join([f"`{x}`" for x in df.columns]),
+            ", ".join(["%s"] * df.columns.size),
+            "ignore " if ignore else "",
+        )
         vals = InsertSqlParser._get_format_list(df)  # 应用过obj_format处无需再df.replace
         return sql, vals
 
     @staticmethod
-    def insert_n_update(name,
-                        df: DataFrame,
-                        meta: DataFrame):
+    def insert_n_update(name, df: DataFrame, meta: DataFrame):
         """
         insert into on duplicate key update
 
@@ -39,14 +38,19 @@ class InsertSqlParser:
         :param meta:
         :return:
         """
-        normal_cols = meta[meta.apply(lambda x: x[ADDREQ].not_key() and x[COLUMN] in df.columns, axis=1)][COLUMN]
-        inQ2 = [f'`{x}`=values(`{x}`)' for x in normal_cols]
+        normal_cols = meta[
+            meta.apply(
+                lambda x: x[ADDREQ].not_key() and x[COLUMN] in df.columns, axis=1
+            )
+        ][COLUMN]
+        inQ2 = [f"`{x}`=values(`{x}`)" for x in normal_cols]
 
         sql = "insert into `{0}`({1}) values({2}) on duplicate key update {3}".format(
             name,
-            ', '.join([f'`{x}`' for x in df.columns]),  # 避免data.columns中有非str类型导致报错
-            ', '.join(['%s'] * df.columns.size),
-            ', '.join(inQ2))
+            ", ".join([f"`{x}`" for x in df.columns]),  # 避免data.columns中有非str类型导致报错
+            ", ".join(["%s"] * df.columns.size),
+            ", ".join(inQ2),
+        )
         vals = InsertSqlParser._get_format_list(df)  # 应用过obj_format处无需再df.replace
         return sql, vals
 

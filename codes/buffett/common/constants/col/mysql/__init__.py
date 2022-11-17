@@ -1,5 +1,4 @@
 #
-FIELD = 'field'
-ALL = '*'
-ROW_NUM = 'row_num'
-
+FIELD = "field"
+ALL = "*"
+ROW_NUM = "row_num"

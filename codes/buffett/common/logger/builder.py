@@ -10,17 +10,15 @@ class LoggerBuilder:
     @staticmethod
     def build(cls: type) -> type:
         if not issubclass(cls, Logger):
-            raise ParamTypeError('cls', type)
+            raise ParamTypeError("cls", type)
         overrides_func = {}
         level = Logger.Level
         for att_name in dir(cls):
-            if not callable(getattr(cls, att_name)) or att_name.startswith('_'):
+            if not callable(getattr(cls, att_name)) or att_name.startswith("_"):
                 continue
             if LoggerBuilder._recognize(att_name) < level:
                 overrides_func[att_name] = empty_method
-        dyn_cls = type(f'{get_name(cls)}No{LoggerBuilder._NO}',
-                       (cls,),
-                       overrides_func)
+        dyn_cls = type(f"{get_name(cls)}No{LoggerBuilder._NO}", (cls,), overrides_func)
         LoggerBuilder._NO += 1
         return dyn_cls
 

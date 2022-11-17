@@ -8,6 +8,7 @@ class Singleton:
     因此，Singleton中需要创建一个字典来存放这些实例
 
     """
+
     _instance = {}
 
     def __new__(cls, *args, **kwargs):

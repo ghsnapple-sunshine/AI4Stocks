@@ -1,22 +1,23 @@
+from buffett.common.logger import LogType, Logger, LoggerBuilder
 from test import Tester
-
-from buffett.common.logger import Logger
-from buffett.common.logger import LoggerBuilder
-from buffett.common.logger import LogType
 
 
 def my_init(self, v):
     self.v = v
 
 
-DLogger = type('DLogger',
-               (Logger,),
-               {'__init__': my_init,
-                'debug_add_zero': lambda self, x: x,
-                'info_add_one': lambda self, x: x + 1,
-                'warning_add_two': lambda self, x: x + 2,
-                'error_add_three': lambda self, x: x + 3,
-                'other': lambda self, x: x + 100})
+DLogger = type(
+    "DLogger",
+    (Logger,),
+    {
+        "__init__": my_init,
+        "debug_add_zero": lambda self, x: x,
+        "info_add_one": lambda self, x: x + 1,
+        "warning_add_two": lambda self, x: x + 2,
+        "error_add_three": lambda self, x: x + 3,
+        "other": lambda self, x: x + 100,
+    },
+)
 
 
 class TestLogger(Tester):

@@ -1,10 +1,19 @@
 from buffett.adapter.pandas import DataFrame, pd
+from buffett.common.constants.col.task import (
+    ERR_MSG,
+    TASK_ID,
+    PARENT_ID,
+    CLASS,
+    MODULE,
+    CREATE_TIME,
+    START_TIME,
+    END_TIME,
+    SUCCESS,
+)
+from buffett.common.constants.table import TASK_RCD
+from buffett.common.magic import get_module_name, get_name
 from buffett.common.pendelum import DateTime, Duration
 from buffett.common.wrapper import Wrapper
-from buffett.common.constants.col.task import ERR_MSG, TASK_ID, PARENT_ID, CLASS, MODULE, CREATE_TIME, START_TIME, END_TIME, \
-    SUCCESS
-from buffett.common.magic import get_module_name, get_name
-from buffett.common.constants.table import TASK_RCD
 from buffett.download.mysql import Operator
 from buffett.task.task import Task
 from buffett.task.task_scheduler import TaskScheduler
@@ -13,19 +22,18 @@ from test import Tester
 
 
 class InnerA:
-    charm = 'A'
+    charm = "A"
 
     def run(self):
         return self.charm
 
 
 class InnerB(InnerA):
-    charm = 'B'
+    charm = "B"
 
 
 class InnerC(InnerA):
-    def __init__(self,
-                 charm: str):
+    def __init__(self, charm: str):
         self.charm = charm
 
 
@@ -35,15 +43,13 @@ class InnerD:
     def run(self):
         InnerD.COUNT += 1
         if InnerD.COUNT > 2:
-            raise ValueError('error')
+            raise ValueError("error")
 
 
 class OneOffTaskA(Task):
     wrapper = Wrapper(InnerA().run)
 
-    def __init__(self,
-                 operator: Operator = None,
-                 start_time: DateTime = None):
+    def __init__(self, operator: Operator = None, start_time: DateTime = None):
         super(OneOffTaskA, self).__init__(wrapper=self.wrapper, start_time=start_time)
 
     def get_subsequent_task(self, success: bool):
@@ -55,7 +61,7 @@ class OneOffTaskB(OneOffTaskA):
 
 
 class OneOffTaskC(OneOffTaskA):
-    wrapper = Wrapper(InnerC('c').run)
+    wrapper = Wrapper(InnerC("c").run)
 
 
 class PerfectTask(OneOffTaskA):
@@ -74,9 +80,11 @@ class TestTaskScheduler(Tester):
         """
         DbSweeper.cleanup()
         now = DateTime.now()
-        task_infos = [[OneOffTaskA, now - Duration(seconds=1)],
-                      [OneOffTaskB, now - Duration(seconds=2)],
-                      [OneOffTaskC, now]]
+        task_infos = [
+            [OneOffTaskA, now - Duration(seconds=1)],
+            [OneOffTaskB, now - Duration(seconds=2)],
+            [OneOffTaskC, now],
+        ]
 
         tasks = [x[0](start_time=x[1]) for x in task_infos]
         sch = TaskScheduler(operator=self.operator, tasks=tasks)
@@ -91,12 +99,16 @@ class TestTaskScheduler(Tester):
         task_module = [get_module_name(x[0]) for x in task_infos]
         success = [1] * 3
         err = [None] * 3
-        expect = DataFrame({TASK_ID: task_id,
-                            PARENT_ID: parent_id,
-                            CLASS: task_class,
-                            MODULE: task_module,
-                            SUCCESS: success,
-                            ERR_MSG: err})
+        expect = DataFrame(
+            {
+                TASK_ID: task_id,
+                PARENT_ID: parent_id,
+                CLASS: task_class,
+                MODULE: task_module,
+                SUCCESS: success,
+                ERR_MSG: err,
+            }
+        )
 
         cmp = pd.concat([actual, expect]).drop_duplicates(keep=False)
         assert cmp.empty
@@ -111,9 +123,12 @@ class TestTaskScheduler(Tester):
         start = DateTime.now()
         sch = TaskScheduler(
             operator=self.operator,
-            tasks=[OneOffTaskA(start_time=DateTime.now() + Duration(seconds=10)),
-                   OneOffTaskB(start_time=DateTime.now() + Duration(seconds=20)),
-                   OneOffTaskC(start_time=DateTime.now())])
+            tasks=[
+                OneOffTaskA(start_time=DateTime.now() + Duration(seconds=10)),
+                OneOffTaskB(start_time=DateTime.now() + Duration(seconds=20)),
+                OneOffTaskC(start_time=DateTime.now()),
+            ],
+        )
         sch.run()
         end = DateTime.now()
         # delay为20s，但是实际只用了19.xs，原因是存入数据库时未保存microseconds，产生了误差。
@@ -146,14 +161,18 @@ class TestTaskScheduler(Tester):
         InnerD.COUNT = 0
         sch = TaskScheduler(
             operator=self.operator,
-            tasks=[OneOffTaskA(start_time=DateTime.now() - Duration(seconds=1)),
-                   OneOffTaskB(start_time=DateTime.now() - Duration(seconds=2)),
-                   PerfectTask(start_time=DateTime.now())])
+            tasks=[
+                OneOffTaskA(start_time=DateTime.now() - Duration(seconds=1)),
+                OneOffTaskB(start_time=DateTime.now() - Duration(seconds=2)),
+                PerfectTask(start_time=DateTime.now()),
+            ],
+        )
         sch.run()
 
     def _run_with_1task(self):
         InnerD.COUNT = 0
         sch = TaskScheduler(
             operator=self.operator,
-            tasks=[OneOffTaskA(start_time=DateTime.now() - Duration(seconds=1))])
+            tasks=[OneOffTaskA(start_time=DateTime.now() - Duration(seconds=1))],
+        )
         sch.run()

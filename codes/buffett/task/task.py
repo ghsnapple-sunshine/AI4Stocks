@@ -4,22 +4,26 @@ from typing import Any, Optional
 
 from buffett.adapter import logging
 from buffett.adapter.wellknown import format_exc
-from buffett.common.pendelum import DateTime
-from buffett.common.wrapper import Wrapper
 from buffett.common.constants.col.task import CLASS, MODULE, START_TIME
 from buffett.common.magic import get_module_name, get_class_name
+from buffett.common.pendelum import DateTime
+from buffett.common.wrapper import Wrapper
 
 
 class Task:
-    def __init__(self,
-                 wrapper: Wrapper,
-                 args: tuple = tuple(),
-                 kwargs: dict = MappingProxyType({}),
-                 start_time: DateTime = None):
+    def __init__(
+        self,
+        wrapper: Wrapper,
+        args: tuple = tuple(),
+        kwargs: dict = MappingProxyType({}),
+        start_time: DateTime = None,
+    ):
         self._wrapper = wrapper
         self._args = args
         self._kwargs = kwargs
-        self._start_time = start_time if isinstance(start_time, DateTime) else DateTime.now()
+        self._start_time = (
+            start_time if isinstance(start_time, DateTime) else DateTime.now()
+        )
         self._task_id = None
 
     def run(self) -> tuple[bool, Any, None, Optional[str]]:
@@ -27,7 +31,9 @@ class Task:
         err_msg = None
         res = None
         try:
-            logging.info(f"---------------Start running {self._wrapper.func_name}---------------")
+            logging.info(
+                f"---------------Start running {self._wrapper.func_name}---------------"
+            )
             """
             valid_args = isinstance(self._args, tuple)
             valid_kwargs = isinstance(self._kwargs, dict)
@@ -41,10 +47,14 @@ class Task:
                 res = self._wrapper.run()
             """
             res = self._wrapper.run(*self._args, **self._kwargs)
-            logging.info(f"---------------End running {self._wrapper.func_name}---------------")
+            logging.info(
+                f"---------------End running {self._wrapper.func_name}---------------"
+            )
             new_task = self.get_subsequent_task(success=True)
         except Exception as e:
-            logging.error(f"---------------Error occurred when running {self._wrapper.func_name}---------------")
+            logging.error(
+                f"---------------Error occurred when running {self._wrapper.func_name}---------------"
+            )
             err_msg = format_exc()
             logging.error(err_msg)
             success = False
@@ -57,9 +67,11 @@ class Task:
 
     @property
     def info(self) -> dict:
-        return {CLASS: get_class_name(self),
-                MODULE: get_module_name(self),
-                START_TIME: self._start_time.format_YMDHms()}
+        return {
+            CLASS: get_class_name(self),
+            MODULE: get_module_name(self),
+            START_TIME: self._start_time.format_YMDHms(),
+        }
 
     @property
     def task_id(self) -> int:

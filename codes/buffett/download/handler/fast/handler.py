@@ -2,8 +2,8 @@ from abc import abstractmethod
 from typing import Optional
 
 from buffett.adapter.pandas import DataFrame
-from buffett.download.handler import Handler
 from buffett.download import Para
+from buffett.download.handler import Handler
 
 
 # FastHandler:
@@ -33,4 +33,6 @@ class FastHandler(Handler):
     @abstractmethod
     def _save_to_database(self, df: DataFrame) -> None:
         pass
+
+
 # endregion

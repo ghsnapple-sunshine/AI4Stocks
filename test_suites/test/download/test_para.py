@@ -1,12 +1,11 @@
-from test import Tester
-
 from buffett.adapter.pandas import Series
 from buffett.common import Code
-from buffett.common.pendelum import Date
 from buffett.common.constants.col import FREQ, SOURCE, FUQUAN, START_DATE, END_DATE
 from buffett.common.constants.col.stock import CODE, NAME
+from buffett.common.pendelum import Date
 from buffett.download import Para
 from buffett.download.types import FuquanType, FreqType, SourceType
+from test import Tester
 
 
 class TestPara(Tester):
@@ -38,13 +37,21 @@ class TestPara(Tester):
         freq = FreqType.DAY
         source = SourceType.BAOSTOCK
         fuquan = FuquanType.BFQ
-        code = Code('000001')
-        name = '平安银行'
+        code = Code("000001")
+        name = "平安银行"
         start_date = Date(2022, 1, 1)
         end_date = Date(2022, 1, 10)
-        series = Series({CODE: code, NAME: name,
-                         FREQ: freq, SOURCE: source, FUQUAN: fuquan,
-                         START_DATE: start_date, END_DATE: end_date})
+        series = Series(
+            {
+                CODE: code,
+                NAME: name,
+                FREQ: freq,
+                SOURCE: source,
+                FUQUAN: fuquan,
+                START_DATE: start_date,
+                END_DATE: end_date,
+            }
+        )
         para = Para.from_series(series)
         assert para.comb.freq == freq
         assert para.comb.source == source

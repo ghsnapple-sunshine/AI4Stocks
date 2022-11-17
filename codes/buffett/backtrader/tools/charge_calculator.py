@@ -1,9 +1,11 @@
 class ChargeCalculator:
-    def __init__(self,
-                 yinhuashuilv: float = 0.001,  # 1‰
-                 yongjinlv: float = 0.00003,  # 0.03%（万三）
-                 zuidiyongjin: float = 5,  # 5
-                 guohufeilv: float = 0.000002):  # 0.002%（万零点二）
+    def __init__(
+        self,
+        yinhuashuilv: float = 0.001,  # 1‰
+        yongjinlv: float = 0.00003,  # 0.03%（万三）
+        zuidiyongjin: float = 5,  # 5
+        guohufeilv: float = 0.000002,
+    ):  # 0.002%（万零点二）
         self.__yinhuashuilv = yinhuashuilv
         self.__yongjinlv = yongjinlv
         self.__zuidiyongjin = zuidiyongjin

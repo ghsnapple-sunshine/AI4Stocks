@@ -1,8 +1,10 @@
-from baostock import login as bs_login
-from baostock import logout as bs_logout
-from baostock import query_history_k_data_plus as bs_query_history_k_data_plus
-from baostock import query_money_supply_data_month as bs_query_money_supply_data_month
-from baostock import query_trade_dates as bs_query_trade_dates
+from baostock import (
+    login as bs_login,
+    logout as bs_logout,
+    query_history_k_data_plus as bs_query_history_k_data_plus,
+    query_money_supply_data_month as bs_query_money_supply_data_month,
+    query_trade_dates as bs_query_trade_dates,
+)
 from baostock.data.resultset import ResultData as bs_ResultData
 
 # types

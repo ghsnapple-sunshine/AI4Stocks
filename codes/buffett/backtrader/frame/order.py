@@ -13,12 +13,12 @@ class OrderStatus(Enum):
 
 class Order:
     def __init__(
-            self,
-            code: int,
-            order_num: int,
-            create_tick: int,
-            limit_price: int = -1,
-            valid_time: int = 1
+        self,
+        code: int,
+        order_num: int,
+        create_tick: int,
+        limit_price: int = -1,
+        valid_time: int = 1,
     ):
         """
         初始化订单
@@ -55,14 +55,11 @@ class Order:
     def cje(self):
         return self._deal_num * self._deal_price
 
-    def set_dealed(
-            self,
-            deal_num: int,
-            deal_time: int,
-            deal_price: int
-    ) -> None:
+    def set_dealed(self, deal_num: int, deal_time: int, deal_price: int) -> None:
         if deal_num * self.__order_num <= 0 or abs(deal_num) > abs(self.resi_deal_num):
-            err_msg = 'Incorrect deal: order wishes yet {0} while deal is {1}'.format(self.resi_deal_num, deal_num)
+            err_msg = "Incorrect deal: order wishes yet {0} while deal is {1}".format(
+                self.resi_deal_num, deal_num
+            )
             raise ValueError(err_msg)
 
         if deal_num == self.__order_num:  # 一次性成交
@@ -74,9 +71,13 @@ class Order:
             return
 
         # 部分成交（因为当前OrdMan未考虑成交量，因此一定是全部成交）
-        self._first_deal_time = self._first_deal_time if self._first_deal_time > 0 else deal_time
+        self._first_deal_time = (
+            self._first_deal_time if self._first_deal_time > 0 else deal_time
+        )
         self._last_deal_time = deal_time
-        self._deal_price = (self._deal_price * self._deal_num + deal_price * deal_num) / (self._deal_num + deal_num)
+        self._deal_price = (
+            self._deal_price * self._deal_num + deal_price * deal_num
+        ) / (self._deal_num + deal_num)
         self._deal_num = self._deal_num + deal_num
 
     def set_charge(self, charge: int) -> None:
@@ -89,7 +90,9 @@ class Order:
         self._status = OrderStatus.CANCELED
 
     def is_overdue(self, curr_time: int) -> bool:
-        return self.__valid_time < 0 or self.__valid_time > curr_time  # valid_time为负值的情况视作无效值
+        return (
+            self.__valid_time < 0 or self.__valid_time > curr_time
+        )  # valid_time为负值的情况视作无效值
 
     @property
     def code(self) -> int:

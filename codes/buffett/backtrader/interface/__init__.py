@@ -1,3 +1,2 @@
 from buffett.backtrader.interface.time_sequence import ITimeSequence
 from buffett.backtrader.interface.trade_success_notify import ITradeSuccessNotify
-

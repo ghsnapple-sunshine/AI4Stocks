@@ -8,13 +8,16 @@ from buffett.download.mysql import Operator
 from buffett.download.mysql.types import ColType, AddReqType
 from buffett.download.types import FreqType, FuquanType, SourceType
 
-_META = create_meta(meta_list=[
-    [CODE, ColType.CODE, AddReqType.KEY],
-    [FREQ, ColType.ENUM_BOOL, AddReqType.KEY],
-    [FUQUAN, ColType.ENUM_BOOL, AddReqType.KEY],
-    [SOURCE, ColType.ENUM_BOOL, AddReqType.KEY],
-    [START_DATE, ColType.DATETIME, AddReqType.NONE],
-    [END_DATE, ColType.DATETIME, AddReqType.NONE]])
+_META = create_meta(
+    meta_list=[
+        [CODE, ColType.CODE, AddReqType.KEY],
+        [FREQ, ColType.ENUM_BOOL, AddReqType.KEY],
+        [FUQUAN, ColType.ENUM_BOOL, AddReqType.KEY],
+        [SOURCE, ColType.ENUM_BOOL, AddReqType.KEY],
+        [START_DATE, ColType.DATETIME, AddReqType.NONE],
+        [END_DATE, ColType.DATETIME, AddReqType.NONE],
+    ]
+)
 
 
 class ReformRecorder:
@@ -24,7 +27,14 @@ class ReformRecorder:
 
     def save(self, para: Para):
         ls = [
-            [para.stock.code, para.comb.freq, para.comb.fuquan, para.comb.source, para.span.start, para.span.end]
+            [
+                para.stock.code,
+                para.comb.freq,
+                para.comb.fuquan,
+                para.comb.source,
+                para.span.start,
+                para.span.end,
+            ]
         ]
         cols = [CODE, FREQ, FUQUAN, SOURCE, START_DATE, END_DATE]
         data = DataFrame(data=ls, columns=cols)

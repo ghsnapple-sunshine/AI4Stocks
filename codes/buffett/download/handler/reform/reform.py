@@ -4,7 +4,15 @@ from buffett.adapter import logging
 from buffett.adapter.numpy import NAN, np
 from buffett.adapter.pandas import DataFrame, pd, Series
 from buffett.common import create_meta
-from buffett.common.constants.col import FREQ, FUQUAN, SOURCE, START_DATE, END_DATE, DATE, DATETIME
+from buffett.common.constants.col import (
+    FREQ,
+    FUQUAN,
+    SOURCE,
+    START_DATE,
+    END_DATE,
+    DATE,
+    DATETIME,
+)
 from buffett.common.constants.col.my import MONTH_START, DORCD_START, DORCD_END
 from buffett.common.constants.col.stock import CODE
 from buffett.common.pendelum import DateSpan, convert_datetime, DateTime
@@ -17,10 +25,9 @@ from buffett.download.recorder.dl_recorder import DownloadRecorder as DRecorder
 from buffett.download.recorder.rf_recorder import ReformRecorder as RRecorder
 from buffett.download.types import CombType
 
-_ADD_META = create_meta(meta_list=[
-    [CODE, ColType.CODE, AddReqType.KEY]])
+_ADD_META = create_meta(meta_list=[[CODE, ColType.CODE, AddReqType.KEY]])
 
-_GROUP = 'group_id'
+_GROUP = "group_id"
 _GROUP_SIZE = 30
 
 
@@ -53,8 +60,9 @@ class ReformHandler:
         self._create_tables()
         comb_records = self._get_comb_records()
 
-        comb_records.groupby(by=[_GROUP, FREQ, SOURCE, FUQUAN, START_DATE, END_DATE]).apply(
-            lambda group: self._reform_n_save_data(group))
+        comb_records.groupby(
+            by=[_GROUP, FREQ, SOURCE, FUQUAN, START_DATE, END_DATE]
+        ).apply(lambda group: self._reform_n_save_data(group))
 
         # endregion
 
@@ -74,7 +82,9 @@ class ReformHandler:
         if dataframe_is_valid(done_records):
             # self._done_records = done_records.drop_duplicates()
             self._done_records = done_records
-            todo_records = pd.concat([todo_records, self._done_records, self._done_records]).drop_duplicates(keep=False)
+            todo_records = pd.concat(
+                [todo_records, self._done_records, self._done_records]
+            ).drop_duplicates(keep=False)
 
         self._todo_records = todo_records
 
@@ -99,15 +109,17 @@ class ReformHandler:
         """
         todo_records = self._todo_records
         if dataframe_is_valid(self._done_records):
-            done_records = self._done_records.rename(columns={START_DATE: DORCD_START,
-                                                              END_DATE: DORCD_END})
-            todo_records = pd.merge(todo_records, done_records, how='left',
-                                    on=[CODE, FREQ, SOURCE, FUQUAN])
+            done_records = self._done_records.rename(
+                columns={START_DATE: DORCD_START, END_DATE: DORCD_END}
+            )
+            todo_records = pd.merge(
+                todo_records, done_records, how="left", on=[CODE, FREQ, SOURCE, FUQUAN]
+            )
         else:
             todo_records[DORCD_START] = NAN
             todo_records[DORCD_END] = NAN
 
-        todo_records = pd.merge(todo_records, self._stock_group, how='left', on=[CODE])
+        todo_records = pd.merge(todo_records, self._stock_group, how="left", on=[CODE])
         return todo_records
 
     def _create_tables(self) -> None:
@@ -119,29 +131,41 @@ class ReformHandler:
         todo_tables = self.create_multi_series(self._todo_records)
         if dataframe_is_valid(self._done_records):
             done_tables = self.create_multi_series(self._done_records)
-            todo_tables = pd.concat([todo_tables, done_tables, done_tables]).drop_duplicates(keep=False)
+            todo_tables = pd.concat(
+                [todo_tables, done_tables, done_tables]
+            ).drop_duplicates(keep=False)
 
         for index, row in todo_tables.iterrows():
-            para = Para().with_freq(row[FREQ]).with_source(row[SOURCE]) \
-                .with_fuquan(row[FUQUAN]).with_start(row[MONTH_START])
+            para = (
+                Para()
+                .with_freq(row[FREQ])
+                .with_source(row[SOURCE])
+                .with_fuquan(row[FUQUAN])
+                .with_start(row[MONTH_START])
+            )
             table_name = TableNameTool.get_by_date(para=para)
             meta = self._get_meta_cache(para=para)
             self._operator.create_table(name=table_name, meta=meta)
 
     @classmethod
-    def create_multi_series(cls,
-                            records: DataFrame) -> DataFrame:
+    def create_multi_series(cls, records: DataFrame) -> DataFrame:
         """
         生成已下载记录/待下载记录的Mysql表信息
 
         :param records:             已下载记录/待下载记录
         :return:
         """
-        records = records[[FREQ, SOURCE, FUQUAN, START_DATE, END_DATE]].drop_duplicates()
+        records = records[
+            [FREQ, SOURCE, FUQUAN, START_DATE, END_DATE]
+        ].drop_duplicates()
         spans = records[[START_DATE, END_DATE]].drop_duplicates()
-        series = pd.concat([ReformHandler._create_single_series(span)
-                            for index, span in spans.iterrows()])
-        tables = pd.merge(records, series, how='left', on=[START_DATE, END_DATE])
+        series = pd.concat(
+            [
+                ReformHandler._create_single_series(span)
+                for index, span in spans.iterrows()
+            ]
+        )
+        tables = pd.merge(records, series, how="left", on=[START_DATE, END_DATE])
         return tables
 
     @classmethod
@@ -162,8 +186,7 @@ class ReformHandler:
             month_start = month_start.add(months=1)
         return DataFrame(dates, columns=[START_DATE, END_DATE, MONTH_START])
 
-    def _get_meta_cache(self,
-                        para: Para) -> DataFrame:
+    def _get_meta_cache(self, para: Para) -> DataFrame:
         """
         获取表格元数据
 
@@ -177,8 +200,7 @@ class ReformHandler:
             self._meta_cache[para.comb] = meta
         return meta
 
-    def _create_meta(self,
-                     para: Para) -> DataFrame:
+    def _create_meta(self, para: Para) -> DataFrame:
         """
         按照原表的结构创建Meta
 
@@ -187,17 +209,18 @@ class ReformHandler:
         """
         para = para.clone()
         records = self._todo_records
-        record = records[(records[FREQ] == para.comb.freq) &
-                         (records[SOURCE] == para.comb.source) &
-                         (records[FUQUAN] == para.comb.fuquan)].iloc[0, :]
+        record = records[
+            (records[FREQ] == para.comb.freq)
+            & (records[SOURCE] == para.comb.source)
+            & (records[FUQUAN] == para.comb.fuquan)
+        ].iloc[0, :]
         para.with_code(code=record[CODE])
         table_name = TableNameTool.get_by_code(para=para)
         meta = self._operator.get_meta(name=table_name)
         meta = pd.concat([meta, _ADD_META])
         return meta
 
-    def _reform_n_save_data(self,
-                            df: DataFrame) -> None:
+    def _reform_n_save_data(self, df: DataFrame) -> None:
         """
         分组进行reform操作
 
@@ -205,28 +228,40 @@ class ReformHandler:
         :return:
         """
         row = df.iloc[0]
-        para = Para().with_freq(row[FREQ]).with_source(row[SOURCE]).with_fuquan(row[FUQUAN])
+        para = (
+            Para()
+            .with_freq(row[FREQ])
+            .with_source(row[SOURCE])
+            .with_fuquan(row[FUQUAN])
+        )
         span = DateSpan(row[START_DATE], row[END_DATE])
-        group_desc = 'group {0}info {1}({2}-{3}) {4} {5}'.format(
-            para.comb.freq, row[_GROUP],
-            df[CODE].min(), df[CODE].max(),
-            para.comb.fuquan, span)
-        logging.info(f'Start to convert {group_desc}')
+        group_desc = "group {0}info {1}({2}-{3}) {4} {5}".format(
+            para.comb.freq,
+            row[_GROUP],
+            df[CODE].min(),
+            df[CODE].max(),
+            para.comb.fuquan,
+            span,
+        )
+        logging.info(f"Start to convert {group_desc}")
 
-        data = pd.concat([self._get_required_data(row=row, para=para)
-                          for index, row in df.iterrows()])
+        data = pd.concat(
+            [
+                self._get_required_data(row=row, para=para)
+                for index, row in df.iterrows()
+            ]
+        )
         key = DATE if DATE in data.columns else DATETIME
         data[MONTH_START] = data[key].apply(lambda x: DateTime(x.year, x.month, 1))
         data.groupby(by=[MONTH_START]).apply(
-            lambda subgroup: self._save_2_database(df=subgroup, para=para))
+            lambda subgroup: self._save_2_database(df=subgroup, para=para)
+        )
 
         self._save_reform_records(df=df)
 
-        logging.info(f'Successfully convert {group_desc}')
+        logging.info(f"Successfully convert {group_desc}")
 
-    def _get_required_data(self,
-                           row: Series,
-                           para: Para) -> DataFrame:
+    def _get_required_data(self, row: Series, para: Para) -> DataFrame:
         """
         按照指定的范围，读取数据
 
@@ -242,14 +277,16 @@ class ReformHandler:
         else:
             done_span = DateSpan(start=row[DORCD_START], end=row[DORCD_END])
             todo_ls = todo_span.subtract(done_span)
-        data = pd.concat([self._operator.select_data(name=table_name_by_code, span=span)
-                          for span in todo_ls])
+        data = pd.concat(
+            [
+                self._operator.select_data(name=table_name_by_code, span=span)
+                for span in todo_ls
+            ]
+        )
         data[CODE] = para.stock.code
         return data
 
-    def _save_2_database(self,
-                         df: DataFrame,
-                         para: Para) -> None:
+    def _save_2_database(self, df: DataFrame, para: Para) -> None:
         """
         把数据存储到数据库
 
@@ -266,25 +303,26 @@ class ReformHandler:
             if e.args[0] == 1062:
                 logging.warning(e)
                 meta = self._get_meta_cache(para=para)
-                self._operator.try_insert_data(name=table_name_by_date, df=df, meta=meta)
+                self._operator.try_insert_data(
+                    name=table_name_by_date, df=df, meta=meta
+                )
             else:
                 raise e
 
-    def _save_reform_records(self,
-                             df: DataFrame):
+    def _save_reform_records(self, df: DataFrame):
         """
         保存转换记录
 
         :param df:
         :return:
         """
-        df = pd.concat([ReformHandler._get_reform_record(row)
-                        for index, row in df.iterrows()])
+        df = pd.concat(
+            [ReformHandler._get_reform_record(row) for index, row in df.iterrows()]
+        )
         self._rf_recorder.save_to_database(df=df)
 
     @classmethod
-    def _get_reform_record(cls,
-                           row: Series) -> DataFrame:
+    def _get_reform_record(cls, row: Series) -> DataFrame:
         """
         获取转换记录（待转换+已转换）
 
@@ -295,8 +333,20 @@ class ReformHandler:
         if not pd.isna(row[DORCD_START]):
             done_span = DateSpan(start=row[DORCD_START], end=row[DORCD_END])
             todo_span = todo_span.add(done_span)
-        return DataFrame([[row[CODE], row[FREQ], row[SOURCE], row[FUQUAN], todo_span.start, todo_span.end]],
-                         columns=[CODE, FREQ, SOURCE, FUQUAN, START_DATE, END_DATE])
+        return DataFrame(
+            [
+                [
+                    row[CODE],
+                    row[FREQ],
+                    row[SOURCE],
+                    row[FUQUAN],
+                    todo_span.start,
+                    todo_span.end,
+                ]
+            ],
+            columns=[CODE, FREQ, SOURCE, FUQUAN, START_DATE, END_DATE],
+        )
+
     # endregion
 
 

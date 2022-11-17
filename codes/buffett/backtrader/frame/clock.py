@@ -1,7 +1,7 @@
 class Clock:
     def __init__(self):
         self._tick = -1
-        self._time = 'Prepare'
+        self._time = "Prepare"
         self._is_end = False
 
     @property

@@ -11,5 +11,5 @@ class DbSweeper:
         db = op.execute(sql, fetch=True)
         op = Operator(RoleType.DbTest)
         for index, row in db.iterrows():
-            table_name = row['TABLE_NAME']
+            table_name = row["TABLE_NAME"]
             op.drop_table(name=table_name)

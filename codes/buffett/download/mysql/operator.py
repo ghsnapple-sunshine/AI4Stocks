@@ -1,10 +1,10 @@
 from typing import Optional, Union
 
 from buffett.adapter.pandas import DataFrame
+from buffett.common.constants.col.meta import COLUMN, TYPE, ADDREQ, KEY, PRI
+from buffett.common.constants.col.mysql import FIELD
 from buffett.common.pendelum import DateSpan
 from buffett.common.tools import dataframe_not_valid, list_not_valid, dataframe_is_valid
-from buffett.common.constants.col.mysql import FIELD
-from buffett.common.constants.col.meta import COLUMN, TYPE, ADDREQ, KEY, PRI
 from buffett.download.mysql.connector import Connector
 from buffett.download.mysql.create_parser import CreateSqlTools
 from buffett.download.mysql.insert_parser import InsertSqlParser
@@ -14,11 +14,9 @@ from buffett.download.mysql.types import ColType, AddReqType
 
 
 class Operator(Connector):
-    def create_table(self,
-                     name: str,
-                     meta: DataFrame,
-                     if_not_exist=True,
-                     update=False) -> None:
+    def create_table(
+        self, name: str, meta: DataFrame, if_not_exist=True, update=False
+    ) -> None:
         """
         在Mysql中创建表
 
@@ -34,15 +32,15 @@ class Operator(Connector):
             curr_meta = self.get_meta(name)
             if dataframe_is_valid(curr_meta):
                 not_exist = False
-                sql = CreateSqlTools.alter(name=name, curr_meta=curr_meta, new_meta=meta)
+                sql = CreateSqlTools.alter(
+                    name=name, curr_meta=curr_meta, new_meta=meta
+                )
         if not_exist:
             sql = CreateSqlTools.create(name=name, meta=meta, if_not_exist=if_not_exist)
         if sql is not None:
             self.execute(sql)
 
-    def insert_data(self,
-                    name: str,
-                    df: DataFrame) -> None:
+    def insert_data(self, name: str, df: DataFrame) -> None:
         """
         插入数据到Mysql表
 
@@ -55,11 +53,13 @@ class Operator(Connector):
         sql, vals = InsertSqlParser.insert(name=name, df=df, ignore=False)
         self.execute_many(sql, vals, commit=True)
 
-    def try_insert_data(self,
-                        name: str,
-                        df: DataFrame,
-                        meta: Optional[DataFrame] = None,
-                        update: bool = False) -> None:
+    def try_insert_data(
+        self,
+        name: str,
+        df: DataFrame,
+        meta: Optional[DataFrame] = None,
+        update: bool = False,
+    ) -> None:
         """
         尝试插入数据到Mysql表
 
@@ -87,11 +87,13 @@ class Operator(Connector):
         sql = f"drop table if exists `{name}`"
         self.execute(sql)
 
-    def select_row_num(self,
-                       name: str,
-                       meta: Optional[DataFrame] = None,
-                       span: Optional[DateSpan] = None,
-                       groupby: Optional[list[str]] = None) -> Union[int, DataFrame]:
+    def select_row_num(
+        self,
+        name: str,
+        meta: Optional[DataFrame] = None,
+        span: Optional[DateSpan] = None,
+        groupby: Optional[list[str]] = None,
+    ) -> Union[int, DataFrame]:
         """
         查询表格的行数
 
@@ -104,20 +106,24 @@ class Operator(Connector):
         meta = self.get_meta(name) if meta is None and span is not None else meta
         groupby = [] if groupby is None else [ReqCol(x) for x in groupby]
 
-        sql = SelectSqlParser.select(name=name,
-                                     cols=[ReqCol.ROW_NUM],  # Don't worry, it works.
-                                     meta=meta,
-                                     span=span,
-                                     groupby=groupby)
+        sql = SelectSqlParser.select(
+            name=name,
+            cols=[ReqCol.ROW_NUM],  # Don't worry, it works.
+            meta=meta,
+            span=span,
+            groupby=groupby,
+        )
         res = self.execute(sql, fetch=True)
         if list_not_valid(groupby):
             return 0 if dataframe_not_valid(res) else res.iloc[0, 0]
         return res
 
-    def select_data(self,
-                    name: str,
-                    meta: Optional[DataFrame] = None,
-                    span: Optional[DateSpan] = None) -> Optional[DataFrame]:
+    def select_data(
+        self,
+        name: str,
+        meta: Optional[DataFrame] = None,
+        span: Optional[DateSpan] = None,
+    ) -> Optional[DataFrame]:
         """
         查询表格的数据
 
@@ -128,30 +134,37 @@ class Operator(Connector):
         """
         meta = self.get_meta(name) if meta is None and span is not None else meta
         groupby = []
-        sql = SelectSqlParser.select(name=name,
-                                     cols=[ReqCol.ALL],  # Don't worry, it works.
-                                     meta=meta,
-                                     span=span,
-                                     groupby=groupby)
+        sql = SelectSqlParser.select(
+            name=name,
+            cols=[ReqCol.ALL],  # Don't worry, it works.
+            meta=meta,
+            span=span,
+            groupby=groupby,
+        )
         res = self.execute(sql, fetch=True)
         return res
 
-    def get_meta(self,
-                 name: str) -> Optional[DataFrame]:
+    def get_meta(self, name: str) -> Optional[DataFrame]:
         """
         获取表格的元数据
 
         :param name:            获取表格的元数据
         :return:
         """
-        sql = f'desc {name}'
+        sql = f"desc {name}"
         data = self.execute(sql=sql, fetch=True)
 
         if dataframe_not_valid(data):
             return
 
         data.columns = [x.lower() for x in data.columns]
-        df = DataFrame({COLUMN: data[FIELD],
-                        TYPE: data[TYPE].apply(lambda x: ColType.create(x)),
-                        ADDREQ: data[KEY].apply(lambda x: AddReqType.KEY if x.lower() == PRI else AddReqType.NONE)})
+        df = DataFrame(
+            {
+                COLUMN: data[FIELD],
+                TYPE: data[TYPE].apply(lambda x: ColType.create(x)),
+                ADDREQ: data[KEY].apply(
+                    lambda x: AddReqType.KEY if x.lower() == PRI else AddReqType.NONE
+                ),
+            }
+        )
         return df

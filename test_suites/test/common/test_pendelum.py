@@ -1,9 +1,8 @@
-from test import Tester
-
 from buffett.adapter import pendulum
 from buffett.adapter.pandas import DataFrame
 from buffett.adapter.pendulum import date
 from buffett.common.pendelum import Date, DateSpan, DateTime, Duration
+from test import Tester
 
 
 class PendelumTest(Tester):
@@ -112,8 +111,8 @@ class PendelumTest(Tester):
     def test_compatible_2_pandas(self):
         try:
             dt = DateTime(2022, 1, 1)
-            df = DataFrame({'dt': [dt]})
-            ts = df.loc[0, 'dt']
+            df = DataFrame({"dt": [dt]})
+            ts = df.loc[0, "dt"]
             assert True  # when DataFrame() works, assert True
         except Exception as e:
             assert False

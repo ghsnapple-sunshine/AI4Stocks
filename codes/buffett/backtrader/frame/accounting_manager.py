@@ -1,6 +1,9 @@
 from buffett.backtrader.frame.clock import Clock
 from buffett.backtrader.frame.order import Order as Order
-from buffett.backtrader.interface import ITimeSequence as Sequence, ITradeSuccessNotify as ITSN
+from buffett.backtrader.interface import (
+    ITimeSequence as Sequence,
+    ITradeSuccessNotify as ITSN,
+)
 from buffett.backtrader.tools import ChargeCalculator as Calc
 from buffett.common.wrapper import Wrapper
 
@@ -48,9 +51,8 @@ class AccountingManager(Sequence):
             # 始终以开盘价成交
             deal_price = _open
         order.set_dealed(
-            deal_num=deal_num,
-            deal_time=self.curr_tick,
-            deal_price=deal_price)
+            deal_num=deal_num, deal_time=self.curr_tick, deal_price=deal_price
+        )
         if order.is_dealed:  # 如果完全成交
             order.set_charge(charge=self._charge_calc.run(order.cje))
             self.trade_success(order=order)
@@ -78,9 +80,8 @@ class AccountingManager(Sequence):
             # 始终以开盘价成交
             deal_price = _open
         order.set_dealed(
-            deal_num=deal_num,
-            deal_time=self.curr_tick,
-            deal_price=deal_price)
+            deal_num=deal_num, deal_time=self.curr_tick, deal_price=deal_price
+        )
         if order.is_dealed:  # 如果完全成交
             order.set_charge(charge=self._charge_calc.run(order.cje))
             self.trade_success(order=order)
@@ -133,4 +134,6 @@ class AccountManagerBuilder:
     def build(self):
         self.item.__class__ = AccountingManager
         return self.item
+
+
 # endregion
