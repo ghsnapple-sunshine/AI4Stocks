@@ -15,6 +15,7 @@ class ColType(Enum):
                          'DATE': 10,  # ColType.DATE
                          'DATETIME': 11,  # ColType.DATETIME
                          'TINYINT UNSIGNED': 100,  # ColType.ENUM
+                         'VARCHAR(12)': 198,  # ColType.MINI_DESC
                          'VARCHAR(100)': 199,  # ColType.SHORT_DESC
                          'VARCHAR(10000)': 200}  # ColType.LONG_DESC
         return ColType(COL_TYPE_DICT[col_type.upper()])
@@ -32,6 +33,7 @@ class ColType(Enum):
 
     ENUM_BOOL = 100  # 枚举类型/Bool类型
 
+    MINI_DESC = 198
     SHORT_DESC = 199
     LONG_DESC = 200
 
@@ -45,6 +47,7 @@ class ColType(Enum):
                          ColType.DATE: 'DATE',
                          ColType.DATETIME: 'DATETIME',
                          ColType.ENUM_BOOL: 'TINYINT UNSIGNED',
+                         ColType.MINI_DESC: 'VARCHAR(12)',
                          ColType.SHORT_DESC: 'VARCHAR(100)',
                          ColType.LONG_DESC: 'VARCHAR(10000)'}
         return COL_TYPE_DICT[self]

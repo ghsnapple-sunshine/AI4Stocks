@@ -142,7 +142,7 @@ class ReformHandlerTest(Tester):
 
             :return:
             """
-            self._prepare()
+            self._more_init()
             # S1:
             self._atom_test(Cls=BsMinuteHandler,
                             start=Date(2022, 1, 4),
@@ -162,7 +162,7 @@ class ReformHandlerTest(Tester):
 
             :return:
             """
-            self._prepare()
+            self._more_init()
             # S1:
             self._atom_test(Cls=BsMinuteHandler,
                             start=Date(2022, 1, 4),

@@ -90,13 +90,15 @@ class DateSpan:
         # 2  TTTTTTTTTTTTTTTTTTTTTTTTTTTTFFFFFFFFFFF
         return (other.end > self._start) == (other.start < self._end)
 
-    def subtract(self, other: DateSpan) -> list[DateSpan]:
+    def subtract(self, other: Optional[DateSpan]) -> list[DateSpan]:
         """
         求两个DateSpan的差集
 
         :param other:
         :return:
         """
+        if other is None:
+            return [self]
         condition1 = other.start <= self._start
         condition2 = other.end >= self._end
         if condition1 and condition2:
@@ -108,13 +110,15 @@ class DateSpan:
         return [DateSpan(start=self._start, end=other.start),
                 DateSpan(start=other.end, end=self._end)]
 
-    def add(self, other: DateSpan) -> DateSpan:
+    def add(self, other: Optional[DateSpan]) -> DateSpan:
         """
         求两个dataspan的交集
 
         :param other:
         :return:
         """
+        if other is None:
+            return self
         if (other.end >= self._start) == (other.start <= self._end):
             return DateSpan(min(self._start, other.start), max(self._end, other.end))
         raise ValueError('self and other is separated and cannot be added.')

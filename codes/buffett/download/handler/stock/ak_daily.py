@@ -3,13 +3,13 @@ from typing import Optional
 from buffett.adapter.akshare import ak
 from buffett.adapter.pandas import DataFrame
 from buffett.common import create_meta
-from buffett.common.tools import dataframe_not_valid
 from buffett.common.constants.col import DATE, OPEN, CLOSE, HIGH, LOW, CJL, CJE, ZF, ZDF, ZDE, HSL
+from buffett.common.tools import dataframe_not_valid
 from buffett.download import Para
+from buffett.download.handler.slow.handler import SlowHandler
+from buffett.download.handler.tools.table_name import TableNameTool
 from buffett.download.mysql import Operator
 from buffett.download.mysql.types import ColType, AddReqType
-from buffett.download.handler.tools.table_name import TableNameTool
-from buffett.download.handler.slow.handler import SlowHandler
 from buffett.download.types import FuquanType
 
 _RENAME = {'日期': DATE,

@@ -75,7 +75,7 @@ class Operator(Connector):
             sql, vals = InsertSqlParser.insert_n_update(name=name, df=df, meta=meta)
         else:
             sql, vals = InsertSqlParser.insert(name=name, df=df, ignore=True)
-        self.execute_many(sql, vals, True)
+        self.execute_many(sql, vals, commit=True)
 
     def drop_table(self, name: str):
         """

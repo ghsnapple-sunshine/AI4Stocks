@@ -1,14 +1,14 @@
 from buffett.adapter.akshare import ak
 from buffett.adapter.pandas import DataFrame
 from buffett.common import create_meta
+from buffett.common.constants.col import DATETIME, OPEN, CLOSE, HIGH, LOW, CJL, CJE, ZF, ZDF, ZDE, HSL
 from buffett.common.pendelum import convert_datetime
 from buffett.common.tools import dataframe_not_valid
-from buffett.common.constants.col import DATETIME, OPEN, CLOSE, HIGH, LOW, CJL, CJE, ZF, ZDF, ZDE, HSL
 from buffett.download import Para
-from buffett.download.mysql import Operator
-from buffett.download.mysql.types import ColType, AddReqType
 from buffett.download.handler.slow.handler import SlowHandler
 from buffett.download.handler.tools.table_name import TableNameTool
+from buffett.download.mysql import Operator
+from buffett.download.mysql.types import ColType, AddReqType
 from buffett.download.types import SourceType, FuquanType, FreqType
 
 _RENAME = {'时间': DATETIME,

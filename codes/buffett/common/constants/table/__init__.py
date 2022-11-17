@@ -5,9 +5,10 @@ INDUS_LS = 'industry_list'
 INDUS_CONS_LS = 'industry_cons_list'
 INDEX_LS = 'index_list'
 MONEY_SPLY = 'money_supply'
+STK_DVD = 'stock_dividend'
 STK_LS = 'stock_list'
-STK_RT = 'stock_realtime'
 STK_PROFIT = 'stock_profit'
+STK_RT = 'stock_realtime'
 TRA_CAL = 'trade_calendar'
 
 # COL_DF = 'columns'
@@ -15,4 +16,6 @@ TRA_CAL = 'trade_calendar'
 # record类
 TASK_RCD = 'task_record'
 DL_RCD = 'download_record'
+EA_RCD = 'easy_record'
 RF_RCD = 'reform_record'
+

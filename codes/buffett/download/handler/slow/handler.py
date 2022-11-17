@@ -8,7 +8,7 @@ from buffett.common.constants.col import FREQ, FUQUAN, SOURCE, START_DATE, END_D
 from buffett.common.constants.col.stock import CODE
 from buffett.common.error import ParamTypeError
 from buffett.common.pendelum import DateSpan, Date, convert_datetime, Duration
-from buffett.common.tools import dataframe_not_valid
+from buffett.common.tools import dataframe_not_valid, list_not_valid
 from buffett.download.handler import Handler
 from buffett.download.handler.calendar import CalendarHandler
 from buffett.download.handler.stock.ak_list import StockListHandler
@@ -142,7 +142,7 @@ class SlowHandler(Handler):
         else:
             done_span = DateSpan(row[_DORCD_START], row[_DORCD_END])
             todo_ls = todo_span.subtract(done_span)
-            if len(todo_ls) == 0:
+            if list_not_valid(todo_ls):
                 self._log_already_downloaded(para=para)
                 return
             data = pd.concat([self._download(para=para.with_span(span)) for span in todo_ls])

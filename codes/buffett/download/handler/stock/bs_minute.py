@@ -1,14 +1,14 @@
 from buffett.adapter.baostock import bs
 from buffett.adapter.pandas import DataFrame
 from buffett.common import create_meta
-from buffett.common.pendelum import convert_datetime
 from buffett.common.constants.col import DATETIME, OPEN, CLOSE, HIGH, LOW, CJL, CJE
+from buffett.common.pendelum import convert_datetime
 from buffett.download import Para
+from buffett.download.handler.slow import SlowHandler
+from buffett.download.handler.tools import bs_result_to_dataframe, bs_str_to_datetime, bs_check_float, bs_check_int
+from buffett.download.handler.tools.table_name import TableNameTool
 from buffett.download.mysql import Operator
 from buffett.download.mysql.types import ColType, AddReqType
-from buffett.download.handler.slow.handler import SlowHandler
-from buffett.download.handler.tools.table_name import TableNameTool
-from buffett.download.handler.tools import bs_result_to_dataframe, bs_str_to_datetime, bs_check_float, bs_check_int
 from buffett.download.types import SourceType, FuquanType, FreqType
 
 _RENAME = {'time': DATETIME,
