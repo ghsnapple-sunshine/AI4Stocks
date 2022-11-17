@@ -1,3 +1,3 @@
-from test.db_sweeper import DbSweeper
-from test.tester import Tester, SingletonTester
-from test.tools import create_1stock, create_2stocks, create_ex_1stock
+from test.suites.db_sweeper import DbSweeper
+from test.suites.singleton_tester import SingletonTester
+from test.suites.tester import Tester

@@ -17,8 +17,7 @@ from buffett.common.wrapper import Wrapper
 from buffett.download.mysql import Operator
 from buffett.task.task import Task
 from buffett.task.task_scheduler import TaskScheduler
-from test import DbSweeper
-from test import Tester
+from test import DbSweeper, Tester
 
 
 class InnerA:
