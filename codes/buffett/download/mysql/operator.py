@@ -103,7 +103,10 @@ class Operator(Connector):
         :param groupby:         聚合条件
         :return:                表格行数
         """
-        meta = self.get_meta(name) if meta is None and span is not None else meta
+        if meta is None and span is not None:
+            meta = self.get_meta(name)
+            if meta is None:
+                return 0
         groupby = [] if groupby is None else [ReqCol(x) for x in groupby]
 
         sql = SelectSqlParser.select(
@@ -132,7 +135,10 @@ class Operator(Connector):
         :param span:            时间范围
         :return:                表格行数
         """
-        meta = self.get_meta(name) if meta is None and span is not None else meta
+        if meta is None and span is not None:
+            meta = self.get_meta(name)
+            if meta is None:
+                return
         groupby = []
         sql = SelectSqlParser.select(
             name=name,
