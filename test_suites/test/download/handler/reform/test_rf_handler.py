@@ -169,57 +169,57 @@ class ReformHandlerTest(Tester):
             ],
         )
 
-        def test_bs_minute_10days(self):
-            """
-            测试一支股票，分两次下载10天的分钟线数据并重组
+    def test_bs_minute_10days(self):
+        """
+        测试一支股票，分两次下载10天的分钟线数据并重组
 
-            :return:
-            """
-            self._more_init()
-            # S1:
-            self._atom_test(
-                Cls=BsMinuteHandler,
-                start=Date(2022, 1, 4),
-                end=Date(2022, 1, 5),
-                dl_table_names="bs_stock_min5info_000001_",
-                rf_table_names="bs_stock_min5info_2022_01_",
-            )
-            # S2:
-            self._atom_test(
-                Cls=BsMinuteHandler,
-                start=Date(2022, 1, 1),
-                end=Date(2022, 1, 10),
-                dl_table_names="bs_stock_min5info_000001_",
-                rf_table_names="bs_stock_min5info_2022_01_",
-            )
+        :return:
+        """
+        self._prepare()
+        # S1:
+        self._atom_test(
+            Cls=BsMinuteHandler,
+            start=Date(2022, 1, 4),
+            end=Date(2022, 1, 5),
+            dl_table_names="bs_stock_min5info_000001_",
+            rf_table_names="bs_stock_min5info_2022_01_",
+        )
+        # S2:
+        self._atom_test(
+            Cls=BsMinuteHandler,
+            start=Date(2022, 1, 1),
+            end=Date(2022, 1, 10),
+            dl_table_names="bs_stock_min5info_000001_",
+            rf_table_names="bs_stock_min5info_2022_01_",
+        )
 
-        def test_bs_minute_2months(self):
-            """
-            测试一支股票，分两次下载2个月的分钟线数据并重组
+    def test_bs_minute_2months(self):
+        """
+        测试一支股票，分两次下载2个月的分钟线数据并重组
 
-            :return:
-            """
-            self._more_init()
-            # S1:
-            self._atom_test(
-                Cls=BsMinuteHandler,
-                start=Date(2022, 1, 4),
-                end=Date(2022, 1, 5),
-                dl_table_names="bs_stock_min5info_000001_",
-                rf_table_names="bs_stock_min5info_2022_01_",
-            )
-            # S2:
-            self._atom_test(
-                Cls=BsMinuteHandler,
-                start=Date(2021, 12, 31),
-                end=Date(2022, 2, 10),
-                dl_table_names="bs_stock_min5info_000001_",
-                rf_table_names=[
-                    "bs_stock_min5info_2021_12_",
-                    "bs_stock_min5info_2022_01_",
-                    "bs_stock_min5info_2022_02_",
-                ],
-            )
+        :return:
+        """
+        self._prepare()
+        # S1:
+        self._atom_test(
+            Cls=BsMinuteHandler,
+            start=Date(2022, 1, 4),
+            end=Date(2022, 1, 5),
+            dl_table_names="bs_stock_min5info_000001_",
+            rf_table_names="bs_stock_min5info_2022_01_",
+        )
+        # S2:
+        self._atom_test(
+            Cls=BsMinuteHandler,
+            start=Date(2021, 12, 31),
+            end=Date(2022, 2, 10),
+            dl_table_names="bs_stock_min5info_000001_",
+            rf_table_names=[
+                "bs_stock_min5info_2021_12_",
+                "bs_stock_min5info_2022_01_",
+                "bs_stock_min5info_2022_02_",
+            ],
+        )
 
     def test_irregular(self):
         DbSweeper.cleanup()
