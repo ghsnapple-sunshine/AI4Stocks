@@ -9,7 +9,7 @@ from buffett.common.constants.col.mysql import ROW_NUM
 from buffett.common.constants.col.stock import CODE
 from buffett.common.logger import Logger
 from buffett.common.pendelum import DateSpan, DateTime
-from buffett.common.tools import dataframe_not_valid
+from buffett.common.tools import dataframe_not_valid, dataframe_is_valid
 from buffett.download import Para
 from buffett.download.handler.tools import TableNameTool
 from buffett.download.mysql import Operator
@@ -35,7 +35,12 @@ class ReformMaintain:
         ):
             return True
 
-        return self._region_check() and self._datanum_check()
+        result = self._region_check() and self._datanum_check()
+        # 恢复现场
+        self._dl_records = DataFrame()
+        self._rf_records = DataFrame()
+        # 返回结果
+        return result
 
     def _region_check(self) -> bool:
         """
@@ -128,12 +133,13 @@ class ReformMaintain:
         row_num = self._operator.select_row_num(
             name=row[TABLE_NAME], span=span, groupby=[CODE]
         )
-        row_num[FREQ], row_num[FUQUAN], row_num[SOURCE], row_num[TABLE_NAME] = (
-            row[FREQ],
-            row[FUQUAN],
-            row[SOURCE],
-            row[TABLE_NAME],
-        )
+        if dataframe_is_valid(row_num):
+            row_num[FREQ], row_num[FUQUAN], row_num[SOURCE], row_num[TABLE_NAME] = (
+                row[FREQ],
+                row[FUQUAN],
+                row[SOURCE],
+                row[TABLE_NAME],
+            )
         self._logger.get_data_info(row[TABLE_NAME])
         return row_num
 
