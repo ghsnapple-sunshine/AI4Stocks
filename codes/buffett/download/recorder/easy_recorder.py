@@ -6,7 +6,7 @@ from buffett.common.constants.col import START_DATE, END_DATE
 from buffett.common.constants.col.task import CLASS, MODULE
 from buffett.common.constants.table import EA_RCD
 from buffett.common.magic import get_name, get_module_name
-from buffett.common.pendelum import DateSpan
+from buffett.common.pendulum import DateSpan
 from buffett.common.tools import dataframe_not_valid
 from buffett.download.mysql import Operator
 from buffett.download.mysql.types import ColType, AddReqType

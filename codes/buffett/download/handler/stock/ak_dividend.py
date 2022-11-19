@@ -24,7 +24,7 @@ from buffett.common.constants.col.stock import (
     ZXGGR,
 )
 from buffett.common.constants.table import STK_DVD
-from buffett.common.pendelum import DateSpan
+from buffett.common.pendulum import DateSpan
 from buffett.common.tools import list_not_valid, create_meta, dataframe_not_valid
 from buffett.download import Para
 from buffett.download.handler import Handler

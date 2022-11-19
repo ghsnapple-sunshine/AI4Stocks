@@ -8,7 +8,7 @@ from buffett.adapter.pendulum import date
 from buffett.common import Code
 from buffett.common.constants.col import FREQ, SOURCE, FUQUAN, START_DATE, END_DATE
 from buffett.common.constants.col.stock import CODE, NAME
-from buffett.common.pendelum import DateSpan
+from buffett.common.pendulum import DateSpan
 from buffett.common.stock import Stock
 from buffett.download.types import HeadType, CombType, FuquanType, FreqType, SourceType
 

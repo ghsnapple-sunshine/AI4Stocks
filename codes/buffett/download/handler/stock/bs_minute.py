@@ -2,7 +2,7 @@ from buffett.adapter.baostock import bs
 from buffett.adapter.pandas import DataFrame
 from buffett.common import create_meta
 from buffett.common.constants.col import DATETIME, OPEN, CLOSE, HIGH, LOW, CJL, CJE
-from buffett.common.pendelum import convert_datetime
+from buffett.common.pendulum import convert_datetime
 from buffett.download import Para
 from buffett.download.handler.slow import SlowHandler
 from buffett.download.handler.tools import (

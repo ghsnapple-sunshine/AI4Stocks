@@ -4,8 +4,8 @@ from typing import Optional
 
 from buffett.adapter.pendulum import date
 from buffett.common.error import ParamTypeError
-from buffett.common.pendelum.convert import convert_date
-from buffett.common.pendelum.date import Date
+from buffett.common.pendulum.convert import convert_date
+from buffett.common.pendulum.date import Date
 
 
 class DateSpan:

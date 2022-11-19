@@ -12,7 +12,7 @@ from buffett.backtrader.strategy import (
 )
 from buffett.backtrader.tools import ChargeCalculator as Calc
 from buffett.common import Code as Code
-from buffett.common.pendelum import DateSpan as Span
+from buffett.common.pendulum import DateSpan as Span
 from buffett.download.mysql import Operator as Operator
 
 

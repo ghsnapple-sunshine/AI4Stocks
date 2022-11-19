@@ -3,7 +3,7 @@ from buffett.common import create_meta
 from buffett.common.constants.col import DATETIME, OPEN, CLOSE
 from buffett.common.constants.col.mysql import ROW_NUM
 from buffett.common.constants.col.stock import CODE
-from buffett.common.pendelum import Date, DateSpan, DateTime
+from buffett.common.pendulum import Date, DateSpan, DateTime
 from buffett.download.mysql.types import ColType, AddReqType
 from test import Tester, DbSweeper
 

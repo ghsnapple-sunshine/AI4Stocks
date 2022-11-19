@@ -1,5 +1,5 @@
 from buffett.common.magic import empty_init
-from buffett.common.pendelum import DateTime
+from buffett.common.pendulum import DateTime
 from buffett.common.wrapper import Wrapper
 from buffett.download.handler.stock import AkDailyHandler, BsMinuteHandler
 from buffett.task import StockDailyTask, StockReformTask, StockMinuteTask

@@ -7,8 +7,8 @@ from buffett.adapter.pendulum import (
     datetime,
     timedelta,
 )
-from buffett.common.pendelum.date import Date
-from buffett.common.pendelum.duration import Duration
+from buffett.common.pendulum.date import Date
+from buffett.common.pendulum.duration import Duration
 
 
 class DateTime(PDateTime, Date):

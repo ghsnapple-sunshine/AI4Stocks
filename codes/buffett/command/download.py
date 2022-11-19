@@ -1,4 +1,4 @@
-from buffett.common.pendelum import DateTime
+from buffett.common.pendulum import DateTime
 from buffett.download.mysql import Operator
 from buffett.download.mysql.types import RoleType
 from buffett.task import (

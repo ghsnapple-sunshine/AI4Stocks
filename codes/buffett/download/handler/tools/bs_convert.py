@@ -8,7 +8,7 @@ from buffett.common.constants import (
     FLOAT_MAX_VALUE,
     FLOAT_MIN_VALUE,
 )
-from buffett.common.pendelum import DateTime
+from buffett.common.pendulum import DateTime
 
 
 def bs_result_to_dataframe(rs: ResultData) -> DataFrame:

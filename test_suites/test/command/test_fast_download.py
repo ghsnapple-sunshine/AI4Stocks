@@ -1,4 +1,4 @@
-from buffett.common.pendelum import DateTime
+from buffett.common.pendulum import DateTime
 from buffett.task import StockListTask
 from test import Tester
 

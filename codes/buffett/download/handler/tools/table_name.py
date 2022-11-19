@@ -1,7 +1,7 @@
 from buffett.adapter.pandas import DataFrame, pd, Series
 from buffett.common.constants.col import FREQ, SOURCE, FUQUAN, START_DATE, END_DATE
 from buffett.common.constants.col.my import MONTH_START, TABLE_NAME
-from buffett.common.pendelum import convert_datetime, DateTime
+from buffett.common.pendulum import convert_datetime, DateTime
 from buffett.download import Para
 
 

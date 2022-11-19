@@ -3,7 +3,7 @@ from typing import final
 
 from buffett.adapter.akshare import ak
 from buffett.adapter.pendulum import Date
-from buffett.common.pendelum import DateTime
+from buffett.common.pendulum import DateTime
 from buffett.download import Para
 from buffett.download.mysql import Operator
 from buffett.download.mysql.types import RoleType

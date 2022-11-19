@@ -19,7 +19,7 @@ from buffett.common.constants.col.task import (
 from buffett.common.constants.table import TASK_RCD
 from buffett.common.interface import Singleton
 from buffett.common.magic import load_class
-from buffett.common.pendelum import DateTime, convert_datetime
+from buffett.common.pendulum import DateTime, convert_datetime
 from buffett.common.tools import dataframe_not_valid, list_is_valid, dataframe_is_valid
 from buffett.download.mysql import Operator
 from buffett.download.mysql.types import ColType, AddReqType

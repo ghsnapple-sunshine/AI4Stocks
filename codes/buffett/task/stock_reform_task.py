@@ -1,4 +1,4 @@
-from buffett.common.pendelum import DateTime
+from buffett.common.pendulum import DateTime
 from buffett.common.wrapper import Wrapper
 from buffett.download.handler.reform import ReformHandler
 from buffett.download.mysql import Operator

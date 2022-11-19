@@ -16,7 +16,7 @@ from buffett.common.constants.col.money import (
     M2HB,
 )
 from buffett.common.constants.table import MONEY_SPLY
-from buffett.common.pendelum import Date
+from buffett.common.pendulum import Date
 from buffett.common.tools import dataframe_not_valid
 from buffett.download import Para
 from buffett.download.handler.fast.handler import FastHandler

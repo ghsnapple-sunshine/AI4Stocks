@@ -6,7 +6,7 @@ from buffett.adapter.pandas import DataFrame
 from buffett.common import create_meta
 from buffett.common.constants.col import DATE
 from buffett.common.constants.table import TRA_CAL
-from buffett.common.pendelum import Date
+from buffett.common.pendulum import Date
 from buffett.common.tools import dataframe_not_valid
 from buffett.download import Para
 from buffett.download.handler.fast.handler import FastHandler

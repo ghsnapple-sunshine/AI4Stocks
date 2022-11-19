@@ -1,7 +1,7 @@
 from buffett.adapter import pendulum
 from buffett.adapter.pandas import DataFrame
 from buffett.adapter.pendulum import date
-from buffett.common.pendelum import Date, DateSpan, DateTime, Duration
+from buffett.common.pendulum import Date, DateSpan, DateTime, Duration
 from test import Tester
 
 

@@ -23,7 +23,7 @@ from buffett.common.constants.col import (
 )
 from buffett.common.constants.col.stock import CODE
 from buffett.common.constants.table import STK_RT
-from buffett.common.pendelum import DateTime
+from buffett.common.pendulum import DateTime
 from buffett.common.tools import dataframe_not_valid
 from buffett.download import Para
 from buffett.download.handler.fast.handler import FastHandler

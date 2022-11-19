@@ -14,7 +14,7 @@ from buffett.common.constants.col import (
 )
 from buffett.common.constants.col.stock import CODE
 from buffett.common.error import ParamTypeError
-from buffett.common.pendelum import DateSpan, Date, convert_datetime, Duration
+from buffett.common.pendulum import DateSpan, Date, convert_datetime, Duration
 from buffett.common.tools import dataframe_not_valid, list_not_valid
 from buffett.download.handler import Handler
 from buffett.download.handler.calendar import CalendarHandler

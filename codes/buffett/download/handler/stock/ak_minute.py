@@ -14,7 +14,7 @@ from buffett.common.constants.col import (
     ZDE,
     HSL,
 )
-from buffett.common.pendelum import convert_datetime
+from buffett.common.pendulum import convert_datetime
 from buffett.common.tools import dataframe_not_valid
 from buffett.download import Para
 from buffett.download.handler.slow.handler import SlowHandler

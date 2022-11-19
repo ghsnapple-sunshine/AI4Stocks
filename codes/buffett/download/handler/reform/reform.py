@@ -15,7 +15,7 @@ from buffett.common.constants.col import (
 )
 from buffett.common.constants.col.my import MONTH_START, DORCD_START, DORCD_END
 from buffett.common.constants.col.stock import CODE
-from buffett.common.pendelum import DateSpan, convert_datetime, DateTime
+from buffett.common.pendulum import DateSpan, convert_datetime, DateTime
 from buffett.common.tools import dataframe_not_valid, dataframe_is_valid
 from buffett.download.handler.tools.table_name import TableNameTool
 from buffett.download.mysql import Operator

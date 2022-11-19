@@ -8,7 +8,7 @@ from buffett.common.constants.col.my import TABLE_NAME, DORCD_START, DORCD_END
 from buffett.common.constants.col.mysql import ROW_NUM
 from buffett.common.constants.col.stock import CODE
 from buffett.common.logger import Logger
-from buffett.common.pendelum import DateSpan, DateTime
+from buffett.common.pendulum import DateSpan, DateTime
 from buffett.common.tools import dataframe_not_valid, dataframe_is_valid
 from buffett.download import Para
 from buffett.download.handler.tools import TableNameTool

@@ -1,5 +1,5 @@
 from buffett.adapter.pendulum import Date
-from buffett.common.pendelum import DateSpan
+from buffett.common.pendulum import DateSpan
 from buffett.download import Para
 from buffett.download.handler.stock.ak_dividend import AkStockDividendHandler
 from test import DbSweeper, Tester

@@ -6,7 +6,7 @@ from buffett.backtrader.frame.column import Column
 from buffett.backtrader.frame.stock_info import StockInfo
 from buffett.backtrader.interface import ITimeSequence
 from buffett.common import Code
-from buffett.common.pendelum import DateSpan
+from buffett.common.pendulum import DateSpan
 from buffett.download import Para
 from buffett.download.handler import Handler
 from buffett.download.handler.stock import AkDailyHandler

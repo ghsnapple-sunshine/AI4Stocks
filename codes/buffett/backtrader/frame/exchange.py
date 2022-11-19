@@ -25,7 +25,7 @@ from buffett.backtrader.frame.stock_info_manager import (
 from buffett.backtrader.interface.time_sequence import ITimeSequence as Sequence
 from buffett.backtrader.tools import ChargeCalculator as Calc
 from buffett.common import Code as Code
-from buffett.common.pendelum import DateSpan as Span
+from buffett.common.pendulum import DateSpan as Span
 from buffett.common.wrapper import Wrapper
 from buffett.download.handler import Handler
 from buffett.download.mysql import Operator

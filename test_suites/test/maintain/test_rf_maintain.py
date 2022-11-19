@@ -1,6 +1,6 @@
 from buffett.common import Code
 from buffett.common.constants.table import STK_LS
-from buffett.common.pendelum import Date
+from buffett.common.pendulum import Date
 from buffett.download import Para
 from buffett.download.handler.reform import ReformHandler
 from buffett.download.handler.stock import AkDailyHandler

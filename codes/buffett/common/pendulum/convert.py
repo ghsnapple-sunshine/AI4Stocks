@@ -2,8 +2,8 @@ from typing import Optional, Union
 
 from buffett.adapter.pendulum import date, datetime
 from buffett.common.error import ParamTypeError
-from buffett.common.pendelum.date import Date
-from buffett.common.pendelum.datetime import DateTime
+from buffett.common.pendulum.date import Date
+from buffett.common.pendulum.datetime import DateTime
 
 
 def convert_date(dt: Optional[date]) -> Union[Date, DateTime, None]:

@@ -6,7 +6,7 @@ from buffett.adapter import logging
 from buffett.adapter.wellknown import format_exc
 from buffett.common.constants.col.task import CLASS, MODULE, START_TIME
 from buffett.common.magic import get_module_name, get_class_name
-from buffett.common.pendelum import DateTime
+from buffett.common.pendulum import DateTime
 from buffett.common.wrapper import Wrapper
 
 

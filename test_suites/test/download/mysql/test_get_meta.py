@@ -1,5 +1,5 @@
 from buffett.common import Code
-from buffett.common.pendelum import Date
+from buffett.common.pendulum import Date
 from buffett.download import Para
 from buffett.download.handler.stock import (
     AkDailyHandler,
