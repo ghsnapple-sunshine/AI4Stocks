@@ -40,6 +40,9 @@ class ReformHandler:
         self._operator = operator
         self._dl_recorder = DRecorder(operator=operator)
         self._rf_recorder = RRecorder(operator=operator)
+        self._reset_datas()
+
+    def _reset_datas(self):
         self._todo_records = DataFrame()
         self._done_records = DataFrame()
         self._meta_cache: dict[CombType, DataFrame] = {}
@@ -63,6 +66,8 @@ class ReformHandler:
         comb_records.groupby(
             by=[_GROUP, FREQ, SOURCE, FUQUAN, START_DATE, END_DATE]
         ).apply(lambda group: self._reform_n_save_data(group))
+
+        self._reset_datas()
 
         # endregion
 
