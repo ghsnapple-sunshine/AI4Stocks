@@ -1,15 +1,25 @@
 from buffett.common.constants.col.stock import CODE
-from buffett.download.handler.stock.ak_list import StockListHandler
-from test import Tester
+from buffett.download.handler.list.ak_list import StockListHandler
+from test import Tester, DbSweeper
 
 
 class StockListHandlerTest(Tester):
-    def test_download_result(self):
-        hdl = StockListHandler(operator=self.operator)
-        df1 = hdl.obtain_data()
-        df2 = hdl.select_data()
+    @classmethod
+    def _setup_oncemore(cls):
+        cls._hdl = StockListHandler(operator=cls._operator)
+
+    def _setup_always(self) -> None:
+        DbSweeper.cleanup()
+
+    def test_download(self):
+        self._download()
+        self._repeat_download()
+
+    def _download(self):
+        df1 = self._hdl.obtain_data()
+        df2 = self._hdl.select_data()
         assert self.compare_dataframe(df1, df2)
         assert df1[CODE].apply(lambda x: x[0] != "4").all()
 
-    def test_repeat_download(self):
-        StockListHandler(operator=self.operator).obtain_data()
+    def _repeat_download(self):
+        self._hdl.obtain_data()

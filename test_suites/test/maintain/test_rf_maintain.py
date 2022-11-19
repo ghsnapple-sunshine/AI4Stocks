@@ -1,41 +1,48 @@
 from buffett.common import Code
+from buffett.common.constants.table import STK_LS
 from buffett.common.pendelum import Date
 from buffett.download import Para
 from buffett.download.handler.reform import ReformHandler
 from buffett.download.handler.stock import AkDailyHandler
-
 from buffett.maintain import ReformMaintain
-from test import Tester, create_2stocks, create_ex_1stock
+from test import Tester, create_2stocks, create_ex_1stock, DbSweeper
 
 
 class TestReformMaintain(Tester):
-    def setUp(self) -> None:
-        super().setUp()
+    @classmethod
+    def _setup_oncemore(cls):
+        cls._ak_handler = AkDailyHandler(operator=cls._operator)
+        cls._rf_handler = ReformHandler(operator=cls._operator)
+        cls._rf_mtain = ReformMaintain(operator=cls._operator)
+
+    def _setup_always(self) -> None:
+        DbSweeper.erase()
 
     def test_maintain(self):
-        create_2stocks(operator=self.operator)
-        para = Para().with_start_n_end(start=Date(2022, 1, 1), end=Date(2023, 1, 1))
-        AkDailyHandler(operator=self.operator).obtain_data(para=para)
-        ReformHandler(operator=self.operator).reform_data()
-        assert ReformMaintain(operator=self.operator).run()
+        create_2stocks(operator=self._operator)
+        self._ak_handler.obtain_data(para=self._short_para)
+        self._rf_handler.reform_data()
+        assert self._rf_mtain.run()
 
     def test_datanum_irregular(self):
-        create_2stocks(operator=self.operator)
-        para = Para().with_start_n_end(start=Date(2022, 1, 1), end=Date(2023, 1, 1))
-        AkDailyHandler(operator=self.operator).obtain_data(para=para)
-        ReformHandler(operator=self.operator).reform_data()
-        self.operator.execute(
-            "delete from `dc_stock_dayinfo_2022_09_` where `date` > '2022-9-15'"
+        create_2stocks(operator=self._operator)
+        self._ak_handler.obtain_data(para=self._long_para)
+        self._rf_handler.reform_data()
+        self._operator.execute(
+            "delete from `dc_stock_dayinfo_2020_09_` where `date` > '2020-9-15'"
         )
-        assert not ReformMaintain(operator=self.operator).run()
+        assert not self._rf_mtain.run()
 
     def test_datanum_diff_span(self):
-        create_2stocks(operator=self.operator)
-        para = Para().with_start_n_end(start=Date(2022, 1, 1), end=Date(2023, 1, 1))
-        AkDailyHandler(operator=self.operator).obtain_data(para=para)
-        create_ex_1stock(operator=self.operator, code=Code("000004"))
-        para = Para().with_start_n_end(start=Date(2022, 1, 1), end=Date(2022, 7, 1))
-        AkDailyHandler(operator=self.operator).obtain_data(para=para)
+        # S1
+        create_2stocks(operator=self._operator)
+        self._ak_handler.obtain_data(para=self._short_para)
+        self._rf_handler.reform_data()
 
-        ReformHandler(operator=self.operator).reform_data()
-        assert ReformMaintain(operator=self.operator).run()
+        # S2
+        create_ex_1stock(operator=self._operator, code=Code("000004"))
+        para = Para().with_start_n_end(start=Date(2022, 1, 1), end=Date(2022, 7, 1))
+        self._ak_handler.obtain_data(para=para)
+        self._rf_handler.reform_data()
+
+        assert self._rf_mtain.run()

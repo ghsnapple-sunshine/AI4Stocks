@@ -1,5 +1,4 @@
-from pandas import DataFrame
-
+from buffett.adapter.pandas import DataFrame
 from buffett.common import Code
 from buffett.common.constants.col import FREQ, FUQUAN, SOURCE, START_DATE, END_DATE
 from buffett.common.constants.col.stock import CODE
@@ -11,16 +10,19 @@ from test import Tester
 
 
 class TestDownloadRecorder(Tester):
-    def setUp(self):
-        super().setUp()
-        self.recorder = DownloadRecorder(self.operator)
+    @classmethod
+    def _setup_oncemore(cls):
+        cls._recorder = DownloadRecorder(cls._operator)
+
+    def _setup_always(self):
+        pass
 
     def test_all(self) -> None:
-        self.__save_to_database__()
-        self.__save_to_database2__()
-        self.__get_table__()
+        self._save_to_database()
+        self._save_to_database2()
+        self._select_data()
 
-    def __save_to_database__(self):
+    def _save_to_database(self):
         ls = [
             [
                 "000001",
@@ -33,9 +35,9 @@ class TestDownloadRecorder(Tester):
         ]
         cols = [CODE, "freq", "fuquan", "source", "start_date", "end_date"]
         df = DataFrame(data=ls, columns=cols)
-        self.recorder.save_to_database(df)
+        self._recorder.save_to_database(df)
 
-    def __save_to_database2__(self):
+    def _save_to_database2(self):
         code = Code("000002")
         freq = FreqType.DAY
         fuquan = FuquanType.BFQ
@@ -50,10 +52,10 @@ class TestDownloadRecorder(Tester):
             .with_source(source)
             .with_start_n_end(start_date, end_date)
         )
-        self.recorder.save(para=para)
+        self._recorder.save(para=para)
 
-    def __get_table__(self):
-        data = self.recorder.select_data()
+    def _select_data(self):
+        data = self._recorder.select_data()
         assert type(data) == DataFrame
         # 验证数据正确
         assert data[data[CODE] == "000001"][FREQ][0] == FreqType.DAY

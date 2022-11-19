@@ -1,31 +1,35 @@
 from buffett.adapter.pendulum import Date
+from buffett.common.pendelum import DateSpan
 from buffett.download import Para
 from buffett.download.handler.stock.ak_dividend import AkStockDividendHandler
-from test import SingletonTester, DbSweeper
+from test import DbSweeper, Tester
 
 
-class TestAkStockDividendHandler(SingletonTester):
-    def _more_init(self):
-        self._hdl = AkStockDividendHandler(operator=self._operator)
+class TestAkStockDividendHandler(Tester):
+    @classmethod
+    def _setup_oncemore(cls):
+        cls._hdl = AkStockDividendHandler(operator=cls._operator)
+        cls._short_span = DateSpan(start=Date(2020, 1, 1), end=Date(2021, 1, 1))
+        cls._short_span2 = DateSpan(start=Date(2020, 10, 31), end=Date(2021, 1, 1))
+        cls._long_span = DateSpan(start=Date(2020, 1, 1), end=Date(2022, 1, 1))
 
-    def setUp(self) -> None:
-        DbSweeper.cleanup()
+    def _setup_always(self) -> None:
+        DbSweeper.erase()
 
     def test_download(self):
-        para = Para().with_start_n_end(start=Date(2020, 1, 1), end=Date(2021, 1, 1))
+        para = Para().with_span(self._short_span)
         df1 = self._hdl.obtain_data(para=para)
         df2 = self._hdl.select_data(para=para)
         assert df1.shape == df2.shape
 
     def test_download_n_combine(self):
         # S1
-        para1 = Para().with_start_n_end(start=Date(2020, 1, 1), end=Date(2022, 1, 1))
+        para1 = Para().with_span(self._long_span)
         df1 = self._hdl.obtain_data(para=para1)
 
         # S2
         DbSweeper.cleanup()
-        para1 = Para().with_start_n_end(start=Date(2020, 1, 1), end=Date(2021, 1, 30))
-        para2 = Para().with_start_n_end(start=Date(2020, 1, 10), end=Date(2022, 1, 1))
+        para2 = Para().with_span(self._long_span)
         self._hdl.obtain_data(para=para1)
         self._hdl.obtain_data(para=para2)
         df2 = self._hdl.obtain_data(para=para2)

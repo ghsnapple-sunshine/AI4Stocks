@@ -18,7 +18,7 @@ from buffett.common.pendelum import DateSpan, Date, convert_datetime, Duration
 from buffett.common.tools import dataframe_not_valid, list_not_valid
 from buffett.download.handler import Handler
 from buffett.download.handler.calendar import CalendarHandler
-from buffett.download.handler.stock.ak_list import StockListHandler
+from buffett.download.handler.list import StockListHandler  # 特殊的反向引用
 from buffett.download.handler.tools import TableNameTool
 from buffett.download.mysql import Operator
 from buffett.download.para import Para

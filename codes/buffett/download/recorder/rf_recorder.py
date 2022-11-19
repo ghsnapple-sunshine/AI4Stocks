@@ -1,8 +1,11 @@
+from typing import Optional
+
 from buffett.adapter.pandas import DataFrame
 from buffett.common import create_meta, Code
 from buffett.common.constants.col import FREQ, FUQUAN, SOURCE, START_DATE, END_DATE
 from buffett.common.constants.col.stock import CODE
 from buffett.common.constants.table import RF_RCD
+from buffett.common.tools import dataframe_not_valid
 from buffett.download import Para
 from buffett.download.mysql import Operator
 from buffett.download.mysql.types import ColType, AddReqType
@@ -47,10 +50,10 @@ class ReformRecorder:
 
         self._operator.try_insert_data(RF_RCD, df, _META, update=True)  # 如果原纪录已存在，则更新
 
-    def get_data(self) -> DataFrame:
+    def get_data(self) -> Optional[DataFrame]:
         df = self._operator.select_data(RF_RCD)
-        if (not isinstance(df, DataFrame)) or df.empty:
-            return DataFrame()
+        if dataframe_not_valid(df):
+            return
 
         df[CODE] = df[CODE].apply(lambda x: Code(x))
         df[FREQ] = df[FREQ].apply(lambda x: FreqType(x))

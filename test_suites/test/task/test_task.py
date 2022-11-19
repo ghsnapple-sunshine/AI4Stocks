@@ -1,4 +1,5 @@
 from buffett.adapter import logging
+from buffett.adapter.wellknown import format_exc
 from buffett.common.wrapper import Wrapper
 from buffett.task.task import Task
 from test import Tester
@@ -68,5 +69,5 @@ class TestTask(Tester):
             success = task.run()[0]
             assert not success
         except ValueError as e:
-            logging.error("\n" + traceback.format_exc())
+            logging.error("\n" + format_exc())
             assert False

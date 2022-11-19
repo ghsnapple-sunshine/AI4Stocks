@@ -21,6 +21,6 @@ class Singleton:
             return super(Singleton, cls).__new__(cls)
         return cls._instance[cls]
 
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
         cls = get_class(self)
         cls._instance[cls] = self

@@ -85,7 +85,7 @@ class ReformMaintain:
         rf_records = pd.concat(
             [self._get_rf_row_num(row) for index, row in table_names_by_date.iterrows()]
         )
-        ReformMaintain._save_report(rf_records)
+        # ReformMaintain._save_report(rf_records)
         rf_records = (
             rf_records.groupby(by=[CODE, FREQ, SOURCE, FUQUAN])
             .aggregate({ROW_NUM: "sum"})

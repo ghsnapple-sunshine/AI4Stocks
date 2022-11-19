@@ -87,13 +87,23 @@ class Operator(Connector):
         sql = f"drop table if exists `{name}`"
         self.execute(sql)
 
+    def delete_data(self, name: str):
+        """
+        删除表格的数据
+
+        :param name:                表名
+        :return:
+        """
+        sql = f"delete from `{name}`"
+        self.execute(sql)
+
     def select_row_num(
         self,
         name: str,
         meta: Optional[DataFrame] = None,
         span: Optional[DateSpan] = None,
         groupby: Optional[list[str]] = None,
-    ) -> Union[int, DataFrame]:
+    ) -> Union[None, int, DataFrame]:
         """
         查询表格的行数
 
@@ -106,7 +116,7 @@ class Operator(Connector):
         if meta is None and span is not None:
             meta = self.get_meta(name)
             if meta is None:
-                return 0
+                return
         groupby = [] if groupby is None else [ReqCol(x) for x in groupby]
 
         sql = SelectSqlParser.select(

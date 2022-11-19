@@ -5,8 +5,16 @@ from buffett.common.pendelum import Date, DateSpan, DateTime, Duration
 from test import Tester
 
 
-class PendelumTest(Tester):
-    def test_date_compare(self):
+class PendulumTest(Tester):
+    @classmethod
+    def _setup_oncemore(cls):
+        pass
+
+    def _setup_always(self) -> None:
+        pass
+
+    @staticmethod
+    def test_date_compare():
         date1 = Date(2022, 1, 4)
         date2 = Date(2022, 1, 5)
         date3 = Date(2022, 1, 4)
@@ -17,7 +25,8 @@ class PendelumTest(Tester):
         assert date1 == date3
         assert date1 != date2
 
-    def test_datetime_compare(self):
+    @staticmethod
+    def test_datetime_compare():
         datetime1 = DateTime(2022, 1, 4)
         datetime2 = DateTime(2022, 1, 5)
         datetime3 = DateTime(2022, 1, 4)
@@ -28,7 +37,8 @@ class PendelumTest(Tester):
         assert datetime1 == datetime3
         assert datetime1 != datetime2
 
-    def test_date_datetime_comapre(self):
+    @staticmethod
+    def test_date_datetime_compare():
         date1 = Date(2022, 1, 4)
         dt2 = DateTime(2022, 1, 4, 9, 30)
         dt3 = DateTime(2022, 1, 4)
@@ -39,7 +49,8 @@ class PendelumTest(Tester):
         assert date1 == dt3
         assert date1 != dt2
 
-    def test_datespan(self):
+    @staticmethod
+    def test_datespan():
         span = DateSpan(Date(2022, 1, 4), Date(2022, 1, 5))
         assert span._start.year == 2022
         assert span._start.month == 1
@@ -48,7 +59,8 @@ class PendelumTest(Tester):
         assert span._end.month == 1
         assert span._end.day == 5
 
-    def test_timespan(self):
+    @staticmethod
+    def test_timespan():
         span = DateSpan(DateTime(2022, 1, 4, 9, 30), DateTime(2022, 1, 5))
         assert span.start.year == 2022
         assert span.start.month == 1
@@ -59,7 +71,8 @@ class PendelumTest(Tester):
         assert span.end.month == 1
         assert span.end.day == 5
 
-    def test_hash(self):
+    @staticmethod
+    def test_hash():
         date1 = Date(2022, 1, 1)
         _hash1 = hash(date1)
         assert _hash1 != -1
@@ -67,7 +80,8 @@ class PendelumTest(Tester):
         _hash2 = hash(date2)
         assert _hash1 == _hash2
 
-    def test_add_sub(self):
+    @staticmethod
+    def test_add_sub():
         du = Duration(days=1)
         dt1 = DateTime(2022, 1, 1)
         dt3 = DateTime(2022, 1, 2)
@@ -85,13 +99,15 @@ class PendelumTest(Tester):
         assert type(dt1.subtract(days=1)) == DateTime
         assert dt1.subtract(days=1) == dt3
 
-    def test_now(self):
+    @staticmethod
+    def test_now():
         now1 = DateTime.now()
         now2 = pendulum.DateTime.now()
         assert now1.year == now2.year
         assert now1.month == now2.month
 
-    def test_span_add_sub(self):
+    @staticmethod
+    def test_span_add_sub():
         span1 = DateSpan(Date(2022, 1, 1), Date(2022, 1, 4))
         span2 = DateSpan(Date(2022, 1, 4), Date(2022, 1, 5))
         span3 = DateSpan(Date(2022, 1, 1), Date(2022, 1, 5))
@@ -103,12 +119,14 @@ class PendelumTest(Tester):
         assert span3.subtract(span2)[0] == span1
         assert span1.add(span4) == span5
 
-    def test_timestamp(self):
+    @staticmethod
+    def test_timestamp():
         dt = DateTime(2022, 1, 1)
         dt.timestamp()
         assert True  # when dt.timestamp works, assert true
 
-    def test_compatible_2_pandas(self):
+    @staticmethod
+    def test_compatible_2_pandas():
         try:
             dt = DateTime(2022, 1, 1)
             df = DataFrame({"dt": [dt]})

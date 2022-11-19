@@ -15,8 +15,7 @@ from buffett.common.magic import get_module_name, get_name
 from buffett.common.pendelum import DateTime, Duration
 from buffett.common.wrapper import Wrapper
 from buffett.download.mysql import Operator
-from buffett.task.task import Task
-from buffett.task.task_scheduler import TaskScheduler
+from buffett.task import Task, TaskScheduler
 from test import DbSweeper, Tester
 
 
@@ -86,10 +85,10 @@ class TestTaskScheduler(Tester):
         ]
 
         tasks = [x[0](start_time=x[1]) for x in task_infos]
-        sch = TaskScheduler(operator=self.operator, tasks=tasks)
+        sch = TaskScheduler(operator=self._operator, tasks=tasks)
         sch.run()
         # actual
-        actual = self.operator.select_data(name=TASK_RCD)
+        actual = self._operator.select_data(name=TASK_RCD)
         del actual[CREATE_TIME], actual[START_TIME], actual[END_TIME]  # 这三列不参与比较
         # expect
         task_id = [1, 2, 3]
@@ -121,22 +120,22 @@ class TestTaskScheduler(Tester):
         DbSweeper.cleanup()
         start = DateTime.now()
         sch = TaskScheduler(
-            operator=self.operator,
+            operator=self._operator,
             tasks=[
-                OneOffTaskA(start_time=DateTime.now() + Duration(seconds=10)),
-                OneOffTaskB(start_time=DateTime.now() + Duration(seconds=20)),
+                OneOffTaskA(start_time=DateTime.now() + Duration(seconds=5)),
+                OneOffTaskB(start_time=DateTime.now() + Duration(seconds=10)),
                 OneOffTaskC(start_time=DateTime.now()),
             ],
         )
         sch.run()
         end = DateTime.now()
-        # delay为20s，但是实际只用了19.xs，原因是存入数据库时未保存microseconds，产生了误差。
-        assert end - start >= Duration(seconds=19)
+        # delay10s，但是实际只用了9.xs，原因是存入数据库时未保存microseconds，产生了误差。
+        assert end - start >= Duration(seconds=9)
 
     def test_run_with_new_task_n_error(self):
         DbSweeper.cleanup()
         self._run_with_3tasks()
-        actual = self.operator.select_data(name=TASK_RCD)
+        actual = self._operator.select_data(name=TASK_RCD)
         assert actual[actual[SUCCESS] == 0].shape[0] == 1
         assert actual.shape[0] == 5
 
@@ -144,22 +143,22 @@ class TestTaskScheduler(Tester):
         DbSweeper.cleanup()
         self._run_with_3tasks()
         self._run_with_3tasks()
-        actual = self.operator.select_data(name=TASK_RCD)
+        actual = self._operator.select_data(name=TASK_RCD)
         assert actual.shape[0] == 5
 
     def test_run_2times_add_task(self):
         DbSweeper.cleanup()
         self._run_with_1task()
-        actual = self.operator.select_data(name=TASK_RCD)
+        actual = self._operator.select_data(name=TASK_RCD)
         assert actual.shape[0] == 1
         self._run_with_3tasks()
-        actual = self.operator.select_data(name=TASK_RCD)
+        actual = self._operator.select_data(name=TASK_RCD)
         assert actual.shape[0] == 5
 
     def _run_with_3tasks(self):
         InnerD.COUNT = 0
         sch = TaskScheduler(
-            operator=self.operator,
+            operator=self._operator,
             tasks=[
                 OneOffTaskA(start_time=DateTime.now() - Duration(seconds=1)),
                 OneOffTaskB(start_time=DateTime.now() - Duration(seconds=2)),
@@ -171,7 +170,7 @@ class TestTaskScheduler(Tester):
     def _run_with_1task(self):
         InnerD.COUNT = 0
         sch = TaskScheduler(
-            operator=self.operator,
+            operator=self._operator,
             tasks=[OneOffTaskA(start_time=DateTime.now() - Duration(seconds=1))],
         )
         sch.run()

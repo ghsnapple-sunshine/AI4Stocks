@@ -1,12 +1,15 @@
-from buffett.adapter import logging
 from buffett.common.pendelum import DateTime
 from buffett.task import StockListTask
 from test import Tester
 
 
 class FastDownloadTest(Tester):
-    def setUp(self) -> None:
-        super().setUp()
+    @classmethod
+    def _setup_oncemore(cls):
+        pass
+
+    def _setup_always(self) -> None:
+        pass
 
     def test_download_fast(self):
         """
@@ -14,10 +17,7 @@ class FastDownloadTest(Tester):
 
         :return:
         """
-        logging.basicConfig(level=logging.INFO)
         now = DateTime.now()
-        operator = self.operator
-
-        tasks = [StockListTask(operator=operator, start_time=now)]
+        tasks = [StockListTask(operator=self._operator, start_time=now)]
         for task in tasks:
             task.run()

@@ -4,9 +4,9 @@ from test import Tester, DbSweeper
 
 
 class TestCreate(Tester):
-    def setUp(self) -> None:
-        super(TestCreate, self).setUp()
-        self._META = create_meta(
+    @classmethod
+    def _setup_oncemore(cls):
+        cls._META = create_meta(
             meta_list=[
                 ["A", ColType.INT32, AddReqType.KEY],
                 ["B", ColType.INT32, AddReqType.NONE],
@@ -14,7 +14,7 @@ class TestCreate(Tester):
                 ["D", ColType.INT32, AddReqType.NONE],
             ]
         )
-        self._META2 = create_meta(
+        cls._META2 = create_meta(
             meta_list=[
                 ["A", ColType.INT32, AddReqType.KEY],
                 ["B", ColType.INT32, AddReqType.NONE],
@@ -25,7 +25,7 @@ class TestCreate(Tester):
                 ["G", ColType.INT32, AddReqType.NONE],
             ]
         )
-        self._META3 = create_meta(
+        cls._META3 = create_meta(
             meta_list=[
                 ["A", ColType.INT32, AddReqType.KEY],
                 ["B", ColType.FLOAT, AddReqType.NONE],
@@ -36,7 +36,7 @@ class TestCreate(Tester):
                 ["G", ColType.FLOAT, AddReqType.NONE],
             ]
         )
-        self._META4 = create_meta(
+        cls._META4 = create_meta(
             meta_list=[
                 ["A", ColType.INT32, AddReqType.KEY],
                 ["B", ColType.FLOAT, AddReqType.NONE],
@@ -44,7 +44,7 @@ class TestCreate(Tester):
                 ["D", ColType.FLOAT, AddReqType.NONE],
             ]
         )
-        self._META5 = create_meta(
+        cls._META5 = create_meta(
             meta_list=[
                 ["A", ColType.INT32, AddReqType.KEY],
                 ["E", ColType.FLOAT, AddReqType.NONE],
@@ -53,84 +53,80 @@ class TestCreate(Tester):
             ]
         )
 
-    def test_create(self):
+    def _setup_always(self) -> None:
         DbSweeper.cleanup()
-        self.operator.create_table(
-            name=self.table_name, meta=self._META, if_not_exist=False
+
+    def test_create(self):
+        self._operator.create_table(
+            name=self._table_name, meta=self._META, if_not_exist=False
         )
-        meta = self.operator.get_meta(name=self.table_name)
+        meta = self._operator.get_meta(name=self._table_name)
         assert self.compare_dataframe(self._META, meta)
 
     def test_add_column_fail(self):
-        DbSweeper.cleanup()
-        self.operator.create_table(
-            name=self.table_name, meta=self._META, if_not_exist=False
+        self._operator.create_table(
+            name=self._table_name, meta=self._META, if_not_exist=False
         )
-        self.operator.create_table(
-            name=self.table_name, meta=self._META2, if_not_exist=True
+        self._operator.create_table(
+            name=self._table_name, meta=self._META2, if_not_exist=True
         )
-        meta = self.operator.get_meta(name=self.table_name)
+        meta = self._operator.get_meta(name=self._table_name)
         assert self.compare_dataframe(self._META, meta)
 
     def test_add_column_success(self):
-        DbSweeper.cleanup()
-        self.operator.create_table(
-            name=self.table_name, meta=self._META, if_not_exist=False
+        self._operator.create_table(
+            name=self._table_name, meta=self._META, if_not_exist=False
         )
-        self.operator.create_table(name=self.table_name, meta=self._META2, update=True)
-        meta = self.operator.get_meta(name=self.table_name)
-        assert self.compare_dataframe(self._META2, meta)
-
-    def test_add_column_success(self):
-        DbSweeper.cleanup()
-        self.operator.create_table(
-            name=self.table_name, meta=self._META, if_not_exist=False
+        self._operator.create_table(
+            name=self._table_name, meta=self._META2, update=True
         )
-        self.operator.create_table(name=self.table_name, meta=self._META2, update=True)
-        meta = self.operator.get_meta(name=self.table_name)
+        meta = self._operator.get_meta(name=self._table_name)
         assert self.compare_dataframe(self._META2, meta)
 
     def test_modify_column(self):
-        DbSweeper.cleanup()
-        self.operator.create_table(
-            name=self.table_name, meta=self._META2, if_not_exist=False
+        self._operator.create_table(
+            name=self._table_name, meta=self._META2, if_not_exist=False
         )
-        self.operator.create_table(name=self.table_name, meta=self._META3, update=True)
-        meta = self.operator.get_meta(name=self.table_name)
+        self._operator.create_table(
+            name=self._table_name, meta=self._META3, update=True
+        )
+        meta = self._operator.get_meta(name=self._table_name)
         assert self.compare_dataframe(self._META3, meta)
 
     def test_drop_column(self):
-        DbSweeper.cleanup()
-        self.operator.create_table(
-            name=self.table_name, meta=self._META2, if_not_exist=False
+        self._operator.create_table(
+            name=self._table_name, meta=self._META2, if_not_exist=False
         )
-        self.operator.create_table(name=self.table_name, meta=self._META, update=True)
-        meta = self.operator.get_meta(name=self.table_name)
+        self._operator.create_table(name=self._table_name, meta=self._META, update=True)
+        meta = self._operator.get_meta(name=self._table_name)
         assert self.compare_dataframe(self._META, meta)
 
     def test_add_drop_column(self):
-        DbSweeper.cleanup()
-        self.operator.create_table(
-            name=self.table_name, meta=self._META, if_not_exist=False
+        self._operator.create_table(
+            name=self._table_name, meta=self._META, if_not_exist=False
         )
-        self.operator.create_table(name=self.table_name, meta=self._META5, update=True)
-        meta = self.operator.get_meta(name=self.table_name)
+        self._operator.create_table(
+            name=self._table_name, meta=self._META5, update=True
+        )
+        meta = self._operator.get_meta(name=self._table_name)
         assert self.compare_dataframe(self._META5, meta)
 
     def test_modify_drop_column(self):
-        DbSweeper.cleanup()
-        self.operator.create_table(
-            name=self.table_name, meta=self._META2, if_not_exist=False
+        self._operator.create_table(
+            name=self._table_name, meta=self._META2, if_not_exist=False
         )
-        self.operator.create_table(name=self.table_name, meta=self._META4, update=True)
-        meta = self.operator.get_meta(name=self.table_name)
+        self._operator.create_table(
+            name=self._table_name, meta=self._META4, update=True
+        )
+        meta = self._operator.get_meta(name=self._table_name)
         assert self.compare_dataframe(self._META4, meta)
 
     def test_add_modify_column(self):
-        DbSweeper.cleanup()
-        self.operator.create_table(
-            name=self.table_name, meta=self._META, if_not_exist=False
+        self._operator.create_table(
+            name=self._table_name, meta=self._META, if_not_exist=False
         )
-        self.operator.create_table(name=self.table_name, meta=self._META3, update=True)
-        meta = self.operator.get_meta(name=self.table_name)
+        self._operator.create_table(
+            name=self._table_name, meta=self._META3, update=True
+        )
+        meta = self._operator.get_meta(name=self._table_name)
         assert self.compare_dataframe(self._META3, meta)

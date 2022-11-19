@@ -3,6 +3,7 @@ from typing import Type, Union
 from buffett.adapter.numpy import np
 from buffett.adapter.pandas import pd
 from buffett.common import Code
+from buffett.common.constants.table import STK_LS
 from buffett.common.pendelum import Date
 from buffett.download import Para
 from buffett.download.handler.reform import ReformHandler as RHandler
@@ -13,19 +14,19 @@ from test import Tester, DbSweeper, create_1stock, create_ex_1stock
 
 
 class ReformHandlerTest(Tester):
-    def setUp(self) -> None:
-        super(ReformHandlerTest, self).setUp()
+    @classmethod
+    def _setup_oncemore(cls):
+        pass
 
-    def _prepare(self):
-        # 清理数据库
-        DbSweeper.cleanup()
+    def _setup_always(self) -> None:
+        DbSweeper.erase()
         # 初始化StockList
-        create_1stock(operator=self.operator)
+        create_1stock(operator=self._operator)
 
-    def _prepare_2nd(self):
+    def _setup_2nd(self):
         # 初始化StockList
-        create_ex_1stock(operator=self.operator, code=Code("000002"))
-        create_ex_1stock(operator=self.operator, code=Code("000004"))
+        create_ex_1stock(operator=self._operator, code=Code("000002"))
+        create_ex_1stock(operator=self._operator, code=Code("000004"))
 
     def _atom_test(
         self,
@@ -36,23 +37,23 @@ class ReformHandlerTest(Tester):
         rf_table_names: Union[str, list[str]],
     ):
         # 1.下载数据
-        Cls(operator=self.operator).obtain_data(
+        Cls(operator=self._operator).obtain_data(
             para=Para().with_start_n_end(start=start, end=end)
         )
         # 2. Reform
-        RHandler(operator=self.operator).reform_data()
+        RHandler(operator=self._operator).reform_data()
         # 3. 比较结果
         dl_table_names = (
             dl_table_names if isinstance(dl_table_names, list) else [dl_table_names]
         )
-        dl_data = np.sum([self.operator.select_row_num(x) for x in dl_table_names])
+        dl_data = np.sum([self._operator.select_row_num(x) for x in dl_table_names])
         rf_table_names = (
             rf_table_names if isinstance(rf_table_names, list) else [rf_table_names]
         )
-        rf_data = np.sum([self.operator.select_row_num(x) for x in rf_table_names])
+        rf_data = np.sum([self._operator.select_row_num(x) for x in rf_table_names])
         assert dl_data == rf_data
-        dl_record = DownloadRecorder(operator=self.operator).select_data()
-        rf_record = ReformRecorder(operator=self.operator).get_data()
+        dl_record = DownloadRecorder(operator=self._operator).select_data()
+        rf_record = ReformRecorder(operator=self._operator).get_data()
         assert pd.concat([dl_record, rf_record]).drop_duplicates(keep=False).empty
 
     def test_ak_daily_10days(self):
@@ -61,7 +62,6 @@ class ReformHandlerTest(Tester):
 
         :return:
         """
-        self._prepare()
         # S1:
         self._atom_test(
             Cls=AkDailyHandler,
@@ -85,7 +85,6 @@ class ReformHandlerTest(Tester):
 
         :return:
         """
-        self._prepare()
         # S1:
         self._atom_test(
             Cls=AkDailyHandler,
@@ -116,7 +115,6 @@ class ReformHandlerTest(Tester):
 
         :return:
         """
-        self._prepare()
         # S1:
         self._atom_test(
             Cls=AkDailyHandler,
@@ -136,7 +134,6 @@ class ReformHandlerTest(Tester):
 
         :return:
         """
-        self._prepare()
         # S1:
         self._atom_test(
             Cls=AkDailyHandler,
@@ -151,7 +148,7 @@ class ReformHandlerTest(Tester):
             ],
         )
         # S2:
-        self._prepare_2nd()
+        self._setup_2nd()
         self._atom_test(
             Cls=AkDailyHandler,
             start=Date(2022, 2, 4),
@@ -175,7 +172,6 @@ class ReformHandlerTest(Tester):
 
         :return:
         """
-        self._prepare()
         # S1:
         self._atom_test(
             Cls=BsMinuteHandler,
@@ -199,7 +195,6 @@ class ReformHandlerTest(Tester):
 
         :return:
         """
-        self._prepare()
         # S1:
         self._atom_test(
             Cls=BsMinuteHandler,
@@ -222,8 +217,12 @@ class ReformHandlerTest(Tester):
         )
 
     def test_irregular(self):
-        DbSweeper.cleanup()
-        create_ex_1stock(self.operator, Code("000795"))
+        """
+        测试有异常数据的股票
+
+        :return:
+        """
+        create_ex_1stock(self._operator, Code("000795"))
         para = Para().with_start_n_end(Date(2002, 4, 16), Date(2002, 4, 17))
-        BsMinuteHandler(operator=self.operator).obtain_data(para=para)
-        RHandler(operator=self.operator).reform_data()
+        BsMinuteHandler(operator=self._operator).obtain_data(para=para)
+        RHandler(operator=self._operator).reform_data()

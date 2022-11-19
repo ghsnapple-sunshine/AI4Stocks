@@ -1,16 +1,19 @@
-from buffett.adapter.pandas import DataFrame, pd
+from buffett.adapter.pandas import DataFrame
 from buffett.common import create_meta
 from buffett.common.constants.col import DATETIME, OPEN, CLOSE
 from buffett.common.constants.col.mysql import ROW_NUM
 from buffett.common.constants.col.stock import CODE
 from buffett.common.pendelum import Date, DateSpan, DateTime
 from buffett.download.mysql.types import ColType, AddReqType
-from test import Tester
+from test import Tester, DbSweeper
 
 
 class TestSelect(Tester):
-    def setUp(self) -> None:
-        super().setUp()
+    _df = None
+
+    @classmethod
+    def _setup_oncemore(cls):
+        DbSweeper.cleanup()
         meta = create_meta(
             meta_list=[
                 [CODE, ColType.CODE, AddReqType.KEY],
@@ -19,7 +22,7 @@ class TestSelect(Tester):
                 [CLOSE, ColType.FLOAT, AddReqType.NONE],
             ]
         )
-        self.operator.create_table(name=self.table_name, meta=meta)
+        cls._operator.create_table(name=cls._table_name, meta=meta)
         data = [
             ["000001", DateTime(2022, 1, 1), 10.0, 10.5],
             ["000001", DateTime(2022, 1, 2), 10.5, 11.0],
@@ -30,32 +33,32 @@ class TestSelect(Tester):
             ["000002", DateTime(2022, 1, 3), 9.9, 10.1],
             ["000002", DateTime(2022, 1, 4), 10.1, 10.5],
         ]
-        self.df = DataFrame(data, columns=[CODE, DATETIME, OPEN, CLOSE])
-        self.operator.insert_data(name=self.table_name, df=self.df)
+        cls._df = DataFrame(data, columns=[CODE, DATETIME, OPEN, CLOSE])
+        cls._operator.insert_data(name=cls._table_name, df=cls._df)
+
+    def _setup_always(self) -> None:
+        pass
 
     def test_select(self):
-        db = self.operator.select_data(name=self.table_name)
-        df = self.df
-        cmp = pd.concat([db, df]).drop_duplicates(keep=False)
-        assert cmp.empty
+        db = self._operator.select_data(name=self._table_name)
+        assert self.compare_dataframe(db, self._df)
 
     def test_select_row_num(self):
-        db_row_num = self.operator.select_row_num(name=self.table_name)
-        df_row_num = self.df.shape[0]
+        db_row_num = self._operator.select_row_num(name=self._table_name)
+        df_row_num = self._df.shape[0]
         assert df_row_num == db_row_num
 
     def test_select_with_span(self):
         span = DateSpan(start=Date(2022, 1, 1), end=Date(2022, 1, 4))
-        db = self.operator.select_data(name=self.table_name, span=span)
-        df = self.df[self.df[DATETIME].apply(lambda x: span.is_inside(x))]
-        cmp = pd.concat([db, df]).drop_duplicates(keep=False)
-        assert cmp.empty
+        db = self._operator.select_data(name=self._table_name, span=span)
+        df = self._df[self._df[DATETIME].apply(lambda x: span.is_inside(x))]
+        assert self.compare_dataframe(db, df)
 
     def test_select_row_num_with_groupby(self):
-        db = self.operator.select_row_num(
-            name=self.table_name, groupby=[CODE, DATETIME]
+        db = self._operator.select_row_num(
+            name=self._table_name, groupby=[CODE, DATETIME]
         )
-        df = self.df.groupby(by=[CODE, DATETIME]).apply(
+        df = self._df.groupby(by=[CODE, DATETIME]).apply(
             lambda x: DataFrame(
                 {
                     CODE: [x[CODE].iloc[0]],
@@ -65,21 +68,19 @@ class TestSelect(Tester):
             )
         )
         df.reset_index(inplace=True, drop=True)
-        cmp = pd.concat([db, df]).drop_duplicates(keep=False)
-        assert cmp.empty
+        assert self.compare_dataframe(db, df)
 
     def test_select_row_num_with_groupby_n_where(self):
         span = DateSpan(start=Date(2022, 1, 1), end=Date(2022, 1, 3))
-        db = self.operator.select_row_num(
-            name=self.table_name, groupby=[CODE], span=span
+        db = self._operator.select_row_num(
+            name=self._table_name, groupby=[CODE], span=span
         )
         df = (
-            self.df[self.df[DATETIME].apply(lambda x: span.is_inside(x))]
+            self._df[self._df[DATETIME].apply(lambda x: span.is_inside(x))]
             .groupby(by=[CODE])
             .apply(
                 lambda x: DataFrame({CODE: [x[CODE].iloc[0]], ROW_NUM: [x.shape[0]]})
             )
         )
         df.reset_index(inplace=True, drop=True)
-        cmp = pd.concat([db, df]).drop_duplicates(keep=False)
-        assert cmp.empty
+        assert self.compare_dataframe(db, df)

@@ -5,41 +5,36 @@ from buffett.common import Code as Code
 from buffett.common.constants.col import DATE
 from buffett.common.constants.col.stock import CODE, NAME
 from buffett.common.pendelum import Date, DateSpan as Span
-from buffett.download import Para as HPara
+from buffett.download import Para as DPara
 from buffett.download.handler.calendar import CalendarHandler as CHandler
-from buffett.download.handler.stock import (
-    StockListHandler as SHandler,
-    AkDailyHandler as DHandler,
-)
-from test import Tester, DbSweeper
+from buffett.download.handler.list import StockListHandler as SHandler
+from buffett.download.handler.stock import AkDailyHandler as DHandler
+from test import Tester
 
 
 class WorldTest(Tester):
-    def setUp(self) -> None:
-        super().setUp()
-        # 清理数据库
-        DbSweeper.cleanup()
+    @classmethod
+    def _setup_oncemore(cls):
         # 指定测试周期
-        start = Date(2022, 1, 4)
-        end = Date(2022, 1, 6)
+        d1, d2, d3 = Date(2022, 1, 4), Date(2022, 1, 5), Date(2022, 1, 6)
         # 初始化交易日历
-        data = [[start.format("YYYY-MM-DD")], [end.format("YYYY-MM-DD")]]
-        CHandler(operator=self.operator)._save_to_database(
-            df=DataFrame(data=data, columns=[DATE])
-        )
+        cdata = DataFrame({DATE: [d1, d2]})
+        CHandler(operator=cls._operator)._save_to_database(cdata)
         # 初始化StockList
-        data = [["000001", "平安银行"], ["600000", "浦发银行"]]
-        SHandler(operator=self.operator)._save_to_database(
-            df=DataFrame(data=data, columns=[CODE, NAME])
+        sdata = DataFrame(
+            [["000001", "平安银行"], ["600000", "浦发银行"]], columns=[CODE, NAME]
         )
-        # 下载日线数据
-        DHandler(operator=self.operator).obtain_data(
-            para=HPara().with_start_n_end(start=start, end=end)
-        )
+        SHandler(operator=cls._operator)._save_to_database(sdata)
+        # 初始化日线数据
+        mini_para = DPara().with_start_n_end(start=d1, end=d3)
+        DHandler(operator=cls._operator).obtain_data(mini_para)
+
+    def _setup_always(self) -> None:
+        pass
 
     def test_world_flow(self):
         para = WPara(
-            operator=self.operator,
+            operator=self._operator,
             stock_list=[Code("000001"), Code("600000")],
             datespan=Span(start=Date(2022, 1, 4), end=Date(2022, 1, 6)),
             strat_cls=Strat,

@@ -3,12 +3,22 @@ from test import Tester
 
 
 class TestConceptListHandler(Tester):
+    @classmethod
+    def _setup_oncemore(cls):
+        cls._hdl = ConceptListHandler(operator=cls._operator)
+
+    def _setup_always(self) -> None:
+        pass
+
     def test_download(self):
-        hdl = ConceptListHandler(operator=self.operator)
-        df1 = hdl.obtain_data()
-        df2 = hdl.select_data()
+        self._download()
+        self._repeat_download()
+
+    def _download(self):
+        df1 = self._hdl.obtain_data()
+        df2 = self._hdl.select_data()
         assert self.compare_dataframe(df1, df2)
 
-    def test_repeat_download(self):
+    def _repeat_download(self):
         # 测试重复下载不报错
-        ConceptListHandler(operator=self.operator).obtain_data()
+        self._hdl.obtain_data()

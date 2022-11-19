@@ -9,6 +9,13 @@ from test import Tester
 
 
 class TestPara(Tester):
+    @classmethod
+    def _setup_oncemore(cls):
+        pass
+
+    def _setup_always(self) -> None:
+        pass
+
     def test_from_series_partial(self):
         freq = FreqType.DAY
         source = SourceType.BAOSTOCK

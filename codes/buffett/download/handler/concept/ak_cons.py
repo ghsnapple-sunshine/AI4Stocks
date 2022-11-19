@@ -11,7 +11,7 @@ from buffett.common.tools import dataframe_not_valid
 from buffett.download import Para
 from buffett.download.handler.concept.ak_list import ConceptListHandler
 from buffett.download.handler.fast.handler import FastHandler
-from buffett.download.handler.stock.ak_list import StockListHandler
+from buffett.download.handler.list.ak_list import StockListHandler
 from buffett.download.mysql.types import ColType, AddReqType
 
 DM = "代码"

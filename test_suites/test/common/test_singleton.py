@@ -2,15 +2,20 @@ from buffett.common.interface import Singleton
 from test import Tester
 
 
-def init_method(self, v):
-    super(SingletonSubClass, self).__init__()
-    self.v = v
-
-
-SingletonSubClass = type("SingletonSubClass", (Singleton,), {"__init__": init_method})
-
-
 class TestSingleton(Tester):
+    @classmethod
+    def _setup_oncemore(cls):
+        def init_method(s, v):
+            super(s.__class__, s).__init__()
+            s.v = v
+
+        cls.SingletonSubClass = type(
+            "SingletonSubClass", (Singleton,), {"__init__": init_method}
+        )
+
+    def _setup_always(self) -> None:
+        pass
+
     def test_singleton(self):
         obj1 = Singleton()
         obj2 = Singleton()
@@ -18,10 +23,10 @@ class TestSingleton(Tester):
         assert type(obj1) == Singleton
 
     def test_singleton_subclass(self):
-        obj1 = SingletonSubClass(1)
-        obj2 = SingletonSubClass(2)
+        obj1 = self.SingletonSubClass(1)
+        obj2 = self.SingletonSubClass(2)
         assert id(obj1) == id(obj2)
-        assert type(obj1) == SingletonSubClass
+        assert type(obj1) == self.SingletonSubClass
         """
         说明：
         执行obj2 = SingletonSubClass(2)时：

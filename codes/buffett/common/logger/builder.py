@@ -1,3 +1,5 @@
+from typing import Type
+
 from buffett.common.error import ParamTypeError
 from buffett.common.logger.logger import Logger
 from buffett.common.logger.type import LogType
@@ -8,9 +10,9 @@ class LoggerBuilder:
     _NO = 0
 
     @staticmethod
-    def build(cls: type) -> type:
+    def build(cls: type):
         if not issubclass(cls, Logger):
-            raise ParamTypeError("cls", type)
+            raise ParamTypeError("cls", Type[Logger])
         overrides_func = {}
         level = Logger.Level
         for att_name in dir(cls):

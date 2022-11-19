@@ -24,21 +24,31 @@ class InnerC:
 
 
 class WrapperTest(Tester):
-    def test_method_no_para(self):
+    def _setup_always(self) -> None:
+        pass
+
+    @classmethod
+    def _setup_oncemore(cls):
+        pass
+
+    @staticmethod
+    def test_method_no_para():
         obj = InnerA()
         wrapper = WrapperFactory.from_method_name(obj, "run")
         assert wrapper.run() == 1
         wrapper = WrapperFactory.from_method_ref(obj.run)
         assert wrapper.run() == 1
 
-    def test_method_with_positional_para(self):
+    @staticmethod
+    def test_method_with_positional_para():
         obj = InnerB()
         wrapper = WrapperFactory.from_method_name(obj, "run")
         assert wrapper.run(1) == 2
         wrapper = WrapperFactory.from_method_ref(obj.run)
         assert wrapper.run(1) == 2
 
-    def test_method_with_optional_para(self):
+    @staticmethod
+    def test_method_with_optional_para():
         obj = InnerC()
         wrapper = WrapperFactory.from_method_name(obj, "run")
         assert wrapper.run() == 1

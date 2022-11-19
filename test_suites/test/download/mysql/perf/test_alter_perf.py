@@ -7,8 +7,8 @@ from test import Tester, DbSweeper
 
 
 class TestAlterPerf(Tester):
-    def setUp(self) -> None:
-        super().setUp()
+    def _setup_always(self) -> None:
+        super()._setup_always()
         self._META = create_meta(
             meta_list=[
                 ["A", ColType.INT32, AddReqType.KEY],
@@ -86,27 +86,27 @@ class TestAlterPerf(Tester):
         print(sum(alter_times) / 10)
 
     def _create(self):
-        self.operator.create_table(name=self.table_name, meta=self._META)
+        self._operator.create_table(name=self._table_name, meta=self._META)
         df = DataFrame({"A": self.a, "B": self.b, "C": self.c, "D": self.d})
-        self.operator.insert_data(name=self.table_name, df=df)
+        self._operator.insert_data(name=self._table_name, df=df)
 
     def _alter(self):
-        sql = f"alter table `{self.table_name}` add column `E` int, add column `F` int, add column `G` int"
-        self.operator.execute(sql=sql, commit=True)
+        sql = f"alter table `{self._table_name}` add column `E` int, add column `F` int, add column `G` int"
+        self._operator.execute(sql=sql, commit=True)
         df = DataFrame({"A": self.a, "E": self.e, "F": self.f, "G": self.g})
-        self.operator.try_insert_data(
-            name=self.table_name, df=df, meta=self._META2, update=True
+        self._operator.try_insert_data(
+            name=self._table_name, df=df, meta=self._META2, update=True
         )
 
     def _rebuild(self):
-        df = self.operator.select_data(name=self.table_name)
+        df = self._operator.select_data(name=self._table_name)
         df["E"], df["F"], df["G"] = self.e, self.f, self.g
-        tmp_table_name = self.table_name + "_tmp"
-        self.operator.create_table(name=tmp_table_name, meta=self._META2)
-        self.operator.insert_data(name=tmp_table_name, df=df)
-        self.operator.drop_table(name=self.table_name)
-        sql = f"alter table {tmp_table_name} rename to {self.table_name}"
-        self.operator.execute(sql=sql, commit=True)
+        tmp_table_name = self._table_name + "_tmp"
+        self._operator.create_table(name=tmp_table_name, meta=self._META2)
+        self._operator.insert_data(name=tmp_table_name, df=df)
+        self._operator.drop_table(name=self._table_name)
+        sql = f"alter table {tmp_table_name} rename to {self._table_name}"
+        self._operator.execute(sql=sql, commit=True)
 
     def _timer(self, attr):
         start = DateTime.now()
