@@ -20,7 +20,6 @@ from buffett.common.pendulum import Date
 from buffett.common.tools import dataframe_not_valid
 from buffett.download import Para
 from buffett.download.handler.fast.handler import FastHandler
-from buffett.download.handler.tools import bs_result_to_dataframe
 from buffett.download.mysql import Operator
 from buffett.download.mysql.types import ColType, AddReqType
 
@@ -62,11 +61,12 @@ class BsMoneySupplyHandler(FastHandler):
     def _download(self) -> DataFrame:
         bs.login()
 
-        rs = bs.query_money_supply_data_month(
+        money_supply = bs.query_money_supply_data_month(
             start_date="2000-01", end_date=Date.today().format("YYYY-MM")
         )
-        money_supply = bs_result_to_dataframe(rs)
-        money_supply.rename(columns=_RENAME, inplace=True)
+        # 重命名
+        money_supply = money_supply.rename(columns=_RENAME)
+        # 处理日期
         money_supply[DATE] = money_supply.apply(
             lambda row: Date(int(row[_YEAR]), int(row[_MONTH]), 1), axis=1
         )

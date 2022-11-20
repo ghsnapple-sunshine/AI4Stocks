@@ -21,6 +21,13 @@ class InnerB:
 
 
 class TestTask(Tester):
+    @classmethod
+    def _setup_oncemore(cls):
+        pass
+
+    def _setup_always(self) -> None:
+        pass
+
     def test_func1(self):
         task = Task(wrapper=Wrapper(InnerA().func1), args=("a", "b"))
         var = task.run()[1]

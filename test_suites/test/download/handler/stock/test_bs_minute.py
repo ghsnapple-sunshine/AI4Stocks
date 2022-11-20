@@ -12,7 +12,6 @@ class BsStockMinuteHandlerTest(Tester):
         cls._hdl = BsMinuteHandler(operator=cls._operator)
 
     def _setup_always(self) -> None:
-        pass
         DbSweeper.erase()
 
     def test_download_1_month(self) -> None:

@@ -6,7 +6,7 @@ from buffett.adapter.pandas import DataFrame, pd
 from buffett.common.magic import get_class
 
 
-class SingletonTester(TestCase):
+class SimpleTester(TestCase):
     _prepared = False
 
     @final
@@ -40,7 +40,6 @@ class SingletonTester(TestCase):
         :return:
         """
         pass
-
 
     @staticmethod
     def compare_dataframe(df1: DataFrame, df2: DataFrame):

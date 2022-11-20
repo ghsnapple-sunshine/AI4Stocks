@@ -65,5 +65,5 @@ class DbSweeper:
         sql = "SHOW TABLES"
         db = cls._op.execute(sql, fetch=True)
         if dataframe_not_valid(db):
-            return Series()
+            return Series(dtype=object)
         return db.iloc[:, 0]

@@ -1,7 +1,5 @@
 from typing import Optional
 
-from buffett.adapter.baostock import ResultData
-from buffett.adapter.pandas import DataFrame
 from buffett.common.constants import (
     INT_MAX_VALUE,
     INT_MIN_VALUE,
@@ -9,20 +7,6 @@ from buffett.common.constants import (
     FLOAT_MIN_VALUE,
 )
 from buffett.common.pendulum import DateTime
-
-
-def bs_result_to_dataframe(rs: ResultData) -> DataFrame:
-    """
-    将baostock返回的ResultData转换为DataFrame
-
-    :param rs:      ResultData
-    :return:        DataFrame
-    """
-    data = []
-    while (rs.error_code == "0") & rs.next():
-        # 获取一条记录，将记录合并在一起
-        data.append(rs.get_row_data())
-    return DataFrame(data, columns=rs.fields)
 
 
 def bs_str_to_datetime(str_datetime: str) -> DateTime:

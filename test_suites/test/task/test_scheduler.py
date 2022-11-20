@@ -38,7 +38,8 @@ class InnerC(InnerA):
 class InnerD:
     COUNT = 0
 
-    def run(self):
+    @staticmethod
+    def run():
         InnerD.COUNT += 1
         if InnerD.COUNT > 2:
             raise ValueError("error")
@@ -70,6 +71,13 @@ class PerfectTask(OneOffTaskA):
 
 
 class TestTaskScheduler(Tester):
+    @classmethod
+    def _setup_oncemore(cls):
+        pass
+
+    def _setup_always(self) -> None:
+        pass
+
     def test_run_with_oneoff_task(self):
         """
         测试不会生成新Task的场景

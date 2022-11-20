@@ -31,25 +31,18 @@ class CalendarHandler(FastHandler):
         logging.info("login respond  error_msg:" + lg.error_msg)
 
         #### 获取交易日信息 ####
-        rs = bs.query_trade_dates(
+        calendar = bs.query_trade_dates(
             start_date="2000-01-01",
             end_date=Date.today().add(months=2).format("YYYY-MM-01"),
         )
 
-        #### 打印结果集 ####
-        data_list = []
-        while (rs.error_code == "0") & rs.next():
-            # 获取一条记录，将记录合并在一起
-            data_list.append(rs.get_row_data())
-        res = DataFrame(data_list, columns=rs.fields)
-
         # 仅保留交易日
-        res = res[res["is_trading_day"] == "1"]
+        calendar = calendar[calendar["is_trading_day"] == "1"]
 
-        res.rename(columns=_RENAME_DICT, inplace=True)
-        res = res[[DATE]]
+        calendar.rename(columns=_RENAME_DICT, inplace=True)
+        calendar = calendar[[DATE]]
 
-        return res
+        return calendar
 
     def _save_to_database(self, df: DataFrame):
         self._operator.create_table(name=TRA_CAL, meta=_META)

@@ -1,10 +1,10 @@
 from buffett.common.stock import Code
-from test import Tester
+from test import SimpleTester
 
 
-class TestStock(Tester):
+class TestStock(SimpleTester):
     @classmethod
-    def _setup_oncemore(cls):
+    def _setup_once(cls):
         pass
 
     def _setup_always(self) -> None:

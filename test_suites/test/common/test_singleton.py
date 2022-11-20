@@ -1,10 +1,10 @@
 from buffett.common.interface import Singleton
-from test import Tester
+from test import SimpleTester
 
 
-class TestSingleton(Tester):
+class TestSingleton(SimpleTester):
     @classmethod
-    def _setup_oncemore(cls):
+    def _setup_once(cls):
         def init_method(s, v):
             super(s.__class__, s).__init__()
             s.v = v

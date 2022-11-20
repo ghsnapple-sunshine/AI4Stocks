@@ -1,18 +1,18 @@
 from abc import abstractmethod
-from typing import final
+from typing import final, Optional
 
 from buffett.adapter.akshare import ak
+from buffett.adapter.baostock import bs
 from buffett.adapter.pendulum import Date
 from buffett.common.pendulum import DateTime
+from buffett.common.tools import list_is_valid
 from buffett.download import Para
 from buffett.download.mysql import Operator
 from buffett.download.mysql.types import RoleType
-from test import DbSweeper
-from test.suites.acc import Accelerator
-from test.suites.sing_tester import SingletonTester
+from test import DbSweeper, Accelerator, SimpleTester
 
 
-class Tester(SingletonTester):
+class Tester(SimpleTester):
     _table_name = None
     _operator = None
     _short_para = None
@@ -34,6 +34,7 @@ class Tester(SingletonTester):
         cls._long_para = Para().with_start_n_end(Date(2020, 1, 15), Date(2021, 4, 2))
         # 定义Accelerator
         cls._accelerate(ak)
+        cls._accelerate(bs, excepts=["login", "logout"])
         # 清理数据库
         DbSweeper.cleanup()
         # 调用oncemore
@@ -59,14 +60,18 @@ class Tester(SingletonTester):
         pass
 
     @staticmethod
-    def _accelerate(cls: type):
+    def _accelerate(cls: type, excepts: Optional[list[str]] = None):
         """
         把类下面的方法使用加速器封装
 
         :param cls:
         :return:
         """
+        if excepts is None:
+            excepts = []
         for att_name in dir(cls):
-            if att_name.startswith("_"):
+            if att_name.startswith("_") or (
+                list_is_valid(excepts) and att_name in excepts
+            ):
                 continue
             setattr(cls, att_name, Accelerator(getattr(cls, att_name)).mock())

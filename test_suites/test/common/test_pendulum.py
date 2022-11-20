@@ -2,12 +2,12 @@ from buffett.adapter import pendulum
 from buffett.adapter.pandas import DataFrame
 from buffett.adapter.pendulum import date
 from buffett.common.pendulum import Date, DateSpan, DateTime, Duration
-from test import Tester
+from test import SimpleTester
 
 
-class PendulumTest(Tester):
+class PendulumTest(SimpleTester):
     @classmethod
-    def _setup_oncemore(cls):
+    def _setup_once(cls):
         pass
 
     def _setup_always(self) -> None:

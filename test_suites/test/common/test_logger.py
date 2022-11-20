@@ -1,10 +1,10 @@
 from buffett.common.logger import LogType, Logger, LoggerBuilder
-from test import Tester
+from test import SimpleTester
 
 
-class TestLogger(Tester):
+class TestLogger(SimpleTester):
     @classmethod
-    def _setup_oncemore(cls):
+    def _setup_once(cls):
         def my_init(s, v):
             s.v = v
 

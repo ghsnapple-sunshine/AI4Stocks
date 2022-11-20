@@ -9,7 +9,7 @@ class StockListHandlerTest(Tester):
         cls._hdl = StockListHandler(operator=cls._operator)
 
     def _setup_always(self) -> None:
-        DbSweeper.cleanup()
+        pass
 
     def test_download(self):
         self._download()

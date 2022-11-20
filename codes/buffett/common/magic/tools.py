@@ -1,5 +1,7 @@
 #
-from typing import Type
+import inspect
+import types
+from typing import Type, Any
 
 from buffett.adapter.importlib import import_module
 
@@ -47,3 +49,28 @@ def empty_init(self) -> None:
 
 def empty_method(*args, **kwargs) -> None:
     return
+
+
+def get_func_params(func) -> list[list[str, Any]]:
+    """
+    获取函数的参数及默认值
+
+    :param func:
+    :return:
+    """
+    var_names = func.__code__.co_varnames
+    names_count = len(var_names)
+    var_defaults = func.__defaults__
+    defaults_count = 0 if var_defaults is None else len(var_defaults)
+    results = [
+        [
+            var_names[i],
+            None
+            if i - (names_count - defaults_count) < 0
+            else var_defaults[i - (names_count - defaults_count)],
+        ]
+        for i in range(0, names_count)
+    ]
+    if isinstance(func, types.FunctionType):
+        return results
+    return results[1 : len(results)]  # 如果不是functionType则会自动忽略第一个参数

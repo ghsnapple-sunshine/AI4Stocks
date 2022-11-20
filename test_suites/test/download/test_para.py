@@ -5,10 +5,10 @@ from buffett.common.constants.col.stock import CODE, NAME
 from buffett.common.pendulum import Date
 from buffett.download import Para
 from buffett.download.types import FuquanType, FreqType, SourceType
-from test import Tester
+from test import SimpleTester
 
 
-class TestPara(Tester):
+class TestPara(SimpleTester):
     @classmethod
     def _setup_oncemore(cls):
         pass

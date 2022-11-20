@@ -1,5 +1,5 @@
 from buffett.common.wrapper import WrapperFactory
-from test import Tester
+from test import SimpleTester
 
 
 class InnerA:
@@ -23,12 +23,12 @@ class InnerC:
         return self.val + obj
 
 
-class WrapperTest(Tester):
+class WrapperTest(SimpleTester):
     def _setup_always(self) -> None:
         pass
 
     @classmethod
-    def _setup_oncemore(cls):
+    def _setup_once(cls):
         pass
 
     @staticmethod
