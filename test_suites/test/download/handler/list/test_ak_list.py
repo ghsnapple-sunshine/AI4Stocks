@@ -1,6 +1,6 @@
 from buffett.common.constants.col.stock import CODE
 from buffett.download.handler.list.ak_list import StockListHandler
-from test import Tester, DbSweeper
+from test import Tester
 
 
 class StockListHandlerTest(Tester):

@@ -1,3 +1,5 @@
+from buffett.common.constants.table.tools import get_stock_pepb
+
 # fast类
 CNCP_LS = "concept_list"
 CNCP_CONS_LS = "concept_cons_list"
@@ -6,7 +8,7 @@ INDUS_CONS_LS = "industry_cons_list"
 INDEX_LS = "index_list"
 MONEY_SPLY = "money_supply"
 STK_DVD = "stock_dividend"
-STK_LS = "stock_list"
+STK_LS, LG_STK_LS = "stock_list", "lg_stock_list"
 STK_PROFIT = "stock_profit"
 STK_RT = "stock_realtime"
 TRA_CAL = "trade_calendar"
