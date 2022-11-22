@@ -1,4 +1,5 @@
 from buffett.common.magic.tools import (
+    get_attr_safe,
     get_class,
     get_class_name,
     get_self,

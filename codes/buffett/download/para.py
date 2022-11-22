@@ -8,6 +8,7 @@ from buffett.adapter.pendulum import date
 from buffett.common import Code
 from buffett.common.constants.col import FREQ, SOURCE, FUQUAN, START_DATE, END_DATE
 from buffett.common.constants.col.stock import CODE, NAME
+from buffett.common.magic import get_attr_safe
 from buffett.common.pendulum import DateSpan
 from buffett.common.stock import Stock
 from buffett.download.types import HeadType, CombType, FuquanType, FreqType, SourceType
@@ -47,17 +48,21 @@ class Para:
         merge = pd.merge(left, right, how="left", left_index=True, right_index=True)
         merge = merge.replace({NAN: None})
         code, name, freq, source, fuquan, start_date, end_date = merge[0]
-        stock = Stock(code, name) if any([code, name]) else None
-        comb = (
-            CombType(freq=freq, source=source, fuquan=fuquan)
-            if any([freq, source, fuquan])
-            else None
+        return cls._create_para(code, name, freq, fuquan, source, start_date, end_date)
+
+    @classmethod
+    def from_tuple(cls, tup: tuple) -> Para:
+        code, name, freq, source, fuquan, start_date, end_date = (
+            get_attr_safe(tup, x)
+            for x in (CODE, NAME, FREQ, SOURCE, FUQUAN, START_DATE, END_DATE)
         )
-        span = (
-            DateSpan(start=start_date, end=end_date)
-            if any([start_date, end_date])
-            else None
-        )
+        return cls._create_para(code, name, freq, fuquan, source, start_date, end_date)
+
+    @classmethod
+    def _create_para(cls, code, name, freq, fuquan, source, start_date, end_date):
+        stock = Stock(code=code, name=name)
+        comb = CombType(freq=freq, source=source, fuquan=fuquan)
+        span = DateSpan(start=start_date, end=end_date)
         return Para(stock=stock, comb=comb, span=span)
 
     def with_stock(self, stock: Stock, condition: bool = True) -> Para:
