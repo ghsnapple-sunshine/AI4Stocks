@@ -1,4 +1,5 @@
 from buffett.adapter.pandas import DataFrame
+from buffett.common.constants.col.my import TABLE_NAME
 from buffett.download.mysql import Operator
 from buffett.download.mysql.types import RoleType
 
@@ -8,8 +9,8 @@ def cleanup() -> None:
     if confirm == "y":
         db = _scan()
         op = Operator(RoleType.ROOT)
-        for index, row in db.iterrows():
-            table_name = row["TABLE_NAME"]
+        for row in db.itertuples(index=False):
+            table_name = getattr(row, TABLE_NAME)
             op.drop_table(name=table_name)
 
 

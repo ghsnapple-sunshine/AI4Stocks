@@ -1,7 +1,7 @@
-from buffett.adapter.akshare import ak_stock_info_a_code_name, ak_stock_zh_a_hist, ak
+from buffett.adapter.akshare import ak
 from buffett.common.magic.tools import get_func_params
-from test.suites.acc import Accelerator
 from test import SimpleTester
+from test.suites.acc import Accelerator
 
 
 class TestMagic(SimpleTester):

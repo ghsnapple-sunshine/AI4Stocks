@@ -157,8 +157,8 @@ class PendulumTest(SimpleTester):
             todo_records = DataFrame({CODE: ["000001", "000002"]})
             todo_records[START_DATE] = DateTime(2022, 1, 1)
             todo_records[END_DATE] = DateTime.today()
-            for index, row in todo_records.iterrows():
-                print(row[CODE])
+            for row in todo_records.itertuples(index=False):
+                print(getattr(row, CODE))
             assert True  # when DataFrame() works, assert True
         except Exception as e:
             assert False

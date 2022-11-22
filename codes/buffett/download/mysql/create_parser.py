@@ -1,6 +1,6 @@
 from typing import Optional
 
-from buffett.adapter.pandas import DataFrame, pd, Series
+from buffett.adapter.pandas import DataFrame, pd
 from buffett.common.constants.col.meta import COLUMN, TYPE, ADDREQ
 
 CURR_TYPE = TYPE + "_l"
@@ -17,7 +17,7 @@ class CreateSqlTools:
         """
         create table
         """
-        cols = [CreateSqlTools._describe(row) for index, row in meta.iterrows()]
+        cols = [CreateSqlTools._describe(row) for row in meta.itertuples(index=False)]
 
         prim_key = meta[meta[ADDREQ].apply(lambda x: x.is_key())][COLUMN]
         if not prim_key.empty:
@@ -39,12 +39,14 @@ class CreateSqlTools:
         )
 
         diffs = []
-        for index, row in comb_meta.iterrows():
-            if pd.isna(row[CURR_TYPE]):  # 变更前不存在
+        for row in comb_meta.itertuples():
+            if pd.isna(getattr(row, CURR_TYPE)):  # 变更前不存在
                 diffs.append(f"add column {CreateSqlTools._describe(row)}")
-            elif pd.isna(row[TYPE]):  # 变更后不存在
-                diffs.append(f"drop column `{row[COLUMN]}`")
-            elif row[CURR_TYPE] != row[TYPE] or row[CURR_ADDREQ] != row[ADDREQ]:  # 有变更
+            elif pd.isna(getattr(row, TYPE)):  # 变更后不存在
+                diffs.append(f"drop column `{getattr(row, COLUMN)}`")
+            elif (getattr(row, CURR_TYPE) != getattr(row, TYPE)) or (
+                getattr(row, CURR_ADDREQ) != getattr(row, ADDREQ)
+            ):  # 有变更
                 diffs.append(f"modify column {CreateSqlTools._describe(row)}")
                 # 否则什么都不做
 
@@ -54,5 +56,5 @@ class CreateSqlTools:
         return sql
 
     @staticmethod
-    def _describe(row: Series) -> str:
-        return f"`{row[COLUMN]}` {row[TYPE].sql_format()} {row[ADDREQ].sql_format()}"
+    def _describe(row: tuple) -> str:
+        return f"`{getattr(row, COLUMN)}` {getattr(row, TYPE).sql_format()} {getattr(row, ADDREQ).sql_format()}"

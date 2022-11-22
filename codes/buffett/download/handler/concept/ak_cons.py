@@ -1,7 +1,7 @@
 from typing import Optional
 
 from buffett.adapter.akshare import ak
-from buffett.adapter.pandas import DataFrame, Series, pd
+from buffett.adapter.pandas import DataFrame, pd
 from buffett.common import create_meta
 from buffett.common.constants.col.stock import CONCEPT_CODE, CONCEPT_NAME, CODE, NAME
 from buffett.common.constants.table import CNCP_CONS_LS
@@ -35,7 +35,7 @@ class ConceptConsHandler(FastHandler):
                 curr_step=ConceptConsHandler, pre_step=ConceptListHandler
             )
         cons = pd.concat(
-            [self._download_concept(row) for index, row in concepts.iterrows()]
+            [self._download_concept(row) for row in concepts.itertuples(index=False)]
         )
         Logger.info(f"Before filter, total record num is {len(cons)}.")
 
@@ -47,20 +47,20 @@ class ConceptConsHandler(FastHandler):
         return cons
 
     @staticmethod
-    def _download_concept(row: Series):
+    def _download_concept(row: tuple):
         """
         分别下载每个概念板块的成分股
 
         :param row:
         :return:
         """
-        cons = ak.stock_board_concept_cons_em(symbol=row[CONCEPT_NAME])
+        cons = ak.stock_board_concept_cons_em(symbol=getattr(row, CONCEPT_NAME))
         cons = DataFrame(
             {
                 CODE: cons[DM],
                 NAME: cons[MC],
-                CONCEPT_CODE: row[CONCEPT_CODE],
-                CONCEPT_NAME: row[CONCEPT_NAME],
+                CONCEPT_CODE: getattr(row, CONCEPT_CODE),
+                CONCEPT_NAME: getattr(row, CONCEPT_NAME),
             }
         )
         return cons

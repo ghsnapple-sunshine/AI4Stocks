@@ -54,8 +54,8 @@ class TableNameTool:
         spans = records[[START_DATE, END_DATE]].drop_duplicates()
         series = pd.concat(
             [
-                TableNameTool._create_single_series(span)
-                for index, span in spans.iterrows()
+                TableNameTool._create_single_series(row)
+                for row in spans.itertuples(index=False)
             ]
         )
         tables = pd.merge(records, series, how="left", on=[START_DATE, END_DATE])
@@ -68,15 +68,15 @@ class TableNameTool:
         return tables
 
     @classmethod
-    def _create_single_series(cls, spans: Series) -> DataFrame:
+    def _create_single_series(cls, spans: tuple) -> DataFrame:
         """
         获取指定时间范围内的时间分段清单
 
         :param spans:               时间范围
         :return:                    时间分段清单
         """
-        start = convert_datetime(spans[START_DATE])
-        end = convert_datetime(spans[END_DATE])
+        start = convert_datetime(getattr(spans, START_DATE))
+        end = convert_datetime(getattr(spans, END_DATE))
         month_start = DateTime(start.year, start.month, 1)
 
         dates = []

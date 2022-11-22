@@ -2,7 +2,7 @@ from pymysql import IntegrityError
 
 from buffett.adapter import logging
 from buffett.adapter.numpy import NAN, np
-from buffett.adapter.pandas import DataFrame, pd, Series
+from buffett.adapter.pandas import DataFrame, pd
 from buffett.common import create_meta
 from buffett.common.constants.col import (
     FREQ,
@@ -15,7 +15,7 @@ from buffett.common.constants.col import (
 )
 from buffett.common.constants.col.my import MONTH_START, DORCD_START, DORCD_END
 from buffett.common.constants.col.stock import CODE
-from buffett.common.pendulum import DateSpan, convert_datetime, DateTime
+from buffett.common.pendulum import DateSpan, DateTime, convert_datetime
 from buffett.common.tools import dataframe_not_valid, dataframe_is_valid
 from buffett.download.handler.tools.table_name import TableNameTool
 from buffett.download.mysql import Operator
@@ -27,8 +27,8 @@ from buffett.download.types import CombType
 
 _ADD_META = create_meta(meta_list=[[CODE, ColType.CODE, AddReqType.KEY]])
 
-_GROUP = "group_id"
-_GROUP_SIZE = 30
+GROUP = "group_id"
+GROUP_SIZE = 30
 
 
 class ReformHandler:
@@ -64,7 +64,7 @@ class ReformHandler:
         comb_records = self._get_comb_records()
 
         comb_records.groupby(
-            by=[_GROUP, FREQ, SOURCE, FUQUAN, START_DATE, END_DATE]
+            by=[GROUP, FREQ, SOURCE, FUQUAN, START_DATE, END_DATE]
         ).apply(lambda group: self._reform_n_save_data(group))
 
         self._reset_datas()
@@ -82,14 +82,10 @@ class ReformHandler:
         todo_records = self._dl_recorder.select_data()
         if dataframe_not_valid(todo_records):
             return
-        # todo_records = todo_records.drop_duplicates()
         done_records = self._rf_recorder.get_data()
         if dataframe_is_valid(done_records):
-            # self._done_records = done_records.drop_duplicates()
             self._done_records = done_records
-            todo_records = pd.concat(
-                [todo_records, self._done_records, self._done_records]
-            ).drop_duplicates(keep=False)
+            todo_records = pd.subtract(todo_records, done_records)
 
         self._todo_records = todo_records
 
@@ -102,8 +98,8 @@ class ReformHandler:
         stock_list = self._todo_records[[CODE]].drop_duplicates()
         row = stock_list.shape[0]
         group = np.linspace(0, row - 1, row, dtype=int)
-        group = [x // _GROUP_SIZE for x in group]
-        stock_list[_GROUP] = group
+        group = [x // GROUP_SIZE for x in group]
+        stock_list[GROUP] = group
         self._stock_group = stock_list
 
     def _get_comb_records(self) -> DataFrame:
@@ -133,63 +129,16 @@ class ReformHandler:
 
         :return:                    None
         """
-        todo_tables = self.create_multi_series(self._todo_records)
+        todo_tables = TableNameTool.get_multi_by_date(self._todo_records)
         if dataframe_is_valid(self._done_records):
-            done_tables = self.create_multi_series(self._done_records)
-            todo_tables = pd.concat(
-                [todo_tables, done_tables, done_tables]
-            ).drop_duplicates(keep=False)
+            done_tables = TableNameTool.get_multi_by_date(self._done_records)
+            todo_tables = pd.subtract(todo_tables, done_tables)
 
-        for index, row in todo_tables.iterrows():
-            para = (
-                Para()
-                .with_freq(row[FREQ])
-                .with_source(row[SOURCE])
-                .with_fuquan(row[FUQUAN])
-                .with_start(row[MONTH_START])
-            )
+        for row in todo_tables.itertuples(index=False):
+            para = Para.from_tuple(row).with_start(getattr(row, MONTH_START))
             table_name = TableNameTool.get_by_date(para=para)
             meta = self._get_meta_cache(para=para)
             self._operator.create_table(name=table_name, meta=meta)
-
-    @classmethod
-    def create_multi_series(cls, records: DataFrame) -> DataFrame:
-        """
-        生成已下载记录/待下载记录的Mysql表信息
-
-        :param records:             已下载记录/待下载记录
-        :return:
-        """
-        records = records[
-            [FREQ, SOURCE, FUQUAN, START_DATE, END_DATE]
-        ].drop_duplicates()
-        spans = records[[START_DATE, END_DATE]].drop_duplicates()
-        series = pd.concat(
-            [
-                ReformHandler._create_single_series(span)
-                for index, span in spans.iterrows()
-            ]
-        )
-        tables = pd.merge(records, series, how="left", on=[START_DATE, END_DATE])
-        return tables
-
-    @classmethod
-    def _create_single_series(cls, spans: Series) -> DataFrame:
-        """
-        获取指定时间范围内的时间分段清单
-
-        :param spans:               时间范围
-        :return:                    时间分段清单
-        """
-        start = convert_datetime(spans[START_DATE])
-        end = convert_datetime(spans[END_DATE])
-        month_start = DateTime(start.year, start.month, 1)
-
-        dates = []
-        while month_start < end:
-            dates.append([start, end, month_start])
-            month_start = month_start.add(months=1)
-        return DataFrame(dates, columns=[START_DATE, END_DATE, MONTH_START])
 
     def _get_meta_cache(self, para: Para) -> DataFrame:
         """
@@ -233,16 +182,11 @@ class ReformHandler:
         :return:
         """
         row = df.iloc[0]
-        para = (
-            Para()
-            .with_freq(row[FREQ])
-            .with_source(row[SOURCE])
-            .with_fuquan(row[FUQUAN])
-        )
+        para = Para.from_series(row)
         span = DateSpan(row[START_DATE], row[END_DATE])
         group_desc = "group {0}info {1}({2}-{3}) {4} {5}".format(
             para.comb.freq,
-            row[_GROUP],
+            row[GROUP],
             df[CODE].min(),
             df[CODE].max(),
             para.comb.fuquan,
@@ -253,7 +197,7 @@ class ReformHandler:
         data = pd.concat(
             [
                 self._get_required_data(row=row, para=para)
-                for index, row in df.iterrows()
+                for row in df.itertuples(index=False)
             ]
         )
         key = DATE if DATE in data.columns else DATETIME
@@ -266,7 +210,7 @@ class ReformHandler:
 
         logging.info(f"Successfully convert {group_desc}")
 
-    def _get_required_data(self, row: Series, para: Para) -> DataFrame:
+    def _get_required_data(self, row: tuple, para: Para) -> DataFrame:
         """
         按照指定的范围，读取数据
 
@@ -274,13 +218,13 @@ class ReformHandler:
         :param para                 freq, source, fuquan
         :return:
         """
-        para = para.with_code(row[CODE])
+        para = para.with_code(getattr(row, CODE))
         table_name_by_code = TableNameTool.get_by_code(para=para)
-        todo_span = DateSpan(start=row[START_DATE], end=row[END_DATE])
-        if pd.isna(row[DORCD_START]):
+        todo_span = DateSpan(start=getattr(row, START_DATE), end=getattr(row, END_DATE))
+        if pd.isna(getattr(row, DORCD_START)):
             todo_ls = [todo_span]
         else:
-            done_span = DateSpan(start=row[DORCD_START], end=row[DORCD_END])
+            done_span = DateSpan(getattr(row, DORCD_START), getattr(row, DORCD_END))
             todo_ls = todo_span.subtract(done_span)
         data = pd.concat(
             [
@@ -322,34 +266,36 @@ class ReformHandler:
         :return:
         """
         df = pd.concat(
-            [ReformHandler._get_reform_record(row) for index, row in df.iterrows()]
+            [
+                ReformHandler._get_reform_record(row)
+                for row in df.itertuples(index=False)
+            ]
         )
         self._rf_recorder.save_to_database(df=df)
 
     @classmethod
-    def _get_reform_record(cls, row: Series) -> DataFrame:
+    def _get_reform_record(cls, row: tuple) -> DataFrame:
         """
         获取转换记录（待转换+已转换）
 
         :param row:
         :return:
         """
-        todo_span = DateSpan(row[START_DATE], row[END_DATE])
-        if not pd.isna(row[DORCD_START]):
-            done_span = DateSpan(start=row[DORCD_START], end=row[DORCD_END])
+        todo_span = DateSpan(getattr(row, START_DATE), getattr(row, END_DATE))
+        if not pd.isna(getattr(row, DORCD_START)):
+            done_span = DateSpan(getattr(row, DORCD_START), getattr(row, DORCD_END))
             todo_span = todo_span.add(done_span)
         return DataFrame(
             [
-                [
-                    row[CODE],
-                    row[FREQ],
-                    row[SOURCE],
-                    row[FUQUAN],
-                    todo_span.start,
-                    todo_span.end,
-                ]
-            ],
-            columns=[CODE, FREQ, SOURCE, FUQUAN, START_DATE, END_DATE],
+                {
+                    CODE: getattr(row, CODE),
+                    FREQ: getattr(row, FREQ),
+                    SOURCE: getattr(row, SOURCE),
+                    FUQUAN: getattr(row, FUQUAN),
+                    START_DATE: todo_span.start,
+                    END_DATE: todo_span.end,
+                }
+            ]
         )
 
     # endregion

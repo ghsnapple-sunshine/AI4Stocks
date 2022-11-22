@@ -83,7 +83,10 @@ class ReformMaintain:
 
         dl_records[DL_ROW_NUM] = dl_records.apply(self._get_dl_row_num, axis=1)
         rf_records = pd.concat(
-            [self._get_rf_row_num(row) for index, row in table_names_by_date.iterrows()]
+            [
+                self._get_rf_row_num(row)
+                for row in table_names_by_date.itertuples(index=False)
+            ]
         )
         # ReformMaintain._save_report(rf_records)
         rf_records = (
@@ -122,49 +125,51 @@ class ReformMaintain:
         self._logger.get_data_info(table_name_by_code)
         return row_num
 
-    def _get_rf_row_num(self, row: Series) -> DataFrame:
+    def _get_rf_row_num(self, row: tuple) -> DataFrame:
         """
         获取某支股票在按照Date组织的表中的行数
 
         :param row:
         :return:
         """
-        span = DateSpan(row[START_DATE], row[END_DATE])
+        span = DateSpan(getattr(row, START_DATE), getattr(row, END_DATE))
         row_num = self._operator.select_row_num(
-            name=row[TABLE_NAME], span=span, groupby=[CODE]
+            name=getattr(row, TABLE_NAME), span=span, groupby=[CODE]
         )
         if dataframe_is_valid(row_num):
             row_num[FREQ], row_num[FUQUAN], row_num[SOURCE], row_num[TABLE_NAME] = (
-                row[FREQ],
-                row[FUQUAN],
-                row[SOURCE],
-                row[TABLE_NAME],
+                getattr(row, FREQ),
+                getattr(row, FUQUAN),
+                getattr(row, SOURCE),
+                getattr(row, TABLE_NAME),
             )
-        self._logger.get_data_info(row[TABLE_NAME])
+        self._logger.get_data_info(getattr(row, TABLE_NAME))
         return row_num
 
 
 class ReformMaintainLogger:
-    def start_date_error(self, row: Series):
+    def start_date_error(self, row: tuple):
         key = self._get_key(row)
         Logger.error(
-            f"In {key}, reform start at {row[START_DATE]} while record start at {row[DORCD_START]}."
+            f"In {key}, reform start at {getattr(row, START_DATE)} while record start at {getattr(row, DORCD_START)}."
         )
 
-    def end_date_error(self, row: Series):
+    def end_date_error(self, row: tuple):
         key = self._get_key(row)
         Logger.error(
-            f"In {key}, reform end at {row[END_DATE]} while record end at {row[DORCD_END]}."
+            f"In {key}, reform end at {getattr(row, END_DATE)} while record end at {getattr(row, DORCD_END)}."
         )
 
-    def data_num_error(self, row: Series):
+    def data_num_error(self, row: tuple):
         key = self._get_key(row)
         Logger.error(
-            f"In {key}, reform data count is {row[ROW_NUM]} while record data count is {row[DL_ROW_NUM]}"
+            f"In {key}, reform data count is {getattr(row, ROW_NUM)} while record data count is {getattr(row, DL_ROW_NUM)} "
         )
 
-    def get_data_info(self, table_name: str):
+    @staticmethod
+    def get_data_info(table_name: str):
         Logger.info(f"Successfully get data from {table_name}")
 
-    def _get_key(self, row: Series):
-        return f"{row[FREQ]}info {row[CODE]} {row[FUQUAN]}"
+    @staticmethod
+    def _get_key(row: tuple):
+        return f"{getattr(row, FREQ)}info {getattr(row, CODE)} {getattr(row, FUQUAN)}"

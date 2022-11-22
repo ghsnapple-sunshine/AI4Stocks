@@ -35,7 +35,7 @@ class IndustryConsHandler(FastHandler):
                 curr_step=IndustryConsHandler, pre_step=IndustryListHandler
             )
         cons = pd.concat(
-            [self._download_industry(row) for index, row in industries.iterrows()]
+            [self._download_industry(row) for row in industries.itertuples(index=False)]
         )
         Logger.info(f"Before filter, total record num is {len(cons)}.")
 
@@ -47,20 +47,20 @@ class IndustryConsHandler(FastHandler):
         return cons
 
     @staticmethod
-    def _download_industry(row: Series):
+    def _download_industry(row: tuple):
         """
         分别下载每个行业板块的成分股
 
         :param row:
         :return:
         """
-        cons = ak.stock_board_industry_cons_em(symbol=row[INDUSTRY_NAME])
+        cons = ak.stock_board_industry_cons_em(symbol=getattr(row, INDUSTRY_NAME))
         cons = DataFrame(
             {
                 CODE: cons[DM],
                 NAME: cons[MC],
-                INDUSTRY_CODE: row[INDUSTRY_CODE],
-                INDUSTRY_NAME: row[INDUSTRY_NAME],
+                INDUSTRY_CODE: getattr(row, INDUSTRY_CODE),
+                INDUSTRY_NAME: getattr(row, INDUSTRY_NAME),
             }
         )
         return cons

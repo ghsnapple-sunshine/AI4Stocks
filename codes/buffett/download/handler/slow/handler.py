@@ -64,7 +64,7 @@ class SlowHandler(Handler):
             todo_records=todo_records, done_records=done_records
         )
         tbs = [
-            self._download_n_save_1stock(row) for index, row in comb_records.iterrows()
+            self._download_n_save_1stock(row) for row in comb_records.itertuples(index=False)
         ]
         return tbs
 
@@ -151,15 +151,21 @@ class SlowHandler(Handler):
         )
         return todo_records
 
-    def _download_n_save_1stock(self, row: Series) -> None:
-        para = Para.from_series(series=row)
+    def _download_n_save_1stock(self, row: tuple) -> None:
+        """
+        下载某一只股票
 
-        todo_span = DateSpan(row[START_DATE], row[END_DATE])
-        if pd.isna(row[DORCD_START]):
+        :param row:
+        :return:
+        """
+        para = Para.from_tuple(tup=row)
+
+        todo_span = DateSpan(getattr(row, START_DATE), getattr(row, END_DATE))
+        if pd.isna(getattr(row, DORCD_START)):
             done_span = None
             data = self._download(para=para.with_span(todo_span))
         else:
-            done_span = DateSpan(row[DORCD_START], row[DORCD_END])
+            done_span = DateSpan(getattr(row, DORCD_START), getattr(row, DORCD_END))
             todo_ls = todo_span.subtract(done_span)
             if list_not_valid(todo_ls):
                 self._log_already_downloaded(para=para)
