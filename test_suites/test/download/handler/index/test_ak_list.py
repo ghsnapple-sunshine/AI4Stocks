@@ -18,7 +18,7 @@ class TestIndexListHandler(Tester):
         hdl = IndexListHandler(operator=self._operator)
         df1 = hdl.obtain_data()
         df2 = hdl.select_data()
-        assert self.compare_dataframe(df1, df2)
+        assert self.dataframe_equals(df1, df2)
 
     def _repeat_download(self):
         # 测试重复下载不报错

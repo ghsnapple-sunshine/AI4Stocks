@@ -16,7 +16,7 @@ class TradeCalendarHandlerTest(Tester):
         df1 = self._hdl.obtain_data()
         df2 = self._hdl.select_data()
         df2[DATE] = df2[DATE].apply(lambda x: str(x))
-        assert self.compare_dataframe(df1, df2)
+        assert self.dataframe_equals(df1, df2)
 
     def test_no_download(self):
         db = self._hdl.select_data()

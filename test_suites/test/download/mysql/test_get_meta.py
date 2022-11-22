@@ -34,7 +34,7 @@ class TestGetMeta(Tester):
         )
         table_name = TableNameTool.get_by_code(para=para)
         meta_get = self._operator.get_meta(name=table_name)
-        assert self.compare_dataframe(meta_get, A_META)
+        assert self.dataframe_equals(meta_get, A_META)
 
     def test_bs_minute(self):
         # 下载分钟线数据
@@ -48,4 +48,4 @@ class TestGetMeta(Tester):
         )
         table_name = TableNameTool.get_by_code(para=para)
         meta_get = self._operator.get_meta(name=table_name)
-        assert self.compare_dataframe(meta_get, B_META)
+        assert self.dataframe_equals(meta_get, B_META)

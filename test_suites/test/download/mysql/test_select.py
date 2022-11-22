@@ -41,7 +41,7 @@ class TestSelect(Tester):
 
     def test_select(self):
         db = self._operator.select_data(name=self._table_name)
-        assert self.compare_dataframe(db, self._df)
+        assert self.dataframe_equals(db, self._df)
 
     def test_select_row_num(self):
         db_row_num = self._operator.select_row_num(name=self._table_name)
@@ -52,7 +52,7 @@ class TestSelect(Tester):
         span = DateSpan(start=Date(2022, 1, 1), end=Date(2022, 1, 4))
         db = self._operator.select_data(name=self._table_name, span=span)
         df = self._df[self._df[DATETIME].apply(lambda x: span.is_inside(x))]
-        assert self.compare_dataframe(db, df)
+        assert self.dataframe_equals(db, df)
 
     def test_select_row_num_with_groupby(self):
         db = self._operator.select_row_num(
@@ -68,7 +68,7 @@ class TestSelect(Tester):
             )
         )
         df.reset_index(inplace=True, drop=True)
-        assert self.compare_dataframe(db, df)
+        assert self.dataframe_equals(db, df)
 
     def test_select_row_num_with_groupby_n_where(self):
         span = DateSpan(start=Date(2022, 1, 1), end=Date(2022, 1, 3))
@@ -83,4 +83,4 @@ class TestSelect(Tester):
             )
         )
         df.reset_index(inplace=True, drop=True)
-        assert self.compare_dataframe(db, df)
+        assert self.dataframe_equals(db, df)

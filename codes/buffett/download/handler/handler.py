@@ -9,9 +9,9 @@ class Handler:
         self._operator = operator
 
     @abstractmethod
-    def obtain_data(self, para: Para):
+    def obtain_data(self, *args, **kwargs):
         pass
 
     @abstractmethod
-    def select_data(self, para: Para):
+    def select_data(self, *args, **kwarg):
         pass
