@@ -15,13 +15,14 @@ def convert_date(dt: Optional[date]) -> Union[Date, DateTime, None]:
     """
     if isinstance(dt, datetime):
         return DateTime(
-            year=dt.year,
-            month=dt.month,
-            day=dt.day,
-            hour=dt.hour,
-            minute=dt.minute,
-            second=dt.second,
+            dt.year,
+            dt.month,
+            dt.day,
+            dt.hour,
+            dt.minute,
+            dt.second,
             microsecond=dt.microsecond,
+            tzinfo=dt.tzinfo,
         )
     elif isinstance(dt, date):
         return Date(dt.year, dt.month, dt.day)
@@ -39,13 +40,15 @@ def convert_datetime(dt: Optional[date]) -> Union[Date, DateTime, None]:
     """
     if isinstance(dt, datetime):
         return DateTime(
-            year=dt.year,
-            month=dt.month,
-            day=dt.day,
-            hour=dt.hour,
-            minute=dt.minute,
-            second=dt.second,
+            dt.year,
+            dt.month,
+            dt.day,
+            dt.hour,
+            dt.minute,
+            dt.second,
             microsecond=dt.microsecond,
+            tzinfo=dt.tzinfo,
+            fold=dt.fold,
         )
     elif isinstance(dt, date):
         return DateTime(dt.year, dt.month, dt.day)

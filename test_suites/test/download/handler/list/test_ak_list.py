@@ -18,7 +18,7 @@ class StockListHandlerTest(Tester):
     def _download(self):
         df1 = self._hdl.obtain_data()
         df2 = self._hdl.select_data()
-        assert self.dataframe_equals(df1, df2)
+        assert self.compare_dataframe(df1, df2)
         assert df1[CODE].apply(lambda x: x[0] != "4").all()
 
     def _repeat_download(self):

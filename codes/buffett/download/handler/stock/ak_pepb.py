@@ -1,29 +1,17 @@
 from typing import Optional
 
 from buffett.adapter.akshare import ak
-from buffett.adapter.pandas import DataFrame
-from buffett.common import create_meta
-from buffett.common.constants.col import (
-    DATE,
-    SYL,
-    DSYL,
-    SJL,
-    SXL,
-    DSXL,
-    GXL,
-    ZSZ,
-    DGXL,
-)
+from buffett.adapter.pandas import DataFrame, Series
+from buffett.adapter.wellknown import tqdm
+from buffett.common import create_meta, Code
+from buffett.common.constants.col import DATE, SYL, DSYL, SJL, SXL, DSXL, GXL, ZSZ, DGXL
 from buffett.common.constants.col.stock import CODE
+from buffett.common.constants.table import get_stock_pepb
 from buffett.common.tools import dataframe_not_valid
 from buffett.download import Para
+from buffett.download.handler import Handler
 from buffett.download.handler.list import StockListHandler
-from buffett.download.handler.medium import MediumHandler
-from buffett.download.handler.tools import TableNameTool
-from buffett.download.mysql import Operator
 from buffett.download.mysql.types import AddReqType, ColType
-from buffett.download.recorder import DownloadRecorder
-from buffett.download.types import SourceType, FuquanType, FreqType
 
 _RENAME = {
     "trade_date": DATE,
@@ -53,31 +41,30 @@ _META = create_meta(
 )
 
 
-class AkStockPePbHandler(MediumHandler):
-    def __init__(self, operator: Operator):
-        super(AkStockPePbHandler, self).__init__(
-            operator=operator,
-            list_handler=StockListHandler(operator=operator),
-            recorder=DownloadRecorder(operator=operator),
-            source=SourceType.AKSHARE_LGLG_PEPB,
-            fuquan=FuquanType.BFQ,
-            freq=FreqType.DAY,
-        )
+class AkStockPePbHandler(Handler):
+    def obtain_data(self, para: Para = None):
+        stocks = StockListHandler(self._operator).select_data()
+        with tqdm(total=len(stocks)) as pbar:
+            for index, row in stocks.iterrows():
+                self._download_and_save(row)
+                pbar.update(1)
 
-    def _download(self, tup: tuple) -> DataFrame:
-        code = getattr(tup, CODE)
-        pepb = ak.stock_a_lg_indicator(symbol=code)
+    def _download_and_save(self, row: Series) -> DataFrame:
+        pepb = ak.stock_a_lg_indicator(symbol=row[CODE])
         # rename
         pepb = pepb.rename(columns=_RENAME)
-        pepb[CODE] = code
+        pepb[CODE] = row[CODE]
+        table_name = get_stock_pepb(code=row[CODE])
+        self._operator.create_table(name=table_name, meta=_META)
+        self._operator.try_insert_data(
+            name=table_name, meta=_META, df=pepb, update=True
+        )
         return pepb
 
-    def _save_to_database(self, df: DataFrame, para: Para) -> None:
-        if dataframe_not_valid(df):
+    def select_data(self, para: Para = None) -> Optional[DataFrame]:
+        table_name = get_stock_pepb(code=para.stock.code)
+        pepb = self._operator.select_data(name=table_name)
+        if dataframe_not_valid(pepb):
             return
-        table_name = TableNameTool.get_by_code(para=para)
-        self._operator.create_table(name=table_name, meta=_META)
-        self._operator.insert_data(name=table_name, df=df)
-
-    def select_data(self, para: Para) -> Optional[DataFrame]:
-        return super(AkStockPePbHandler, self).select_data(para=para)
+        pepb[CODE] = pepb[CODE].apply(lambda x: Code(x))
+        return pepb

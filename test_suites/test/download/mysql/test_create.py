@@ -61,7 +61,7 @@ class TestCreate(Tester):
             name=self._table_name, meta=self._META, if_not_exist=False
         )
         meta = self._operator.get_meta(name=self._table_name)
-        assert self.dataframe_equals(self._META, meta)
+        assert self.compare_dataframe(self._META, meta)
 
     def test_add_column_fail(self):
         self._operator.create_table(
@@ -71,7 +71,7 @@ class TestCreate(Tester):
             name=self._table_name, meta=self._META2, if_not_exist=True
         )
         meta = self._operator.get_meta(name=self._table_name)
-        assert self.dataframe_equals(self._META, meta)
+        assert self.compare_dataframe(self._META, meta)
 
     def test_add_column_success(self):
         self._operator.create_table(
@@ -81,7 +81,7 @@ class TestCreate(Tester):
             name=self._table_name, meta=self._META2, update=True
         )
         meta = self._operator.get_meta(name=self._table_name)
-        assert self.dataframe_equals(self._META2, meta)
+        assert self.compare_dataframe(self._META2, meta)
 
     def test_modify_column(self):
         self._operator.create_table(
@@ -91,7 +91,7 @@ class TestCreate(Tester):
             name=self._table_name, meta=self._META3, update=True
         )
         meta = self._operator.get_meta(name=self._table_name)
-        assert self.dataframe_equals(self._META3, meta)
+        assert self.compare_dataframe(self._META3, meta)
 
     def test_drop_column(self):
         self._operator.create_table(
@@ -99,7 +99,7 @@ class TestCreate(Tester):
         )
         self._operator.create_table(name=self._table_name, meta=self._META, update=True)
         meta = self._operator.get_meta(name=self._table_name)
-        assert self.dataframe_equals(self._META, meta)
+        assert self.compare_dataframe(self._META, meta)
 
     def test_add_drop_column(self):
         self._operator.create_table(
@@ -109,7 +109,7 @@ class TestCreate(Tester):
             name=self._table_name, meta=self._META5, update=True
         )
         meta = self._operator.get_meta(name=self._table_name)
-        assert self.dataframe_equals(self._META5, meta)
+        assert self.compare_dataframe(self._META5, meta)
 
     def test_modify_drop_column(self):
         self._operator.create_table(
@@ -119,7 +119,7 @@ class TestCreate(Tester):
             name=self._table_name, meta=self._META4, update=True
         )
         meta = self._operator.get_meta(name=self._table_name)
-        assert self.dataframe_equals(self._META4, meta)
+        assert self.compare_dataframe(self._META4, meta)
 
     def test_add_modify_column(self):
         self._operator.create_table(
@@ -129,4 +129,4 @@ class TestCreate(Tester):
             name=self._table_name, meta=self._META3, update=True
         )
         meta = self._operator.get_meta(name=self._table_name)
-        assert self.dataframe_equals(self._META3, meta)
+        assert self.compare_dataframe(self._META3, meta)

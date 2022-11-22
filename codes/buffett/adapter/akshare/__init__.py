@@ -1,7 +1,6 @@
 from akshare import (
     index_stock_info as ak_index_stock_info,
     stock_board_concept_cons_em as ak_stock_board_concept_cons_em,
-    stock_board_concept_hist_em as ak_stock_board_concept_hist_em,
     stock_board_concept_name_em as ak_stock_board_concept_name_em,
     stock_board_industry_cons_em as ak_stock_board_industry_cons_em,
     stock_board_industry_name_em as ak_stock_board_industry_name_em,
@@ -11,7 +10,6 @@ from akshare import (
     stock_zh_a_hist as ak_stock_zh_a_hist,
     stock_zh_a_hist_min_em as ak_stock_zh_a_hist_min_em,
     stock_zh_a_spot_em as ak_stock_zh_a_spot_em,
-
 )
 
 from buffett.adapter.akshare.stock_a_lg_indicator import stock_a_lg_indicator
@@ -25,10 +23,6 @@ class ak:
     @staticmethod
     def stock_board_concept_cons_em(symbol: str):
         return ak_stock_board_concept_cons_em(symbol)
-
-    @staticmethod
-    def stock_board_concept_hist_em(symbol: str, adjust: str):
-        return ak_stock_board_concept_hist_em(symbol=symbol, adjust=adjust)
 
     @staticmethod
     def stock_board_concept_name_em():

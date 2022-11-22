@@ -1,4 +1,5 @@
 #
+import inspect
 import types
 from typing import Type, Any
 
@@ -48,10 +49,6 @@ def empty_init(self) -> None:
 
 def empty_method(*args, **kwargs) -> None:
     return
-
-
-def get_attr_safe(obj, att_name) -> None:
-    return getattr(obj, att_name) if hasattr(obj, att_name) else None
 
 
 def get_func_params(func) -> list[list[str, Any]]:

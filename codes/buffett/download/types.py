@@ -93,14 +93,12 @@ class SourceType(ComparableEnum):
     BAOSTOCK = 1
     AKSHARE_DONGCAI = 10
     AKSHARE_TONGHUASHUN = 11
-    AKSHARE_LGLG_PEPB = 12
 
     def sql_format(self):
         SOURCE_TYPE_DICT = {
             SourceType.BAOSTOCK: "bs",
             SourceType.AKSHARE_DONGCAI: "dc",
-            SourceType.AKSHARE_TONGHUASHUN: "th",
-            SourceType.AKSHARE_LGLG_PEPB: "lg_pepb",
+            SourceType.AKSHARE_TONGHUASHUN: "ths",
         }
         return SOURCE_TYPE_DICT[self]
 
@@ -109,7 +107,6 @@ class SourceType(ComparableEnum):
             SourceType.BAOSTOCK: "bs",
             SourceType.AKSHARE_DONGCAI: "ak(东财)",
             SourceType.AKSHARE_TONGHUASHUN: "ak(同花顺)",
-            SourceType.AKSHARE_LGLG_PEPB: "ak(乐股,PEPB)",
         }
         return SOURCE_TYPE_DICT[self]
 
@@ -118,16 +115,6 @@ class CombType:
     """
     封装类型，封装了FuquanType, SourceType, FreqType
     """
-
-    def __new__(
-        cls,
-        fuquan: Optional[FuquanType] = None,
-        source: Optional[SourceType] = None,
-        freq: Optional[FreqType] = None,
-    ):
-        if fuquan is None and source is None and freq is None:
-            return None
-        return super(CombType, cls).__new__(cls)
 
     def __init__(
         self,

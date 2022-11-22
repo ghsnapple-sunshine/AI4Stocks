@@ -35,11 +35,6 @@ class Code(str):
 
 
 class Stock:
-    def __new__(cls, code: Optional[Code] = None, name: Optional[str] = None):
-        if code is None and name is None:
-            return None
-        return super(Stock, cls).__new__(cls)
-
     def __init__(self, code: Optional[Code] = None, name: Optional[str] = None):
         self._code = code
         self._name = name

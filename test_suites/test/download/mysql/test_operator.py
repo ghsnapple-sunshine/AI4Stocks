@@ -57,7 +57,7 @@ class TestOperator(Tester):
     def _validate(self, ass_data: list) -> None:
         db = self._operator.select_data(self._table_name)
         ass_df = DataFrame(data=ass_data, columns=[CODE, NAME])
-        assert self.dataframe_equals(db, ass_df)
+        assert self.compare_dataframe(db, ass_df)
 
     def _select_data(self):
         db = self._operator.select_data("test")
