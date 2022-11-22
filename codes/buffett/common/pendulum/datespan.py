@@ -9,6 +9,11 @@ from buffett.common.pendulum.date import Date
 
 
 class DateSpan:
+    def __new__(cls, start: Optional[date] = None, end: Optional[date] = None):
+        if start is None and end is None:
+            return None
+        return super(DateSpan, cls).__new__(cls)
+
     # DateSpan所描述的范围为[start, end)
     def __init__(self, start: Optional[date] = None, end: Optional[date] = None):
         """
@@ -23,15 +28,14 @@ class DateSpan:
             raise ParamTypeError("start", Optional[date])
         if not is_end_date and end is not None:
             raise ParamTypeError("end", Optional[date])
-        if start is None and end is None:
-            raise ValueError("param 'start' and 'end' cannot be None at the mean time.")
-        elif is_start_date and is_end_date and start >= end:
-            raise ValueError(
-                f"Invalid datespan when 'start:{start}' later than or equals 'end:{end}'"
-            )
 
         self._start = convert_date(start)
         self._end = convert_date(end)
+
+        if is_start_date and is_end_date and self._start >= self._end:
+            raise ValueError(
+                f"Invalid datespan when 'start:{start}' later than or equals 'end:{end}'"
+            )
 
     def clone(self) -> DateSpan:
         """

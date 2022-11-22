@@ -1,6 +1,8 @@
 from buffett.adapter import pendulum
 from buffett.adapter.pandas import DataFrame
 from buffett.adapter.pendulum import date
+from buffett.common.constants.col import START_DATE, END_DATE
+from buffett.common.constants.col.stock import CODE
 from buffett.common.pendulum import Date, DateSpan, DateTime, Duration
 from test import SimpleTester
 
@@ -100,11 +102,21 @@ class PendulumTest(SimpleTester):
         assert dt1.subtract(days=1) == dt3
 
     @staticmethod
+    def test_sub2():
+        # failure from other tests
+        dt1 = DateTime(2022, 11, 21, 21, 38, 39)
+        dt2 = DateTime(2022, 11, 21, 21, 38, 43)
+        du = dt1 - dt2
+        assert du.seconds == -4
+
+    @staticmethod
     def test_now():
         now1 = DateTime.now()
         now2 = pendulum.DateTime.now()
         assert now1.year == now2.year
         assert now1.month == now2.month
+        assert now1.day == now2.day
+        assert now1.minute == now2.minute
 
     @staticmethod
     def test_span_add_sub():
@@ -131,6 +143,22 @@ class PendulumTest(SimpleTester):
             dt = DateTime(2022, 1, 1)
             df = DataFrame({"dt": [dt]})
             ts = df.loc[0, "dt"]
+            assert True  # when DataFrame() works, assert True
+        except Exception as e:
+            assert False
+
+    @staticmethod
+    def test_compatible_2_pandas2():
+        """
+        A failed trail from MediumHandler
+        :return:
+        """
+        try:
+            todo_records = DataFrame({CODE: ["000001", "000002"]})
+            todo_records[START_DATE] = DateTime(2022, 1, 1)
+            todo_records[END_DATE] = DateTime.today()
+            for index, row in todo_records.iterrows():
+                print(row[CODE])
             assert True  # when DataFrame() works, assert True
         except Exception as e:
             assert False

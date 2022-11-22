@@ -5,12 +5,16 @@ from pandas import (
     isna as pd_isna,
     merge as pd_merge,
     to_datetime as pd_to_datetime,
+    Timestamp as pd_Timestamp,
+    Timedelta as pd_Timedelta,
 )
 
 # constants
 
 # types
 DataFrame = pd_DataFrame
+Timestamp = pd_Timestamp
+Timedelta = pd_Timedelta
 Series = pd_Series
 
 
