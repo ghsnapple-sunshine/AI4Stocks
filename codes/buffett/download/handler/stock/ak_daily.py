@@ -82,7 +82,7 @@ class AkDailyHandler(SlowHandler):
         )
 
         # 重命名
-        daily_info.rename(columns=_RENAME, inplace=True)
+        daily_info = daily_info.rename(columns=_RENAME)
         return daily_info
 
     def _save_to_database(self, table_name: str, df: DataFrame) -> None:

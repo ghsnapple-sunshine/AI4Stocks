@@ -13,8 +13,6 @@ from buffett.download.handler.fast.handler import FastHandler
 from buffett.download.mysql import Operator
 from buffett.download.mysql.types import ColType, AddReqType
 
-_RENAME_DICT = {"calendar_date": DATE}
-
 _META = create_meta(meta_list=[[DATE, ColType.DATE, AddReqType.NONE]])
 
 
@@ -38,9 +36,8 @@ class CalendarHandler(FastHandler):
 
         # 仅保留交易日
         calendar = calendar[calendar["is_trading_day"] == "1"]
-
-        calendar.rename(columns=_RENAME_DICT, inplace=True)
-        calendar = calendar[[DATE]]
+        # 保留有用列
+        calendar = DataFrame({DATE: calendar["calendar_date"]})
 
         return calendar
 

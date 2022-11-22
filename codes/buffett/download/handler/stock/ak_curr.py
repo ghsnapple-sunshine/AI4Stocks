@@ -81,9 +81,9 @@ class AkCurrHandler(FastHandler):
     def _download(self) -> DataFrame:
         curr_info = ak.stock_zh_a_spot_em()
         now = DateTime.now()
-        curr_info.rename(columns=_RENAME, inplace=True)
+        curr_info = curr_info.rename(columns=_RENAME)
         curr_info = curr_info[list(_RENAME.values())]
-        curr_info[DATETIME] = pd.to_datetime(now.format("YYYY-MM-DDTHH:mm:ss"))
+        curr_info[DATETIME] = now
         return curr_info
 
     def _save_to_database(self, df: DataFrame) -> None:

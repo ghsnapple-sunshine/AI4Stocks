@@ -143,7 +143,7 @@ class AkStockDividendHandler(Handler):
                 for x in time_series
             ]
         )  # XXXX-[6-30|12-31]
-        data.rename(columns=_RENAME, inplace=True)
+        data = data.rename(columns=_RENAME)
         del data[MC]
         return data
 

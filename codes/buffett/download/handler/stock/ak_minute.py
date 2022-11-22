@@ -77,7 +77,7 @@ class AkMinuteHandler(SlowHandler):
             adjust=para.comb.fuquan.ak_format(),
         )
 
-        minute_info.rename(columns=_RENAME, inplace=True)  # 重命名
+        minute_info = minute_info.rename(columns=_RENAME)  # 重命名
         return minute_info
 
     def _save_to_database(self, table_name: str, df: DataFrame):

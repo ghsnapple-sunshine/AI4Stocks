@@ -143,8 +143,8 @@ class SlowHandler(Handler):
             todo_records[DORCD_END] = NAN
             return todo_records
 
-        done_records.rename(
-            columns={START_DATE: DORCD_START, END_DATE: DORCD_END}, inplace=True
+        done_records = done_records.rename(
+            columns={START_DATE: DORCD_START, END_DATE: DORCD_END}
         )
         todo_records = pd.merge(
             todo_records, done_records, how="left", on=[CODE, FREQ, SOURCE, FUQUAN]

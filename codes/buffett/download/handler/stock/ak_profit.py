@@ -60,11 +60,11 @@ class AkProfitHandler(FastHandler):
         :return:
         """
         profit = ak.stock_profit_forecast()
-        profit.rename(columns=_RENAME, inplace=True)
-        cols = [YEAR2021, YEAR2022, YEAR2023, YEAR2024]
+        profit = profit.rename(columns=_RENAME)
+        # cols = [YEAR2021, YEAR2022, YEAR2023, YEAR2024]
         code_n_cols = [CODE, YEAR2021, YEAR2022, YEAR2023, YEAR2024]
-        for col in cols:
-            profit[col] = profit[col].apply(lambda x: round(x, 3))  # 保留3位小数
+        # for col in cols:
+        #     profit[col] = profit[col].apply(lambda x: round(x, 3))  # 保留3位小数
         profit = profit[code_n_cols]
         profit = profit.drop_duplicates()  # akshare下载完带有重复数据
 
@@ -82,4 +82,4 @@ class AkProfitHandler(FastHandler):
         if dataframe_not_valid(df):
             return
         self._operator.create_table(name=STK_PROFIT, meta=_META)
-        self._operator.insert_data(name=STK_PROFIT, df=df)
+        self._operator.try_insert_data(name=STK_PROFIT, df=df)

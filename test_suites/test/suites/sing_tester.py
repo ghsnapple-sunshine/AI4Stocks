@@ -2,6 +2,7 @@ from abc import abstractmethod
 from typing import final
 from unittest import TestCase
 
+from buffett.adapter.datacompy import compare
 from buffett.adapter.pandas import DataFrame, pd
 from buffett.common.magic import get_class
 
@@ -51,7 +52,9 @@ class SimpleTester(TestCase):
         :return:
         """
         cmp = pd.concat([df1, df2]).drop_duplicates(keep=False).empty
-        if not cmp:
-            print(df1)
-            print(df2)
         return cmp
+
+    @staticmethod
+    def dataframe_almost_equals(df1: DataFrame, df2: DataFrame, join: list):
+        res = compare(df1, df2, join_columns=join, rel_tol=1e-5)
+        return res.matches()
