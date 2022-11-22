@@ -64,7 +64,8 @@ class SlowHandler(Handler):
             todo_records=todo_records, done_records=done_records
         )
         tbs = [
-            self._download_n_save_1stock(row) for row in comb_records.itertuples(index=False)
+            self._download_n_save_1stock(row)
+            for row in comb_records.itertuples(index=False)
         ]
         return tbs
 

@@ -11,7 +11,6 @@ from akshare import (
     stock_zh_a_hist as ak_stock_zh_a_hist,
     stock_zh_a_hist_min_em as ak_stock_zh_a_hist_min_em,
     stock_zh_a_spot_em as ak_stock_zh_a_spot_em,
-
 )
 
 from buffett.adapter.akshare.stock_a_lg_indicator import stock_a_lg_indicator

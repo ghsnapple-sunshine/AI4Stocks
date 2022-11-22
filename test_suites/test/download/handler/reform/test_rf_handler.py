@@ -54,7 +54,8 @@ class ReformHandlerTest(Tester):
         assert dl_data == rf_data
         dl_record = DownloadRecorder(operator=self._operator).select_data()
         rf_record = ReformRecorder(operator=self._operator).get_data()
-        assert pd.concat([dl_record, rf_record]).drop_duplicates(keep=False).empty
+        # assert pd.concat([dl_record, rf_record]).drop_duplicates(keep=False).empty
+        assert self.compare_dataframe(dl_record, rf_record)
 
     def test_ak_daily_10days(self):
         """

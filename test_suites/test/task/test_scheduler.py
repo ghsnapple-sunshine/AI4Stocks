@@ -116,8 +116,9 @@ class TestTaskScheduler(Tester):
             }
         )
 
-        cmp = pd.concat([actual, expect]).drop_duplicates(keep=False)
-        assert cmp.empty
+        # cmp = pd.concat([actual, expect]).drop_duplicates(keep=False)
+        # assert cmp.empty
+        assert self.compare_dataframe(actual, expect)
 
     def test_run_with_oneoff_task_n_delay(self):
         """
