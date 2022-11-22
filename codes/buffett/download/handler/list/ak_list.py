@@ -15,7 +15,7 @@ from buffett.download.mysql.types import ColType, AddReqType
 _META = create_meta(
     meta_list=[
         [CODE, ColType.CODE, AddReqType.KEY],
-        [NAME, ColType.CODE, AddReqType.NONE],
+        [NAME, ColType.STOCK_NAME, AddReqType.NONE],
     ]
 )
 
@@ -33,15 +33,12 @@ class StockListHandler(FastHandler):
     def _save_to_database(self, df: DataFrame) -> None:
         if dataframe_not_valid(df):
             return
-
         self._operator.create_table(name=STK_LS, meta=_META)
         self._operator.try_insert_data(name=STK_LS, df=df, update=True, meta=_META)
-        self._operator.disconnect()
 
     def select_data(self, para: Para = None) -> Optional[DataFrame]:
         df = self._operator.select_data(STK_LS)
         if dataframe_not_valid(df):
             return
-
         df[CODE] = df[CODE].apply(lambda x: Code(x))
         return df
