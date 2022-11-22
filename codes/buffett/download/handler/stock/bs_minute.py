@@ -4,6 +4,7 @@ from buffett.common import create_meta
 from buffett.common.constants.col import DATETIME, OPEN, CLOSE, HIGH, LOW, CJL, CJE
 from buffett.common.pendulum import convert_datetime
 from buffett.download import Para
+from buffett.download.handler.list import StockListHandler
 from buffett.download.handler.slow import SlowHandler
 from buffett.download.handler.tools import (
     bs_str_to_datetime,
@@ -13,6 +14,7 @@ from buffett.download.handler.tools import (
 from buffett.download.handler.tools.table_name import TableNameTool
 from buffett.download.mysql import Operator
 from buffett.download.mysql.types import ColType, AddReqType
+from buffett.download.recorder import DownloadRecorder
 from buffett.download.types import SourceType, FuquanType, FreqType
 
 _RENAME = {"time": DATETIME, "volume": CJL, "amount": CJE}
@@ -32,10 +34,14 @@ _META = create_meta(
 
 class BsMinuteHandler(SlowHandler):
     def __init__(self, operator: Operator):
-        super().__init__(operator)
-        self._source = SourceType.BAOSTOCK
-        self._fuquans = [FuquanType.BFQ]
-        self._freq = FreqType.MIN5
+        super().__init__(
+            operator=operator,
+            list_handler=StockListHandler(operator=operator),
+            recorder=DownloadRecorder(operator=operator),
+            source=SourceType.BAOSTOCK,
+            fuquans=[FuquanType.BFQ],
+            freq=FreqType.MIN5,
+        )
 
     def _download(self, para: Para) -> DataFrame:
         bs.login()

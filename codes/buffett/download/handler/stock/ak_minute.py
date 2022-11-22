@@ -17,10 +17,12 @@ from buffett.common.constants.col import (
 from buffett.common.pendulum import convert_datetime
 from buffett.common.tools import dataframe_not_valid
 from buffett.download import Para
+from buffett.download.handler.list import StockListHandler
 from buffett.download.handler.slow.handler import SlowHandler
 from buffett.download.handler.tools.table_name import TableNameTool
 from buffett.download.mysql import Operator
 from buffett.download.mysql.types import ColType, AddReqType
+from buffett.download.recorder import DownloadRecorder
 from buffett.download.types import SourceType, FuquanType, FreqType
 
 _RENAME = {
@@ -56,10 +58,14 @@ _META = create_meta(
 
 class AkMinuteHandler(SlowHandler):
     def __init__(self, operator: Operator):
-        super().__init__(operator)
-        self._source = SourceType.AKSHARE_DONGCAI
-        self._fuquans = [FuquanType.BFQ]
-        self._freq = FreqType.MIN5
+        super().__init__(
+            operator=operator,
+            list_handler=StockListHandler(operator=operator),
+            recorder=DownloadRecorder(operator=operator),
+            source=SourceType.AKSHARE_DONGCAI,
+            fuquans=[FuquanType.BFQ],
+            freq=FreqType.MIN5,
+        )
 
     def _download(self, para: Para) -> DataFrame:
         # 使用接口（stock_zh_a_hist_min_em，源：东财）,code为Str6
