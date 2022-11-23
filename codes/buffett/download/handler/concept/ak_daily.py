@@ -2,7 +2,7 @@ from typing import Optional
 
 from buffett.adapter.akshare import ak
 from buffett.adapter.pandas import DataFrame
-from buffett.common import create_meta, Code
+from buffett.common import create_meta
 from buffett.common.constants.col import (
     DATE,
     OPEN,
@@ -16,7 +16,7 @@ from buffett.common.constants.col import (
     ZDE,
     HSL,
 )
-from buffett.common.constants.col.stock import NAME, CONCEPT_CODE, CONCEPT_NAME
+from buffett.common.constants.col.stock import CONCEPT_CODE, CONCEPT_NAME
 from buffett.common.pendulum import Date
 from buffett.common.tools import dataframe_not_valid
 from buffett.download import Para
@@ -65,7 +65,7 @@ class AkConceptDailyHandler(MediumHandler):
             operator=operator,
             list_handler=ConceptListHandler(operator=operator),
             recorder=DownloadRecorder(operator=operator),
-            source=SourceType.AKSHARE_LGLG_PEPB,
+            source=SourceType.AKSHARE_DONGCAI_CONCEPT,
             fuquan=FuquanType.BFQ,
             freq=FreqType.DAY,
             field_code=CONCEPT_CODE,
@@ -73,7 +73,7 @@ class AkConceptDailyHandler(MediumHandler):
         )
 
     def _download(self, row: tuple) -> DataFrame:
-        # 使用接口（stock_board_concept_hist_em，源：东财）,code为Str6
+        # 使用接口（stock_board_concept_hist_em，源：东财）,采用name作为symbol
         daily_info = ak.stock_board_concept_hist_em(
             symbol=getattr(row, self._NAME),
             adjust=self._fuquan.ak_format(),
