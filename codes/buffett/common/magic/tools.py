@@ -1,5 +1,5 @@
 #
-import types
+from types import FunctionType
 from typing import Type, Any
 
 from buffett.adapter.importlib import import_module
@@ -74,6 +74,14 @@ def get_func_params(func) -> list[list[str, Any]]:
         ]
         for i in range(0, names_count)
     ]
-    if isinstance(func, types.FunctionType):
+    if isinstance(func, FunctionType):
         return results
     return results[1 : len(results)]  # 如果不是functionType则会自动忽略第一个参数
+
+
+def get_func_full_name(func):
+    caller = get_self(func)
+    cls_or_mdl = (
+        get_module_name(func) if caller is None else get_class_name(caller)
+    )
+    return f"{cls_or_mdl}.{get_name(func)}"

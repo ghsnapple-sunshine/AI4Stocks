@@ -14,9 +14,6 @@ ResultData = bs_ResultData
 
 
 class bs:
-    login = bs_login
-    logout = bs_logout
-
     @staticmethod
     def query_history_k_data_plus(
         code: str,
@@ -26,7 +23,8 @@ class bs:
         frequency: str,
         adjustflag: str,
     ):
-        return bs._resultdata_to_dataframe(
+        bs_login()
+        result = bs._resultdata_to_dataframe(
             bs_query_history_k_data_plus(
                 code,
                 fields,
@@ -36,18 +34,26 @@ class bs:
                 adjustflag=adjustflag,
             )
         )
+        bs_logout()
+        return result
 
     @staticmethod
     def query_money_supply_data_month(start_date: str, end_date: str):
-        return bs._resultdata_to_dataframe(
+        bs_login()
+        result = bs._resultdata_to_dataframe(
             bs_query_money_supply_data_month(start_date=start_date, end_date=end_date)
         )
+        bs_logout()
+        return result
 
     @staticmethod
     def query_trade_dates(start_date: str, end_date: str):
-        return bs._resultdata_to_dataframe(
+        bs_login()
+        result = bs._resultdata_to_dataframe(
             bs_query_trade_dates(start_date=start_date, end_date=end_date)
         )
+        bs_logout()
+        return result
 
     @staticmethod
     def _resultdata_to_dataframe(self: ResultData) -> DataFrame:

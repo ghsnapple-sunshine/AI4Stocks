@@ -22,12 +22,6 @@ class CalendarHandler(FastHandler):
         super().__init__(operator)
 
     def _download(self) -> DataFrame:
-        #### 登陆系统 ####
-        lg = bs.login()
-        # 显示登陆返回信息
-        logging.info("login respond error_code:" + lg.error_code)
-        logging.info("login respond  error_msg:" + lg.error_msg)
-
         #### 获取交易日信息 ####
         calendar = bs.query_trade_dates(
             start_date="2000-01-01",

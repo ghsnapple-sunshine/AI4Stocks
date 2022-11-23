@@ -44,8 +44,6 @@ class BsMinuteHandler(SlowHandler):
         )
 
     def _download(self, para: Para) -> DataFrame:
-        bs.login()
-
         fields = "time,open,high,low,close,volume,amount"
         minute_info = bs.query_history_k_data_plus(
             code=para.stock.code.to_code9(),
@@ -76,7 +74,6 @@ class BsMinuteHandler(SlowHandler):
         minute_info[CJL] = minute_info[CJL].apply(lambda x: bs_check_int(x))
         minute_info[CJE] = minute_info[CJE].apply(lambda x: bs_check_float(x))
 
-        bs.logout()
         return minute_info
 
     def _save_to_database(self, table_name: str, df: DataFrame) -> None:

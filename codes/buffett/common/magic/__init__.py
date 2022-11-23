@@ -8,6 +8,7 @@ from buffett.common.magic.tools import (
     load_class,
     empty_init,
     empty_method,
+    get_func_full_name
 )
 
 # TODO: About to remove this.

@@ -1,5 +1,5 @@
 from buffett.adapter.akshare import ak
-from buffett.common.magic.tools import get_func_params
+from buffett.common.magic.tools import get_func_params, get_func_full_name
 from test import SimpleTester
 from test.suites.acc import Accelerator
 
@@ -94,3 +94,11 @@ class TestMagic(SimpleTester):
             ["adjust", None],
         ]
         assert actual == expectation
+
+    def test_get_func_full_name(self):
+        class InnerA:
+            def print(self):
+                pass
+
+        assert get_func_full_name(InnerA.print) == "test.common.test_magic.print"
+        assert get_func_full_name(InnerA().print) == "InnerA.print"

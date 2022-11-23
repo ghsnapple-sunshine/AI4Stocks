@@ -131,15 +131,15 @@ class TestTaskScheduler(Tester):
         sch = TaskScheduler(
             operator=self._operator,
             tasks=[
-                OneOffTaskA(start_time=DateTime.now() + Duration(seconds=5)),
-                OneOffTaskB(start_time=DateTime.now() + Duration(seconds=10)),
+                OneOffTaskA(start_time=DateTime.now() + Duration(seconds=2)),
+                OneOffTaskB(start_time=DateTime.now() + Duration(seconds=4)),
                 OneOffTaskC(start_time=DateTime.now()),
             ],
         )
         sch.run()
         end = DateTime.now()
         # delay10s，但是实际只用了9.xs，原因是存入数据库时未保存microseconds，产生了误差。
-        assert end - start >= Duration(seconds=9)
+        assert end - start >= Duration(seconds=3)
 
     def test_run_with_new_task_n_error(self):
         DbSweeper.cleanup()
@@ -169,8 +169,8 @@ class TestTaskScheduler(Tester):
         sch = TaskScheduler(
             operator=self._operator,
             tasks=[
-                OneOffTaskA(start_time=DateTime.now() - Duration(seconds=1)),
-                OneOffTaskB(start_time=DateTime.now() - Duration(seconds=2)),
+                OneOffTaskA(start_time=DateTime.now() - Duration(seconds=0.1)),
+                OneOffTaskB(start_time=DateTime.now() - Duration(seconds=0.2)),
                 PerfectTask(start_time=DateTime.now()),
             ],
         )
@@ -180,6 +180,6 @@ class TestTaskScheduler(Tester):
         InnerD.COUNT = 0
         sch = TaskScheduler(
             operator=self._operator,
-            tasks=[OneOffTaskA(start_time=DateTime.now() - Duration(seconds=1))],
+            tasks=[OneOffTaskA(start_time=DateTime.now() - Duration(seconds=0.1))],
         )
         sch.run()

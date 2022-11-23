@@ -5,6 +5,8 @@ from pandas import (
     isna as pd_isna,
     merge as pd_merge,
     to_datetime as pd_to_datetime,
+    read_csv as pd_read_csv,
+    read_feather as pd_read_feather,
     Timestamp as pd_Timestamp,
     Timedelta as pd_Timedelta,
 )
@@ -23,6 +25,8 @@ class pd:
     concat = pd_concat
     isna = pd_isna
     merge = pd_merge
+    read_csv = pd_read_csv
+    read_feather = pd_read_feather
     to_datetime = pd_to_datetime
 
     # new_add_methods

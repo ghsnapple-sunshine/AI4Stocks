@@ -59,8 +59,6 @@ class BsMoneySupplyHandler(FastHandler):
         super().__init__(operator=operator)
 
     def _download(self) -> DataFrame:
-        bs.login()
-
         money_supply = bs.query_money_supply_data_month(
             start_date="2000-01", end_date=Date.today().format("YYYY-MM")
         )
@@ -71,7 +69,6 @@ class BsMoneySupplyHandler(FastHandler):
             lambda row: Date(int(row[_YEAR]), int(row[_MONTH]), 1), axis=1
         )
         del money_supply[_YEAR], money_supply[_MONTH]
-        bs.logout()
         return money_supply
 
     def _save_to_database(self, df: DataFrame) -> None:
