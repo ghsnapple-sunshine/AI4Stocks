@@ -1,8 +1,10 @@
+from typing import Optional
+
 from buffett.adapter.baostock import bs
 from buffett.adapter.pandas import DataFrame
 from buffett.common import create_meta
 from buffett.common.constants.col import DATETIME, OPEN, CLOSE, HIGH, LOW, CJL, CJE
-from buffett.common.pendulum import convert_datetime
+from buffett.common.tools import dataframe_not_valid
 from buffett.download import Para
 from buffett.download.handler.list import StockListHandler
 from buffett.download.handler.slow import SlowHandler
@@ -43,7 +45,7 @@ class BsMinuteHandler(SlowHandler):
             freq=FreqType.MIN5,
         )
 
-    def _download(self, para: Para) -> DataFrame:
+    def _download(self, para: Para) -> Optional[DataFrame]:
         fields = "time,open,high,low,close,volume,amount"
         minute_info = bs.query_history_k_data_plus(
             code=para.stock.code.to_code9(),
@@ -53,17 +55,17 @@ class BsMinuteHandler(SlowHandler):
             end_date=para.span.end.format("YYYY-MM-DD"),
             adjustflag=para.comb.fuquan.bs_format(),
         )
+        if dataframe_not_valid(minute_info):
+            return
 
         # 重命名
         minute_info = minute_info.rename(columns=_RENAME)
-
         # 按照start_date和end_date过滤数据
         minute_info[DATETIME] = minute_info[DATETIME].apply(
             lambda x: bs_str_to_datetime(x)
         )
         minute_info = minute_info[
-            (minute_info[DATETIME] >= convert_datetime(para.span.start))
-            & (minute_info[DATETIME] <= convert_datetime(para.span.end))
+            minute_info[DATETIME].apply(lambda x: para.span.is_inside(x))
         ]
 
         # 更改类型
