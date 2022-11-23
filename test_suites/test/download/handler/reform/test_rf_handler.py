@@ -1,9 +1,7 @@
 from typing import Type, Union
 
 from buffett.adapter.numpy import np
-from buffett.adapter.pandas import pd
 from buffett.common import Code
-from buffett.common.constants.table import STK_LS
 from buffett.common.pendulum import Date
 from buffett.download import Para
 from buffett.download.handler.reform import ReformHandler as RHandler

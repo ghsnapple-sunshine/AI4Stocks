@@ -1,13 +1,20 @@
 from __future__ import annotations
 
-from typing import Optional
+from typing import Optional, Union
 
 from buffett.adapter.numpy import NAN
 from buffett.adapter.pandas import Series, DataFrame, pd
 from buffett.adapter.pendulum import date
 from buffett.common import Code
 from buffett.common.constants.col import FREQ, SOURCE, FUQUAN, START_DATE, END_DATE
-from buffett.common.constants.col.stock import CODE, NAME
+from buffett.common.constants.col.stock import (
+    CODE,
+    NAME,
+    CONCEPT_CODE,
+    CONCEPT_NAME,
+    INDUSTRY_CODE,
+    INDUSTRY_NAME,
+)
 from buffett.common.magic import get_attr_safe
 from buffett.common.pendulum import DateSpan
 from buffett.common.stock import Stock
@@ -43,24 +50,121 @@ class Para:
         :param series:
         :return:
         """
-        left = DataFrame(index=[CODE, NAME, FREQ, SOURCE, FUQUAN, START_DATE, END_DATE])
+        left = DataFrame(
+            index=[
+                CODE,
+                NAME,
+                CONCEPT_CODE,
+                CONCEPT_NAME,
+                INDUSTRY_CODE,
+                INDUSTRY_NAME,
+                FREQ,
+                SOURCE,
+                FUQUAN,
+                START_DATE,
+                END_DATE,
+            ]
+        )
         right = DataFrame({0: series})
         merge = pd.merge(left, right, how="left", left_index=True, right_index=True)
         merge = merge.replace({NAN: None})
-        code, name, freq, source, fuquan, start_date, end_date = merge[0]
-        return cls._create_para(code, name, freq, fuquan, source, start_date, end_date)
+        (
+            code,
+            name,
+            concept_code,
+            concept_name,
+            industry_code,
+            industry_name,
+            freq,
+            source,
+            fuquan,
+            start_date,
+            end_date,
+        ) = merge[0]
+        return cls._create_para(
+            code,
+            name,
+            concept_code,
+            concept_name,
+            industry_code,
+            industry_name,
+            freq,
+            fuquan,
+            source,
+            start_date,
+            end_date,
+        )
 
     @classmethod
     def from_tuple(cls, tup: tuple) -> Para:
-        code, name, freq, source, fuquan, start_date, end_date = (
+        """
+        从tuple中创建para
+
+        :param tup:
+        :return:
+        """
+        (
+            code,
+            name,
+            concept_code,
+            concept_name,
+            industry_code,
+            industry_name,
+            freq,
+            source,
+            fuquan,
+            start_date,
+            end_date,
+        ) = (
             get_attr_safe(tup, x)
-            for x in (CODE, NAME, FREQ, SOURCE, FUQUAN, START_DATE, END_DATE)
+            for x in (
+                CODE,
+                NAME,
+                CONCEPT_CODE,
+                CONCEPT_NAME,
+                INDUSTRY_CODE,
+                INDUSTRY_NAME,
+                FREQ,
+                SOURCE,
+                FUQUAN,
+                START_DATE,
+                END_DATE,
+            )
         )
-        return cls._create_para(code, name, freq, fuquan, source, start_date, end_date)
+        return cls._create_para(
+            code,
+            name,
+            concept_code,
+            concept_name,
+            industry_code,
+            industry_name,
+            freq,
+            fuquan,
+            source,
+            start_date,
+            end_date,
+        )
 
     @classmethod
-    def _create_para(cls, code, name, freq, fuquan, source, start_date, end_date):
+    def _create_para(
+        cls,
+        code,
+        name,
+        concept_code,
+        concept_name,
+        industry_code,
+        industry_name,
+        freq,
+        fuquan,
+        source,
+        start_date,
+        end_date,
+    ) -> Para:
         stock = Stock(code=code, name=name)
+        if stock is None:
+            stock = Stock(code=concept_code, name=concept_name)
+        if stock is None:
+            stock = Stock(code=industry_code, name=industry_name)
         comb = CombType(freq=freq, source=source, fuquan=fuquan)
         span = DateSpan(start=start_date, end=end_date)
         return Para(stock=stock, comb=comb, span=span)
@@ -77,7 +181,7 @@ class Para:
             self._stock = stock
         return self
 
-    def with_code(self, code: Code, condition: bool = True) -> Para:
+    def with_code(self, code: Union[Code, str], condition: bool = True) -> Para:
         """
         条件设置stock.code并返回自身
 
@@ -87,6 +191,8 @@ class Para:
         """
         if condition:
             if self._stock is None:
+                if isinstance(code, str):
+                    code = Code(code)
                 self._stock = Stock(code=code)
             else:
                 self._stock.with_code(code)

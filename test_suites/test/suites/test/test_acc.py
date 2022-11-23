@@ -18,7 +18,7 @@ class TestAccelerator(SimpleTester):
         start = DateTime.now()
         self._atom_download()
         duration = DateTime.now() - start
-        assert ('buffett.adapter.akshare.stock_info_a_code_name',) in Accelerator._cache
+        assert ("buffett.adapter.akshare.stock_info_a_code_name",) in Accelerator._cache
         assert duration.total_seconds() < 0.1
 
     def test_signature(self):

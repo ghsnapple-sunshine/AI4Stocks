@@ -5,10 +5,13 @@ from buffett.common.pendulum.duration import Duration
 
 
 class Date(PDate):
-    """
-    def to_datetime(self):
-        return DateTime(self.year, self.month, self.day)
-    """
+    @staticmethod
+    def from_str(dt: str, sep="-") -> Date:
+        seplen = len(sep)
+        year = int(dt[:4])
+        month = int(dt[4 + seplen : 6 + seplen])
+        day = int(dt[-2:])
+        return Date(year=year, month=month, day=day)
 
     def __lt__(self, other) -> bool:
         if isinstance(other, datetime):

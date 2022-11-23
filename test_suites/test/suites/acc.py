@@ -62,9 +62,7 @@ class Accelerator:
         if path.isfile(cls._index_path):  # index file exists
             with open(cls._index_path, "rb") as index_file:
                 cls._cache = load(file=index_file)
-            cls._file_num = sum(
-                [x[1] is not None for x in cls._cache.values()]
-            )
+            cls._file_num = sum([x[1] is not None for x in cls._cache.values()])
             return
         # if _cache is not successfully loaded...
         elif not path.isdir(Accelerator._folder_path):  # folder file not exists
@@ -82,7 +80,10 @@ class Accelerator:
         :return:
         """
         caller = get_self(func)
-        if isinstance(caller, Accelerator) and get_name(func) == Accelerator._mocked_func:  # 避免套娃
+        if (
+            isinstance(caller, Accelerator)
+            and get_name(func) == Accelerator._mocked_func
+        ):  # 避免套娃
             # if Accelerator._mocked_func == get_func_full_name(func):  # 避免套娃
             return caller._func
         return None

@@ -81,7 +81,5 @@ def get_func_params(func) -> list[list[str, Any]]:
 
 def get_func_full_name(func):
     caller = get_self(func)
-    cls_or_mdl = (
-        get_module_name(func) if caller is None else get_class_name(caller)
-    )
+    cls_or_mdl = get_module_name(func) if caller is None else get_class_name(caller)
     return f"{cls_or_mdl}.{get_name(func)}"

@@ -1,6 +1,5 @@
 from typing import Optional
 
-from buffett.adapter import logging
 from buffett.adapter.baostock import bs
 from buffett.adapter.pandas import DataFrame
 from buffett.common import create_meta
@@ -41,7 +40,8 @@ class CalendarHandler(FastHandler):
         self._operator.disconnect()
 
     def select_data(self, para: Para = None) -> Optional[DataFrame]:
-        df = self._operator.select_data(TRA_CAL)
+        span = None if para is None else para.span
+        df = self._operator.select_data(TRA_CAL, span=span)
         if dataframe_not_valid(df):
             return
 

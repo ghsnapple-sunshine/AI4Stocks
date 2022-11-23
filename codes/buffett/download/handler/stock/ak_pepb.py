@@ -14,7 +14,7 @@ from buffett.common.constants.col import (
     ZSZ,
     DGXL,
 )
-from buffett.common.constants.col.stock import CODE
+from buffett.common.constants.col.stock import CODE, NAME
 from buffett.common.tools import dataframe_not_valid
 from buffett.download import Para
 from buffett.download.handler.list import StockListHandler
@@ -40,7 +40,6 @@ _RENAME = {
 _META = create_meta(
     meta_list=[
         [DATE, ColType.DATE, AddReqType.KEY],
-        [CODE, ColType.CODE, AddReqType.KEY],
         [SYL, ColType.FLOAT, AddReqType.NONE],
         [DSYL, ColType.FLOAT, AddReqType.NONE],
         [SJL, ColType.FLOAT, AddReqType.NONE],
@@ -62,14 +61,15 @@ class AkStockPePbHandler(MediumHandler):
             source=SourceType.AKSHARE_LGLG_PEPB,
             fuquan=FuquanType.BFQ,
             freq=FreqType.DAY,
+            field_code=CODE,
+            field_name=NAME,
         )
 
-    def _download(self, tup: tuple) -> DataFrame:
-        code = getattr(tup, CODE)
+    def _download(self, row: tuple) -> DataFrame:
+        code = getattr(row, CODE)
         pepb = ak.stock_a_lg_indicator(symbol=code)
         # rename
         pepb = pepb.rename(columns=_RENAME)
-        pepb[CODE] = code
         return pepb
 
     def _save_to_database(self, df: DataFrame, para: Para) -> None:
