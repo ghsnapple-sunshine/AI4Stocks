@@ -3,7 +3,7 @@ from typing import Optional
 
 from buffett.adapter import logging
 from buffett.adapter.numpy import NAN
-from buffett.adapter.pandas import DataFrame, pd, Series
+from buffett.adapter.pandas import DataFrame, pd
 from buffett.common.constants.col import (
     FREQ,
     FUQUAN,
@@ -16,7 +16,7 @@ from buffett.common.constants.col.my import DORCD_START, DORCD_END
 from buffett.common.constants.col.stock import CODE
 from buffett.common.error import ParamTypeError
 from buffett.common.pendulum import DateSpan, Date, convert_datetime, Duration
-from buffett.common.tools import dataframe_not_valid, list_not_valid
+from buffett.common.tools import dataframe_not_valid, list_not_valid, dataframe_is_valid
 from buffett.download.handler import Handler
 from buffett.download.handler.calendar import CalendarHandler
 from buffett.download.handler.tools import TableNameTool
@@ -39,6 +39,8 @@ class SlowHandler(Handler):
         source: SourceType,
         fuquans: list[FuquanType],
         freq: FreqType,
+        field_code: str,
+        field_name: str,
     ):
         super(SlowHandler, self).__init__(operator)
         self._list_handler = list_handler
@@ -46,6 +48,8 @@ class SlowHandler(Handler):
         self._source = source
         self._fuquans = fuquans
         self._freq = freq
+        self._CODE = field_code
+        self._NAME = field_name
 
     # region 公共方法
     def obtain_data(self, para: Para):
@@ -113,7 +117,7 @@ class SlowHandler(Handler):
         """
         计算待下载的记录
 
-        :param item_list:          股票代码
+        :param item_list:           股票(...)代码
         :param done_records:        下载记录
         :param para:                span
         :return:                    待下载记录
@@ -124,13 +128,13 @@ class SlowHandler(Handler):
         todo_records[SOURCE] = self._source
         todo_records[START_DATE] = para.span.start
         todo_records[END_DATE] = para.span.end
-        # todo_records = pd.concat([todo_records, done_records, done_records]).drop_duplicates(keep=False)
-        todo_records = pd.subtract(todo_records, done_records)
+        if dataframe_is_valid(done_records):
+            done_records = done_records.rename({CODE: self._CODE})
+            todo_records = pd.subtract(todo_records, done_records)
         return todo_records
 
-    @staticmethod
     def _get_comb_records(
-        todo_records: DataFrame, done_records: DataFrame
+        self, todo_records: DataFrame, done_records: DataFrame
     ) -> DataFrame:
         """
         将待下载记录和已下载记录进行拼接
@@ -148,7 +152,10 @@ class SlowHandler(Handler):
             columns={START_DATE: DORCD_START, END_DATE: DORCD_END}
         )
         todo_records = pd.merge(
-            todo_records, done_records, how="left", on=[CODE, FREQ, SOURCE, FUQUAN]
+            todo_records,
+            done_records,
+            how="left",
+            on=[self._CODE, FREQ, SOURCE, FUQUAN],
         )
         return todo_records
 
@@ -182,7 +189,7 @@ class SlowHandler(Handler):
         self._log_success_download(para=para)
 
     @abstractmethod
-    def _download(self, para: Para) -> DataFrame:
+    def _download(self, para: Para) -> Optional[DataFrame]:
         """
         根据para中指定的条件下载数据
 

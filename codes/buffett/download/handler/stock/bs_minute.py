@@ -4,6 +4,7 @@ from buffett.adapter.baostock import bs
 from buffett.adapter.pandas import DataFrame
 from buffett.common import create_meta
 from buffett.common.constants.col import DATETIME, OPEN, CLOSE, HIGH, LOW, CJL, CJE
+from buffett.common.constants.col.stock import CODE, NAME
 from buffett.common.tools import dataframe_not_valid
 from buffett.download import Para
 from buffett.download.handler.list import StockListHandler
@@ -43,6 +44,8 @@ class BsMinuteHandler(SlowHandler):
             source=SourceType.BAOSTOCK,
             fuquans=[FuquanType.BFQ],
             freq=FreqType.MIN5,
+            field_code=CODE,
+            field_name=NAME,
         )
 
     def _download(self, para: Para) -> Optional[DataFrame]:

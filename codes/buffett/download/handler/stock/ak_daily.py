@@ -16,6 +16,7 @@ from buffett.common.constants.col import (
     ZDE,
     HSL,
 )
+from buffett.common.constants.col.stock import CODE, NAME
 from buffett.common.tools import dataframe_not_valid
 from buffett.download import Para
 from buffett.download.handler.list import StockListHandler
@@ -66,6 +67,8 @@ class AkDailyHandler(SlowHandler):
             source=SourceType.AKSHARE_DONGCAI,
             fuquans=[FuquanType.BFQ, FuquanType.HFQ, FuquanType.QFQ],
             freq=FreqType.DAY,
+            field_code=CODE,
+            field_name=NAME,
         )
 
     def _download(self, para: Para) -> DataFrame:
@@ -88,10 +91,8 @@ class AkDailyHandler(SlowHandler):
     def _save_to_database(self, table_name: str, df: DataFrame) -> None:
         if dataframe_not_valid(df):
             return
-
         self._operator.create_table(name=table_name, meta=_META, if_not_exist=True)
         self._operator.insert_data(table_name, df)
-        self._operator.disconnect()
 
     def select_data(self, para: Para) -> Optional[DataFrame]:
         """

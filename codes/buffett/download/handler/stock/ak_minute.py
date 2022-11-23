@@ -14,6 +14,7 @@ from buffett.common.constants.col import (
     ZDE,
     HSL,
 )
+from buffett.common.constants.col.stock import CODE, NAME
 from buffett.common.pendulum import convert_datetime
 from buffett.common.tools import dataframe_not_valid
 from buffett.download import Para
@@ -65,6 +66,8 @@ class AkMinuteHandler(SlowHandler):
             source=SourceType.AKSHARE_DONGCAI,
             fuquans=[FuquanType.BFQ],
             freq=FreqType.MIN5,
+            field_code=CODE,
+            field_name=NAME,
         )
 
     def _download(self, para: Para) -> DataFrame:
