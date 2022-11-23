@@ -34,7 +34,7 @@ class Tester(SimpleTester):
         cls._long_para = Para().with_start_n_end(Date(2020, 1, 15), Date(2021, 4, 2))
         # 定义Accelerator
         cls._accelerate(ak)
-        cls._accelerate(bs, excepts=["login", "logout"])
+        cls._accelerate(bs)
         # 清理数据库
         DbSweeper.cleanup()
         # 调用oncemore
