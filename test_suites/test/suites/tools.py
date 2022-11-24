@@ -9,8 +9,10 @@ from buffett.common.constants.col.target import (
     CONCEPT_NAME,
     INDUSTRY_CODE,
     INDUSTRY_NAME,
+    INDEX_CODE,
+    INDEX_NAME,
 )
-from buffett.common.constants.table import STK_LS, CNCP_LS, INDUS_LS
+from buffett.common.constants.table import STK_LS, CNCP_LS, INDUS_LS, INDEX_LS
 from buffett.common.target import Target
 from buffett.download.mysql import Operator
 from buffett.download.mysql.types import ColType, AddReqType
@@ -93,15 +95,15 @@ def create_2concepts(operator: Operator) -> DataFrame:
     return _create_concepts(operator, data)
 
 
-def create_ex_1concept(operator: Operator, stock: Target) -> DataFrame:
+def create_ex_1concept(operator: Operator, target: Target) -> DataFrame:
     """
     创建只有一支概念的ConceptList，概念代码需指定
 
     :param operator:
-    :param stock:
+    :param target:
     :return:
     """
-    data = [[stock.code, stock.name]]
+    data = [[target.code, target.name]]
     return _create_stocks(operator, data)
 
 
@@ -147,15 +149,15 @@ def create_2industries(operator: Operator) -> DataFrame:
     return _create_industries(operator, data)
 
 
-def create_ex_1industry(operator: Operator, stock: Target) -> DataFrame:
+def create_ex_1industry(operator: Operator, target: Target) -> DataFrame:
     """
     创建只有一个行业的IndustryList，行业代码需指定
 
     :param operator:
-    :param stock:
+    :param target:
     :return:
     """
-    data = [[stock.code, stock.name]]
+    data = [[target.code, target.name]]
     return _create_industries(operator, data)
 
 
@@ -176,4 +178,58 @@ def _create_industries(operator: Operator, data: list[list[Any]]) -> DataFrame:
     operator.create_table(INDUS_LS, table_meta)
     df = DataFrame(data=data, columns=[INDUSTRY_CODE, INDUSTRY_NAME])
     operator.insert_data(INDUS_LS, df)
+    return df
+
+
+def create_1index(operator: Operator) -> DataFrame:
+    """
+    创建只有一个指数的IndexList
+
+    :param operator:
+    :return:
+    """
+    data = [["000001", "上证指数"]]
+    return _create_indexs(operator, data)
+
+
+def create_2indexs(operator: Operator) -> DataFrame:
+    """
+    创建有两个指数的IndexList
+
+    :param operator:
+    :return:
+    """
+    data = [["000001", "上证指数"], ["399006", "创业板指"]]
+    return _create_indexs(operator, data)
+
+
+def create_ex_1index(operator: Operator, target: Target) -> DataFrame:
+    """
+    创建只有一个指数的IndexList，指数代码需指定
+
+    :param operator:
+    :param target:
+    :return:
+    """
+    data = [[target.code, target.name]]
+    return _create_indexs(operator, data)
+
+
+def _create_indexs(operator: Operator, data: list[list[Any]]) -> DataFrame:
+    """
+    创建IndustryList
+
+    :param operator:
+    :param data:
+    :return:
+    """
+    table_meta = create_meta(
+        meta_list=[
+            [INDEX_CODE, ColType.CODE, AddReqType.KEY],
+            [INDEX_NAME, ColType.INDEX_NAME, AddReqType.NONE],
+        ]
+    )
+    operator.create_table(INDEX_LS, table_meta)
+    df = DataFrame(data=data, columns=[INDEX_CODE, INDEX_NAME])
+    operator.insert_data(INDEX_LS, df)
     return df

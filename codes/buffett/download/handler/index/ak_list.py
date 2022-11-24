@@ -20,7 +20,7 @@ _META = create_meta(
 )
 
 
-class IndexListHandler(FastHandler):
+class AkIndexListHandler(FastHandler):
     def _download(self) -> Optional[DataFrame]:
         indexs = ak.index_stock_info()
         if dataframe_not_valid(indexs):

@@ -14,6 +14,8 @@ from buffett.common.constants.col.target import (
     CONCEPT_NAME,
     INDUSTRY_CODE,
     INDUSTRY_NAME,
+    INDEX_CODE,
+    INDEX_NAME,
 )
 from buffett.common.magic import get_attr_safe
 from buffett.common.pendulum import DateSpan
@@ -58,6 +60,8 @@ class Para:
                 CONCEPT_NAME,
                 INDUSTRY_CODE,
                 INDUSTRY_NAME,
+                INDEX_CODE,
+                INDEX_NAME,
                 FREQ,
                 SOURCE,
                 FUQUAN,
@@ -75,6 +79,8 @@ class Para:
             concept_name,
             industry_code,
             industry_name,
+            index_code,
+            index_name,
             freq,
             source,
             fuquan,
@@ -88,6 +94,8 @@ class Para:
             concept_name,
             industry_code,
             industry_name,
+            index_code,
+            index_name,
             freq,
             fuquan,
             source,
@@ -110,6 +118,8 @@ class Para:
             concept_name,
             industry_code,
             industry_name,
+            index_code,
+            index_name,
             freq,
             source,
             fuquan,
@@ -124,6 +134,8 @@ class Para:
                 CONCEPT_NAME,
                 INDUSTRY_CODE,
                 INDUSTRY_NAME,
+                INDEX_CODE,
+                INDEX_NAME,
                 FREQ,
                 SOURCE,
                 FUQUAN,
@@ -138,6 +150,8 @@ class Para:
             concept_name,
             industry_code,
             industry_name,
+            index_code,
+            index_name,
             freq,
             fuquan,
             source,
@@ -154,6 +168,8 @@ class Para:
         concept_name,
         industry_code,
         industry_name,
+        index_code,
+        index_name,
         freq,
         fuquan,
         source,
@@ -165,6 +181,8 @@ class Para:
             target = Target(code=concept_code, name=concept_name)
         if target is None:
             target = Target(code=industry_code, name=industry_name)
+        if target is None:
+            target = Target(code=index_code, name=index_name)
         comb = CombType(freq=freq, source=source, fuquan=fuquan)
         span = DateSpan(start=start_date, end=end_date)
         return Para(target=target, comb=comb, span=span)

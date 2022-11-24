@@ -14,7 +14,7 @@ class TableNameTool:
         :param para:            freq, source, fuquan, code
         :return:
         """
-        table_name = "{0}_stock_{1}info_{2}_{3}".format(
+        table_name = "{0}_{1}info_{2}_{3}".format(
             para.comb.source.sql_format(),
             para.comb.freq,
             para.target.code,
@@ -30,7 +30,7 @@ class TableNameTool:
         :param para:            freq, source, fuquan, start
         :return:
         """
-        table_name = "{0}_stock_{1}info_{2}_{3}".format(
+        table_name = "{0}_{1}info_{2}_{3}".format(
             para.comb.source.sql_format(),
             para.comb.freq,
             para.span.start.format("YYYY_MM"),
