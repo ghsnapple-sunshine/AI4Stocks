@@ -78,7 +78,7 @@ class AkIndustryDailyHandler(SlowHandler):
     def _download(self, para: Para) -> DataFrame:
         # 使用接口（stock_board_industry_hist_em，源：东财）,采用name作为symbol
         daily_info = ak.stock_board_industry_hist_em(
-            symbol=para.stock.name,
+            symbol=para.stock.code,
             period="日k",  # emmm...
             start_date=para.span.start.format("YYYYMMDD"),
             end_date=para.span.end.subtract(days=1).format("YYYYMMDD"),

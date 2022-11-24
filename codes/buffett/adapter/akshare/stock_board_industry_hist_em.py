@@ -1,20 +1,19 @@
 import requests
-from akshare import stock_board_industry_name_em
 
 from buffett.adapter.pandas import pd, DataFrame
 
 
 def stock_board_industry_hist_em(
-    symbol: str = "小金属",
-    start_date: str = "20211201",
-    end_date: str = "20220401",
-    period: str = "日k",
-    adjust: str = "",
+    symbol: str,
+    start_date: str,
+    end_date: str,
+    period: str,
+    adjust: str,
 ) -> DataFrame:
     """
     东方财富网-沪深板块-行业板块-历史行情
     https://quote.eastmoney.com/bk/90.BK1027.html
-    :param symbol: 板块名称
+    :param symbol: 板块代码
     :type symbol: str
     :param start_date: 开始时间
     :type start_date: str
@@ -28,18 +27,14 @@ def stock_board_industry_hist_em(
     :rtype: pandas.DataFrame
     """
     period_map = {
-        "日k": '101',
-        "周k": '102',
-        "月k": '103',
+        "日k": "101",
+        "周k": "102",
+        "月k": "103",
     }
-    stock_board_concept_em_map = stock_board_industry_name_em()
-    stock_board_code = stock_board_concept_em_map[
-        stock_board_concept_em_map["板块名称"] == symbol
-    ]["板块代码"].values[0]
     adjust_map = {"": "0", "qfq": "1", "hfq": "2"}
     url = "http://7.push2his.eastmoney.com/api/qt/stock/kline/get"
     params = {
-        "secid": f"90.{stock_board_code}",
+        "secid": f"90.{symbol}",
         "ut": "fa5fd1943c7b386f172d6893dbfba10b",
         "fields1": "f1,f2,f3,f4,f5,f6",
         "fields2": "f51,f52,f53,f54,f55,f56,f57,f58,f59,f60,f61",
@@ -53,9 +48,7 @@ def stock_board_industry_hist_em(
     }
     r = requests.get(url, params=params)
     data_json = r.json()
-    temp_df = DataFrame(
-        [item.split(",") for item in data_json["data"]["klines"]]
-    )
+    temp_df = DataFrame([item.split(",") for item in data_json["data"]["klines"]])
     if temp_df.empty:
         return temp_df
     temp_df.columns = [
