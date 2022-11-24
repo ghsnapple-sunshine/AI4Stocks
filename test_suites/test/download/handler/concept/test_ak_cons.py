@@ -1,19 +1,19 @@
 from buffett.common.constants.col.stock import CONCEPT_CODE
 from buffett.common.constants.table import CNCP_LS
-from buffett.download.handler.concept import ConceptConsHandler, ConceptListHandler
+from buffett.download.handler.concept import AkConceptConsHandler, AkConceptListHandler
 from buffett.download.handler.list import StockListHandler
 from test import Tester
 
 
-class TestConceptConsHandler(Tester):
+class TestAkConceptConsHandler(Tester):
     @classmethod
     def _setup_oncemore(cls):
         StockListHandler(cls._operator).obtain_data()
-        ConceptListHandler(cls._operator).obtain_data()
+        AkConceptListHandler(cls._operator).obtain_data()
         cls._operator.execute(
             f"DELETE FROM {CNCP_LS} WHERE {CONCEPT_CODE} > 'BK0500'", commit=True
         )  # 减少concept个数，提升测试性能
-        cls._hdl = ConceptConsHandler(operator=cls._operator)
+        cls._hdl = AkConceptConsHandler(operator=cls._operator)
 
     def _setup_always(self) -> None:
         pass

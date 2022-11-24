@@ -22,7 +22,7 @@ _META = create_meta(
 )
 
 
-class ConceptListHandler(FastHandler):
+class AkConceptListHandler(FastHandler):
     def __init__(self, operator: Operator):
         super().__init__(operator=operator)
 

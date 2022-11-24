@@ -20,7 +20,7 @@ from buffett.common.constants.col.stock import CONCEPT_CODE, CONCEPT_NAME
 from buffett.common.pendulum import Date
 from buffett.common.tools import dataframe_not_valid
 from buffett.download import Para
-from buffett.download.handler.concept.ak_list import ConceptListHandler
+from buffett.download.handler.concept.ak_list import AkConceptListHandler
 from buffett.download.handler.medium import MediumHandler
 from buffett.download.handler.tools import TableNameTool
 from buffett.download.mysql import Operator
@@ -63,7 +63,7 @@ class AkConceptDailyHandler(MediumHandler):
     def __init__(self, operator: Operator):
         super(AkConceptDailyHandler, self).__init__(
             operator=operator,
-            list_handler=ConceptListHandler(operator=operator),
+            list_handler=AkConceptListHandler(operator=operator),
             recorder=DownloadRecorder(operator=operator),
             source=SourceType.AKSHARE_DONGCAI_CONCEPT,
             fuquan=FuquanType.BFQ,

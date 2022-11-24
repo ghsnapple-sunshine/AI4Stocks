@@ -1,11 +1,12 @@
-from buffett.download.handler.concept import ConceptListHandler
-from test import Tester
+from buffett.download.handler.concept import AkConceptListHandler
+from test import Tester, DbSweeper
 
 
 class TestConceptListHandler(Tester):
     @classmethod
     def _setup_oncemore(cls):
-        cls._hdl = ConceptListHandler(operator=cls._operator)
+        DbSweeper.cleanup()
+        cls._hdl = AkConceptListHandler(operator=cls._operator)
 
     def _setup_always(self) -> None:
         pass

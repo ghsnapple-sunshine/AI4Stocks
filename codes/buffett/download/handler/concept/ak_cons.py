@@ -9,7 +9,7 @@ from buffett.common.error.pre_step import PreStepError
 from buffett.common.logger import Logger
 from buffett.common.tools import dataframe_not_valid
 from buffett.download import Para
-from buffett.download.handler.concept.ak_list import ConceptListHandler
+from buffett.download.handler.concept.ak_list import AkConceptListHandler
 from buffett.download.handler.fast.handler import FastHandler
 from buffett.download.handler.list.ak_list import StockListHandler
 from buffett.download.mysql.types import ColType, AddReqType
@@ -27,12 +27,12 @@ _META = create_meta(
 )
 
 
-class ConceptConsHandler(FastHandler):
+class AkConceptConsHandler(FastHandler):
     def _download(self) -> DataFrame:
-        concepts = ConceptListHandler(self._operator).select_data()
+        concepts = AkConceptListHandler(self._operator).select_data()
         if dataframe_not_valid(concepts):
             raise PreStepError(
-                curr_step=ConceptConsHandler, pre_step=ConceptListHandler
+                curr_step=AkConceptConsHandler, pre_step=AkConceptListHandler
             )
         cons = pd.concat(
             [self._download_concept(row) for row in concepts.itertuples(index=False)]
@@ -41,7 +41,7 @@ class ConceptConsHandler(FastHandler):
 
         stocks = StockListHandler(self._operator).select_data()
         if dataframe_not_valid(stocks):
-            raise PreStepError(curr_step=ConceptConsHandler, pre_step=StockListHandler)
+            raise PreStepError(curr_step=AkConceptConsHandler, pre_step=StockListHandler)
         cons = pd.merge(cons, stocks[[CODE]], how="inner", on=[CODE])
         Logger.info(f"After filter, total record num is {len(cons)}.")
         return cons

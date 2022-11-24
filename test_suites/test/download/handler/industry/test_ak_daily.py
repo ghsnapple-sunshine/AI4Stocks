@@ -3,16 +3,16 @@ from buffett.common.constants.table import TRA_CAL
 from buffett.common.pendulum import DateSpan
 from buffett.download import Para
 from buffett.download.handler.calendar import CalendarHandler
-from buffett.download.handler.concept import AkConceptDailyHandler
+from buffett.download.handler.industry import AkIndustryDailyHandler
 from test import Tester, DbSweeper, create_1concept, create_2concepts
 
 
-class TestAkConceptDailyHandler(Tester):
+class AkIndustryDailyHandlerTest(Tester):
     _cal_hdl = None
 
     @classmethod
     def _setup_oncemore(cls):
-        cls._hdl = AkConceptDailyHandler(operator=cls._operator)
+        cls._hdl = AkIndustryDailyHandler(operator=cls._operator)
         cls._cal_hdl = CalendarHandler(operator=cls._operator)
         cls._cal_hdl.obtain_data()
 

@@ -1,2 +1,3 @@
-from buffett.download.handler.concept.ak_cons import ConceptConsHandler
-from buffett.download.handler.concept.ak_list import ConceptListHandler
+from buffett.download.handler.concept.ak_cons import AkConceptConsHandler
+from buffett.download.handler.concept.ak_list import AkConceptListHandler
+from buffett.download.handler.concept.ak_daily import AkConceptDailyHandler
