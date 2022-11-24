@@ -1,7 +1,6 @@
 from buffett.adapter.pandas import DataFrame
 from buffett.backtrader.frame import Para as WPara, TheWorldBuilder as Builder
 from buffett.backtrader.strategy import StrategyBase as Strat
-from buffett.common import Code as Code
 from buffett.common.constants.col import DATE
 from buffett.common.constants.col.target import CODE, NAME
 from buffett.common.pendulum import Date, DateSpan as Span
@@ -35,7 +34,7 @@ class WorldTest(Tester):
     def test_world_flow(self):
         para = WPara(
             operator=self._operator,
-            stock_list=[Code("000001"), Code("600000")],
+            stock_list=["000001", "600000"],
             datespan=Span(start=Date(2022, 1, 4), end=Date(2022, 1, 6)),
             strat_cls=Strat,
         )

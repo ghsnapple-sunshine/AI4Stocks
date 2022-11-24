@@ -23,7 +23,7 @@ from buffett.common.pendulum import DateTime, convert_datetime
 from buffett.common.tools import dataframe_not_valid, list_is_valid, dataframe_is_valid
 from buffett.download.mysql import Operator
 from buffett.download.mysql.types import ColType, AddReqType
-from buffett.task import Task
+from buffett.task.task import Task
 
 _META = create_meta(
     meta_list=[

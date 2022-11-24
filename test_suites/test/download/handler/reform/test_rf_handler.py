@@ -1,11 +1,10 @@
-from typing import Type, Union
+from typing import Union, Type
 
 from buffett.adapter.numpy import np
-from buffett.common import Code
 from buffett.common.pendulum import Date
 from buffett.download import Para
+from buffett.download.handler import Handler
 from buffett.download.handler.reform import ReformHandler as RHandler
-from buffett.download.handler.slow import SlowHandler
 from buffett.download.handler.stock import AkDailyHandler, BsMinuteHandler
 from buffett.download.recorder import DownloadRecorder, ReformRecorder
 from test import Tester, DbSweeper, create_1stock, create_ex_1stock
@@ -23,12 +22,12 @@ class ReformHandlerTest(Tester):
 
     def _setup_2nd(self):
         # 初始化StockList
-        create_ex_1stock(operator=self._operator, code=Code("000002"))
-        create_ex_1stock(operator=self._operator, code=Code("000004"))
+        create_ex_1stock(operator=self._operator, code="000001")
+        create_ex_1stock(operator=self._operator, code="000004")
 
     def _atom_test(
         self,
-        Cls: Type[SlowHandler],
+        Cls: Type[Handler],
         start: Date,
         end: Date,
         dl_table_names: Union[str, list[str]],
@@ -52,7 +51,6 @@ class ReformHandlerTest(Tester):
         assert dl_data == rf_data
         dl_record = DownloadRecorder(operator=self._operator).select_data()
         rf_record = ReformRecorder(operator=self._operator).get_data()
-        # assert pd.concat([dl_record, rf_record]).drop_duplicates(keep=False).empty
         assert self.compare_dataframe(dl_record, rf_record)
 
     def test_ak_daily_10days(self):
@@ -221,7 +219,7 @@ class ReformHandlerTest(Tester):
 
         :return:
         """
-        create_ex_1stock(self._operator, Code("000795"))
+        create_ex_1stock(self._operator, "000795")
         para = Para().with_start_n_end(Date(2002, 4, 16), Date(2002, 4, 17))
         BsMinuteHandler(operator=self._operator).obtain_data(para=para)
         RHandler(operator=self._operator).reform_data()

@@ -2,55 +2,23 @@ from __future__ import annotations
 
 from typing import Optional, Union
 
-from buffett.adapter.enum import Enum
-
-
-class CodeType(Enum):
-    CODE6 = 1
-    CODE8 = 2
-    CODE9 = 3
-
-
-class Code(str):
-    def to_code6(self) -> str:
-        return self
-
-    def to_code9(self) -> str:
-        if self[0] == "6":
-            return "sh." + self
-        elif self[0] == "0":
-            return "sz." + self
-        elif self[0] == "3":
-            return "sz." + self
-        raise NotImplemented
-
-    def to_code8(self) -> str:
-        if self[0] == "6":
-            return "sh" + self
-        elif self[0] == "0":
-            return "sz" + self
-        elif self[0] == "3":
-            return "sz" + self
-        raise NotImplemented
-
 
 class Target:
     """
     标的，可以是股票(Stock), 指数(Index), 概念(Concept), 行业(Industry)
 
     """
-    def __new__(cls, code: Union[Code, str, None] = None, name: Optional[str] = None):
+
+    def __new__(cls, code: Optional[str] = None, name: Optional[str] = None):
         if code is None and name is None:
             return None
         return super(Target, cls).__new__(cls)
 
-    def __init__(self, code: Union[Code, str, None] = None, name: Optional[str] = None):
-        if type(code) == str:  # 使用isinstance则str, Code均为True
-            code = Code(code)
+    def __init__(self, code: Optional[str] = None, name: Optional[str] = None):
         self._code = code
         self._name = name
 
-    def with_code(self, code: Code) -> Target:
+    def with_code(self, code: str) -> Target:
         """
         条件设置code
 
@@ -79,7 +47,7 @@ class Target:
         return Target(code=self._code, name=self._name)
 
     @property
-    def code(self) -> Optional[Code]:
+    def code(self) -> Optional[str]:
         return self._code
 
     @property

@@ -7,7 +7,6 @@ from buffett.common import create_meta
 from buffett.common.constants.col.target import INDUSTRY_CODE, INDUSTRY_NAME
 from buffett.common.constants.table import INDUS_LS
 from buffett.common.tools import dataframe_not_valid
-from buffett.download import Para
 from buffett.download.handler.fast.handler import FastHandler
 from buffett.download.mysql import Operator
 from buffett.download.mysql.types import ColType, AddReqType
@@ -36,12 +35,13 @@ class IndustryListHandler(FastHandler):
         return industries
 
     def _save_to_database(self, df: DataFrame) -> None:
-        if dataframe_not_valid(df):
-            return
         self._operator.create_table(name=INDUS_LS, meta=_META)
         self._operator.try_insert_data(name=INDUS_LS, df=df, update=True, meta=_META)
-        self._operator.disconnect()
 
-    def select_data(self, para: Para = None) -> Optional[DataFrame]:
-        df = self._operator.select_data(INDUS_LS)
-        return df
+    def select_data(self) -> Optional[DataFrame]:
+        """
+        获取行业板块清单
+
+        :return:
+        """
+        return self._operator.select_data(INDUS_LS)

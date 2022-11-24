@@ -1,5 +1,3 @@
-from typing import Optional
-
 from buffett.adapter.baostock import bs
 from buffett.adapter.pandas import DataFrame
 from buffett.common import create_meta
@@ -51,7 +49,7 @@ class BsMinuteHandler(SlowHandler):
     def _download(self, para: Para) -> DataFrame:
         fields = "time,open,high,low,close,volume,amount"
         minute_info = bs.query_history_k_data_plus(
-            code=para.target.code.to_code9(),
+            code=self._convert_code(para.target.code),
             fields=fields,
             frequency="5",
             start_date=para.span.start.format("YYYY-MM-DD"),
@@ -80,6 +78,16 @@ class BsMinuteHandler(SlowHandler):
         minute_info[CJE] = minute_info[CJE].apply(lambda x: bs_check_float(x))
 
         return minute_info
+
+    @staticmethod
+    def _convert_code(code: str) -> str:
+        if code[0] == "6":
+            return "sh." + code
+        elif code[0] == "0":
+            return "sz." + code
+        elif code[0] == "3":
+            return "sz." + code
+        raise NotImplemented
 
     def _save_to_database(self, table_name: str, df: DataFrame) -> None:
         if (not isinstance(df, DataFrame)) or df.empty:

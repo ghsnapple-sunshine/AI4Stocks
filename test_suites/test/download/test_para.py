@@ -1,5 +1,4 @@
 from buffett.adapter.pandas import Series
-from buffett.common import Code
 from buffett.common.constants.col import FREQ, SOURCE, FUQUAN, START_DATE, END_DATE
 from buffett.common.constants.col.target import CODE, NAME
 from buffett.common.pendulum import Date
@@ -10,7 +9,7 @@ from test import SimpleTester
 
 class TestPara(SimpleTester):
     @classmethod
-    def _setup_oncemore(cls):
+    def _setup_once(cls):
         pass
 
     def _setup_always(self) -> None:
@@ -44,7 +43,7 @@ class TestPara(SimpleTester):
         freq = FreqType.DAY
         source = SourceType.BAOSTOCK
         fuquan = FuquanType.BFQ
-        code = Code("000001")
+        code = "000001"
         name = "平安银行"
         start_date = Date(2022, 1, 1)
         end_date = Date(2022, 1, 10)

@@ -1,4 +1,4 @@
-from test import Tester, DbSweeper
+from test import Tester
 
 
 class TestConnector(Tester):

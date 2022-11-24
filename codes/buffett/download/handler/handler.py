@@ -1,11 +1,10 @@
 from abc import abstractmethod
 
 from buffett.download.mysql import Operator
-from buffett.download.para import Para
 
 
 class Handler:
-    def __init__(self, operator: Operator):
+    def __init__(self, operator: Operator, *args, **kwargs):
         self._operator = operator
 
     @abstractmethod

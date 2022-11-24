@@ -2,7 +2,7 @@ from buffett.download.handler.stock.ak_minute import AkMinuteHandler
 from test import Tester, create_2stocks
 
 
-class AkStockMinuteHandlerTest(Tester):
+class TestAkStockMinuteHandler(Tester):
     @classmethod
     def _setup_oncemore(cls):
         cls._hdl = AkMinuteHandler(operator=cls._operator)

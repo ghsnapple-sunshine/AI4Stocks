@@ -3,7 +3,7 @@ from typing import Optional
 from buffett.adapter.akshare import ak
 from buffett.adapter.pandas import DataFrame, pd
 from buffett.adapter.pendulum import Date
-from buffett.common import create_meta, Code
+from buffett.common import create_meta
 from buffett.common.constants.col import DATE
 from buffett.common.constants.col.date import (
     YEAR2021,
@@ -14,8 +14,7 @@ from buffett.common.constants.col.date import (
 )
 from buffett.common.constants.col.target import CODE
 from buffett.common.constants.table import STK_PROFIT
-from buffett.common.tools import dataframe_is_valid, dataframe_not_valid
-from buffett.download import Para
+from buffett.common.tools import dataframe_is_valid
 from buffett.download.handler.fast.handler import FastHandler
 from buffett.download.mysql import Operator
 from buffett.download.mysql.types import ColType, AddReqType
@@ -46,13 +45,6 @@ class AkProfitHandler(FastHandler):
     def __init__(self, operator: Operator):
         super(AkProfitHandler, self).__init__(operator=operator)
 
-    def select_data(self, para: Para = None) -> Optional[DataFrame]:
-        data = self._operator.select_data(name=STK_PROFIT)
-        if dataframe_not_valid(data):
-            return
-        data[CODE] = data[CODE].apply(lambda x: Code(x))
-        return data
-
     def _download(self) -> DataFrame:
         """
         采用增量save模式
@@ -79,7 +71,13 @@ class AkProfitHandler(FastHandler):
         return profit
 
     def _save_to_database(self, df: DataFrame) -> None:
-        if dataframe_not_valid(df):
-            return
         self._operator.create_table(name=STK_PROFIT, meta=_META)
         self._operator.try_insert_data(name=STK_PROFIT, df=df)
+
+    def select_data(self) -> Optional[DataFrame]:
+        """
+        获取股票收益预测
+
+        :return:
+        """
+        return self._operator.select_data(name=STK_PROFIT)

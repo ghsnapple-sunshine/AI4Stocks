@@ -1,8 +1,8 @@
 from buffett.adapter.akshare import ak
 from buffett.adapter.pendulum import DateTime
 from buffett.common.magic import get_func_full_name
-from test.suites.acc import Accelerator
 from test import SimpleTester
+from test.suites.acc import Accelerator
 
 
 class TestAccelerator(SimpleTester):

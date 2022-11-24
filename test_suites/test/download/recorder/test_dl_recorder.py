@@ -1,5 +1,4 @@
 from buffett.adapter.pandas import DataFrame
-from buffett.common import Code
 from buffett.common.constants.col import FREQ, FUQUAN, SOURCE, START_DATE, END_DATE
 from buffett.common.constants.col.target import CODE
 from buffett.common.pendulum import Date
@@ -38,7 +37,7 @@ class TestDownloadRecorder(Tester):
         self._recorder.save_to_database(df)
 
     def _save_to_database2(self):
-        code = Code("000002")
+        code = "000002"
         freq = FreqType.DAY
         fuquan = FuquanType.BFQ
         source = SourceType.AKSHARE_DONGCAI

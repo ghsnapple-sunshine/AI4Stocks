@@ -5,7 +5,6 @@ from buffett.backtrader.frame.clock import Clock
 from buffett.backtrader.frame.column import Column
 from buffett.backtrader.frame.stock_info import StockInfo
 from buffett.backtrader.interface import ITimeSequence
-from buffett.common import Code
 from buffett.common.pendulum import DateSpan
 from buffett.download import Para
 from buffett.download.handler import Handler
@@ -15,7 +14,7 @@ from buffett.download.types import FuquanType, HeadType
 
 
 def _create_stock_info(
-    code: Code,
+    code: str,
     cols: list[HeadType],
     sources: dict[Type[Handler], list[HeadType]],
     datespan: DateSpan,
@@ -49,7 +48,7 @@ def _create_stock_info(
 
 
 def _fetch(
-    code: Code,
+    code: str,
     sources: dict[Type[Handler], list[HeadType]],
     datespan: DateSpan,
     calendar: DataFrame,
@@ -80,7 +79,7 @@ class StockInfoManager(ITimeSequence):
         初始化StockInfoManager
         """
         self._clock = Clock()
-        self._stock_list: list[Code] = []
+        self._stock_list: list[str] = []
         self._infos: list[StockInfo] = []
 
     def run(self):
@@ -92,7 +91,7 @@ class StockInfoManager(ITimeSequence):
         """
         pass
 
-    def get_stock_code(self, code: int) -> Code:
+    def get_stock_code(self, code: int) -> str:
         """
         查询股票代码
 
@@ -145,7 +144,7 @@ class StockInfoManager(ITimeSequence):
 
 class StockInfoManagerBuilder:
     class StockInfoManagerUnderBuilt(StockInfoManager):
-        def set_stock_list(self, stock_list: list[Code]):
+        def set_stock_list(self, stock_list: list[str]):
             self._stock_list = stock_list
 
         def set_infos(self, infos: list[StockInfo]):
@@ -157,7 +156,7 @@ class StockInfoManagerBuilder:
     def __init__(self):
         self.item = StockInfoManagerBuilder.StockInfoManagerUnderBuilt()
 
-    def with_stock_list(self, stock_list: list[Code]):
+    def with_stock_list(self, stock_list: list[str]):
         stock_list = list(set(stock_list))
         self.item.set_stock_list(stock_list=stock_list)
         return self

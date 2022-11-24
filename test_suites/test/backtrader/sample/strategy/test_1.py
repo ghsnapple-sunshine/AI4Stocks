@@ -1,11 +1,13 @@
+import os
 from datetime import datetime
-import backtrader as bt
+
 import akshare as ak
+import backtrader as bt
 import pandas as pd
 from backtrader_plotting import Bokeh
 from backtrader_plotting.schemes import Tradimo
+
 from test.backtrader.sample.strategy.forks import StrategyForks
-import os
 
 
 def get_pnl_gross(strats):

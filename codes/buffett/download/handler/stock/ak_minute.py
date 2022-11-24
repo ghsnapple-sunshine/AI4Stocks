@@ -1,3 +1,5 @@
+from typing import Optional
+
 from buffett.adapter.akshare import ak
 from buffett.adapter.pandas import DataFrame
 from buffett.common import create_meta
@@ -73,7 +75,7 @@ class AkMinuteHandler(SlowHandler):
     def _download(self, para: Para) -> DataFrame:
         # 使用接口（stock_zh_a_hist_min_em，源：东财）,code为Str6
         minute_info = ak.stock_zh_a_hist_min_em(
-            symbol=para.target.code.to_code6(),
+            symbol=para.target.code,
             period="5",
             start_date=convert_datetime(para.span.start).format("YYYY-MM-DD HH:mm:ss"),
             end_date=convert_datetime(para.span.end).format("YYYY-MM-DD HH:mm:ss"),
@@ -86,25 +88,23 @@ class AkMinuteHandler(SlowHandler):
         return minute_info
 
     def _save_to_database(self, table_name: str, df: DataFrame):
-        if (not isinstance(df, DataFrame)) or df.empty:
+        if dataframe_not_valid(df):
             return
-
         self._operator.create_table(name=table_name, meta=_META)
         self._operator.insert_data(name=table_name, df=df)
 
-    def select_data(self, para: Para) -> DataFrame:
+    def select_data(self, para: Para) -> Optional[DataFrame]:
         """
-        查询某支股票以某种复权方式的全部数据
+        查询某支股票、某种复权方式下、某个时间段内的全部数据
 
-        :param para:        code, fuquan
+        :param para:        code, fuquan, start, end
         :return:
         """
         para = para.clone().with_source(self._source).with_freq(self._freq)
         table_name = TableNameTool.get_by_code(para=para)
-        df = self._operator.select_data(table_name)
+        df = self._operator.select_data(name=table_name, span=para.span)
         if dataframe_not_valid(df):
-            return DataFrame()
-
+            return
         df.index = df[DATETIME]
         del df[DATETIME]
         return df

@@ -1,7 +1,7 @@
 from typing import Optional
 
 from buffett.adapter.pandas import DataFrame
-from buffett.common import create_meta, Code
+from buffett.common import create_meta
 from buffett.common.constants.col import FREQ, FUQUAN, SOURCE, START_DATE, END_DATE
 from buffett.common.constants.col.target import CODE
 from buffett.common.constants.table import RF_RCD
@@ -54,11 +54,7 @@ class ReformRecorder:
         df = self._operator.select_data(RF_RCD)
         if dataframe_not_valid(df):
             return
-
-        df[CODE] = df[CODE].apply(lambda x: Code(x))
         df[FREQ] = df[FREQ].apply(lambda x: FreqType(x))
         df[FUQUAN] = df[FUQUAN].apply(lambda x: FuquanType(x))
         df[SOURCE] = df[SOURCE].apply(lambda x: SourceType(x))
-        # df[START_DATE] = df[START_DATE].apply(lambda x: timestamp_to_datetime(x))
-        # df[END_DATE] = df[END_DATE].apply(lambda x: timestamp_to_datetime(x))
         return df

@@ -16,7 +16,9 @@ from akshare import (
 )
 
 from buffett.adapter.akshare.stock_a_lg_indicator import stock_a_lg_indicator
-from buffett.adapter.akshare.stock_board_industry_hist_em import stock_board_industry_hist_em
+from buffett.adapter.akshare.stock_board_industry_hist_em import (
+    stock_board_industry_hist_em,
+)
 
 
 class ak:

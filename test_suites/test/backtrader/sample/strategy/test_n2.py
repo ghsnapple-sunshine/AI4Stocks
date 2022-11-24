@@ -1,17 +1,17 @@
+import os
 from datetime import datetime
 
-import backtrader as bt
 import akshare as ak
+import backtrader as bt
 import pandas as pd
-
-from buffett.download.handler.stock.ak_daily import AkDailyHandler
-from buffett.download.mysql.types import RoleType
-from buffett.download.mysql.operator import Operator
-from test.backtrader.sample.strategy.multi_sma import Strategy
-from test.backtrader.sample.strategy.stamp import StampDutyCommissionScheme
 from backtrader_plotting import Bokeh
 from backtrader_plotting.schemes import Tradimo
-import os
+
+from buffett.download.handler.stock.ak_daily import AkDailyHandler
+from buffett.download.mysql.operator import Operator
+from buffett.download.mysql.types import RoleType
+from test.backtrader.sample.strategy.multi_sma import Strategy
+from test.backtrader.sample.strategy.stamp import StampDutyCommissionScheme
 
 ##########################
 # 主程序开始

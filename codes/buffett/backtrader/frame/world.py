@@ -11,7 +11,6 @@ from buffett.backtrader.strategy import (
     StrategyBuilder as SBuilder,
 )
 from buffett.backtrader.tools import ChargeCalculator as Calc
-from buffett.common import Code as Code
 from buffett.common.pendulum import DateSpan as Span
 from buffett.download.mysql import Operator as Operator
 
@@ -20,7 +19,7 @@ class Para:
     def __init__(
         self,
         operator: Operator,
-        stock_list: list[Code],
+        stock_list: list[str],
         datespan: Span,
         strat_cls: type[Strat],
         init_cash: int = 1000000,

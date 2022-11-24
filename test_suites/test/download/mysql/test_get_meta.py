@@ -1,4 +1,3 @@
-from buffett.common import Code
 from buffett.common.pendulum import Date
 from buffett.download import Para
 from buffett.download.handler.stock import (
@@ -9,7 +8,7 @@ from buffett.download.handler.stock.ak_daily import _META as A_META
 from buffett.download.handler.stock.bs_minute import _META as B_META
 from buffett.download.handler.tools import TableNameTool
 from buffett.download.types import FreqType, SourceType, FuquanType
-from test import Tester, DbSweeper, create_1stock
+from test import Tester, create_1stock
 
 
 class TestGetMeta(Tester):
@@ -27,7 +26,7 @@ class TestGetMeta(Tester):
         para = Para().with_start_n_end(start=Date(2022, 1, 4), end=Date(2022, 1, 5))
         AkDailyHandler(operator=self._operator).obtain_data(para=para)
         para = (
-            para.with_code(Code("000001"))
+            para.with_code("000001")
             .with_freq(FreqType.DAY)
             .with_source(SourceType.AKSHARE_DONGCAI)
             .with_fuquan(FuquanType.BFQ)
@@ -41,7 +40,7 @@ class TestGetMeta(Tester):
         para = Para().with_start_n_end(start=Date(2022, 1, 4), end=Date(2022, 1, 5))
         BsMinuteHandler(operator=self._operator).obtain_data(para=para)
         para = (
-            para.with_code(Code("000001"))
+            para.with_code("000001")
             .with_freq(FreqType.MIN5)
             .with_source(SourceType.BAOSTOCK)
             .with_fuquan(FuquanType.BFQ)

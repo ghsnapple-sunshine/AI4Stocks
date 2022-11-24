@@ -1,8 +1,8 @@
 from typing import Optional
 
 from buffett.adapter.akshare import ak
-from buffett.adapter.pandas import pd, DataFrame
-from buffett.common import create_meta, Code
+from buffett.adapter.pandas import DataFrame
+from buffett.common import create_meta
 from buffett.common.constants.col import (
     DATETIME,
     OPEN,
@@ -25,7 +25,6 @@ from buffett.common.constants.col.target import CODE
 from buffett.common.constants.table import STK_RT
 from buffett.common.pendulum import DateTime
 from buffett.common.tools import dataframe_not_valid
-from buffett.download import Para
 from buffett.download.handler.fast.handler import FastHandler
 from buffett.download.mysql import Operator
 from buffett.download.mysql.types import ColType, AddReqType
@@ -87,17 +86,13 @@ class AkCurrHandler(FastHandler):
         return curr_info
 
     def _save_to_database(self, df: DataFrame) -> None:
-        if dataframe_not_valid(df):
-            return
-
         self._operator.create_table(name=STK_RT, meta=_META)
         self._operator.try_insert_data(name=STK_RT, df=df)
-        self._operator.disconnect()
 
-    def select_data(self, para: Para = None) -> Optional[DataFrame]:
-        df = self._operator.select_data(STK_RT)
-        if dataframe_not_valid(df):
-            return
+    def select_data(self) -> Optional[DataFrame]:
+        """
+        获取实时股票数据
 
-        df[CODE] = df[CODE].apply(lambda x: Code(x))
-        return df
+        :return:
+        """
+        return self._operator.select_data(STK_RT)

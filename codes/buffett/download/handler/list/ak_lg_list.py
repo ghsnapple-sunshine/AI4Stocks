@@ -3,11 +3,10 @@ from typing import Optional
 
 from buffett.adapter.akshare import ak
 from buffett.adapter.pandas import DataFrame
-from buffett.common import Code, create_meta
+from buffett.common import create_meta
 from buffett.common.constants.col.target import CODE, NAME
 from buffett.common.constants.table import LG_STK_LS
 from buffett.common.tools import dataframe_not_valid
-from buffett.download import Para
 from buffett.download.handler.fast.handler import FastHandler
 from buffett.download.mysql import Operator
 from buffett.download.mysql.types import ColType, AddReqType
@@ -35,14 +34,13 @@ class AkLgStockListHandler(FastHandler):
         return stocks
 
     def _save_to_database(self, df: DataFrame) -> None:
-        if dataframe_not_valid(df):
-            return
         self._operator.create_table(name=LG_STK_LS, meta=_META)
         self._operator.try_insert_data(name=LG_STK_LS, df=df, update=True, meta=_META)
 
-    def select_data(self, para: Para = None) -> Optional[DataFrame]:
-        df = self._operator.select_data(LG_STK_LS)
-        if dataframe_not_valid(df):
-            return
-        df[CODE] = df[CODE].apply(lambda x: Code(x))
-        return df
+    def select_data(self) -> Optional[DataFrame]:
+        """
+        获取乐股乐股的股票清单
+
+        :return:
+        """
+        return self._operator.select_data(LG_STK_LS)

@@ -2,7 +2,7 @@ from buffett.adapter.pandas import DataFrame
 from buffett.common.constants.col.meta import META_COLS
 from buffett.common.constants.col.target import CODE, NAME
 from buffett.download.mysql.types import ColType, AddReqType
-from test import Tester, DbSweeper
+from test import Tester
 
 
 class TestOperator(Tester):

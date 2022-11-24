@@ -5,7 +5,6 @@ from typing import Optional, Union
 from buffett.adapter.numpy import NAN
 from buffett.adapter.pandas import Series, DataFrame, pd
 from buffett.adapter.pendulum import date
-from buffett.common import Code
 from buffett.common.constants.col import FREQ, SOURCE, FUQUAN, START_DATE, END_DATE
 from buffett.common.constants.col.target import (
     CODE,
@@ -199,7 +198,7 @@ class Para:
             self._target = target
         return self
 
-    def with_code(self, code: Union[Code, str], condition: bool = True) -> Para:
+    def with_code(self, code: str, condition: bool = True) -> Para:
         """
         条件设置target.code并返回自身
 

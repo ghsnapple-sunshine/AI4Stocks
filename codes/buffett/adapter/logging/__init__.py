@@ -4,13 +4,13 @@ from logging import (
     WARNING as logging_WARNING,
     ERROR as logging_ERROR,
 )
+from logging import basicConfig as logging_config
 from logging import (
     debug as logging_debug,
     info as logging_info,
     warning as logging_warning,
     error as logging_error,
 )
-from logging import basicConfig as logging_config
 
 #
 DEBUG = logging_DEBUG

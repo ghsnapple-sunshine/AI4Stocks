@@ -5,7 +5,6 @@ import datetime
 import akshare
 import backtrader as bt
 import pandas
-
 from backtrader_plotting import Bokeh
 
 

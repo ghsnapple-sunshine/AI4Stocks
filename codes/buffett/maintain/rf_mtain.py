@@ -104,7 +104,7 @@ class ReformMaintain:
 
     @classmethod
     def _save_report(cls, df: DataFrame):
-        _dir = f"d:/reports/rf_maintain/{DateTime.now().format('YYYYMMDD_HHmmss')}/"
+        _dir = f"e:/BuffettData/rf_maintain/{DateTime.now().format('YYYYMMDD_HHmmss')}/"
         os.makedirs(_dir)
         df.to_csv(f"{_dir}report.csv", header=True, index=False, encoding="gbk")
 

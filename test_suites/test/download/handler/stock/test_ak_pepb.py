@@ -1,7 +1,6 @@
 from collections import namedtuple
 
 from buffett.adapter.numpy import NAN
-from buffett.common import Code
 from buffett.common.constants.col import (
     END_DATE,
     DATE,
@@ -18,7 +17,7 @@ from buffett.download.types import FreqType, FuquanType, SourceType
 from test import Tester, create_2stocks, DbSweeper
 
 
-class AkStockPePbHandlerTest(Tester):
+class TestAkStockPePbHandler(Tester):
     @classmethod
     def _setup_oncemore(cls):
         DbSweeper.cleanup()
@@ -34,7 +33,7 @@ class AkStockPePbHandlerTest(Tester):
 
     def _download(self):
         self._hdl.obtain_data(span=self._long_para.span)
-        df1 = self._hdl.select_data(Para().with_code(Code("000001")))
+        df1 = self._hdl.select_data(Para().with_code("000001"))
         data = {
             CODE: "000001",
             FREQ: FreqType.DAY,

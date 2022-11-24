@@ -37,13 +37,17 @@ class CalendarHandler(FastHandler):
     def _save_to_database(self, df: DataFrame):
         self._operator.create_table(name=TRA_CAL, meta=_META)
         self._operator.try_insert_data(name=TRA_CAL, df=df)  # 忽略重复Insert
-        self._operator.disconnect()
 
     def select_data(self, para: Para = None) -> Optional[DataFrame]:
+        """
+        获取指定时间段内的交易日历
+
+        :param para:
+        :return:
+        """
         span = None if para is None else para.span
         df = self._operator.select_data(TRA_CAL, span=span)
         if dataframe_not_valid(df):
             return
-
         df.index = df[DATE]
         return df

@@ -1,7 +1,6 @@
 from typing import Optional
 
 from buffett.adapter.pandas import DataFrame
-from buffett.common import Code
 from buffett.common.constants.col import FREQ, FUQUAN, SOURCE, START_DATE, END_DATE
 from buffett.common.constants.col.target import CODE
 from buffett.common.constants.table import DL_RCD
@@ -54,8 +53,6 @@ class DownloadRecorder:
         df = self._operator.select_data(DL_RCD)
         if dataframe_not_valid(df):
             return
-
-        df[CODE] = df[CODE].apply(lambda x: Code(x))
         df[FREQ] = df[FREQ].apply(lambda x: FreqType(x))
         df[FUQUAN] = df[FUQUAN].apply(lambda x: FuquanType(x))
         df[SOURCE] = df[SOURCE].apply(lambda x: SourceType(x))

@@ -1,16 +1,17 @@
+import warnings
+import webbrowser
+from datetime import datetime
+
+import akshare as ak
 import backtrader as bt
 import pandas as pd
-import akshare as ak
-from datetime import datetime
 import quantstats
-import webbrowser
-import warnings
 
 from buffett.download.handler.stock.ak_daily import AkDailyHandler
-from buffett.download.mysql.types import RoleType
 from buffett.download.mysql.operator import Operator
-from test.backtrader.sample.strategy.stamp import StampDutyCommissionScheme
+from buffett.download.mysql.types import RoleType
 from test.backtrader.sample.strategy.multi_forks import StrategyMultiForks
+from test.backtrader.sample.strategy.stamp import StampDutyCommissionScheme
 
 # 创建cerebro实体
 cerebro = bt.Cerebro()

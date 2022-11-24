@@ -23,7 +23,7 @@ from buffett.common.constants.col.target import (
 from buffett.common.pendulum import Date
 from buffett.common.tools import dataframe_not_valid
 from buffett.download import Para
-from buffett.download.handler.industry import IndustryListHandler
+from buffett.download.handler.industry.ak_list import IndustryListHandler
 from buffett.download.handler.slow import SlowHandler
 from buffett.download.handler.tools import TableNameTool
 from buffett.download.mysql import Operator

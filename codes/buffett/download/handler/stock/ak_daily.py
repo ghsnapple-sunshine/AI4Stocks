@@ -77,7 +77,7 @@ class AkDailyHandler(SlowHandler):
         start_date = para.span.start.format("YYYYMMDD")
         end_date = para.span.end.subtract(days=1).format("YYYYMMDD")
         daily_info = ak.stock_zh_a_hist(
-            symbol=para.target.code.to_code6(),
+            symbol=para.target.code,
             period="daily",
             start_date=start_date,
             end_date=end_date,

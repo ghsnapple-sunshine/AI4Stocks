@@ -5,7 +5,6 @@ from buffett.adapter.pandas import DataFrame
 from buffett.common.constants.col.target import INDEX_CODE, INDEX_NAME
 from buffett.common.constants.table import INDEX_LS
 from buffett.common.tools import dataframe_not_valid, create_meta
-from buffett.download import Para
 from buffett.download.handler.fast import FastHandler
 from buffett.download.mysql.types import ColType, AddReqType
 
@@ -32,12 +31,14 @@ class AkIndexListHandler(FastHandler):
         return indexs
 
     def _save_to_database(self, df: DataFrame) -> None:
-        if dataframe_not_valid(df):
-            return
         self._operator.create_table(name=INDEX_LS, meta=_META)
         self._operator.try_insert_data(name=INDEX_LS, df=df, update=True, meta=_META)
-        self._operator.disconnect()
 
-    def select_data(self, para: Para = None) -> Optional[DataFrame]:
+    def select_data(self) -> Optional[DataFrame]:
+        """
+        获取指数清单
+
+        :return:
+        """
         df = self._operator.select_data(name=INDEX_LS)
         return df

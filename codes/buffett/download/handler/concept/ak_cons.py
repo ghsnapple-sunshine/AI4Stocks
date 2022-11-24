@@ -8,7 +8,6 @@ from buffett.common.constants.table import CNCP_CONS_LS
 from buffett.common.error.pre_step import PreStepError
 from buffett.common.logger import Logger
 from buffett.common.tools import dataframe_not_valid
-from buffett.download import Para
 from buffett.download.handler.concept.ak_list import AkConceptListHandler
 from buffett.download.handler.fast.handler import FastHandler
 from buffett.download.handler.list.ak_list import StockListHandler
@@ -41,7 +40,9 @@ class AkConceptConsHandler(FastHandler):
 
         stocks = StockListHandler(self._operator).select_data()
         if dataframe_not_valid(stocks):
-            raise PreStepError(curr_step=AkConceptConsHandler, pre_step=StockListHandler)
+            raise PreStepError(
+                curr_step=AkConceptConsHandler, pre_step=StockListHandler
+            )
         cons = pd.merge(cons, stocks[[CODE]], how="inner", on=[CODE])
         Logger.info(f"After filter, total record num is {len(cons)}.")
         return cons
@@ -66,14 +67,15 @@ class AkConceptConsHandler(FastHandler):
         return cons
 
     def _save_to_database(self, df: DataFrame) -> None:
-        if dataframe_not_valid(df):
-            return
         self._operator.create_table(name=CNCP_CONS_LS, meta=_META)
         self._operator.try_insert_data(
             name=CNCP_CONS_LS, df=df, update=True, meta=_META
         )
-        self._operator.disconnect()
 
-    def select_data(self, para: Para = None) -> Optional[DataFrame]:
-        df = self._operator.select_data(CNCP_CONS_LS)
-        return df
+    def select_data(self) -> Optional[DataFrame]:
+        """
+        获取概念板块成分股
+
+        :return:
+        """
+        return self._operator.select_data(CNCP_CONS_LS)

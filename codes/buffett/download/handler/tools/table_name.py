@@ -1,4 +1,4 @@
-from buffett.adapter.pandas import DataFrame, pd, Series
+from buffett.adapter.pandas import DataFrame, pd
 from buffett.common.constants.col import FREQ, SOURCE, FUQUAN, START_DATE, END_DATE
 from buffett.common.constants.col.my import MONTH_START, TABLE_NAME
 from buffett.common.pendulum import convert_datetime, DateTime
@@ -54,13 +54,13 @@ class TableNameTool:
         spans = records[[START_DATE, END_DATE]].drop_duplicates()
         series = pd.concat(
             [
-                TableNameTool._create_single_series(row)
+                cls._create_single_series(row)
                 for row in spans.itertuples(index=False)
             ]
         )
         tables = pd.merge(records, series, how="left", on=[START_DATE, END_DATE])
         tables[TABLE_NAME] = tables.apply(
-            lambda row: TableNameTool.get_by_date(
+            lambda row: cls.get_by_date(
                 para=Para.from_series(row).with_start(row[MONTH_START])
             ),
             axis=1,

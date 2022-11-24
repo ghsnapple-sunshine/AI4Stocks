@@ -1,7 +1,7 @@
 from typing import Any
 
 from buffett.adapter.pandas import DataFrame
-from buffett.common import Code, create_meta
+from buffett.common import create_meta
 from buffett.common.constants.col.target import (
     CODE,
     NAME,
@@ -40,7 +40,7 @@ def create_2stocks(operator: Operator) -> DataFrame:
     return _create_stocks(operator, data)
 
 
-def create_ex_1stock(operator: Operator, code: Code) -> DataFrame:
+def create_ex_1stock(operator: Operator, code: str) -> DataFrame:
     """
     创建只有一支股票的StockList，股票代码需指定
 
@@ -48,7 +48,7 @@ def create_ex_1stock(operator: Operator, code: Code) -> DataFrame:
     :param code:
     :return:
     """
-    data = [[code.to_code6(), ""]]
+    data = [[code, ""]]
     return _create_stocks(operator, data)
 
 

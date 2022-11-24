@@ -18,7 +18,6 @@ from buffett.common.constants.col.money import (
 from buffett.common.constants.table import MONEY_SPLY
 from buffett.common.pendulum import Date
 from buffett.common.tools import dataframe_not_valid
-from buffett.download import Para
 from buffett.download.handler.fast.handler import FastHandler
 from buffett.download.mysql import Operator
 from buffett.download.mysql.types import ColType, AddReqType
@@ -72,15 +71,13 @@ class BsMoneySupplyHandler(FastHandler):
         return money_supply
 
     def _save_to_database(self, df: DataFrame) -> None:
-        if dataframe_not_valid(df):
-            return
-
         self._operator.create_table(name=MONEY_SPLY, meta=_META)
         self._operator.try_insert_data(name=MONEY_SPLY, df=df)  # 忽略重复Insert
-        self._operator.disconnect()
 
-    def select_data(self, para: Para = None) -> Optional[DataFrame]:
-        df = self._operator.select_data(MONEY_SPLY)
-        if dataframe_not_valid(df):
-            return
-        return df
+    def select_data(self) -> Optional[DataFrame]:
+        """
+        获取货币供应量
+
+        :return:
+        """
+        return self._operator.select_data(MONEY_SPLY)

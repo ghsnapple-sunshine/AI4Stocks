@@ -1,9 +1,9 @@
 from buffett.common.constants.col.target import CODE
 from buffett.download.handler.list.ak_list import StockListHandler
-from test import Tester, DbSweeper
+from test import Tester
 
 
-class StockListHandlerTest(Tester):
+class TestStockListHandler(Tester):
     @classmethod
     def _setup_oncemore(cls):
         cls._hdl = StockListHandler(operator=cls._operator)

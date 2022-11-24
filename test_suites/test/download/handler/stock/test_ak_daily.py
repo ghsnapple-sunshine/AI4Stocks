@@ -1,12 +1,11 @@
 from buffett.common.pendulum import Date
-from buffett.common.target import Code
 from buffett.download import Para
 from buffett.download.handler.stock.ak_daily import AkDailyHandler
 from buffett.download.types import FuquanType
 from test import Tester, create_1stock, create_2stocks, DbSweeper
 
 
-class AkDailyHandlerTest(Tester):
+class TestAkDailyHandler(Tester):
     @classmethod
     def _setup_oncemore(cls):
         cls._hdl = AkDailyHandler(cls._operator)
@@ -21,7 +20,7 @@ class AkDailyHandlerTest(Tester):
         :return:
         """
         create_1stock(self._operator)
-        select_para = Para().with_code(Code("000001")).with_fuquan(FuquanType.BFQ)
+        select_para = Para().with_code("000001").with_fuquan(FuquanType.BFQ)
         self._hdl.obtain_data(
             para=Para().with_start_n_end(start=Date(2022, 1, 5), end=Date(2022, 1, 7))
         )

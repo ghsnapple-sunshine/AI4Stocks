@@ -24,7 +24,6 @@ from buffett.backtrader.frame.stock_info_manager import (
 )
 from buffett.backtrader.interface.time_sequence import ITimeSequence as Sequence
 from buffett.backtrader.tools import ChargeCalculator as Calc
-from buffett.common import Code as Code
 from buffett.common.pendulum import DateSpan as Span
 from buffett.common.wrapper import Wrapper
 from buffett.download.handler import Handler
@@ -107,7 +106,7 @@ class ExchangeBuilder:
     def with_stock_man(
         self,
         operator: Operator,
-        stock_list: list[Code],
+        stock_list: list[str],
         datespan: Span,
         add_cols: dict[HeadType, Type[Handler]],
     ):

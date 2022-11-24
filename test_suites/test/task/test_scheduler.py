@@ -1,4 +1,4 @@
-from buffett.adapter.pandas import DataFrame, pd
+from buffett.adapter.pandas import DataFrame
 from buffett.common.constants.col.task import (
     ERR_MSG,
     TASK_ID,

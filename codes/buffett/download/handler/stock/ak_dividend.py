@@ -3,7 +3,6 @@ from typing import Optional
 from buffett.adapter.akshare import ak
 from buffett.adapter.pandas import DataFrame, pd
 from buffett.adapter.pendulum import Date
-from buffett.common import Code
 from buffett.common.constants.col.target import (
     CODE,
     SG,
@@ -183,7 +182,4 @@ class AkStockDividendHandler(Handler):
         :return:
         """
         df = self._operator.select_data(name=STK_DVD, meta=_META)
-        if dataframe_not_valid(df):
-            return
-        df[CODE] = df[CODE].apply(lambda x: Code(x))
         return df

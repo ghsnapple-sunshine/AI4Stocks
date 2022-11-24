@@ -1,14 +1,13 @@
 from typing import Optional
 
 from buffett.adapter.akshare import ak
-from buffett.adapter.pandas import DataFrame, Series, pd
+from buffett.adapter.pandas import DataFrame, pd
 from buffett.common import create_meta
 from buffett.common.constants.col.target import CODE, NAME, INDUSTRY_CODE, INDUSTRY_NAME
 from buffett.common.constants.table import INDUS_CONS_LS
 from buffett.common.error.pre_step import PreStepError
 from buffett.common.logger import Logger
 from buffett.common.tools import dataframe_not_valid
-from buffett.download import Para
 from buffett.download.handler.fast import FastHandler
 from buffett.download.handler.industry.ak_list import IndustryListHandler
 from buffett.download.handler.list import StockListHandler
@@ -74,6 +73,10 @@ class IndustryConsHandler(FastHandler):
         )
         self._operator.disconnect()
 
-    def select_data(self, para: Para = None) -> Optional[DataFrame]:
-        df = self._operator.select_data(INDUS_CONS_LS)
-        return df
+    def select_data(self) -> Optional[DataFrame]:
+        """
+        获取行业板块成分股
+
+        :return:
+        """
+        return self._operator.select_data(INDUS_CONS_LS)
