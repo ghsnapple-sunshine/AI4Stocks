@@ -27,7 +27,7 @@ class ReformMaintain:
 
     def run(self) -> bool:
         self._dl_records = self._dl_recorder.select_data()
-        self._rf_records = self._rf_recorder.get_data()
+        self._rf_records = self._rf_recorder.select_data()
         if dataframe_not_valid(self._dl_records) or dataframe_not_valid(
             self._rf_records
         ):

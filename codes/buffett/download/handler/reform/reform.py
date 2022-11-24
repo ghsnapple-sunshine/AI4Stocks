@@ -82,7 +82,7 @@ class ReformHandler:
         todo_records = self._dl_recorder.select_data()
         if dataframe_not_valid(todo_records):
             return
-        done_records = self._rf_recorder.get_data()
+        done_records = self._rf_recorder.select_data()
         if dataframe_is_valid(done_records):
             self._done_records = done_records
             todo_records = pd.subtract(todo_records, done_records)

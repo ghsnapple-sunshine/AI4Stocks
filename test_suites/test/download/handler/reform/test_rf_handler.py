@@ -50,7 +50,7 @@ class ReformHandlerTest(Tester):
         rf_data = np.sum([self._operator.select_row_num(x) for x in rf_table_names])
         assert dl_data == rf_data
         dl_record = DownloadRecorder(operator=self._operator).select_data()
-        rf_record = ReformRecorder(operator=self._operator).get_data()
+        rf_record = ReformRecorder(operator=self._operator).select_data()
         assert self.compare_dataframe(dl_record, rf_record)
 
     def test_ak_daily_10days(self):
