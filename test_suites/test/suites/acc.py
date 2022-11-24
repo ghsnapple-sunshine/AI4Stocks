@@ -10,7 +10,7 @@ from buffett.common.magic.tools import get_func_params, get_func_full_name
 from buffett.common.pendulum import Date
 from buffett.common.tools import dataframe_is_valid
 
-ROOT_PATH = "E:/BuffettData/testcase_cache/"
+ROOT_PATH = "D:/BuffettData/testcase_cache/"
 FOLDER_PATH = f"{ROOT_PATH}%s/"
 INDEX_PATH = f"{ROOT_PATH}%s/index"
 FILE_PATH = f"{ROOT_PATH}%s/%s"
