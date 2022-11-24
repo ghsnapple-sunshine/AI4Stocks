@@ -11,6 +11,7 @@ from buffett.common.constants.col.stock import (
     INDUSTRY_NAME,
 )
 from buffett.common.constants.table import STK_LS, CNCP_LS, INDUS_LS
+from buffett.common.stock import Stock
 from buffett.download.mysql import Operator
 from buffett.download.mysql.types import ColType, AddReqType
 
@@ -92,15 +93,15 @@ def create_2concepts(operator: Operator) -> DataFrame:
     return _create_concepts(operator, data)
 
 
-def create_ex_1concept(operator: Operator, code: Code) -> DataFrame:
+def create_ex_1concept(operator: Operator, stock: Stock) -> DataFrame:
     """
     创建只有一支概念的ConceptList，概念代码需指定
 
     :param operator:
-    :param code:
+    :param stock:
     :return:
     """
-    data = [[code, ""]]
+    data = [[stock.code, stock.name]]
     return _create_stocks(operator, data)
 
 
@@ -131,8 +132,8 @@ def create_1industry(operator: Operator) -> DataFrame:
     :param operator:
     :return:
     """
-    data = [["BK0493", "新能源"]]
-    return _create_concepts(operator, data)
+    data = [["BK1029", "汽车整车"]]
+    return _create_industries(operator, data)
 
 
 def create_2industries(operator: Operator) -> DataFrame:
@@ -142,20 +143,20 @@ def create_2industries(operator: Operator) -> DataFrame:
     :param operator:
     :return:
     """
-    data = [["BK0490", "军工"], ["BK0493", "新能源"]]
-    return _create_concepts(operator, data)
+    data = [["BK1029", "汽车整车"], ["BK1031", "光伏设备"]]
+    return _create_industries(operator, data)
 
 
-def create_ex_1industry(operator: Operator, code: Code) -> DataFrame:
+def create_ex_1industry(operator: Operator, stock: Stock) -> DataFrame:
     """
     创建只有一个行业的IndustryList，行业代码需指定
 
     :param operator:
-    :param code:
+    :param stock:
     :return:
     """
-    data = [[code, ""]]
-    return _create_stocks(operator, data)
+    data = [[stock.code, stock.name]]
+    return _create_industries(operator, data)
 
 
 def _create_industries(operator: Operator, data: list[list[Any]]) -> DataFrame:
@@ -173,6 +174,6 @@ def _create_industries(operator: Operator, data: list[list[Any]]) -> DataFrame:
         ]
     )
     operator.create_table(INDUS_LS, table_meta)
-    df = DataFrame(data=data, columns=[CODE, NAME])
-    operator.insert_data(CNCP_LS, df)
+    df = DataFrame(data=data, columns=[INDUSTRY_CODE, INDUSTRY_NAME])
+    operator.insert_data(INDUS_LS, df)
     return df

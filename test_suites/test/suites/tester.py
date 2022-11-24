@@ -13,6 +13,10 @@ from test import DbSweeper, Accelerator, SimpleTester
 
 
 class Tester(SimpleTester):
+    """
+    Hint: 每个Tester初始化时基类会调用一次清理数据库。
+    """
+
     _table_name = None
     _operator = None
     _short_para = None

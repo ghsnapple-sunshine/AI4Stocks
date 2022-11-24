@@ -129,7 +129,7 @@ class SlowHandler(Handler):
         todo_records[START_DATE] = para.span.start
         todo_records[END_DATE] = para.span.end
         if dataframe_is_valid(done_records):
-            done_records = done_records.rename({CODE: self._CODE})
+            done_records = done_records.rename(columns={CODE: self._CODE})
             todo_records = pd.subtract(todo_records, done_records)
         return todo_records
 
@@ -149,7 +149,7 @@ class SlowHandler(Handler):
             return todo_records
 
         done_records = done_records.rename(
-            columns={START_DATE: DORCD_START, END_DATE: DORCD_END}
+            columns={CODE: self._CODE, START_DATE: DORCD_START, END_DATE: DORCD_END}
         )
         todo_records = pd.merge(
             todo_records,
@@ -189,7 +189,7 @@ class SlowHandler(Handler):
         self._log_success_download(para=para)
 
     @abstractmethod
-    def _download(self, para: Para) -> Optional[DataFrame]:
+    def _download(self, para: Para) -> DataFrame:
         """
         根据para中指定的条件下载数据
 

@@ -48,7 +48,7 @@ class BsMinuteHandler(SlowHandler):
             field_name=NAME,
         )
 
-    def _download(self, para: Para) -> Optional[DataFrame]:
+    def _download(self, para: Para) -> DataFrame:
         fields = "time,open,high,low,close,volume,amount"
         minute_info = bs.query_history_k_data_plus(
             code=para.stock.code.to_code9(),
@@ -59,7 +59,7 @@ class BsMinuteHandler(SlowHandler):
             adjustflag=para.comb.fuquan.bs_format(),
         )
         if dataframe_not_valid(minute_info):
-            return
+            return minute_info
 
         # 重命名
         minute_info = minute_info.rename(columns=_RENAME)

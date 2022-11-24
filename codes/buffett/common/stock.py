@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Optional
+from typing import Optional, Union
 
 from buffett.adapter.enum import Enum
 
@@ -22,7 +22,7 @@ class Code(str):
             return "sz." + self
         elif self[0] == "3":
             return "sz." + self
-        return "unknown"
+        raise NotImplemented
 
     def to_code8(self) -> str:
         if self[0] == "6":
@@ -31,16 +31,18 @@ class Code(str):
             return "sz" + self
         elif self[0] == "3":
             return "sz" + self
-        return "unknown"
+        raise NotImplemented
 
 
 class Stock:
-    def __new__(cls, code: Optional[Code] = None, name: Optional[str] = None):
+    def __new__(cls, code: Union[Code, str, None] = None, name: Optional[str] = None):
         if code is None and name is None:
             return None
         return super(Stock, cls).__new__(cls)
 
-    def __init__(self, code: Optional[Code] = None, name: Optional[str] = None):
+    def __init__(self, code: Union[Code, str, None] = None, name: Optional[str] = None):
+        if type(code) == str:  # 使用isinstance则str, Code均为True
+            code = Code(code)
         self._code = code
         self._name = name
 

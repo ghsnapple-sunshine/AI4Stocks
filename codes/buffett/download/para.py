@@ -191,8 +191,6 @@ class Para:
         """
         if condition:
             if self._stock is None:
-                if isinstance(code, str):
-                    code = Code(code)
                 self._stock = Stock(code=code)
             else:
                 self._stock.with_code(code)

@@ -79,6 +79,8 @@ class AkMinuteHandler(SlowHandler):
             end_date=convert_datetime(para.span.end).format("YYYY-MM-DD HH:mm:ss"),
             adjust=para.comb.fuquan.ak_format(),
         )
+        if dataframe_not_valid(minute_info):
+            return minute_info
 
         minute_info = minute_info.rename(columns=_RENAME)  # 重命名
         return minute_info

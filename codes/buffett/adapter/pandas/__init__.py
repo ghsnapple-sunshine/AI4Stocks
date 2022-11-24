@@ -5,6 +5,7 @@ from pandas import (
     isna as pd_isna,
     merge as pd_merge,
     to_datetime as pd_to_datetime,
+    to_numeric as pd_to_numeric,
     read_csv as pd_read_csv,
     read_feather as pd_read_feather,
     Timestamp as pd_Timestamp,
@@ -28,6 +29,7 @@ class pd:
     read_csv = pd_read_csv
     read_feather = pd_read_feather
     to_datetime = pd_to_datetime
+    to_numeric = pd_to_numeric
 
     # new_add_methods
     @staticmethod
