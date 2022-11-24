@@ -14,7 +14,7 @@ from buffett.common.constants.col import (
     ZSZ,
     DGXL,
 )
-from buffett.common.constants.col.stock import CODE, NAME
+from buffett.common.constants.col.target import CODE, NAME
 from buffett.common.tools import dataframe_not_valid
 from buffett.download import Para
 from buffett.download.handler.list import StockListHandler
@@ -56,7 +56,7 @@ class AkStockPePbHandler(MediumHandler):
     def __init__(self, operator: Operator):
         super(AkStockPePbHandler, self).__init__(
             operator=operator,
-            list_handler=StockListHandler(operator=operator),
+            target_list_handler=StockListHandler(operator=operator),
             recorder=DownloadRecorder(operator=operator),
             source=SourceType.AKSHARE_LGLG_PEPB,
             fuquan=FuquanType.BFQ,

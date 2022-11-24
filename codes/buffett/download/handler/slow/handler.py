@@ -13,7 +13,7 @@ from buffett.common.constants.col import (
     DATE,
 )
 from buffett.common.constants.col.my import DORCD_START, DORCD_END
-from buffett.common.constants.col.stock import CODE
+from buffett.common.constants.col.target import CODE
 from buffett.common.error import ParamTypeError
 from buffett.common.pendulum import DateSpan, Date, convert_datetime, Duration
 from buffett.common.tools import dataframe_not_valid, list_not_valid, dataframe_is_valid
@@ -34,7 +34,7 @@ class SlowHandler(Handler):
     def __init__(
         self,
         operator: Operator,
-        list_handler: Handler,
+        target_list_handler: Handler,
         recorder: DownloadRecorder,
         source: SourceType,
         fuquans: list[FuquanType],
@@ -43,7 +43,7 @@ class SlowHandler(Handler):
         field_name: str,
     ):
         super(SlowHandler, self).__init__(operator)
-        self._list_handler = list_handler
+        self._target_list_handler = target_list_handler
         self._recorder = recorder
         self._source = source
         self._fuquans = fuquans
@@ -58,11 +58,11 @@ class SlowHandler(Handler):
 
         para = self._fix_para(para)
 
-        item_list = self._list_handler.select_data()
+        item_list = self._target_list_handler.select_data()
         done_records = self._recorder.select_data()
 
         todo_records = self._get_todo_records(
-            item_list=item_list, done_records=done_records, para=para
+            target_list=item_list, done_records=done_records, para=para
         )
         comb_records = self._get_comb_records(
             todo_records=todo_records, done_records=done_records
@@ -112,18 +112,18 @@ class SlowHandler(Handler):
         return para.clone().with_start_n_end(start, end)
 
     def _get_todo_records(
-        self, item_list: DataFrame, done_records: DataFrame, para: Para
+        self, target_list: DataFrame, done_records: DataFrame, para: Para
     ) -> DataFrame:
         """
         计算待下载的记录
 
-        :param item_list:           股票(...)代码
+        :param target_list:         标的清单
         :param done_records:        下载记录
         :param para:                span
         :return:                    待下载记录
         """
         fuquan_df = DataFrame(self._fuquans, columns=[FUQUAN])
-        todo_records = pd.merge(item_list, fuquan_df, how="cross")
+        todo_records = pd.merge(target_list, fuquan_df, how="cross")
         todo_records[FREQ] = self._freq
         todo_records[SOURCE] = self._source
         todo_records[START_DATE] = para.span.start
@@ -213,7 +213,7 @@ class SlowHandler(Handler):
     def _log_success_download(cls, para: Para):
         logging.info(
             "Successfully Download Stock {0} {1} {2} {3}".format(
-                para.comb.freq, para.stock.code, para.stock.name, para.comb.fuquan
+                para.comb.freq, para.target.code, para.target.name, para.comb.fuquan
             )
         )
 
@@ -221,7 +221,7 @@ class SlowHandler(Handler):
     def _log_already_downloaded(cls, para: Para):
         logging.info(
             "Have already Downloaded Stock {0} {1} {2} {3}".format(
-                para.comb.freq, para.stock.code, para.stock.name, para.comb.fuquan
+                para.comb.freq, para.target.code, para.target.name, para.comb.fuquan
             )
         )
 

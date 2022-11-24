@@ -1,7 +1,7 @@
 from buffett.adapter.pandas import DataFrame
 from buffett.common import Code
 from buffett.common.constants.col import FREQ, FUQUAN, SOURCE, START_DATE, END_DATE
-from buffett.common.constants.col.stock import CODE
+from buffett.common.constants.col.target import CODE
 from buffett.common.pendulum import Date
 from buffett.download import Para
 from buffett.download.recorder import DownloadRecorder

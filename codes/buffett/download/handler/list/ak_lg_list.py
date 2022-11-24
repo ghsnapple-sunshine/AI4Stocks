@@ -4,7 +4,7 @@ from typing import Optional
 from buffett.adapter.akshare import ak
 from buffett.adapter.pandas import DataFrame
 from buffett.common import Code, create_meta
-from buffett.common.constants.col.stock import CODE, NAME
+from buffett.common.constants.col.target import CODE, NAME
 from buffett.common.constants.table import LG_STK_LS
 from buffett.common.tools import dataframe_not_valid
 from buffett.download import Para

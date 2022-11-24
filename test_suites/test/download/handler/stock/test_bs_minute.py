@@ -1,5 +1,5 @@
 from buffett.common.pendulum import Date, DateTime, convert_date
-from buffett.common.stock import Code
+from buffett.common.target import Code
 from buffett.download import Para
 from buffett.download.handler.stock.bs_minute import BsMinuteHandler
 from buffett.download.types import FuquanType

@@ -4,7 +4,7 @@ from buffett.adapter.baostock import bs
 from buffett.adapter.pandas import DataFrame
 from buffett.common import create_meta
 from buffett.common.constants.col import DATETIME, OPEN, CLOSE, HIGH, LOW, CJL, CJE
-from buffett.common.constants.col.stock import CODE, NAME
+from buffett.common.constants.col.target import CODE, NAME
 from buffett.common.tools import dataframe_not_valid
 from buffett.download import Para
 from buffett.download.handler.list import StockListHandler
@@ -39,7 +39,7 @@ class BsMinuteHandler(SlowHandler):
     def __init__(self, operator: Operator):
         super().__init__(
             operator=operator,
-            list_handler=StockListHandler(operator=operator),
+            target_list_handler=StockListHandler(operator=operator),
             recorder=DownloadRecorder(operator=operator),
             source=SourceType.BAOSTOCK,
             fuquans=[FuquanType.BFQ],
@@ -51,7 +51,7 @@ class BsMinuteHandler(SlowHandler):
     def _download(self, para: Para) -> DataFrame:
         fields = "time,open,high,low,close,volume,amount"
         minute_info = bs.query_history_k_data_plus(
-            code=para.stock.code.to_code9(),
+            code=para.target.code.to_code9(),
             fields=fields,
             frequency="5",
             start_date=para.span.start.format("YYYY-MM-DD"),

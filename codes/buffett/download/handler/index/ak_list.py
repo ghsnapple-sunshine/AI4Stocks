@@ -2,7 +2,7 @@ from typing import Optional
 
 from buffett.adapter.akshare import ak
 from buffett.adapter.pandas import DataFrame
-from buffett.common.constants.col.stock import INDEX_CODE, INDEX_NAME
+from buffett.common.constants.col.target import INDEX_CODE, INDEX_NAME
 from buffett.common.constants.table import INDEX_LS
 from buffett.common.tools import dataframe_not_valid, create_meta
 from buffett.download import Para

@@ -34,11 +34,15 @@ class Code(str):
         raise NotImplemented
 
 
-class Stock:
+class Target:
+    """
+    标的，可以是股票(Stock), 指数(Index), 概念(Concept), 行业(Industry)
+
+    """
     def __new__(cls, code: Union[Code, str, None] = None, name: Optional[str] = None):
         if code is None and name is None:
             return None
-        return super(Stock, cls).__new__(cls)
+        return super(Target, cls).__new__(cls)
 
     def __init__(self, code: Union[Code, str, None] = None, name: Optional[str] = None):
         if type(code) == str:  # 使用isinstance则str, Code均为True
@@ -46,33 +50,33 @@ class Stock:
         self._code = code
         self._name = name
 
-    def with_code(self, code: Code) -> Stock:
+    def with_code(self, code: Code) -> Target:
         """
         条件设置code
 
-        :param code:            股票代码
+        :param code:            标的代码
         :return:                Self
         """
         self._code = code
         return self
 
-    def with_name(self, name: str) -> Stock:
+    def with_name(self, name: str) -> Target:
         """
         条件设置name
 
-        :param name:            股票名称
+        :param name:            标的名称
         :return:                Self
         """
         self._name = name
         return self
 
-    def clone(self) -> Stock:
+    def clone(self) -> Target:
         """
         复制自身
 
         :return:                复制的对象
         """
-        return Stock(code=self._code, name=self._name)
+        return Target(code=self._code, name=self._name)
 
     @property
     def code(self) -> Optional[Code]:

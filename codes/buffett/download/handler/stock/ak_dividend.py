@@ -4,7 +4,7 @@ from buffett.adapter.akshare import ak
 from buffett.adapter.pandas import DataFrame, pd
 from buffett.adapter.pendulum import Date
 from buffett.common import Code
-from buffett.common.constants.col.stock import (
+from buffett.common.constants.col.target import (
     CODE,
     SG,
     ZG,

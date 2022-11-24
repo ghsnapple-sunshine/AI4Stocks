@@ -3,7 +3,7 @@ from typing import Optional
 from buffett.adapter.akshare import ak
 from buffett.adapter.pandas import DataFrame, Series, pd
 from buffett.common import create_meta
-from buffett.common.constants.col.stock import CODE, NAME, INDUSTRY_CODE, INDUSTRY_NAME
+from buffett.common.constants.col.target import CODE, NAME, INDUSTRY_CODE, INDUSTRY_NAME
 from buffett.common.constants.table import INDUS_CONS_LS
 from buffett.common.error.pre_step import PreStepError
 from buffett.common.logger import Logger

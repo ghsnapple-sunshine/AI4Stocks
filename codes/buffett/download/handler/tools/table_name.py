@@ -17,7 +17,7 @@ class TableNameTool:
         table_name = "{0}_stock_{1}info_{2}_{3}".format(
             para.comb.source.sql_format(),
             para.comb.freq,
-            para.stock.code,
+            para.target.code,
             para.comb.fuquan.ak_format(),
         )
         return table_name

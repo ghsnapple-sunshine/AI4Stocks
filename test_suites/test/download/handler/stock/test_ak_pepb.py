@@ -11,7 +11,7 @@ from buffett.common.constants.col import (
     SOURCE,
 )
 from buffett.common.constants.col.my import DORCD_START, DORCD_END
-from buffett.common.constants.col.stock import CODE
+from buffett.common.constants.col.target import CODE
 from buffett.download import Para
 from buffett.download.handler.stock.ak_pepb import AkStockPePbHandler
 from buffett.download.types import FreqType, FuquanType, SourceType

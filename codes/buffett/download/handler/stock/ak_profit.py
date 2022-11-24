@@ -12,7 +12,7 @@ from buffett.common.constants.col.date import (
     YEAR2024,
     YEAR2025,
 )
-from buffett.common.constants.col.stock import CODE
+from buffett.common.constants.col.target import CODE
 from buffett.common.constants.table import STK_PROFIT
 from buffett.common.tools import dataframe_is_valid, dataframe_not_valid
 from buffett.download import Para

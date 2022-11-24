@@ -2,7 +2,7 @@ from typing import Any
 
 from buffett.adapter.pandas import DataFrame
 from buffett.common import Code, create_meta
-from buffett.common.constants.col.stock import (
+from buffett.common.constants.col.target import (
     CODE,
     NAME,
     CONCEPT_CODE,
@@ -11,7 +11,7 @@ from buffett.common.constants.col.stock import (
     INDUSTRY_NAME,
 )
 from buffett.common.constants.table import STK_LS, CNCP_LS, INDUS_LS
-from buffett.common.stock import Stock
+from buffett.common.target import Target
 from buffett.download.mysql import Operator
 from buffett.download.mysql.types import ColType, AddReqType
 
@@ -93,7 +93,7 @@ def create_2concepts(operator: Operator) -> DataFrame:
     return _create_concepts(operator, data)
 
 
-def create_ex_1concept(operator: Operator, stock: Stock) -> DataFrame:
+def create_ex_1concept(operator: Operator, stock: Target) -> DataFrame:
     """
     创建只有一支概念的ConceptList，概念代码需指定
 
@@ -147,7 +147,7 @@ def create_2industries(operator: Operator) -> DataFrame:
     return _create_industries(operator, data)
 
 
-def create_ex_1industry(operator: Operator, stock: Stock) -> DataFrame:
+def create_ex_1industry(operator: Operator, stock: Target) -> DataFrame:
     """
     创建只有一个行业的IndustryList，行业代码需指定
 

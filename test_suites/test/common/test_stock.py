@@ -1,4 +1,4 @@
-from buffett.common.stock import Code
+from buffett.common.target import Code
 from test import SimpleTester
 
 

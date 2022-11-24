@@ -13,7 +13,7 @@ from buffett.common.constants.col import (
     END_DATE,
 )
 from buffett.common.constants.col.my import DORCD_START, DORCD_END
-from buffett.common.constants.col.stock import CODE
+from buffett.common.constants.col.target import CODE
 from buffett.common.pendulum import DateSpan, Date
 from buffett.common.tools import dataframe_is_valid
 from buffett.download import Para
@@ -28,7 +28,7 @@ class MediumHandler(Handler):
     def __init__(
         self,
         operator: Operator,
-        list_handler: Handler,
+        target_list_handler: Handler,
         recorder: DownloadRecorder,
         source: SourceType,
         fuquan: FuquanType,
@@ -37,7 +37,7 @@ class MediumHandler(Handler):
         field_name: str,
     ):
         super(MediumHandler, self).__init__(operator)
-        self._list_handler = list_handler
+        self._target_list_handler = target_list_handler
         self._recorder = recorder
         self._source = source
         self._fuquan = fuquan
@@ -63,7 +63,7 @@ class MediumHandler(Handler):
         :param: span
         :return:
         """
-        item_list = self._list_handler.select_data()
+        item_list = self._target_list_handler.select_data()
         todo_records = DataFrame(
             {
                 self._CODE: item_list[self._CODE],
@@ -126,7 +126,7 @@ class MediumHandler(Handler):
     def select_data(self, para: Para) -> Optional[DataFrame]:
         para = (
             Para()
-            .with_code(para.stock.code)
+            .with_code(para.target.code)
             .with_source(self._source)
             .with_freq(self._freq)
             .with_fuquan(self._fuquan)

@@ -1,7 +1,7 @@
 from buffett.adapter.pandas import Series
 from buffett.common import Code
 from buffett.common.constants.col import FREQ, SOURCE, FUQUAN, START_DATE, END_DATE
-from buffett.common.constants.col.stock import CODE, NAME
+from buffett.common.constants.col.target import CODE, NAME
 from buffett.common.pendulum import Date
 from buffett.download import Para
 from buffett.download.types import FuquanType, FreqType, SourceType
@@ -26,7 +26,7 @@ class TestPara(SimpleTester):
         assert para.comb.source == source
         assert para.comb.fuquan == fuquan
         assert para.span is None
-        assert para.stock is None
+        assert para.target is None
 
     def test_from_series_incorrect_key(self):
         freq = FreqType.DAY
@@ -38,7 +38,7 @@ class TestPara(SimpleTester):
         assert para.comb.source == source
         assert para.comb.fuquan == fuquan
         assert para.span is None
-        assert para.stock is None
+        assert para.target is None
 
     def test_from_series_all(self):
         freq = FreqType.DAY
@@ -63,8 +63,8 @@ class TestPara(SimpleTester):
         assert para.comb.freq == freq
         assert para.comb.source == source
         assert para.comb.fuquan == fuquan
-        assert para.stock.code == code
-        assert para.stock.name == name
+        assert para.target.code == code
+        assert para.target.name == name
         assert para.span.start == start_date
         assert para.span.end == end_date
 
@@ -73,4 +73,4 @@ class TestPara(SimpleTester):
         para = Para.from_series(series)
         assert para.comb is None
         assert para.span is None
-        assert para.stock is None
+        assert para.target is None

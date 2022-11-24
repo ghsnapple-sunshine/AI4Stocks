@@ -16,7 +16,7 @@ from buffett.common.constants.col import (
     ZDE,
     HSL,
 )
-from buffett.common.constants.col.stock import (
+from buffett.common.constants.col.target import (
     INDUSTRY_CODE,
     INDUSTRY_NAME,
 )
@@ -66,7 +66,7 @@ class AkIndustryDailyHandler(SlowHandler):
     def __init__(self, operator: Operator):
         super(AkIndustryDailyHandler, self).__init__(
             operator=operator,
-            list_handler=IndustryListHandler(operator=operator),
+            target_list_handler=IndustryListHandler(operator=operator),
             recorder=DownloadRecorder(operator=operator),
             source=SourceType.AKSHARE_DONGCAI_INDUSTRY,
             fuquans=[FuquanType.BFQ],
@@ -78,7 +78,7 @@ class AkIndustryDailyHandler(SlowHandler):
     def _download(self, para: Para) -> DataFrame:
         # 使用接口（stock_board_industry_hist_em，源：东财）,采用name作为symbol
         daily_info = ak.stock_board_industry_hist_em(
-            symbol=para.stock.code,
+            symbol=para.target.code,
             period="日k",  # emmm...
             start_date=para.span.start.format("YYYYMMDD"),
             end_date=para.span.end.subtract(days=1).format("YYYYMMDD"),

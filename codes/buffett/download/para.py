@@ -7,7 +7,7 @@ from buffett.adapter.pandas import Series, DataFrame, pd
 from buffett.adapter.pendulum import date
 from buffett.common import Code
 from buffett.common.constants.col import FREQ, SOURCE, FUQUAN, START_DATE, END_DATE
-from buffett.common.constants.col.stock import (
+from buffett.common.constants.col.target import (
     CODE,
     NAME,
     CONCEPT_CODE,
@@ -17,14 +17,14 @@ from buffett.common.constants.col.stock import (
 )
 from buffett.common.magic import get_attr_safe
 from buffett.common.pendulum import DateSpan
-from buffett.common.stock import Stock
+from buffett.common.target import Target
 from buffett.download.types import HeadType, CombType, FuquanType, FreqType, SourceType
 
 
 class Para:
     def __init__(
         self,
-        stock: Optional[Stock] = None,
+        target: Optional[Target] = None,
         comb: Optional[CombType] = None,
         span: Optional[DateSpan] = None,
         heads: Optional[list[HeadType]] = None,
@@ -32,12 +32,12 @@ class Para:
         """
         初始化Para for Handler
 
-        :param stock:       股票信息
+        :param target:      标的信息
         :param comb:        复合类型
         :param span:        指定的时间周期
         :param heads:       指定的数据列
         """
-        self._stock = stock
+        self._target = target
         self._comb = comb
         self._span = span
         self._heads = heads
@@ -160,55 +160,55 @@ class Para:
         start_date,
         end_date,
     ) -> Para:
-        stock = Stock(code=code, name=name)
-        if stock is None:
-            stock = Stock(code=concept_code, name=concept_name)
-        if stock is None:
-            stock = Stock(code=industry_code, name=industry_name)
+        target = Target(code=code, name=name)
+        if target is None:
+            target = Target(code=concept_code, name=concept_name)
+        if target is None:
+            target = Target(code=industry_code, name=industry_name)
         comb = CombType(freq=freq, source=source, fuquan=fuquan)
         span = DateSpan(start=start_date, end=end_date)
-        return Para(stock=stock, comb=comb, span=span)
+        return Para(target=target, comb=comb, span=span)
 
-    def with_stock(self, stock: Stock, condition: bool = True) -> Para:
+    def with_target(self, target: Target, condition: bool = True) -> Para:
         """
-        条件设置stock并返回自身
+        条件设置target并返回自身
 
-        :param stock:       股票
+        :param target:      标的
         :param condition:   条件设置
         :return:            Self
         """
         if condition:
-            self._stock = stock
+            self._target = target
         return self
 
     def with_code(self, code: Union[Code, str], condition: bool = True) -> Para:
         """
-        条件设置stock.code并返回自身
+        条件设置target.code并返回自身
 
-        :param code:        股票代码
+        :param code:        标的代码
         :param condition:   条件设置
         :return:            Self
         """
         if condition:
-            if self._stock is None:
-                self._stock = Stock(code=code)
+            if self._target is None:
+                self._target = Target(code=code)
             else:
-                self._stock.with_code(code)
+                self._target.with_code(code)
         return self
 
     def with_name(self, name: str, condition: bool = True) -> Para:
         """
-        条件设置stock.name并返回自身
+        条件设置target.name并返回自身
 
-        :param name:        股票名称
+        :param name:        标的名称
         :param condition:   条件设置
         :return:            Self
         """
         if condition:
-            if self._stock is None:
-                self._stock = Stock(name=name)
+            if self._target is None:
+                self._target = Target(name=name)
             else:
-                self._stock.with_name(name)
+                self._target.with_name(name)
         return self
 
     def with_comb(self, comb: CombType, condition: bool = True) -> Para:
@@ -344,15 +344,15 @@ class Para:
         :return:            复制的对象
         """
         return Para(
-            stock=None if self._stock is None else self._stock.clone(),
+            target=None if self._target is None else self._target.clone(),
             comb=None if self._comb is None else self._comb.clone(),
             span=None if self._span is None else self._span.clone(),
             heads=None if self._heads is None else self._heads.copy(),
         )
 
     @property
-    def stock(self) -> Optional[Stock]:
-        return self._stock
+    def target(self) -> Optional[Target]:
+        return self._target
 
     @property
     def comb(self) -> Optional[CombType]:

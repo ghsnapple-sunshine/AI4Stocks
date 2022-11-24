@@ -1,4 +1,4 @@
-from buffett.common.constants.col.stock import INDUSTRY_CODE
+from buffett.common.constants.col.target import INDUSTRY_CODE
 from buffett.common.constants.table import INDUS_LS
 from buffett.download.handler.industry import IndustryListHandler, IndustryConsHandler
 from buffett.download.handler.list import StockListHandler

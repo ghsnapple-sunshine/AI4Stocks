@@ -4,7 +4,7 @@ from buffett.adapter.pandas import DataFrame, pd, Series
 from buffett.common.constants.col import FREQ, SOURCE, FUQUAN, START_DATE, END_DATE
 from buffett.common.constants.col.my import TABLE_NAME, DORCD_START, DORCD_END
 from buffett.common.constants.col.mysql import ROW_NUM
-from buffett.common.constants.col.stock import CODE
+from buffett.common.constants.col.target import CODE
 from buffett.common.logger import Logger
 from buffett.common.pendulum import DateSpan, DateTime
 from buffett.common.tools import dataframe_not_valid, dataframe_is_valid

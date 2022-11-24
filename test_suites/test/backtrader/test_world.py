@@ -3,7 +3,7 @@ from buffett.backtrader.frame import Para as WPara, TheWorldBuilder as Builder
 from buffett.backtrader.strategy import StrategyBase as Strat
 from buffett.common import Code as Code
 from buffett.common.constants.col import DATE
-from buffett.common.constants.col.stock import CODE, NAME
+from buffett.common.constants.col.target import CODE, NAME
 from buffett.common.pendulum import Date, DateSpan as Span
 from buffett.download import Para as DPara
 from buffett.download.handler.calendar import CalendarHandler as CHandler

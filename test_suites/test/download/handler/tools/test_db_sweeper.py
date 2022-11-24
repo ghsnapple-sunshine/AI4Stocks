@@ -1,7 +1,7 @@
 from pandas import DataFrame
 
 from buffett.common.constants.col.meta import META_COLS
-from buffett.common.constants.col.stock import CODE, NAME
+from buffett.common.constants.col.target import CODE, NAME
 from buffett.common.constants.table import STK_LS
 from buffett.common.tools import dataframe_not_valid
 from buffett.download.mysql.types import ColType, AddReqType

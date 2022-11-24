@@ -16,7 +16,7 @@ from buffett.common.constants.col import (
     ZDE,
     HSL,
 )
-from buffett.common.constants.col.stock import CODE, NAME
+from buffett.common.constants.col.target import CODE, NAME
 from buffett.common.tools import dataframe_not_valid
 from buffett.download import Para
 from buffett.download.handler.list import StockListHandler
@@ -62,7 +62,7 @@ class AkDailyHandler(SlowHandler):
     def __init__(self, operator: Operator):
         super().__init__(
             operator=operator,
-            list_handler=StockListHandler(operator=operator),
+            target_list_handler=StockListHandler(operator=operator),
             recorder=DownloadRecorder(operator=operator),
             source=SourceType.AKSHARE_DONGCAI,
             fuquans=[FuquanType.BFQ, FuquanType.HFQ, FuquanType.QFQ],
@@ -77,7 +77,7 @@ class AkDailyHandler(SlowHandler):
         start_date = para.span.start.format("YYYYMMDD")
         end_date = para.span.end.subtract(days=1).format("YYYYMMDD")
         daily_info = ak.stock_zh_a_hist(
-            symbol=para.stock.code.to_code6(),
+            symbol=para.target.code.to_code6(),
             period="daily",
             start_date=start_date,
             end_date=end_date,

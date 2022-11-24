@@ -14,7 +14,7 @@ from buffett.common.constants.col import (
     DATETIME,
 )
 from buffett.common.constants.col.my import MONTH_START, DORCD_START, DORCD_END
-from buffett.common.constants.col.stock import CODE
+from buffett.common.constants.col.target import CODE
 from buffett.common.pendulum import DateSpan, DateTime, convert_datetime
 from buffett.common.tools import dataframe_not_valid, dataframe_is_valid
 from buffett.download.handler.tools.table_name import TableNameTool
@@ -232,7 +232,7 @@ class ReformHandler:
                 for span in todo_ls
             ]
         )
-        data[CODE] = para.stock.code
+        data[CODE] = para.target.code
         return data
 
     def _save_2_database(self, df: DataFrame, para: Para) -> None:

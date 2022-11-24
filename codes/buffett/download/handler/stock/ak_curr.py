@@ -21,7 +21,7 @@ from buffett.common.constants.col import (
     ZSZ,
     LTSZ,
 )
-from buffett.common.constants.col.stock import CODE
+from buffett.common.constants.col.target import CODE
 from buffett.common.constants.table import STK_RT
 from buffett.common.pendulum import DateTime
 from buffett.common.tools import dataframe_not_valid

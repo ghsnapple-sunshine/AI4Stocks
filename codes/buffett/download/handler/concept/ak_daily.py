@@ -16,7 +16,7 @@ from buffett.common.constants.col import (
     ZDE,
     HSL,
 )
-from buffett.common.constants.col.stock import CONCEPT_CODE, CONCEPT_NAME
+from buffett.common.constants.col.target import CONCEPT_CODE, CONCEPT_NAME
 from buffett.common.pendulum import Date
 from buffett.common.tools import dataframe_not_valid
 from buffett.download import Para
@@ -63,7 +63,7 @@ class AkConceptDailyHandler(MediumHandler):
     def __init__(self, operator: Operator):
         super(AkConceptDailyHandler, self).__init__(
             operator=operator,
-            list_handler=AkConceptListHandler(operator=operator),
+            target_list_handler=AkConceptListHandler(operator=operator),
             recorder=DownloadRecorder(operator=operator),
             source=SourceType.AKSHARE_DONGCAI_CONCEPT,
             fuquan=FuquanType.BFQ,

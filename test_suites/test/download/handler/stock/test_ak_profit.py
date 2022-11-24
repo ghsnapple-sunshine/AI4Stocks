@@ -1,6 +1,6 @@
 from buffett.common.constants.col import DATE
 from buffett.common.constants.col.date import YEAR2025
-from buffett.common.constants.col.stock import CODE
+from buffett.common.constants.col.target import CODE
 from buffett.download.handler.stock import AkProfitHandler
 from test import Tester
 

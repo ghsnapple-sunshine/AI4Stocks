@@ -3,7 +3,7 @@ from typing import Optional
 from buffett.adapter.pandas import DataFrame
 from buffett.common import create_meta, Code
 from buffett.common.constants.col import FREQ, FUQUAN, SOURCE, START_DATE, END_DATE
-from buffett.common.constants.col.stock import CODE
+from buffett.common.constants.col.target import CODE
 from buffett.common.constants.table import RF_RCD
 from buffett.common.tools import dataframe_not_valid
 from buffett.download import Para
@@ -31,7 +31,7 @@ class ReformRecorder:
     def save(self, para: Para):
         ls = [
             [
-                para.stock.code,
+                para.target.code,
                 para.comb.freq,
                 para.comb.fuquan,
                 para.comb.source,

@@ -2,7 +2,7 @@ from buffett.adapter import pendulum
 from buffett.adapter.pandas import DataFrame
 from buffett.adapter.pendulum import date
 from buffett.common.constants.col import START_DATE, END_DATE
-from buffett.common.constants.col.stock import CODE
+from buffett.common.constants.col.target import CODE
 from buffett.common.pendulum import Date, DateSpan, DateTime, Duration
 from test import SimpleTester
 

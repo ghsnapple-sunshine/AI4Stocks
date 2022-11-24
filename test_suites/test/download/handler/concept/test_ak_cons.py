@@ -1,4 +1,4 @@
-from buffett.common.constants.col.stock import CONCEPT_CODE
+from buffett.common.constants.col.target import CONCEPT_CODE
 from buffett.common.constants.table import CNCP_LS
 from buffett.download.handler.concept import AkConceptConsHandler, AkConceptListHandler
 from buffett.download.handler.list import StockListHandler
