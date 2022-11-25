@@ -10,7 +10,7 @@ class Connector:
     def __init__(self, role):
         # self._role = role
         if role == RoleType.DbStock:
-            self._user = "target"
+            self._user = "stock"
             self._db = "stocks"
             self._pwd = "Changeme_1234"
         elif role == RoleType.DbTest:
