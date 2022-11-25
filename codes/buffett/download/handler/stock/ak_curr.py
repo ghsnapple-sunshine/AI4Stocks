@@ -2,7 +2,6 @@ from typing import Optional
 
 from buffett.adapter.akshare import ak
 from buffett.adapter.pandas import DataFrame
-from buffett.common import create_meta
 from buffett.common.constants.col import (
     DATETIME,
     OPEN,
@@ -22,12 +21,11 @@ from buffett.common.constants.col import (
     LTSZ,
 )
 from buffett.common.constants.col.target import CODE
+from buffett.common.constants.meta.handler import STK_RT_META
 from buffett.common.constants.table import STK_RT
 from buffett.common.pendulum import DateTime
-from buffett.common.tools import dataframe_not_valid
-from buffett.download.handler.fast.handler import FastHandler
+from buffett.download.handler.base import FastHandler
 from buffett.download.mysql import Operator
-from buffett.download.mysql.types import ColType, AddReqType
 
 _RENAME = {
     "代码": CODE,
@@ -48,28 +46,6 @@ _RENAME = {
     "流通市值": LTSZ,
 }
 
-_META = create_meta(
-    meta_list=[
-        [CODE, ColType.CODE, AddReqType.KEY],
-        [DATETIME, ColType.DATETIME, AddReqType.KEY],
-        [OPEN, ColType.FLOAT, AddReqType.NONE],
-        [CLOSE, ColType.FLOAT, AddReqType.NONE],
-        [HIGH, ColType.FLOAT, AddReqType.NONE],
-        [LOW, ColType.FLOAT, AddReqType.NONE],
-        [CJL, ColType.INT32, AddReqType.NONE],
-        [CJE, ColType.FLOAT, AddReqType.NONE],
-        [ZF, ColType.FLOAT, AddReqType.NONE],
-        [ZDF, ColType.FLOAT, AddReqType.NONE],
-        [ZDE, ColType.FLOAT, AddReqType.NONE],
-        [HSL, ColType.FLOAT, AddReqType.NONE],
-        [LB, ColType.FLOAT, AddReqType.NONE],
-        [DSYL, ColType.FLOAT, AddReqType.NONE],
-        [SJL, ColType.FLOAT, AddReqType.NONE],
-        [ZSZ, ColType.FLOAT, AddReqType.NONE],
-        [LTSZ, ColType.FLOAT, AddReqType.NONE],
-    ]
-)
-
 
 class AkCurrHandler(FastHandler):
     def __init__(self, operator: Operator):
@@ -86,7 +62,7 @@ class AkCurrHandler(FastHandler):
         return curr_info
 
     def _save_to_database(self, df: DataFrame) -> None:
-        self._operator.create_table(name=STK_RT, meta=_META)
+        self._operator.create_table(name=STK_RT, meta=STK_RT_META)
         self._operator.try_insert_data(name=STK_RT, df=df)
 
     def select_data(self) -> Optional[DataFrame]:

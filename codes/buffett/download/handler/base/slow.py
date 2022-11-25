@@ -18,7 +18,6 @@ from buffett.common.error import ParamTypeError
 from buffett.common.pendulum import DateSpan, Date, convert_datetime, Duration
 from buffett.common.tools import dataframe_not_valid, list_not_valid, dataframe_is_valid
 from buffett.download.handler import Handler
-from buffett.download.handler.calendar import CalendarHandler
 from buffett.download.handler.tools import TableNameTool
 from buffett.download.mysql import Operator
 from buffett.download.para import Para
@@ -35,6 +34,7 @@ class SlowHandler(Handler):
         self,
         operator: Operator,
         target_list_handler: Handler,
+        calendar_handler: Handler,
         recorder: DownloadRecorder,
         source: SourceType,
         fuquans: list[FuquanType],
@@ -44,6 +44,7 @@ class SlowHandler(Handler):
     ):
         super(SlowHandler, self).__init__(operator)
         self._target_list_handler = target_list_handler
+        self._calendar_handler = calendar_handler
         self._recorder = recorder
         self._source = source
         self._fuquans = fuquans
@@ -90,7 +91,7 @@ class SlowHandler(Handler):
         start, end = para.span.start, para.span.end
         end = end if end > Date.today() else Date.today()
 
-        calendar = CalendarHandler(operator=self._operator).select_data()
+        calendar = self._calendar_handler.select_data()
         if dataframe_not_valid(calendar) or end - start > Duration(
             days=7
         ):  # 未获取到calendar则不做额外处理
@@ -183,7 +184,8 @@ class SlowHandler(Handler):
             )
 
         table_name = TableNameTool.get_by_code(para=para)
-        self._save_to_database(table_name=table_name, df=data)
+        if dataframe_is_valid(data):
+            self._save_to_database(table_name=table_name, df=data)
         total_span = todo_span if done_span is None else todo_span.add(done_span)
         self._recorder.save(para=para.with_span(total_span))
         self._log_success_download(para=para)

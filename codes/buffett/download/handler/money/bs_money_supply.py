@@ -4,7 +4,7 @@ from buffett.adapter.baostock import bs
 from buffett.adapter.pandas import DataFrame
 from buffett.common import create_meta
 from buffett.common.constants.col import DATE
-from buffett.common.constants.col.money import (
+from buffett.common.constants.col import (
     MO,
     M0TB,
     M0HB,
@@ -17,8 +17,7 @@ from buffett.common.constants.col.money import (
 )
 from buffett.common.constants.table import MONEY_SPLY
 from buffett.common.pendulum import Date
-from buffett.common.tools import dataframe_not_valid
-from buffett.download.handler.fast.handler import FastHandler
+from buffett.download.handler.base import FastHandler
 from buffett.download.mysql import Operator
 from buffett.download.mysql.types import ColType, AddReqType
 

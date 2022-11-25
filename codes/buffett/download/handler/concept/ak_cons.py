@@ -2,28 +2,18 @@ from typing import Optional
 
 from buffett.adapter.akshare import ak
 from buffett.adapter.pandas import DataFrame, pd
-from buffett.common import create_meta
 from buffett.common.constants.col.target import CONCEPT_CODE, CONCEPT_NAME, CODE, NAME
+from buffett.common.constants.meta.handler import CNCP_CONS_META
 from buffett.common.constants.table import CNCP_CONS_LS
 from buffett.common.error.pre_step import PreStepError
 from buffett.common.logger import Logger
 from buffett.common.tools import dataframe_not_valid
 from buffett.download.handler.concept.ak_list import AkConceptListHandler
-from buffett.download.handler.fast.handler import FastHandler
+from buffett.download.handler.base import FastHandler
 from buffett.download.handler.list.ak_list import StockListHandler
-from buffett.download.mysql.types import ColType, AddReqType
 
 DM = "代码"
 MC = "名称"
-
-_META = create_meta(
-    meta_list=[
-        [CONCEPT_CODE, ColType.CODE, AddReqType.KEY],
-        [CONCEPT_NAME, ColType.CONCEPT_NAME, AddReqType.NONE],
-        [CODE, ColType.CODE, AddReqType.KEY],
-        [NAME, ColType.STOCK_NAME, AddReqType.NONE],
-    ]
-)
 
 
 class AkConceptConsHandler(FastHandler):
@@ -67,9 +57,9 @@ class AkConceptConsHandler(FastHandler):
         return cons
 
     def _save_to_database(self, df: DataFrame) -> None:
-        self._operator.create_table(name=CNCP_CONS_LS, meta=_META)
+        self._operator.create_table(name=CNCP_CONS_LS, meta=CNCP_CONS_META)
         self._operator.try_insert_data(
-            name=CNCP_CONS_LS, df=df, update=True, meta=_META
+            name=CNCP_CONS_LS, df=df, update=True, meta=CNCP_CONS_META
         )
 
     def select_data(self) -> Optional[DataFrame]:

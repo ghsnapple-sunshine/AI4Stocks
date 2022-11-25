@@ -5,7 +5,7 @@ from buffett.common.constants.col.task import CLASS, MODULE
 from buffett.download.mysql.types import ColType, AddReqType
 
 """
-Metadata for DownloadRecorder and RFRecorder
+Metadata for DL_RCD & RF_RCD
 """
 DL_RF_META = create_meta(
     meta_list=[
@@ -20,7 +20,7 @@ DL_RF_META = create_meta(
 
 
 """
-Metadata for EasyRecorder
+Metadata for EA_RCD
 """
 EA_META = create_meta(
     meta_list=[

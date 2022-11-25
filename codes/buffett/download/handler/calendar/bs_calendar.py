@@ -8,7 +8,7 @@ from buffett.common.constants.table import TRA_CAL
 from buffett.common.pendulum import Date
 from buffett.common.tools import dataframe_not_valid
 from buffett.download import Para
-from buffett.download.handler.fast.handler import FastHandler
+from buffett.download.handler.base import FastHandler
 from buffett.download.mysql import Operator
 from buffett.download.mysql.types import ColType, AddReqType
 

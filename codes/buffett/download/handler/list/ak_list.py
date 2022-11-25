@@ -6,8 +6,7 @@ from buffett.adapter.pandas import DataFrame
 from buffett.common import create_meta
 from buffett.common.constants.col.target import CODE, NAME
 from buffett.common.constants.table import STK_LS
-from buffett.common.tools import dataframe_not_valid
-from buffett.download.handler.fast.handler import FastHandler
+from buffett.download.handler.base import FastHandler
 from buffett.download.mysql import Operator
 from buffett.download.mysql.types import ColType, AddReqType
 

@@ -3,20 +3,11 @@ from typing import Optional
 
 from buffett.adapter.akshare import ak
 from buffett.adapter.pandas import DataFrame
-from buffett.common import create_meta
 from buffett.common.constants.col.target import CODE, NAME
+from buffett.common.constants.meta.handler import STK_META
 from buffett.common.constants.table import LG_STK_LS
-from buffett.common.tools import dataframe_not_valid
-from buffett.download.handler.fast.handler import FastHandler
+from buffett.download.handler.base import FastHandler
 from buffett.download.mysql import Operator
-from buffett.download.mysql.types import ColType, AddReqType
-
-_META = create_meta(
-    meta_list=[
-        [CODE, ColType.CODE, AddReqType.KEY],
-        [NAME, ColType.STOCK_NAME, AddReqType.NONE],
-    ]
-)
 
 STOCK_NAME = "stock_name"
 
@@ -34,8 +25,10 @@ class AkLgStockListHandler(FastHandler):
         return stocks
 
     def _save_to_database(self, df: DataFrame) -> None:
-        self._operator.create_table(name=LG_STK_LS, meta=_META)
-        self._operator.try_insert_data(name=LG_STK_LS, df=df, update=True, meta=_META)
+        self._operator.create_table(name=LG_STK_LS, meta=STK_META)
+        self._operator.try_insert_data(
+            name=LG_STK_LS, df=df, update=True, meta=STK_META
+        )
 
     def select_data(self) -> Optional[DataFrame]:
         """

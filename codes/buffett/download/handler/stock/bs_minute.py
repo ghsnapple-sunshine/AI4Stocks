@@ -1,12 +1,13 @@
 from buffett.adapter.baostock import bs
 from buffett.adapter.pandas import DataFrame
-from buffett.common import create_meta
 from buffett.common.constants.col import DATETIME, OPEN, CLOSE, HIGH, LOW, CJL, CJE
 from buffett.common.constants.col.target import CODE, NAME
+from buffett.common.constants.meta.handler import BS_MINUTE_META
 from buffett.common.tools import dataframe_not_valid
 from buffett.download import Para
+from buffett.download.handler.calendar import CalendarHandler
 from buffett.download.handler.list import StockListHandler
-from buffett.download.handler.slow import SlowHandler
+from buffett.download.handler.base import SlowHandler
 from buffett.download.handler.tools import (
     bs_str_to_datetime,
     bs_check_float,
@@ -14,23 +15,10 @@ from buffett.download.handler.tools import (
 )
 from buffett.download.handler.tools.table_name import TableNameTool
 from buffett.download.mysql import Operator
-from buffett.download.mysql.types import ColType, AddReqType
 from buffett.download.recorder import DownloadRecorder
 from buffett.download.types import SourceType, FuquanType, FreqType
 
 _RENAME = {"time": DATETIME, "volume": CJL, "amount": CJE}
-
-_META = create_meta(
-    meta_list=[
-        [DATETIME, ColType.DATETIME, AddReqType.KEY],
-        [OPEN, ColType.FLOAT, AddReqType.NONE],
-        [CLOSE, ColType.FLOAT, AddReqType.NONE],
-        [HIGH, ColType.FLOAT, AddReqType.NONE],
-        [LOW, ColType.FLOAT, AddReqType.NONE],
-        [CJL, ColType.INT32, AddReqType.NONE],
-        [CJE, ColType.FLOAT, AddReqType.NONE],
-    ]
-)
 
 
 class BsMinuteHandler(SlowHandler):
@@ -38,6 +26,7 @@ class BsMinuteHandler(SlowHandler):
         super().__init__(
             operator=operator,
             target_list_handler=StockListHandler(operator=operator),
+            calendar_handler=CalendarHandler(operator=operator),
             recorder=DownloadRecorder(operator=operator),
             source=SourceType.BAOSTOCK,
             fuquans=[FuquanType.BFQ],
@@ -90,10 +79,7 @@ class BsMinuteHandler(SlowHandler):
         raise NotImplemented
 
     def _save_to_database(self, table_name: str, df: DataFrame) -> None:
-        if (not isinstance(df, DataFrame)) or df.empty:
-            return
-
-        self._operator.create_table(name=table_name, meta=_META)
+        self._operator.create_table(name=table_name, meta=BS_MINUTE_META)
         self._operator.insert_data(table_name, df)
 
     def select_data(self, para: Para) -> DataFrame:

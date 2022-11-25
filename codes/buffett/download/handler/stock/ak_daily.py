@@ -2,7 +2,6 @@ from typing import Optional
 
 from buffett.adapter.akshare import ak
 from buffett.adapter.pandas import DataFrame
-from buffett.common import create_meta
 from buffett.common.constants.col import (
     DATE,
     OPEN,
@@ -17,13 +16,14 @@ from buffett.common.constants.col import (
     HSL,
 )
 from buffett.common.constants.col.target import CODE, NAME
+from buffett.common.constants.meta.handler import AK_DAILY_META
 from buffett.common.tools import dataframe_not_valid
 from buffett.download import Para
+from buffett.download.handler.calendar import CalendarHandler
 from buffett.download.handler.list import StockListHandler
-from buffett.download.handler.slow.handler import SlowHandler
+from buffett.download.handler.base.slow import SlowHandler
 from buffett.download.handler.tools.table_name import TableNameTool
 from buffett.download.mysql import Operator
-from buffett.download.mysql.types import ColType, AddReqType
 from buffett.download.recorder import DownloadRecorder
 from buffett.download.types import FuquanType, SourceType, FreqType
 
@@ -41,28 +41,13 @@ _RENAME = {
     "换手率": HSL,
 }
 
-_META = create_meta(
-    meta_list=[
-        [DATE, ColType.DATE, AddReqType.KEY],
-        [OPEN, ColType.FLOAT, AddReqType.NONE],
-        [CLOSE, ColType.FLOAT, AddReqType.NONE],
-        [HIGH, ColType.FLOAT, AddReqType.NONE],
-        [LOW, ColType.FLOAT, AddReqType.NONE],
-        [CJL, ColType.INT32, AddReqType.NONE],
-        [CJE, ColType.FLOAT, AddReqType.NONE],
-        [ZF, ColType.FLOAT, AddReqType.NONE],
-        [ZDF, ColType.FLOAT, AddReqType.NONE],
-        [ZDE, ColType.FLOAT, AddReqType.NONE],
-        [HSL, ColType.FLOAT, AddReqType.NONE],
-    ]
-)
-
 
 class AkDailyHandler(SlowHandler):
     def __init__(self, operator: Operator):
         super().__init__(
             operator=operator,
             target_list_handler=StockListHandler(operator=operator),
+            calendar_handler=CalendarHandler(operator=operator),
             recorder=DownloadRecorder(operator=operator),
             source=SourceType.AKSHARE_DONGCAI,
             fuquans=[FuquanType.BFQ, FuquanType.HFQ, FuquanType.QFQ],
@@ -89,9 +74,9 @@ class AkDailyHandler(SlowHandler):
         return daily_info
 
     def _save_to_database(self, table_name: str, df: DataFrame) -> None:
-        if dataframe_not_valid(df):
-            return
-        self._operator.create_table(name=table_name, meta=_META, if_not_exist=True)
+        self._operator.create_table(
+            name=table_name, meta=AK_DAILY_META, if_not_exist=True
+        )
         self._operator.insert_data(table_name, df)
 
     def select_data(self, para: Para) -> Optional[DataFrame]:

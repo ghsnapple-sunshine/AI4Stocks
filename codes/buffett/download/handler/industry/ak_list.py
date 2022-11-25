@@ -3,23 +3,14 @@ from typing import Optional
 
 from buffett.adapter.akshare import ak
 from buffett.adapter.pandas import DataFrame
-from buffett.common import create_meta
 from buffett.common.constants.col.target import INDUSTRY_CODE, INDUSTRY_NAME
+from buffett.common.constants.meta.handler import INDUS_META
 from buffett.common.constants.table import INDUS_LS
-from buffett.common.tools import dataframe_not_valid
-from buffett.download.handler.fast.handler import FastHandler
+from buffett.download.handler.base import FastHandler
 from buffett.download.mysql import Operator
-from buffett.download.mysql.types import ColType, AddReqType
 
 BKMC = "板块名称"
 BKDM = "板块代码"
-
-_META = create_meta(
-    meta_list=[
-        [INDUSTRY_CODE, ColType.CODE, AddReqType.KEY],
-        [INDUSTRY_NAME, ColType.CONCEPT_NAME, AddReqType.NONE],
-    ]
-)
 
 
 class IndustryListHandler(FastHandler):
@@ -35,8 +26,10 @@ class IndustryListHandler(FastHandler):
         return industries
 
     def _save_to_database(self, df: DataFrame) -> None:
-        self._operator.create_table(name=INDUS_LS, meta=_META)
-        self._operator.try_insert_data(name=INDUS_LS, df=df, update=True, meta=_META)
+        self._operator.create_table(name=INDUS_LS, meta=INDUS_META)
+        self._operator.try_insert_data(
+            name=INDUS_LS, df=df, update=True, meta=INDUS_META
+        )
 
     def select_data(self) -> Optional[DataFrame]:
         """

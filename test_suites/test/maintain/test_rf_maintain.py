@@ -11,6 +11,7 @@ class TestReformMaintain(Tester):
     def _setup_oncemore(cls):
         cls._ak_handler = AkDailyHandler(operator=cls._operator)
         cls._rf_handler = ReformHandler(operator=cls._operator)
+        ReformMaintain.set_save_report(False)
         cls._rf_mtain = ReformMaintain(operator=cls._operator)
 
     def _setup_always(self) -> None:

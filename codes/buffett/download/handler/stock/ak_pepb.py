@@ -1,8 +1,5 @@
-from typing import Optional
-
 from buffett.adapter.akshare import ak
 from buffett.adapter.pandas import DataFrame
-from buffett.common import create_meta
 from buffett.common.constants.col import (
     DATE,
     SYL,
@@ -15,13 +12,10 @@ from buffett.common.constants.col import (
     DGXL,
 )
 from buffett.common.constants.col.target import CODE, NAME
-from buffett.common.tools import dataframe_not_valid
-from buffett.download import Para
+from buffett.common.constants.meta.handler import PEPB_META
 from buffett.download.handler.list import StockListHandler
-from buffett.download.handler.medium import MediumHandler
-from buffett.download.handler.tools import TableNameTool
+from buffett.download.handler.base import MediumHandler
 from buffett.download.mysql import Operator
-from buffett.download.mysql.types import AddReqType, ColType
 from buffett.download.recorder import DownloadRecorder
 from buffett.download.types import SourceType, FuquanType, FreqType
 
@@ -37,20 +31,6 @@ _RENAME = {
     "total_mv": ZSZ,
 }
 
-_META = create_meta(
-    meta_list=[
-        [DATE, ColType.DATE, AddReqType.KEY],
-        [SYL, ColType.FLOAT, AddReqType.NONE],
-        [DSYL, ColType.FLOAT, AddReqType.NONE],
-        [SJL, ColType.FLOAT, AddReqType.NONE],
-        [SXL, ColType.FLOAT, AddReqType.NONE],
-        [DSXL, ColType.FLOAT, AddReqType.NONE],
-        [GXL, ColType.FLOAT, AddReqType.NONE],
-        [DGXL, ColType.FLOAT, AddReqType.NONE],
-        [ZSZ, ColType.FLOAT, AddReqType.NONE],
-    ]
-)
-
 
 class AkStockPePbHandler(MediumHandler):
     def __init__(self, operator: Operator):
@@ -63,6 +43,7 @@ class AkStockPePbHandler(MediumHandler):
             freq=FreqType.DAY,
             field_code=CODE,
             field_name=NAME,
+            meta=PEPB_META,
         )
 
     def _download(self, row: tuple) -> DataFrame:
@@ -71,13 +52,3 @@ class AkStockPePbHandler(MediumHandler):
         # rename
         pepb = pepb.rename(columns=_RENAME)
         return pepb
-
-    def _save_to_database(self, df: DataFrame, para: Para) -> None:
-        if dataframe_not_valid(df):
-            return
-        table_name = TableNameTool.get_by_code(para=para)
-        self._operator.create_table(name=table_name, meta=_META)
-        self._operator.insert_data(name=table_name, df=df)
-
-    def select_data(self, para: Para) -> Optional[DataFrame]:
-        return super(AkStockPePbHandler, self).select_data(para=para)

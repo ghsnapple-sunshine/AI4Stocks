@@ -6,6 +6,7 @@ from buffett.common.constants.col.my import TABLE_NAME, DORCD_START, DORCD_END
 from buffett.common.constants.col.mysql import ROW_NUM
 from buffett.common.constants.col.target import CODE
 from buffett.common.logger import Logger
+from buffett.common.magic import empty_method
 from buffett.common.pendulum import DateSpan, DateTime
 from buffett.common.tools import dataframe_not_valid, dataframe_is_valid
 from buffett.download import Para
@@ -17,6 +18,16 @@ DL_ROW_NUM = "dl_row_num"
 
 
 class ReformMaintain:
+    _save = True
+
+    @classmethod
+    def set_save_report(cls, save: bool):
+        cls._save = save
+        if cls._save:
+            cls._save_report = cls._call_save_report
+        else:
+            cls._save_report = empty_method
+
     def __init__(self, operator: Operator):
         self._operator = operator
         self._dl_recorder = DownloadRecorder(operator)
@@ -84,7 +95,7 @@ class ReformMaintain:
                 for row in table_names_by_date.itertuples(index=False)
             ]
         )
-        # ReformMaintain._save_report(rf_records)
+        self._save_report(rf_records)
         rf_records = (
             rf_records.groupby(by=[CODE, FREQ, SOURCE, FUQUAN])
             .aggregate({ROW_NUM: "sum"})
@@ -103,10 +114,12 @@ class ReformMaintain:
         return result
 
     @classmethod
-    def _save_report(cls, df: DataFrame):
+    def _call_save_report(cls, df: DataFrame):
         _dir = f"e:/BuffettData/rf_maintain/{DateTime.now().format('YYYYMMDD_HHmmss')}/"
         os.makedirs(_dir)
         df.to_csv(f"{_dir}report.csv", header=True, index=False, encoding="gbk")
+
+    _save_report = _call_save_report
 
     def _get_dl_row_num(self, row: Series) -> int:
         """

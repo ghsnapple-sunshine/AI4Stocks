@@ -2,23 +2,14 @@ from typing import Optional
 
 from buffett.adapter.akshare import ak
 from buffett.adapter.pandas import DataFrame
-from buffett.common import create_meta
 from buffett.common.constants.col.target import CONCEPT_CODE, CONCEPT_NAME
+from buffett.common.constants.meta.handler import CNCP_META
 from buffett.common.constants.table import CNCP_LS
-from buffett.common.tools import dataframe_not_valid
-from buffett.download.handler.fast.handler import FastHandler
+from buffett.download.handler.base import FastHandler
 from buffett.download.mysql import Operator
-from buffett.download.mysql.types import ColType, AddReqType
 
 BKMC = "板块名称"
 BKDM = "板块代码"
-
-_META = create_meta(
-    meta_list=[
-        [CONCEPT_CODE, ColType.CODE, AddReqType.KEY],
-        [CONCEPT_NAME, ColType.CONCEPT_NAME, AddReqType.NONE],
-    ]
-)
 
 
 class AkConceptListHandler(FastHandler):
@@ -34,8 +25,8 @@ class AkConceptListHandler(FastHandler):
         return concepts
 
     def _save_to_database(self, df: DataFrame) -> None:
-        self._operator.create_table(name=CNCP_LS, meta=_META)
-        self._operator.try_insert_data(name=CNCP_LS, df=df, update=True, meta=_META)
+        self._operator.create_table(name=CNCP_LS, meta=CNCP_META)
+        self._operator.try_insert_data(name=CNCP_LS, df=df, update=True, meta=CNCP_META)
 
     def select_data(self) -> Optional[DataFrame]:
         """

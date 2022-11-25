@@ -1,11 +1,10 @@
+from buffett.common.constants.meta.handler import BS_MINUTE_META, AK_DAILY_META
 from buffett.common.pendulum import Date
 from buffett.download import Para
 from buffett.download.handler.stock import (
     AkDailyHandler,
     BsMinuteHandler,
 )
-from buffett.download.handler.stock.ak_daily import _META as A_META
-from buffett.download.handler.stock.bs_minute import _META as B_META
 from buffett.download.handler.tools import TableNameTool
 from buffett.download.types import FreqType, SourceType, FuquanType
 from test import Tester, create_1stock
@@ -33,7 +32,7 @@ class TestGetMeta(Tester):
         )
         table_name = TableNameTool.get_by_code(para=para)
         meta_get = self._operator.get_meta(name=table_name)
-        assert self.compare_dataframe(meta_get, A_META)
+        assert self.compare_dataframe(meta_get, AK_DAILY_META)
 
     def test_bs_minute(self):
         # 下载分钟线数据
@@ -47,4 +46,4 @@ class TestGetMeta(Tester):
         )
         table_name = TableNameTool.get_by_code(para=para)
         meta_get = self._operator.get_meta(name=table_name)
-        assert self.compare_dataframe(meta_get, B_META)
+        assert self.compare_dataframe(meta_get, BS_MINUTE_META)

@@ -3,31 +3,20 @@ from typing import Optional
 from buffett.adapter.akshare import ak
 from buffett.adapter.pandas import DataFrame, pd
 from buffett.adapter.pendulum import Date
-from buffett.common.constants.col.target import (
-    CODE,
-    SG,
-    ZG,
-    SGZG,
-    XJ,
-    GXL,
-    SY,
-    JZC,
-    GJJ,
-    WFP,
-    LRZZ,
-    ZGB,
-    GGR,
-    DJR,
-    CXR,
-    JD,
-    ZXGGR,
+from buffett.common.constants.col import (
+    SGc,
+    ZGc,
+    SGZGc,
+    XJc,
+    GXLc,
 )
+from buffett.common.constants.col.target import CODE
+from buffett.common.constants.meta.handler import STK_DVD_META
 from buffett.common.constants.table import STK_DVD
 from buffett.common.pendulum import DateSpan
-from buffett.common.tools import list_not_valid, create_meta, dataframe_not_valid
+from buffett.common.tools import list_not_valid, dataframe_not_valid
 from buffett.download import Para
 from buffett.download.handler import Handler
-from buffett.download.mysql.types import ColType, AddReqType
 from buffett.download.recorder import EasyRecorder
 
 YEAR = "year"
@@ -61,34 +50,12 @@ MC = "名称"
 
 _RENAME = {
     "代码": CODE,
-    "送转股份-送转总比例": SGZG,
-    "送转股份-送转比例": SG,
-    "送转股份-转股比例": ZG,
-    "现金分红-现金分红比例": XJ,
-    "现金分红-股息率": GXL,
+    "送转股份-送转总比例": SGZGc,
+    "送转股份-送转比例": SGc,
+    "送转股份-转股比例": ZGc,
+    "现金分红-现金分红比例": XJc,
+    "现金分红-股息率": GXLc,
 }
-
-_META = create_meta(
-    meta_list=[
-        [CODE, ColType.CODE, AddReqType.KEY],
-        [SGZG, ColType.FLOAT, AddReqType.NONE],
-        [SG, ColType.FLOAT, AddReqType.NONE],
-        [ZG, ColType.FLOAT, AddReqType.NONE],
-        [XJ, ColType.FLOAT, AddReqType.NONE],
-        [GXL, ColType.FLOAT, AddReqType.NONE],
-        [SY, ColType.FLOAT, AddReqType.NONE],
-        [JZC, ColType.FLOAT, AddReqType.NONE],
-        [GJJ, ColType.FLOAT, AddReqType.NONE],
-        [WFP, ColType.FLOAT, AddReqType.NONE],
-        [LRZZ, ColType.FLOAT, AddReqType.NONE],
-        [ZGB, ColType.FLOAT, AddReqType.NONE],
-        [GGR, ColType.DATE, AddReqType.KEY],
-        [DJR, ColType.DATE, AddReqType.NONE],
-        [CXR, ColType.DATE, AddReqType.NONE],
-        [JD, ColType.MINI_DESC, AddReqType.NONE],
-        [ZXGGR, ColType.DATE, AddReqType.NONE],
-    ]
-)
 
 
 class AkStockDividendHandler(Handler):
@@ -171,8 +138,8 @@ class AkStockDividendHandler(Handler):
         """
         if dataframe_not_valid(df):
             return
-        self._operator.create_table(name=STK_DVD, meta=_META)
-        self._operator.try_insert_data(name=STK_DVD, meta=_META, df=df)  # 忽略重复记录
+        self._operator.create_table(name=STK_DVD, meta=STK_DVD_META)
+        self._operator.try_insert_data(name=STK_DVD, meta=STK_DVD_META, df=df)  # 忽略重复记录
 
     def select_data(self, para: Para = None) -> Optional[DataFrame]:
         """
@@ -181,5 +148,5 @@ class AkStockDividendHandler(Handler):
         :param para:        start, end
         :return:
         """
-        df = self._operator.select_data(name=STK_DVD, meta=_META)
+        df = self._operator.select_data(name=STK_DVD, meta=STK_DVD_META)
         return df

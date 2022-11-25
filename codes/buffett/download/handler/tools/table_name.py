@@ -53,10 +53,7 @@ class TableNameTool:
         )
         spans = records[[START_DATE, END_DATE]].drop_duplicates()
         series = pd.concat(
-            [
-                cls._create_single_series(row)
-                for row in spans.itertuples(index=False)
-            ]
+            [cls._create_single_series(row) for row in spans.itertuples(index=False)]
         )
         tables = pd.merge(records, series, how="left", on=[START_DATE, END_DATE])
         tables[TABLE_NAME] = tables.apply(

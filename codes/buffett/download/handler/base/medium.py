@@ -35,6 +35,7 @@ class MediumHandler(Handler):
         freq: FreqType,
         field_code: str,
         field_name: str,
+        meta: DataFrame,
     ):
         super(MediumHandler, self).__init__(operator)
         self._target_list_handler = target_list_handler
@@ -44,6 +45,7 @@ class MediumHandler(Handler):
         self._freq = freq
         self._CODE = field_code
         self._NAME = field_name
+        self._META = meta
 
     def obtain_data(self, span: DateSpan) -> None:
         todo_records = self._get_todo_records(span=span)
@@ -52,7 +54,8 @@ class MediumHandler(Handler):
                 para = Para.from_tuple(row)
                 data = self._download(row=row)
                 data = self._filter(row=row, df=data)
-                self._save_to_database(df=data, para=para)
+                if dataframe_is_valid(data):
+                    self._save_to_database(df=data, para=para)
                 self._recorder.save(para=para)
                 pbar.update(1)
 
@@ -118,11 +121,11 @@ class MediumHandler(Handler):
     def _download(self, row: tuple) -> DataFrame:
         pass
 
-    @abstractmethod
     def _save_to_database(self, df: DataFrame, para: Para) -> None:
-        pass
+        table_name = TableNameTool.get_by_code(para=para)
+        self._operator.create_table(name=table_name, meta=self._META)
+        self._operator.insert_data(name=table_name, df=df)
 
-    @abstractmethod
     def select_data(self, para: Para) -> Optional[DataFrame]:
         para = (
             Para()

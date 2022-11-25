@@ -2,28 +2,18 @@ from typing import Optional
 
 from buffett.adapter.akshare import ak
 from buffett.adapter.pandas import DataFrame, pd
-from buffett.common import create_meta
 from buffett.common.constants.col.target import CODE, NAME, INDUSTRY_CODE, INDUSTRY_NAME
+from buffett.common.constants.meta.handler import INDUS_CONS_META
 from buffett.common.constants.table import INDUS_CONS_LS
 from buffett.common.error.pre_step import PreStepError
 from buffett.common.logger import Logger
 from buffett.common.tools import dataframe_not_valid
-from buffett.download.handler.fast import FastHandler
+from buffett.download.handler.base import FastHandler
 from buffett.download.handler.industry.ak_list import IndustryListHandler
 from buffett.download.handler.list import StockListHandler
-from buffett.download.mysql.types import ColType, AddReqType
 
 DM = "代码"
 MC = "名称"
-
-_META = create_meta(
-    meta_list=[
-        [INDUSTRY_CODE, ColType.CODE, AddReqType.KEY],
-        [INDUSTRY_NAME, ColType.CONCEPT_NAME, AddReqType.NONE],
-        [CODE, ColType.CODE, AddReqType.KEY],
-        [NAME, ColType.STOCK_NAME, AddReqType.NONE],
-    ]
-)
 
 
 class IndustryConsHandler(FastHandler):
@@ -67,9 +57,9 @@ class IndustryConsHandler(FastHandler):
     def _save_to_database(self, df: DataFrame) -> None:
         if dataframe_not_valid(df):
             return
-        self._operator.create_table(name=INDUS_CONS_LS, meta=_META)
+        self._operator.create_table(name=INDUS_CONS_LS, meta=INDUS_CONS_META)
         self._operator.try_insert_data(
-            name=INDUS_CONS_LS, df=df, update=True, meta=_META
+            name=INDUS_CONS_LS, df=df, update=True, meta=INDUS_CONS_META
         )
         self._operator.disconnect()
 
