@@ -8,8 +8,8 @@ from buffett.common.constants.table import CNCP_CONS_LS
 from buffett.common.error.pre_step import PreStepError
 from buffett.common.logger import Logger
 from buffett.common.tools import dataframe_not_valid
-from buffett.download.handler.concept.ak_list import AkConceptListHandler
 from buffett.download.handler.base import FastHandler
+from buffett.download.handler.concept.ak_list import AkConceptListHandler
 from buffett.download.handler.list.ak_list import StockListHandler
 
 DM = "代码"

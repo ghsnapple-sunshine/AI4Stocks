@@ -1,7 +1,7 @@
 from buffett.adapter import logging
 from buffett.adapter.wellknown import format_exc
 from buffett.common.wrapper import Wrapper
-from buffett.task.task import Task
+from buffett.task.base import Task
 from test import Tester
 
 

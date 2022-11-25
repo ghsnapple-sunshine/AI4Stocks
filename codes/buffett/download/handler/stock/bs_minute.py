@@ -5,9 +5,9 @@ from buffett.common.constants.col.target import CODE, NAME
 from buffett.common.constants.meta.handler import BS_MINUTE_META
 from buffett.common.tools import dataframe_not_valid
 from buffett.download import Para
+from buffett.download.handler.base import SlowHandler
 from buffett.download.handler.calendar import CalendarHandler
 from buffett.download.handler.list import StockListHandler
-from buffett.download.handler.base import SlowHandler
 from buffett.download.handler.tools import (
     bs_str_to_datetime,
     bs_check_float,

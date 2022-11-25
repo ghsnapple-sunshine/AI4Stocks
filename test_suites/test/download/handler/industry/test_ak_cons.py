@@ -1,6 +1,9 @@
 from buffett.common.constants.col.target import INDUSTRY_CODE
 from buffett.common.constants.table import INDUS_LS
-from buffett.download.handler.industry import IndustryListHandler, IndustryConsHandler
+from buffett.download.handler.industry import (
+    AkIndustryListHandler,
+    AkIndustryConsHandler,
+)
 from buffett.download.handler.list import StockListHandler
 from test import Tester
 
@@ -9,11 +12,11 @@ class TestIndustryConsHandler(Tester):
     @classmethod
     def _setup_oncemore(cls):
         StockListHandler(cls._operator).obtain_data()
-        IndustryListHandler(cls._operator).obtain_data()
+        AkIndustryListHandler(cls._operator).obtain_data()
         cls._operator.execute(
             f"DELETE FROM {INDUS_LS} WHERE {INDUSTRY_CODE} > 'BK0450'"
         )  # 减少concept个数，提升测试性能
-        cls._hdl = IndustryConsHandler(operator=cls._operator)
+        cls._hdl = AkIndustryConsHandler(operator=cls._operator)
 
     def _setup_always(self) -> None:
         pass

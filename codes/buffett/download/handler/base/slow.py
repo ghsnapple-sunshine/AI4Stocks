@@ -15,6 +15,8 @@ from buffett.common.constants.col import (
 from buffett.common.constants.col.my import DORCD_START, DORCD_END
 from buffett.common.constants.col.target import CODE
 from buffett.common.error import ParamTypeError
+from buffett.common.error.pre_step import PreStepError
+from buffett.common.magic import get_class
 from buffett.common.pendulum import DateSpan, Date, convert_datetime, Duration
 from buffett.common.tools import dataframe_not_valid, list_not_valid, dataframe_is_valid
 from buffett.download.handler import Handler
@@ -59,11 +61,13 @@ class SlowHandler(Handler):
 
         para = self._fix_para(para)
 
-        item_list = self._target_list_handler.select_data()
+        target_list = self._target_list_handler.select_data()
+        if dataframe_not_valid(target_list):
+            raise PreStepError(get_class(self), get_class(self._target_list_handler))
         done_records = self._recorder.select_data()
 
         todo_records = self._get_todo_records(
-            target_list=item_list, done_records=done_records, para=para
+            target_list=target_list, done_records=done_records, para=para
         )
         comb_records = self._get_comb_records(
             todo_records=todo_records, done_records=done_records

@@ -25,7 +25,7 @@ from buffett.common.tools import dataframe_not_valid
 from buffett.download import Para
 from buffett.download.handler.base import SlowHandler
 from buffett.download.handler.calendar import CalendarHandler
-from buffett.download.handler.industry.ak_list import IndustryListHandler
+from buffett.download.handler.industry.ak_list import AkIndustryListHandler
 from buffett.download.handler.tools import TableNameTool
 from buffett.download.mysql import Operator
 from buffett.download.recorder import DownloadRecorder
@@ -50,7 +50,7 @@ class AkIndustryDailyHandler(SlowHandler):
     def __init__(self, operator: Operator):
         super(AkIndustryDailyHandler, self).__init__(
             operator=operator,
-            target_list_handler=IndustryListHandler(operator=operator),
+            target_list_handler=AkIndustryListHandler(operator=operator),
             calendar_handler=CalendarHandler(operator=operator),
             recorder=DownloadRecorder(operator=operator),
             source=SourceType.AKSHARE_DONGCAI_INDUSTRY,

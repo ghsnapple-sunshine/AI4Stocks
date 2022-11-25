@@ -9,19 +9,19 @@ from buffett.common.error.pre_step import PreStepError
 from buffett.common.logger import Logger
 from buffett.common.tools import dataframe_not_valid
 from buffett.download.handler.base import FastHandler
-from buffett.download.handler.industry.ak_list import IndustryListHandler
+from buffett.download.handler.industry.ak_list import AkIndustryListHandler
 from buffett.download.handler.list import StockListHandler
 
 DM = "代码"
 MC = "名称"
 
 
-class IndustryConsHandler(FastHandler):
+class AkIndustryConsHandler(FastHandler):
     def _download(self) -> Optional[DataFrame]:
-        industries = IndustryListHandler(self._operator).select_data()
+        industries = AkIndustryListHandler(self._operator).select_data()
         if dataframe_not_valid(industries):
             raise PreStepError(
-                curr_step=IndustryConsHandler, pre_step=IndustryListHandler
+                curr_step=AkIndustryConsHandler, pre_step=AkIndustryListHandler
             )
         cons = pd.concat(
             [self._download_industry(row) for row in industries.itertuples(index=False)]
@@ -30,7 +30,9 @@ class IndustryConsHandler(FastHandler):
 
         stocks = StockListHandler(self._operator).select_data()
         if dataframe_not_valid(stocks):
-            raise PreStepError(curr_step=IndustryConsHandler, pre_step=StockListHandler)
+            raise PreStepError(
+                curr_step=AkIndustryConsHandler, pre_step=StockListHandler
+            )
         cons = pd.merge(cons, stocks[[CODE]], how="inner", on=[CODE])
         Logger.info(f"After filter, total record num is {len(cons)}.")
         return cons

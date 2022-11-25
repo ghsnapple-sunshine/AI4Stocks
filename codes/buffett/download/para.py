@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Optional, Union
+from typing import Optional
 
 from buffett.adapter.numpy import NAN
 from buffett.adapter.pandas import Series, DataFrame, pd

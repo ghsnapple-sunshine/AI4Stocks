@@ -13,7 +13,7 @@ BKMC = "板块名称"
 BKDM = "板块代码"
 
 
-class IndustryListHandler(FastHandler):
+class AkIndustryListHandler(FastHandler):
     def __init__(self, operator: Operator):
         super().__init__(operator=operator)
 

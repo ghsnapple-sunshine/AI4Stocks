@@ -3,7 +3,7 @@ from buffett.common.constants.table import TRA_CAL
 from buffett.common.pendulum import DateSpan
 from buffett.download import Para
 from buffett.download.handler.calendar import CalendarHandler
-from buffett.download.handler.index.ak_daily import AkIndexDailyHandler
+from buffett.download.handler.index import AkIndexDailyHandler
 from test import Tester, DbSweeper, create_1index, create_2indexs
 
 

@@ -7,19 +7,48 @@ from buffett.task import (
     StockDailyTask,
     StockMinuteTask,
     StockReformTask,
+    CalendarTask,
+    StockProfitTask,
+    StockDividendTask,
+    ConceptListTask,
+    IndustryListTask,
+    IndexListTask,
+    MoneySupplyTask,
+    StockPePbTask,
+    ConceptConsTask,
+    ConceptDailyTask,
+    IndustryConsTask,
+    IndexDailyTask,
+    IndustryDailyTask,
 )
 
 
 def download():
     operator = Operator(RoleType.DbStock)
     now = DateTime.now()
-    sch = TaskScheduler(
-        operator=operator,
-        tasks=[
-            StockListTask(operator=operator, start_time=now),
-            StockDailyTask(operator=operator, start_time=now.add(seconds=1)),
-            StockMinuteTask(operator=operator, start_time=now.add(seconds=2)),
-            StockReformTask(operator=operator, start_time=now.add(seconds=3)),
-        ],
-    )
+    task_cls = [
+        CalendarTask,
+        StockListTask,
+        StockProfitTask,
+        StockDividendTask,
+        ConceptListTask,
+        IndustryListTask,
+        IndexListTask,
+        MoneySupplyTask,  # Fast
+        StockPePbTask,
+        StockListTask,
+        ConceptConsTask,
+        ConceptDailyTask,
+        IndustryConsTask,
+        IndexDailyTask,  # Medium
+        StockDailyTask,
+        StockMinuteTask,
+        IndustryDailyTask,
+        StockReformTask,  # Slow
+    ]
+    tasks = [
+        task_cls[i](operator=operator, start_time=now.add(seconds=i))
+        for i in range(0, len(task_cls))
+    ]
+    sch = TaskScheduler(operator=operator, tasks=tasks)
     sch.run()

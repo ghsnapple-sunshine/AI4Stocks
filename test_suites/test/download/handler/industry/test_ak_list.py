@@ -1,11 +1,11 @@
-from buffett.download.handler.industry import IndustryListHandler
+from buffett.download.handler.industry import AkIndustryListHandler
 from test import Tester
 
 
 class TestConceptListHandler(Tester):
     @classmethod
     def _setup_oncemore(cls):
-        cls._hdl = IndustryListHandler(operator=cls._operator)
+        cls._hdl = AkIndustryListHandler(operator=cls._operator)
 
     def _setup_always(self) -> None:
         pass

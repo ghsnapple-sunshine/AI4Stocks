@@ -1,4 +1,4 @@
-from buffett.common.magic import get_name, get_self
+from buffett.common.magic import get_self, get_func_full_name
 
 
 class Wrapper:
@@ -27,8 +27,8 @@ class Wrapper:
         return get_self(self._attr)
 
     @property
-    def func_name(self):
-        return get_name(self._attr)
+    def full_name(self):
+        return get_func_full_name(self._attr)
 
 
 class WrapperFactory:

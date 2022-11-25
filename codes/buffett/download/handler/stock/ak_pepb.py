@@ -13,8 +13,8 @@ from buffett.common.constants.col import (
 )
 from buffett.common.constants.col.target import CODE, NAME
 from buffett.common.constants.meta.handler import PEPB_META
-from buffett.download.handler.list import StockListHandler
 from buffett.download.handler.base import MediumHandler
+from buffett.download.handler.list import StockListHandler
 from buffett.download.mysql import Operator
 from buffett.download.recorder import DownloadRecorder
 from buffett.download.types import SourceType, FuquanType, FreqType

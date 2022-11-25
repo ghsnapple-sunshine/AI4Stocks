@@ -5,7 +5,6 @@ import akshare as ak
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-
 # 引入TA-Lib库
 import talib as ta
 from pylab import mpl

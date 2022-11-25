@@ -19,9 +19,9 @@ from buffett.common.constants.col.target import CODE, NAME
 from buffett.common.constants.meta.handler import AK_DAILY_META
 from buffett.common.tools import dataframe_not_valid
 from buffett.download import Para
+from buffett.download.handler.base.slow import SlowHandler
 from buffett.download.handler.calendar import CalendarHandler
 from buffett.download.handler.list import StockListHandler
-from buffett.download.handler.base.slow import SlowHandler
 from buffett.download.handler.tools.table_name import TableNameTool
 from buffett.download.mysql import Operator
 from buffett.download.recorder import DownloadRecorder

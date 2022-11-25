@@ -3,7 +3,6 @@ from typing import Optional
 
 from buffett.adapter.pandas import DataFrame
 from buffett.common.tools import dataframe_is_valid
-from buffett.download import Para
 from buffett.download.handler import Handler
 
 

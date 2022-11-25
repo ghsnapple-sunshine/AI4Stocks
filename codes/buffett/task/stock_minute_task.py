@@ -3,7 +3,7 @@ from buffett.common.wrapper import Wrapper
 from buffett.download import Para
 from buffett.download.handler.stock import BsMinuteHandler
 from buffett.download.mysql import Operator
-from buffett.task.task import Task
+from buffett.task.base import Task
 
 
 class StockMinuteTask(Task):

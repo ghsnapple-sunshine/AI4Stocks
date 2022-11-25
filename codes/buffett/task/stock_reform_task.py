@@ -2,7 +2,7 @@ from buffett.common.pendulum import DateTime
 from buffett.common.wrapper import Wrapper
 from buffett.download.handler.reform import ReformHandler
 from buffett.download.mysql import Operator
-from buffett.task.task import Task
+from buffett.task.base import Task
 
 
 class StockReformTask(Task):

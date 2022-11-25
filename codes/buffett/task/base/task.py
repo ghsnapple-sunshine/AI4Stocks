@@ -32,7 +32,7 @@ class Task:
         res = None
         try:
             logging.info(
-                f"---------------Start running {self._wrapper.func_name}---------------"
+                f"---------------Start running {self._wrapper.full_name}---------------"
             )
             """
             valid_args = isinstance(self._args, tuple)
@@ -48,12 +48,12 @@ class Task:
             """
             res = self._wrapper.run(*self._args, **self._kwargs)
             logging.info(
-                f"---------------End running {self._wrapper.func_name}---------------"
+                f"---------------End running {self._wrapper.full_name}---------------"
             )
             new_task = self.get_subsequent_task(success=True)
         except Exception as e:
             logging.error(
-                f"---------------Error occurred when running {self._wrapper.func_name}---------------"
+                f"---------------Error occurred when running {self._wrapper.full_name}---------------"
             )
             err_msg = format_exc()
             logging.error(err_msg)

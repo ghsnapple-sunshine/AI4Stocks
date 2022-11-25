@@ -16,8 +16,8 @@ from buffett.common.constants.col import (
 from buffett.common.constants.col.target import CONCEPT_CODE, CONCEPT_NAME
 from buffett.common.constants.meta.handler import AK_DAILY_META
 from buffett.common.pendulum import Date
-from buffett.download.handler.concept.ak_list import AkConceptListHandler
 from buffett.download.handler.base import MediumHandler
+from buffett.download.handler.concept.ak_list import AkConceptListHandler
 from buffett.download.mysql import Operator
 from buffett.download.recorder import DownloadRecorder
 from buffett.download.types import SourceType, FuquanType, FreqType

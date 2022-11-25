@@ -9,8 +9,8 @@ from buffett.common.constants.col.target import INDEX_CODE, INDEX_NAME
 from buffett.common.constants.meta.handler import AK_DAILY_META
 from buffett.common.pendulum import Date
 from buffett.common.tools import dataframe_not_valid
-from buffett.download.handler.index import AkIndexListHandler
 from buffett.download.handler.base import MediumHandler
+from buffett.download.handler.index.ak_list import AkIndexListHandler
 from buffett.download.mysql import Operator
 from buffett.download.recorder import DownloadRecorder
 from buffett.download.types import SourceType, FuquanType, FreqType
