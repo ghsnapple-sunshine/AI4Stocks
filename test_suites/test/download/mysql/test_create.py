@@ -1,6 +1,6 @@
 from buffett.common import create_meta
 from buffett.download.mysql.types import ColType, AddReqType
-from test import Tester, DbSweeper
+from test import Tester, DbSweeper, create_1stock
 
 
 class TestCreate(Tester):
@@ -130,3 +130,13 @@ class TestCreate(Tester):
         )
         meta = self._operator.get_meta(name=self._table_name)
         assert self.compare_dataframe(self._META3, meta)
+
+    def test_mofify_column(self):
+        """
+        现网问题用例: stock_list转换失败
+
+        :return:
+        """
+        sql = f"create table `{self._table_name}` (`code` varchar(6), `name` varchar(5), primary key (`code`))"
+        self._operator.execute(sql)
+        create_1stock(self._operator)

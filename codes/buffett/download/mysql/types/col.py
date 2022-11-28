@@ -1,11 +1,13 @@
 from __future__ import annotations
 
+from ctypes import Union
+
 from buffett.adapter.enum import Enum
 
 
 class ColType(Enum):
     @classmethod
-    def create(cls, col_type: str) -> ColType:
+    def create(cls, col_type: str) -> ColType | str:
         COL_TYPE_DICT = {
             "VARCHAR(6)": 1,  # ColType.STOCK_CODE,
             "VARCHAR(8)": 2,  # ColType.STOCK_NAME
@@ -20,7 +22,9 @@ class ColType(Enum):
             "VARCHAR(100)": 199,  # ColType.SHORT_DESC
             "VARCHAR(10000)": 200,
         }  # ColType.LONG_DESC
-        return ColType(COL_TYPE_DICT[col_type.upper()])
+        if col_type.upper() in COL_TYPE_DICT:
+            return ColType(COL_TYPE_DICT[col_type.upper()])
+        return col_type
 
     CODE = 1  # 股票代码（6位）
     STOCK_NAME = 2  # 股票名字（8位）
