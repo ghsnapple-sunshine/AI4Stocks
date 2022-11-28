@@ -95,9 +95,7 @@ class TaskScheduler(Singleton):
         """
         if dataframe_not_valid(df):
             return
-
         self._operator.insert_data(name=TASK_RCD, df=df)
-        self._operator.disconnect()
 
     def _add_tasks(self, tasks: list[Task]) -> None:
         """
@@ -110,7 +108,8 @@ class TaskScheduler(Singleton):
 
         df = self._operator.select_data(name=TASK_RCD)
         if dataframe_is_valid(df):
-            df = df[[CLASS, MODULE]]
+            # 20221128变更：新增task时判断下是否有同类型Task未执行完
+            df = df[pd.isna(df[SUCCESS])][[CLASS, MODULE]]
             task_filter = task_infos[[CLASS, MODULE]]
             task_filter = pd.concat([df, task_filter]).drop_duplicates(keep=False)
             task_infos = pd.merge(
@@ -134,7 +133,18 @@ class TaskScheduler(Singleton):
         :return:
         """
         task_info = task.info
-        task_info[TASK_ID] = self._operator.select_row_num(name=TASK_RCD) + 1
+        # 20221128变更：新增task时判断下是否有同类型Task未执行完
+        curr_tasks = self._operator.select_data(name=TASK_RCD)
+        if dataframe_is_valid(curr_tasks):
+            find = (
+                pd.isna(curr_tasks[SUCCESS])  # Task未完成
+                & (curr_tasks[CLASS] == task_info[CLASS])  # Task Class和Module与现有Task相同
+                & (curr_tasks[MODULE] == task_info[MODULE])
+            )
+            if any(find):
+                return  # 跳过插入task
+
+        task_info[TASK_ID] = curr_tasks[TASK_ID].max() + 1
         now = DateTime.now()
         task_info[CREATE_TIME] = now
         task_info[PARENT_ID] = parent_id

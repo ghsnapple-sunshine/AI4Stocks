@@ -71,13 +71,23 @@ class PerfectTask(OneOffTaskA):
         return PerfectTask(start_time=self._start_time) if success else None
 
 
+class ContinousTask(OneOffTaskA):
+    COUNT = 0
+
+    def get_subsequent_task(self, success: bool):
+        if ContinousTask.COUNT < 1:
+            ContinousTask.COUNT += 1
+            return ContinousTask(start_time=self.start_time.add(minutes=5))
+        return
+
+
 class TestTaskScheduler(Tester):
     @classmethod
     def _setup_oncemore(cls):
         pass
 
     def _setup_always(self) -> None:
-        pass
+        DbSweeper.erase()
 
     def test_run_with_oneoff_task(self):
         """
@@ -85,11 +95,10 @@ class TestTaskScheduler(Tester):
 
         :return:
         """
-        DbSweeper.cleanup()
         now = DateTime.now()
         task_infos = [
-            [OneOffTaskA, now - Duration(seconds=1)],
-            [OneOffTaskB, now - Duration(seconds=2)],
+            [OneOffTaskA, now.subtract(seconds=1)],
+            [OneOffTaskB, now.subtract(seconds=2)],
             [OneOffTaskC, now],
         ]
 
@@ -127,13 +136,12 @@ class TestTaskScheduler(Tester):
 
         :return:
         """
-        DbSweeper.cleanup()
         start = DateTime.now()
         sch = TaskScheduler(
             operator=self._operator,
             tasks=[
-                OneOffTaskA(start_time=DateTime.now() + Duration(seconds=2)),
-                OneOffTaskB(start_time=DateTime.now() + Duration(seconds=4)),
+                OneOffTaskA(start_time=DateTime.now().add(seconds=2)),
+                OneOffTaskB(start_time=DateTime.now().add(seconds=4)),
                 OneOffTaskC(start_time=DateTime.now()),
             ],
         )
@@ -143,35 +151,32 @@ class TestTaskScheduler(Tester):
         assert end - start >= Duration(seconds=3)
 
     def test_run_with_new_task_n_error(self):
-        DbSweeper.cleanup()
         self._run_with_3tasks()
         actual = self._operator.select_data(name=TASK_RCD)
         assert actual[actual[SUCCESS] == 0].shape[0] == 1
         assert actual.shape[0] == 5
 
     def test_run_2times(self):
-        DbSweeper.cleanup()
         self._run_with_3tasks()
         self._run_with_3tasks()
         actual = self._operator.select_data(name=TASK_RCD)
-        assert actual.shape[0] == 5
+        assert actual.shape[0] == 10  # 20221128：创建case判断重复时，不再考虑已完成case，因此预期从5->10
 
     def test_run_2times_add_task(self):
-        DbSweeper.cleanup()
         self._run_with_1task()
         actual = self._operator.select_data(name=TASK_RCD)
         assert actual.shape[0] == 1
         self._run_with_3tasks()
         actual = self._operator.select_data(name=TASK_RCD)
-        assert actual.shape[0] == 5
+        assert actual.shape[0] == 6  # 20221128：创建case判断重复时，不再考虑已完成case，因此预期从5->6
 
     def _run_with_3tasks(self):
         InnerD.COUNT = 0
         sch = TaskScheduler(
             operator=self._operator,
             tasks=[
-                OneOffTaskA(start_time=DateTime.now() - Duration(seconds=0.1)),
-                OneOffTaskB(start_time=DateTime.now() - Duration(seconds=0.2)),
+                OneOffTaskA(start_time=DateTime.now().subtract(seconds=0.1)),
+                OneOffTaskB(start_time=DateTime.now().subtract(seconds=0.2)),
                 PerfectTask(start_time=DateTime.now()),
             ],
         )
@@ -181,6 +186,37 @@ class TestTaskScheduler(Tester):
         InnerD.COUNT = 0
         sch = TaskScheduler(
             operator=self._operator,
-            tasks=[OneOffTaskA(start_time=DateTime.now() - Duration(seconds=0.1))],
+            tasks=[OneOffTaskA(start_time=DateTime.now().subtract(seconds=0.1))],
         )
         sch.run()
+
+    def test_add_task_fail(self):
+        """
+        测试由于当前已有未完成case不增加case
+
+        :return:
+        """
+        ContinousTask.COUNT = 0
+        sch = TaskScheduler(
+            operator=self._operator,
+            tasks=[ContinousTask(start_time=DateTime.now().subtract(seconds=2)),
+                   ContinousTask(start_time=DateTime.now().subtract(seconds=1))],
+        )
+        sch.run()
+        task_num = self._operator.select_row_num(TASK_RCD)
+        assert task_num == 2
+
+    def test_add_task_success(self):
+        """
+        测试由于当前没有未完成case需增加case
+
+        :return:
+        """
+        ContinousTask.COUNT = 0
+        sch = TaskScheduler(
+            operator=self._operator,
+            tasks=[ContinousTask(start_time=DateTime.now().subtract(days=1))],
+        )
+        sch.run()
+        task_num = self._operator.select_row_num(TASK_RCD)
+        assert task_num == 2
