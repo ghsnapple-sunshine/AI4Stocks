@@ -183,7 +183,7 @@ class SlowHandler(Handler):
             if list_not_valid(todo_ls):
                 self._log_already_downloaded(para=para)
                 return
-            data = pd.concat(
+            data = pd.concat_safe(
                 [self._download(para=para.with_span(span)) for span in todo_ls]
             )
 

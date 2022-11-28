@@ -223,3 +223,30 @@ class ReformHandlerTest(Tester):
         para = Para().with_start_n_end(Date(2002, 4, 16), Date(2002, 4, 17))
         BsMinuteHandler(operator=self._operator).obtain_data(para=para)
         RHandler(operator=self._operator).reform_data()
+
+    def test_empty(self):
+        """
+        测试空数据
+
+        :return:
+        """
+        create_1stock(self._operator)
+        para = Para().with_start_n_end(Date(2022, 11, 26), Date(2022, 11, 28))  # 周六，周日
+        DcDailyHandler(operator=self._operator).obtain_data(para=para)
+        RHandler(operator=self._operator).reform_data()
+
+    def test_empty2(self):
+        """
+        测试空数据
+
+        :return:
+        """
+        create_1stock(self._operator)
+        # S1
+        para1 = Para().with_start_n_end(Date(2022, 11, 24), Date(2022, 11, 26))  # 周四，周五
+        DcDailyHandler(operator=self._operator).obtain_data(para=para1)
+        RHandler(operator=self._operator).reform_data()
+        # S2
+        para2 = Para().with_start_n_end(Date(2022, 11, 26), Date(2022, 11, 28))  # 周六，周日
+        DcDailyHandler(operator=self._operator).obtain_data(para=para2)
+        RHandler(operator=self._operator).reform_data()

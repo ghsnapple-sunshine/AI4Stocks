@@ -52,7 +52,7 @@ class TableNameTool:
             .reset_index()
         )
         spans = records[[START_DATE, END_DATE]].drop_duplicates()
-        series = pd.concat(
+        series = pd.concat(  # Assure_safe
             [cls._create_single_series(row) for row in spans.itertuples(index=False)]
         )
         tables = pd.merge(records, series, how="left", on=[START_DATE, END_DATE])

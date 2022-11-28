@@ -23,7 +23,7 @@ class DcConceptConsHandler(FastHandler):
             raise PreStepError(
                 curr_step=DcConceptConsHandler, pre_step=DcConceptListHandler
             )
-        cons = pd.concat(
+        cons = pd.concat_safe(
             [self._download_concept(row) for row in concepts.itertuples(index=False)]
         )
         Logger.info(f"Before filter, total record num is {len(cons)}.")

@@ -103,7 +103,7 @@ class DcStockDividendHandler(Handler):
         """
         if list_not_valid(time_series):
             return
-        data = pd.concat(
+        data = pd.concat(  # Assure safe
             [
                 ak.stock_fhps_em(date=x.subtract(days=1).format("YYYYMMDD"))
                 for x in time_series

@@ -1,3 +1,5 @@
+from typing import Optional
+
 from pandas import (
     DataFrame as pd_DataFrame,
     Series as pd_Series,
@@ -42,3 +44,14 @@ class pd:
         :return:
         """
         return pd.concat([df1, df2, df2]).drop_duplicates(keep=False)
+
+    @staticmethod
+    def concat_safe(datas: list[Optional[DataFrame]]) -> Optional[DataFrame]:
+        """
+        安全地concat DataFrame
+
+        :return:
+        """
+        if any(isinstance(x, DataFrame) and not x.empty for x in datas):
+            return pd_concat(datas)
+        return None

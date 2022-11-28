@@ -89,7 +89,7 @@ class ReformMaintain:
         table_names_by_date = TableNameTool.get_multi_by_date(dl_records)
 
         dl_records[DL_ROW_NUM] = dl_records.apply(self._get_dl_row_num, axis=1)
-        rf_records = pd.concat(
+        rf_records = pd.concat(  # Assure safe
             [
                 self._get_rf_row_num(row)
                 for row in table_names_by_date.itertuples(index=False)

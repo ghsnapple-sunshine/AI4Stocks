@@ -1,3 +1,5 @@
+from typing import Optional
+
 from pymysql import IntegrityError
 
 from buffett.adapter import logging
@@ -194,23 +196,24 @@ class ReformHandler:
         )
         logging.info(f"Start to convert {group_desc}")
 
-        data = pd.concat(
+        data = pd.concat_safe(
             [
                 self._get_required_data(row=row, para=para)
                 for row in df.itertuples(index=False)
             ]
         )
-        key = DATE if DATE in data.columns else DATETIME
-        data[MONTH_START] = data[key].apply(lambda x: DateTime(x.year, x.month, 1))
-        data.groupby(by=[MONTH_START]).apply(
-            lambda subgroup: self._save_2_database(df=subgroup, para=para)
-        )
+        if dataframe_is_valid(data):
+            key = DATE if DATE in data.columns else DATETIME
+            data[MONTH_START] = data[key].apply(lambda x: DateTime(x.year, x.month, 1))
+            data.groupby(by=[MONTH_START]).apply(
+                lambda subgroup: self._save_2_database(df=subgroup, para=para)
+            )
 
         self._save_reform_records(df=df)
 
         logging.info(f"Successfully convert {group_desc}")
 
-    def _get_required_data(self, row: tuple, para: Para) -> DataFrame:
+    def _get_required_data(self, row: tuple, para: Para) -> Optional[DataFrame]:
         """
         按照指定的范围，读取数据
 
@@ -226,13 +229,14 @@ class ReformHandler:
         else:
             done_span = DateSpan(getattr(row, DORCD_START), getattr(row, DORCD_END))
             todo_ls = todo_span.subtract(done_span)
-        data = pd.concat(
+        data = pd.concat_safe(
             [
                 self._operator.select_data(name=table_name_by_code, span=span)
                 for span in todo_ls
             ]
         )
-        data[CODE] = para.target.code
+        if dataframe_is_valid(data):
+            data[CODE] = para.target.code
         return data
 
     def _save_2_database(self, df: DataFrame, para: Para) -> None:
@@ -265,7 +269,7 @@ class ReformHandler:
         :param df:
         :return:
         """
-        df = pd.concat(
+        df = pd.concat(  # Assure safe
             [
                 ReformHandler._get_reform_record(row)
                 for row in df.itertuples(index=False)

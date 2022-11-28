@@ -23,7 +23,7 @@ class DcIndustryConsHandler(FastHandler):
             raise PreStepError(
                 curr_step=DcIndustryConsHandler, pre_step=DcIndustryListHandler
             )
-        cons = pd.concat(
+        cons = pd.concat_safe(
             [self._download_industry(row) for row in industries.itertuples(index=False)]
         )
         Logger.info(f"Before filter, total record num is {len(cons)}.")
