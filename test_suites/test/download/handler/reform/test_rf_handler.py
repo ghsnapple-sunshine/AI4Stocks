@@ -5,7 +5,7 @@ from buffett.common.pendulum import Date
 from buffett.download import Para
 from buffett.download.handler import Handler
 from buffett.download.handler.reform import ReformHandler as RHandler
-from buffett.download.handler.stock import AkDailyHandler, BsMinuteHandler
+from buffett.download.handler.stock import DcDailyHandler, BsMinuteHandler
 from buffett.download.recorder import DownloadRecorder, ReformRecorder
 from test import Tester, DbSweeper, create_1stock, create_ex_1stock
 
@@ -61,7 +61,7 @@ class ReformHandlerTest(Tester):
         """
         # S1:
         self._atom_test(
-            Cls=AkDailyHandler,
+            Cls=DcDailyHandler,
             start=Date(2022, 1, 4),
             end=Date(2022, 1, 5),
             dl_table_names="dc_stock_dayinfo_000001_hfq",
@@ -69,7 +69,7 @@ class ReformHandlerTest(Tester):
         )
         # S2:
         self._atom_test(
-            Cls=AkDailyHandler,
+            Cls=DcDailyHandler,
             start=Date(2022, 1, 1),
             end=Date(2022, 1, 10),
             dl_table_names="dc_stock_dayinfo_000001_hfq",
@@ -84,7 +84,7 @@ class ReformHandlerTest(Tester):
         """
         # S1:
         self._atom_test(
-            Cls=AkDailyHandler,
+            Cls=DcDailyHandler,
             start=Date(2022, 1, 4),
             end=Date(2022, 2, 4),
             dl_table_names="dc_stock_dayinfo_000001_hfq",
@@ -95,7 +95,7 @@ class ReformHandlerTest(Tester):
         )
         # S2:
         self._atom_test(
-            Cls=AkDailyHandler,
+            Cls=DcDailyHandler,
             start=Date(2022, 2, 4),
             end=Date(2022, 3, 4),
             dl_table_names="dc_stock_dayinfo_000001_hfq",
@@ -114,7 +114,7 @@ class ReformHandlerTest(Tester):
         """
         # S1:
         self._atom_test(
-            Cls=AkDailyHandler,
+            Cls=DcDailyHandler,
             start=Date(2022, 1, 1),
             end=Date(2022, 4, 1),
             dl_table_names="dc_stock_dayinfo_000001_hfq",
@@ -133,7 +133,7 @@ class ReformHandlerTest(Tester):
         """
         # S1:
         self._atom_test(
-            Cls=AkDailyHandler,
+            Cls=DcDailyHandler,
             start=Date(2022, 1, 4),
             end=Date(2022, 4, 4),
             dl_table_names="dc_stock_dayinfo_000001_qfq",
@@ -147,7 +147,7 @@ class ReformHandlerTest(Tester):
         # S2:
         self._setup_2nd()
         self._atom_test(
-            Cls=AkDailyHandler,
+            Cls=DcDailyHandler,
             start=Date(2022, 2, 4),
             end=Date(2022, 3, 4),
             dl_table_names=[

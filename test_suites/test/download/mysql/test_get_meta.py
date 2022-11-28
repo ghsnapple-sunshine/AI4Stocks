@@ -2,7 +2,7 @@ from buffett.common.constants.meta.handler import BS_MINUTE_META, AK_DAILY_META
 from buffett.common.pendulum import Date
 from buffett.download import Para
 from buffett.download.handler.stock import (
-    AkDailyHandler,
+    DcDailyHandler,
     BsMinuteHandler,
 )
 from buffett.download.handler.tools import TableNameTool
@@ -23,7 +23,7 @@ class TestGetMeta(Tester):
     def test_ak_daily(self):
         # 下载日线数据
         para = Para().with_start_n_end(start=Date(2022, 1, 4), end=Date(2022, 1, 5))
-        AkDailyHandler(operator=self._operator).obtain_data(para=para)
+        DcDailyHandler(operator=self._operator).obtain_data(para=para)
         para = (
             para.with_code("000001")
             .with_freq(FreqType.DAY)

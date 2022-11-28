@@ -1,7 +1,7 @@
 from buffett.common.pendulum import Date
 from buffett.download import Para
 from buffett.download.handler.reform import ReformHandler
-from buffett.download.handler.stock import AkDailyHandler
+from buffett.download.handler.stock import DcDailyHandler
 from buffett.maintain import ReformMaintain
 from test import Tester, create_2stocks, create_ex_1stock, DbSweeper
 
@@ -9,7 +9,7 @@ from test import Tester, create_2stocks, create_ex_1stock, DbSweeper
 class TestReformMaintain(Tester):
     @classmethod
     def _setup_oncemore(cls):
-        cls._ak_handler = AkDailyHandler(operator=cls._operator)
+        cls._ak_handler = DcDailyHandler(operator=cls._operator)
         cls._rf_handler = ReformHandler(operator=cls._operator)
         ReformMaintain.set_save_report(False)
         cls._rf_mtain = ReformMaintain(operator=cls._operator)

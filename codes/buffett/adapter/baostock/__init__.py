@@ -3,6 +3,7 @@ from baostock import (
     logout as bs_logout,
     query_history_k_data_plus as bs_query_history_k_data_plus,
     query_money_supply_data_month as bs_query_money_supply_data_month,
+    query_stock_basic as bs_query_stock_basic,
     query_trade_dates as bs_query_trade_dates,
 )
 from baostock.data.resultset import ResultData as bs_ResultData
@@ -54,6 +55,16 @@ class bs:
         )
         bs_logout()
         return result
+
+    @staticmethod
+    def query_stock_basic():
+        bs_login()
+        result = bs._resultdata_to_dataframe(
+            bs_query_stock_basic()
+        )
+        bs_logout()
+        return result
+
 
     @staticmethod
     def _resultdata_to_dataframe(self: ResultData) -> DataFrame:

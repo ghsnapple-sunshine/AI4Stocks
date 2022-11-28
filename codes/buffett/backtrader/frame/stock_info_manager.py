@@ -8,7 +8,7 @@ from buffett.backtrader.interface import ITimeSequence
 from buffett.common.pendulum import DateSpan
 from buffett.download import Para
 from buffett.download.handler import Handler
-from buffett.download.handler.stock import AkDailyHandler
+from buffett.download.handler.stock import DcDailyHandler
 from buffett.download.mysql import Operator
 from buffett.download.types import FuquanType, HeadType
 
@@ -196,14 +196,14 @@ class StockInfoManagerBuilder:
         :return:            StockInfo需要涵盖的列（多个），数据来源
         """
         cols = {
-            HeadType.OPEN: AkDailyHandler,
-            HeadType.LOW: AkDailyHandler,
-            HeadType.HIGH: AkDailyHandler,
-            HeadType.CLOSE: AkDailyHandler,
-            HeadType.CJL: AkDailyHandler,
+            HeadType.OPEN: DcDailyHandler,
+            HeadType.LOW: DcDailyHandler,
+            HeadType.HIGH: DcDailyHandler,
+            HeadType.CLOSE: DcDailyHandler,
+            HeadType.CJL: DcDailyHandler,
         }
         sources: dict[Type[Handler], list[HeadType]] = {
-            AkDailyHandler: [
+            DcDailyHandler: [
                 HeadType.OPEN,
                 HeadType.CLOSE,
                 HeadType.HIGH,

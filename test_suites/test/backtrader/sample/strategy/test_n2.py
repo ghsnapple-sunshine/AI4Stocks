@@ -7,7 +7,7 @@ import pandas as pd
 from backtrader_plotting import Bokeh
 from backtrader_plotting.schemes import Tradimo
 
-from buffett.download.handler.stock.ak_daily import AkDailyHandler
+from buffett.download.handler.stock.dc_daily import DcDailyHandler
 from buffett.download.mysql.operator import Operator
 from buffett.download.mysql.types import RoleType
 from test.backtrader.sample.strategy.multi_sma import Strategy
@@ -69,7 +69,7 @@ for fname in datafilelist:
 """
 
 code_list = ["000001", "000002"]
-hdl = AkDailyHandler(Operator(RoleType.DbTest))
+hdl = DcDailyHandler(Operator(RoleType.DbTest))
 for code in code_list:
     # 利用 AKShare 获取股票的后复权数据，这里只获取前 6 列
     stock_hfq_df = ak.stock_zh_a_hist(symbol=code, adjust="hfq").iloc[:, :6]

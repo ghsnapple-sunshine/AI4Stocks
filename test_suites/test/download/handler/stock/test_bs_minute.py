@@ -1,3 +1,4 @@
+from buffett.adapter.baostock import bs
 from buffett.common.pendulum import Date, DateTime, convert_date
 from buffett.download import Para
 from buffett.download.handler.stock import BsMinuteHandler
@@ -112,3 +113,24 @@ class TestBsStockMinuteHandler(Tester):
         db = self._hdl.select_data(para=select_para)
         # 2022/1/4, 2022/1/5, 2022/1/6，2022/1/7, 2022/1/10, 2022/1/3为公休日, 2022/1/8为周六
         assert db.shape[0] == 5 * 240 / 5
+
+    def test_download_tuishi(self):
+        """
+        测试退市股票下载+测试下载数据量
+        :return:
+        """
+        create_ex_1stock(self._operator, code="000003")
+        para = Para().with_start_n_end(Date(2000, 1, 15), Date(2000, 3, 28))
+        self._hdl.obtain_data(para=para)
+        data = self._hdl.select_data(
+            para=Para().with_fuquan(FuquanType.BFQ).with_code("000003")
+        )
+        origin_data = bs.query_history_k_data_plus(
+            code="sz.000003",
+            fields="time,open,high,low,close,volume,amount",
+            frequency="5",
+            start_date=para.span.start.format("YYYY-MM-DD"),
+            end_date=para.span.end.subtract(days=1).format("YYYY-MM-DD"),
+            adjustflag=FuquanType.BFQ.bs_format(),
+        )
+        assert data.shape[0] == origin_data.shape[0] != 0

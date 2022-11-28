@@ -1,8 +1,8 @@
 from buffett.common.magic import empty_init
 from buffett.common.pendulum import DateTime
 from buffett.common.wrapper import Wrapper
-from buffett.download.handler.industry import AkIndustryDailyHandler
-from buffett.download.handler.stock import BsMinuteHandler, AkDailyHandler
+from buffett.download.handler.industry import DcIndustryDailyHandler
+from buffett.download.handler.stock import BsMinuteHandler, DcDailyHandler
 from buffett.task import (
     StockDailyTask,
     StockReformTask,
@@ -32,7 +32,7 @@ class TestSlowDownload(Tester):
         cls.StockDailyTaskSubClass = type(
             "StockDailyTaskSubClass",
             (StockDailyTask,),
-            cls._get_cls_dict(AkDailyHandler(operator=cls._operator).obtain_data),
+            cls._get_cls_dict(DcDailyHandler(operator=cls._operator).obtain_data),
         )
         cls.StockMinuteTaskSubClass = type(
             "StockMinuteTaskSubClass",
@@ -43,7 +43,7 @@ class TestSlowDownload(Tester):
             "IndustryDailyTaskSubClass",
             (IndustryDailyTask,),
             cls._get_cls_dict(
-                AkIndustryDailyHandler(operator=cls._operator).obtain_data
+                DcIndustryDailyHandler(operator=cls._operator).obtain_data
             ),
         )
 
