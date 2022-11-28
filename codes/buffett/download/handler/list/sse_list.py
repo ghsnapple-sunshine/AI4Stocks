@@ -23,7 +23,7 @@ class SseStockListHandler(FastHandler):
         return stocks
 
     def _save_to_database(self, df: DataFrame) -> None:
-        self._operator.create_table(name=STK_LS, meta=STK_META)
+        self._operator.create_table(name=STK_LS, meta=STK_META, update=True)
         self._operator.try_insert_data(name=STK_LS, df=df, update=True, meta=STK_META)
 
     def select_data(self) -> Optional[DataFrame]:
