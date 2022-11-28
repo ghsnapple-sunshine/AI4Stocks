@@ -104,4 +104,4 @@ class ak:
 
     @staticmethod
     def stock_zh_index_daily_em(symbol: str):
-        return ak_stock_zh_index_daily_em()
+        return ak_stock_zh_index_daily_em(symbol=symbol)
