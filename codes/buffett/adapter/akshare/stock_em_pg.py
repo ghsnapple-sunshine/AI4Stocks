@@ -7,9 +7,9 @@ from buffett.adapter.pandas import DataFrame, pd
 def stock_em_pg() -> DataFrame:
     """
     东方财富网-数据中心-新股数据-配股
-    http://data.eastmoney.com/xg/pg/
-    :return: 配股
-    :rtype: pandas.DataFrame
+    https://data.eastmoney.com/xg/pg/
+
+    :return:    配股
     """
     temp_dfs = []
     n = 0

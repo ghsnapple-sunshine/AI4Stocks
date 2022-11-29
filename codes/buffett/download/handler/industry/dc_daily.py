@@ -26,7 +26,7 @@ from buffett.download import Para
 from buffett.download.handler.base import SlowHandler
 from buffett.download.handler.calendar import CalendarHandler
 from buffett.download.handler.industry.dc_list import DcIndustryListHandler
-from buffett.download.handler.tools import TableNameTool
+from buffett.download.handler.tools import TableNameTool, select_data_slow
 from buffett.download.mysql import Operator
 from buffett.download.recorder import DownloadRecorder
 from buffett.download.types import SourceType, FuquanType, FreqType
@@ -78,17 +78,27 @@ class DcIndustryDailyHandler(SlowHandler):
         return daily_info
 
     def _save_to_database(self, table_name: str, df: DataFrame) -> None:
-        self._operator.create_table(
-            name=table_name, meta=AK_DAILY_META, if_not_exist=True
-        )
+        """
+        将下载的数据存放到数据库
+
+        :param table_name:
+        :param df:
+        :return:
+        """
+        self._operator.create_table(name=table_name, meta=AK_DAILY_META)
         self._operator.insert_data(table_name, df)
 
     def select_data(self, para: Para) -> Optional[DataFrame]:
-        para = para.clone().with_freq(self._freq).with_source(self._source)
-        table_name = TableNameTool.get_by_code(para=para)
-        df = self._operator.select_data(table_name)
-        if dataframe_not_valid(df):
-            return
-        df.index = df[DATE]
-        del df[DATE]
-        return df
+        """
+        查询某个行业、某个时间段内的全部数据
+
+        :param para:        code, [start, end]
+        :return:
+        """
+        para = (
+            para.clone()
+            .with_fuquan(self._fuquans[0])
+            .with_freq(self._freq)
+            .with_source(self._source)
+        )
+        return select_data_slow(operator=self._operator, para=para)

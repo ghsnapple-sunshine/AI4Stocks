@@ -23,7 +23,7 @@ from buffett.download import Para
 from buffett.download.handler.base.slow import SlowHandler
 from buffett.download.handler.calendar import CalendarHandler
 from buffett.download.handler.list import SseStockListHandler
-from buffett.download.handler.tools.table_name import TableNameTool
+from buffett.download.handler.tools import select_data_slow
 from buffett.download.mysql import Operator
 from buffett.download.recorder import DownloadRecorder
 from buffett.download.types import SourceType, FuquanType, FreqType
@@ -58,7 +58,13 @@ class DcMinuteHandler(SlowHandler):
         )
 
     def _download(self, para: Para) -> DataFrame:
-        # 使用接口（stock_zh_a_hist_min_em，源：东财）,code为Str6
+        """
+        根据para中指定的条件下载数据
+
+        :param para:            code, fuquan, start, end
+        :return:
+        """
+        # 使用接口（stock_zh_a_hist_min_em，源：东财）
         minute_info = ak.stock_zh_a_hist_min_em(
             symbol=para.target.code,
             period="5",
@@ -73,21 +79,27 @@ class DcMinuteHandler(SlowHandler):
         return minute_info
 
     def _save_to_database(self, table_name: str, df: DataFrame):
+        """
+        将下载的数据存放到数据库
+
+        :param table_name:
+        :param df:
+        :return:
+        """
         self._operator.create_table(name=table_name, meta=AK_MINUTE_META)
         self._operator.insert_data(name=table_name, df=df)
 
     def select_data(self, para: Para) -> Optional[DataFrame]:
         """
-        查询某支股票、某种复权方式下、某个时间段内的全部数据
+        查询某支股票、某个时间段内的全部数据
 
-        :param para:        code, fuquan, start, end
+        :param para:        code, [start, end]
         :return:
         """
-        para = para.clone().with_source(self._source).with_freq(self._freq)
-        table_name = TableNameTool.get_by_code(para=para)
-        df = self._operator.select_data(name=table_name, span=para.span)
-        if dataframe_not_valid(df):
-            return
-        df.index = df[DATETIME]
-        del df[DATETIME]
-        return df
+        para = (
+            para.clone()
+            .with_source(self._source)
+            .with_freq(self._freq)
+            .with_fuquan(self._fuquans[0])
+        )
+        return select_data_slow(operator=self._operator, para=para)

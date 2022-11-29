@@ -12,13 +12,13 @@ from akshare import (
     stock_zh_a_hist as ak_stock_zh_a_hist,
     stock_zh_a_hist_min_em as ak_stock_zh_a_hist_min_em,
     stock_zh_a_spot_em as ak_stock_zh_a_spot_em,
-    stock_zh_index_daily_em as ak_stock_zh_index_daily_em,
 )
 
 from buffett.adapter.akshare.stock_a_lg_indicator import stock_a_lg_indicator
 from buffett.adapter.akshare.stock_board_industry_hist_em import (
     stock_board_industry_hist_em,
 )
+from buffett.adapter.akshare.stock_zh_index_daily_em import stock_zh_index_daily_em
 
 
 class ak:
@@ -103,5 +103,7 @@ class ak:
         return stock_a_lg_indicator(symbol=symbol)
 
     @staticmethod
-    def stock_zh_index_daily_em(symbol: str):
-        return ak_stock_zh_index_daily_em(symbol=symbol)
+    def stock_zh_index_daily_em(symbol: str, start_date: str, end_date: str):
+        return stock_zh_index_daily_em(
+            symbol=symbol, start_date=start_date, end_date=end_date
+        )

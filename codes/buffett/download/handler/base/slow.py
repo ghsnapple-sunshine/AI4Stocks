@@ -1,7 +1,6 @@
 from abc import abstractmethod
 from typing import Optional
 
-from buffett.adapter import logging
 from buffett.adapter.numpy import NAN
 from buffett.adapter.pandas import DataFrame, pd
 from buffett.common.constants.col import (
@@ -16,6 +15,7 @@ from buffett.common.constants.col.my import DORCD_START, DORCD_END
 from buffett.common.constants.col.target import CODE
 from buffett.common.error import ParamTypeError
 from buffett.common.error.pre_step import PreStepError
+from buffett.common.logger import Logger
 from buffett.common.magic import get_class
 from buffett.common.pendulum import DateSpan, Date, convert_datetime, Duration
 from buffett.common.tools import dataframe_not_valid, list_not_valid, dataframe_is_valid
@@ -79,7 +79,7 @@ class SlowHandler(Handler):
         return tbs
 
     @abstractmethod
-    def select_data(self, para: Para) -> DataFrame:
+    def select_data(self, para: Para) -> Optional[DataFrame]:
         pass
 
     # endregion
@@ -195,7 +195,7 @@ class SlowHandler(Handler):
         self._log_success_download(para=para)
 
     @abstractmethod
-    def _download(self, para: Para) -> DataFrame:
+    def _download(self, para: Para) -> Optional[DataFrame]:
         """
         根据para中指定的条件下载数据
 
@@ -217,7 +217,7 @@ class SlowHandler(Handler):
 
     @classmethod
     def _log_success_download(cls, para: Para):
-        logging.info(
+        Logger.info(
             "Successfully Download Stock {0} {1} {2} {3}".format(
                 para.comb.freq, para.target.code, para.target.name, para.comb.fuquan
             )
@@ -225,7 +225,7 @@ class SlowHandler(Handler):
 
     @classmethod
     def _log_already_downloaded(cls, para: Para):
-        logging.info(
+        Logger.info(
             "Have already Downloaded Stock {0} {1} {2} {3}".format(
                 para.comb.freq, para.target.code, para.target.name, para.comb.fuquan
             )

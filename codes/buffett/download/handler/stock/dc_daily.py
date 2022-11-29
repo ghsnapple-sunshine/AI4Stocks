@@ -22,7 +22,7 @@ from buffett.download import Para
 from buffett.download.handler.base.slow import SlowHandler
 from buffett.download.handler.calendar import CalendarHandler
 from buffett.download.handler.list import SseStockListHandler
-from buffett.download.handler.tools.table_name import TableNameTool
+from buffett.download.handler.tools import select_data_slow
 from buffett.download.mysql import Operator
 from buffett.download.recorder import DownloadRecorder
 from buffett.download.types import FuquanType, SourceType, FreqType
@@ -56,9 +56,14 @@ class DcDailyHandler(SlowHandler):
             field_name=NAME,
         )
 
-    def _download(self, para: Para) -> DataFrame:
-        # 使用接口（stock_zh_a_hist，源：东财）,code为Str6
-        # 备用接口（stock_zh_a_daily，源：新浪，未实现）
+    def _download(self, para: Para) -> Optional[DataFrame]:
+        """
+        根据para中指定的条件下载数据
+
+        :param para:            code, fuquan, start, end
+        :return:
+        """
+        # 使用接口（stock_zh_a_hist，源：东财）
         daily_info = ak.stock_zh_a_hist(
             symbol=para.target.code,
             period="daily",
@@ -66,29 +71,30 @@ class DcDailyHandler(SlowHandler):
             end_date=para.span.end.subtract(days=1).format("YYYYMMDD"),
             adjust=para.comb.fuquan.ak_format(),
         )
+        if dataframe_not_valid(daily_info):
+            return daily_info
 
         # 重命名
         daily_info = daily_info.rename(columns=_RENAME)
         return daily_info
 
     def _save_to_database(self, table_name: str, df: DataFrame) -> None:
-        self._operator.create_table(
-            name=table_name, meta=AK_DAILY_META, if_not_exist=True
-        )
+        """
+        将下载的数据存放到数据库
+
+        :param table_name:
+        :param df:
+        :return:
+        """
+        self._operator.create_table(name=table_name, meta=AK_DAILY_META)
         self._operator.insert_data(table_name, df)
 
     def select_data(self, para: Para) -> Optional[DataFrame]:
         """
-        查询某支股票以某种复权方式的全部数据
+        查询某支股票、某种复权方式下、某个时间段内的全部数据
 
-        :param para:        code, fuquan
+        :param para:        code, fuquan, [start, end]
         :return:
         """
         para = para.clone().with_freq(self._freq).with_source(self._source)
-        table_name = TableNameTool.get_by_code(para=para)
-        df = self._operator.select_data(name=table_name, span=para.span)
-        if dataframe_not_valid(df):
-            return
-        df.index = df[DATE]
-        del df[DATE]
-        return df
+        return select_data_slow(operator=self._operator, para=para)

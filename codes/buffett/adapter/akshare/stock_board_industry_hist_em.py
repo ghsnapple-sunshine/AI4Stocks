@@ -13,18 +13,13 @@ def stock_board_industry_hist_em(
     """
     东方财富网-沪深板块-行业板块-历史行情
     https://quote.eastmoney.com/bk/90.BK1027.html
-    :param symbol: 板块代码
-    :type symbol: str
-    :param start_date: 开始时间
-    :type start_date: str
-    :param end_date: 结束时间
-    :type end_date: str
-    :param period: 周期; choice of {"日k", "周k", "月k"}
-    :type period: str
-    :param adjust: choice of {'': 不复权, "qfq": 前复权, "hfq": 后复权}
-    :type adjust: str
-    :return: 历史行情
-    :rtype: pandas.DataFrame
+
+    :param symbol:          板块代码
+    :param start_date:      开始时间
+    :param end_date:        结束时间
+    :param period:          周期; choice of {"日k", "周k", "月k"}
+    :param adjust:          choice of {'': 不复权, "qfq": 前复权, "hfq": 后复权}
+    :return:                历史行情
     """
     period_map = {
         "日k": "101",
@@ -32,7 +27,7 @@ def stock_board_industry_hist_em(
         "月k": "103",
     }
     adjust_map = {"": "0", "qfq": "1", "hfq": "2"}
-    url = "http://7.push2his.eastmoney.com/api/qt/stock/kline/get"
+    url = "https://push2his.eastmoney.com/api/qt/stock/kline/get"
     params = {
         "secid": f"90.{symbol}",
         "ut": "fa5fd1943c7b386f172d6893dbfba10b",

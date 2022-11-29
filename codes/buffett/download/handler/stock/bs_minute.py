@@ -14,8 +14,8 @@ from buffett.download.handler.tools import (
     bs_str_to_datetime,
     bs_check_float,
     bs_check_int,
+    select_data_slow,
 )
-from buffett.download.handler.tools.table_name import TableNameTool
 from buffett.download.mysql import Operator
 from buffett.download.recorder import DownloadRecorder
 from buffett.download.types import SourceType, FuquanType, FreqType
@@ -81,21 +81,27 @@ class BsMinuteHandler(SlowHandler):
         raise NotImplemented
 
     def _save_to_database(self, table_name: str, df: DataFrame) -> None:
+        """
+        将下载的数据存放到数据库
+
+        :param table_name:
+        :param df:
+        :return:
+        """
         self._operator.create_table(name=table_name, meta=BS_MINUTE_META)
         self._operator.insert_data(table_name, df)
 
     def select_data(self, para: Para) -> Optional[DataFrame]:
         """
-        查询某支股票以某种复权方式的全部数据
+        查询某支股票、某个时间段内的全部数据
 
-        :param para:        code, fuquan, [start, end]
+        :param para:            code, [start, end]
         :return:
         """
-        para = para.clone().with_source(self._source).with_freq(self._freq)
-        table_name = TableNameTool.get_by_code(para=para)
-        df = self._operator.select_data(name=table_name, span=para.span)
-        if dataframe_not_valid(df):
-            return
-        df.index = df[DATETIME]
-        del df[DATETIME]
-        return df
+        para = (
+            para.clone()
+            .with_source(self._source)
+            .with_freq(self._freq)
+            .with_fuquan(self._fuquans[0])
+        )
+        return select_data_slow(operator=self._operator, para=para)

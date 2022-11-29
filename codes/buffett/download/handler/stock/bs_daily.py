@@ -3,7 +3,6 @@ from typing import Optional
 from buffett.adapter.baostock import bs
 from buffett.adapter.pandas import DataFrame
 from buffett.common.constants.col import (
-    DATE,
     OPEN,
     CLOSE,
     HIGH,
@@ -20,12 +19,12 @@ from buffett.download import Para
 from buffett.download.handler.base.slow import SlowHandler
 from buffett.download.handler.calendar import CalendarHandler
 from buffett.download.handler.list import StockListHandler
+from buffett.download.handler.tools import select_data_slow
 from buffett.download.handler.tools.bs_convert import (
     bs_convert_code,
     bs_check_float,
     bs_check_int,
 )
-from buffett.download.handler.tools.table_name import TableNameTool
 from buffett.download.mysql import Operator
 from buffett.download.recorder import DownloadRecorder
 from buffett.download.types import FuquanType, SourceType, FreqType
@@ -76,21 +75,22 @@ class BsDailyHandler(SlowHandler):
         return daily_info
 
     def _save_to_database(self, table_name: str, df: DataFrame) -> None:
+        """
+        将下载的数据存放到数据库
+
+        :param table_name:
+        :param df:
+        :return:
+        """
         self._operator.create_table(name=table_name, meta=BS_DAILY_META)
         self._operator.insert_data(table_name, df)
 
     def select_data(self, para: Para) -> Optional[DataFrame]:
         """
-        查询某支股票以某种复权方式的全部数据
+        查询某支股票、某种复权方式下、某个时间段内的全部数据
 
         :param para:        code, fuquan, [start, end]
         :return:
         """
         para = para.clone().with_freq(self._freq).with_source(self._source)
-        table_name = TableNameTool.get_by_code(para=para)
-        df = self._operator.select_data(table_name)
-        if dataframe_not_valid(df):
-            return
-        df.index = df[DATE]
-        del df[DATE]
-        return df
+        return select_data_slow(operator=self._operator, para=para)
