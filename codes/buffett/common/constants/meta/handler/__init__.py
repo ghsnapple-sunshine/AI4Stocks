@@ -83,9 +83,30 @@ AK_DAILY_META = create_meta(
 )
 
 """
+Metadata for BS_STOCK_DAYINFO
+"""
+BS_DAILY_META = AK_DAILY_META  # TODO:Seems key should be 'DATETIME'?
+
+"""
 Metadata for DC_STOCK_MIN5INFO
 """
 AK_MINUTE_META = AK_DAILY_META  # TODO:Seems key should be 'DATETIME'?
+
+
+"""
+Metadata for BS_STOCK_MIN5INFO
+"""
+BS_MINUTE_META = create_meta(
+    meta_list=[
+        [DATETIME, ColType.DATETIME, AddReqType.KEY],
+        [OPEN, ColType.FLOAT, AddReqType.NONE],
+        [CLOSE, ColType.FLOAT, AddReqType.NONE],
+        [HIGH, ColType.FLOAT, AddReqType.NONE],
+        [LOW, ColType.FLOAT, AddReqType.NONE],
+        [CJL, ColType.INT32, AddReqType.NONE],
+        [CJE, ColType.FLOAT, AddReqType.NONE],
+    ]
+)
 
 
 """
@@ -135,21 +156,6 @@ STK_DVD_META = create_meta(
         [CXRc, ColType.DATE, AddReqType.NONE],
         [JDc, ColType.MINI_DESC, AddReqType.NONE],
         [ZXGGRc, ColType.DATE, AddReqType.NONE],
-    ]
-)
-
-"""
-Metadata for BS_STOCK_MIN5INFO
-"""
-BS_MINUTE_META = create_meta(
-    meta_list=[
-        [DATETIME, ColType.DATETIME, AddReqType.KEY],
-        [OPEN, ColType.FLOAT, AddReqType.NONE],
-        [CLOSE, ColType.FLOAT, AddReqType.NONE],
-        [HIGH, ColType.FLOAT, AddReqType.NONE],
-        [LOW, ColType.FLOAT, AddReqType.NONE],
-        [CJL, ColType.INT32, AddReqType.NONE],
-        [CJE, ColType.FLOAT, AddReqType.NONE],
     ]
 )
 

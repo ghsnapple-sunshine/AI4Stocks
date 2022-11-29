@@ -1,5 +1,8 @@
 from buffett.adapter.baostock import bs
+from buffett.common.constants.col import DATETIME
+from buffett.common.logger import Logger
 from buffett.common.pendulum import Date, DateTime, convert_date
+from buffett.common.tools import dataframe_not_valid
 from buffett.download import Para
 from buffett.download.handler.stock import BsMinuteHandler
 from buffett.download.types import FuquanType
@@ -54,7 +57,7 @@ class TestBsStockMinuteHandler(Tester):
         self._hdl.obtain_data(para=para)
         para = Para().with_code("000795").with_fuquan(FuquanType.BFQ)
         data = self._hdl.select_data(para=para)
-        assert data.empty
+        assert dataframe_not_valid(data)
 
     def test_download_in_a_day3(self) -> None:
         create_ex_1stock(self._operator, "000795")
@@ -134,3 +137,22 @@ class TestBsStockMinuteHandler(Tester):
             adjustflag=FuquanType.BFQ.bs_format(),
         )
         assert data.shape[0] == origin_data.shape[0] != 0
+
+    def test_official(self):
+        """
+        测试数据库与商用数据库进行对比
+
+        :return:
+        """
+        create_1stock(self._operator)
+        self._hdl.obtain_data(para=self._long_para)
+        test_data = self._hdl.select_data(para=self._long_para).reset_index()
+        test_data[DATETIME] = test_data[DATETIME].apply(lambda x: str(x))
+        official_data = self.official_select(
+            BsMinuteHandler, para=self._long_para
+        ).reset_index()
+        if dataframe_not_valid(official_data):
+            Logger.warning("数据库无此表格。")
+        else:
+            official_data[DATETIME] = official_data[DATETIME].apply(lambda x: str(x))
+            assert self.compare_dataframe(test_data, official_data)

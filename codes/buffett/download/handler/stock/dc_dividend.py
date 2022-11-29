@@ -58,7 +58,7 @@ _RENAME = {
 }
 
 
-class DcStockDividendHandler(Handler):
+class DcDividendHandler(Handler):
     def obtain_data(self, para: Para) -> Optional[DataFrame]:
         """
         获取数据
@@ -71,7 +71,7 @@ class DcStockDividendHandler(Handler):
         todo_span = para.span.clone().with_end(
             Date.today(), para.span.end > Date.today()
         )
-        curr_span = recorder.select_data(cls=DcStockDividendHandler)
+        curr_span = recorder.select_data(cls=DcDividendHandler)
         todo_ls = todo_span.subtract(curr_span)
         if list_not_valid(todo_ls):
             return
@@ -90,7 +90,7 @@ class DcStockDividendHandler(Handler):
             total_span.end.subtract(months=6),
             total_span.end.add(months=6) > Date.today(),
         )
-        recorder.save(cls=DcStockDividendHandler, span=total_span)
+        recorder.save(cls=DcDividendHandler, span=total_span)
         return df
 
     @staticmethod

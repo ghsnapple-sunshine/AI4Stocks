@@ -9,6 +9,7 @@ from buffett.common.tools import list_is_valid
 from buffett.download import Para
 from buffett.download.mysql import Operator
 from buffett.download.mysql.types import RoleType
+from buffett.download.types import FuquanType
 from test import DbSweeper, Accelerator, SimpleTester
 
 
@@ -34,8 +35,24 @@ class Tester(SimpleTester):
         cls._operator = Operator(role=RoleType.DbTest)
         cls._operator.connect()
         cls._table_name = "test_{0}".format(DateTime.now().format("YYYYMMDD_HHmmss"))
-        cls._short_para = Para().with_start_n_end(Date(2020, 1, 15), Date(2020, 3, 28))
-        cls._long_para = Para().with_start_n_end(Date(2020, 1, 15), Date(2021, 4, 2))
+        cls._short_para = (
+            Para()
+            .with_start_n_end(Date(2020, 1, 15), Date(2020, 3, 28))
+            .with_code("000001")
+            .with_fuquan(FuquanType.BFQ)
+        )
+        cls._long_para = (
+            Para()
+            .with_start_n_end(Date(2020, 1, 15), Date(2021, 4, 2))
+            .with_code("000001")
+            .with_fuquan(FuquanType.BFQ)
+        )
+        cls._great_para = (
+            Para()
+            .with_start_n_end(Date(2000, 1, 1), Date(2020, 12, 31))
+            .with_code("000001")
+            .with_fuquan(FuquanType.BFQ)
+        )
         # 定义Accelerator
         cls._accelerate(ak)
         cls._accelerate(bs)
@@ -79,3 +96,16 @@ class Tester(SimpleTester):
             ):
                 continue
             setattr(cls, att_name, Accelerator(getattr(cls, att_name)).mock())
+
+    @staticmethod
+    def official_select(cls: type, para: Para()):
+        """
+        从商用数据库中筛选数据
+
+        :param cls:         Handler的类
+        :param para:
+        :return:
+        """
+        operator = Operator(RoleType.DbStock)
+        handler = cls(operator=operator)
+        return handler.select_data(para=para)

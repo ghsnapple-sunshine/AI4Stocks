@@ -1,18 +1,16 @@
 from buffett.adapter.akshare import ak
-from buffett.common.constants.col import DATE
-from buffett.common.logger import Logger
+from buffett.common.constants.col import DATE, ZF, ZDE
 from buffett.common.pendulum import Date
-from buffett.common.tools import dataframe_not_valid
 from buffett.download import Para
-from buffett.download.handler.stock.dc_daily import DcDailyHandler
+from buffett.download.handler.stock.bs_daily import BsDailyHandler
 from buffett.download.types import FuquanType
 from test import Tester, create_1stock, create_2stocks, DbSweeper, create_ex_1stock
 
 
-class TestDcDailyHandler(Tester):
+class TestBsDailyHandler(Tester):
     @classmethod
     def _setup_oncemore(cls):
-        cls._hdl = DcDailyHandler(cls._operator)
+        cls._hdl = BsDailyHandler(cls._operator)
 
     def _setup_always(self):
         DbSweeper.erase()
@@ -100,23 +98,5 @@ class TestDcDailyHandler(Tester):
         self._hdl.obtain_data(para=self._great_para)
         db = self._hdl.select_data(para=self._great_para).reset_index()
         db[DATE] = db[DATE].apply(lambda x: str(x))
+        del db[ZF], db[ZDE]
         assert self.dataframe_almost_equals(tbl, db, join=[DATE])
-
-    def test_official(self):
-        """
-        测试数据库与商用数据库进行对比
-
-        :return:
-        """
-        create_1stock(self._operator)
-        self._hdl.obtain_data(para=self._great_para)
-        test_data = self._hdl.select_data(para=self._great_para).reset_index()
-        test_data[DATE] = test_data[DATE].apply(lambda x: str(x))
-        official_data = self.official_select(
-            DcDailyHandler, para=self._great_para
-        ).reset_index()
-        if dataframe_not_valid(official_data):
-            Logger.warning("数据库无此表格。")
-        else:
-            official_data[DATE] = official_data[DATE].apply(lambda x: str(x))
-            assert self.compare_dataframe(test_data, official_data)

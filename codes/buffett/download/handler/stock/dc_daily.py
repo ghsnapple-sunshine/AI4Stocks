@@ -86,7 +86,7 @@ class DcDailyHandler(SlowHandler):
         """
         para = para.clone().with_freq(self._freq).with_source(self._source)
         table_name = TableNameTool.get_by_code(para=para)
-        df = self._operator.select_data(table_name)
+        df = self._operator.select_data(name=table_name, span=para.span)
         if dataframe_not_valid(df):
             return
         df.index = df[DATE]

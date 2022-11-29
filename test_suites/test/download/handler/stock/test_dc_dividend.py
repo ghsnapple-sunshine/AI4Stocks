@@ -1,14 +1,14 @@
 from buffett.adapter.pendulum import Date
 from buffett.common.pendulum import DateSpan
 from buffett.download import Para
-from buffett.download.handler.stock.dc_dividend import DcStockDividendHandler
+from buffett.download.handler.stock.dc_dividend import DcDividendHandler
 from test import DbSweeper, Tester
 
 
 class TestDcStockDividendHandler(Tester):
     @classmethod
     def _setup_oncemore(cls):
-        cls._hdl = DcStockDividendHandler(operator=cls._operator)
+        cls._hdl = DcDividendHandler(operator=cls._operator)
         cls._short_span = DateSpan(start=Date(2020, 1, 1), end=Date(2021, 1, 1))
         cls._short_span2 = DateSpan(start=Date(2020, 10, 31), end=Date(2021, 1, 1))
         cls._long_span = DateSpan(start=Date(2020, 1, 1), end=Date(2022, 1, 1))

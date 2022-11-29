@@ -1,3 +1,5 @@
+from typing import Optional
+
 from buffett.adapter.baostock import bs
 from buffett.adapter.pandas import DataFrame
 from buffett.common.constants.col import DATETIME, OPEN, CLOSE, HIGH, LOW, CJL, CJE
@@ -7,7 +9,7 @@ from buffett.common.tools import dataframe_not_valid
 from buffett.download import Para
 from buffett.download.handler.base import SlowHandler
 from buffett.download.handler.calendar import CalendarHandler
-from buffett.download.handler.list import SseStockListHandler
+from buffett.download.handler.list import StockListHandler
 from buffett.download.handler.tools import (
     bs_str_to_datetime,
     bs_check_float,
@@ -25,7 +27,7 @@ class BsMinuteHandler(SlowHandler):
     def __init__(self, operator: Operator):
         super().__init__(
             operator=operator,
-            target_list_handler=SseStockListHandler(operator=operator),
+            target_list_handler=StockListHandler(operator=operator),
             calendar_handler=CalendarHandler(operator=operator),
             recorder=DownloadRecorder(operator=operator),
             source=SourceType.BAOSTOCK,
@@ -82,20 +84,18 @@ class BsMinuteHandler(SlowHandler):
         self._operator.create_table(name=table_name, meta=BS_MINUTE_META)
         self._operator.insert_data(table_name, df)
 
-    def select_data(self, para: Para) -> DataFrame:
+    def select_data(self, para: Para) -> Optional[DataFrame]:
         """
         查询某支股票以某种复权方式的全部数据
 
-        :param para:        code, fuquan
+        :param para:        code, fuquan, [start, end]
         :return:
         """
         para = para.clone().with_source(self._source).with_freq(self._freq)
         table_name = TableNameTool.get_by_code(para=para)
-        df = self._operator.select_data(table_name)
-        if (not isinstance(df, DataFrame)) or df.empty:
-            return DataFrame()
-
-        # df[DATETIME] = df[DATETIME].apply(lambda x: to_my_datetime(x))
+        df = self._operator.select_data(name=table_name, span=para.span)
+        if dataframe_not_valid(df):
+            return
         df.index = df[DATETIME]
         del df[DATETIME]
         return df

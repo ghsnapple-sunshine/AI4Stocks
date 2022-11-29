@@ -32,6 +32,8 @@ def bs_check_int(str_int: str) -> Optional[str]:
     :param str_int:         str类型的int
     :return:                检查结果
     """
+    if str_int == "":
+        return None
     _int = int(str_int)
     if (_int > INT_MAX_VALUE) | (_int < INT_MIN_VALUE):
         return None
@@ -46,7 +48,25 @@ def bs_check_float(str_float: str) -> Optional[str]:
     :param str_float:       str类型的float
     :return:                检查结果
     """
+    if str_float == "":
+        return None
     _float = float(str_float)
     if (_float > FLOAT_MAX_VALUE) | (_float < FLOAT_MIN_VALUE):
         return None
     return str_float
+
+
+def bs_convert_code(code: str) -> str:
+    """
+    把股票代码转换成baostock需要的格式
+
+    :param code:
+    :return:
+    """
+    if code[0] == "6":
+        return "sh." + code
+    elif code[0] == "0":
+        return "sz." + code
+    elif code[0] == "3":
+        return "sz." + code
+    raise NotImplemented

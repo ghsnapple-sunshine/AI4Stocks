@@ -3,15 +3,15 @@ from buffett.common.constants.col.target import CODE
 from buffett.download.handler.list import (
     BsStockListHandler,
     SseStockListHandler,
-    CombineStockListHandler,
+    StockListHandler,
 )
 from test import Tester, DbSweeper
 
 
-class TestCombineListHandler(Tester):
+class TestStockListHandler(Tester):
     @classmethod
     def _setup_oncemore(cls):
-        cls._comb_hdl = CombineStockListHandler(operator=cls._operator)
+        cls._comb_hdl = StockListHandler(operator=cls._operator)
         cls._bs_hdl = BsStockListHandler(operator=cls._operator)
         cls._ak_hdl = SseStockListHandler(operator=cls._operator)
 

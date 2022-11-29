@@ -8,9 +8,9 @@ from buffett.download.handler.list.sse_list import SseStockListHandler
 from buffett.download.mysql import Operator
 
 
-class CombineStockListHandler(Handler):
+class StockListHandler(Handler):
     def __init__(self, operator: Operator):
-        super(CombineStockListHandler, self).__init__(operator=operator)
+        super(StockListHandler, self).__init__(operator=operator)
         self._sse_handler = SseStockListHandler(operator=operator)
         self._bs_handler = BsStockListHandler(operator=operator)
 

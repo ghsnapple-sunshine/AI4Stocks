@@ -12,7 +12,7 @@ from buffett.common.constants.col import (
 from buffett.common.constants.col.my import DORCD_START, DORCD_END
 from buffett.common.constants.col.target import CODE
 from buffett.download import Para
-from buffett.download.handler.stock.lg_pepb import LgStockPePbHandler
+from buffett.download.handler.stock.lg_pepb import LgPePbHandler
 from buffett.download.types import FreqType, FuquanType, SourceType
 from test import Tester, create_2stocks, DbSweeper
 
@@ -21,7 +21,7 @@ class TestLgStockPePbHandler(Tester):
     @classmethod
     def _setup_oncemore(cls):
         DbSweeper.cleanup()
-        cls._hdl = LgStockPePbHandler(operator=cls._operator)
+        cls._hdl = LgPePbHandler(operator=cls._operator)
         create_2stocks(operator=cls._operator)
 
     def _setup_always(self) -> None:

@@ -32,9 +32,9 @@ _RENAME = {
 }
 
 
-class LgStockPePbHandler(MediumHandler):
+class LgPePbHandler(MediumHandler):
     def __init__(self, operator: Operator):
-        super(LgStockPePbHandler, self).__init__(
+        super(LgPePbHandler, self).__init__(
             operator=operator,
             target_list_handler=SseStockListHandler(operator=operator),
             recorder=DownloadRecorder(operator=operator),

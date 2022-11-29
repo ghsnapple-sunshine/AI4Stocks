@@ -1,7 +1,7 @@
 from buffett.adapter.pendulum import DateTime, Date
 from buffett.common.wrapper import Wrapper
 from buffett.download import Para
-from buffett.download.handler.stock.dc_dividend import DcStockDividendHandler
+from buffett.download.handler.stock import DcDividendHandler
 from buffett.download.mysql import Operator
 from buffett.task.base import Task
 
@@ -9,7 +9,7 @@ from buffett.task.base import Task
 class StockDividendTask(Task):
     def __init__(self, operator: Operator, start_time: DateTime = None):
         super().__init__(
-            wrapper=Wrapper(DcStockDividendHandler(operator=operator).obtain_data),
+            wrapper=Wrapper(DcDividendHandler(operator=operator).obtain_data),
             args=(Para().with_start_n_end(start=Date(2000, 1, 1), end=Date.today()),),
             start_time=start_time,
         )
