@@ -22,6 +22,7 @@ class Tester(SimpleTester):
     _operator = None
     _short_para = None
     _long_para = None
+    _great_para = None
 
     @classmethod
     @final

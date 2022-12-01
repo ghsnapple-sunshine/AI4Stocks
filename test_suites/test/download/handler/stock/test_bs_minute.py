@@ -2,6 +2,7 @@ from buffett.adapter.baostock import bs
 from buffett.common.constants.col import DATETIME
 from buffett.common.logger import Logger
 from buffett.common.pendulum import Date, DateTime, convert_date
+from buffett.common.target import Target
 from buffett.common.tools import dataframe_not_valid
 from buffett.download import Para
 from buffett.download.handler.stock import BsMinuteHandler
@@ -18,37 +19,37 @@ class TestBsStockMinuteHandler(Tester):
         DbSweeper.erase()
 
     def test_download_1_month(self) -> None:
-        stocks = create_2stocks(self._operator)
+        stocks = create_2stocks(self._operator, is_sse=False)
         tbls = self._hdl.obtain_data(para=self._short_para)
         assert stocks.shape[0] == len(tbls)
 
     def test_download_1_year(self) -> None:
-        stocks = create_2stocks(self._operator)
+        stocks = create_2stocks(self._operator, is_sse=False)
         tbls = self._hdl.obtain_data(para=self._long_para)
         assert stocks.shape[0] == len(tbls)
 
-    def test_download_irregular(self) -> None:
-        stocks = create_ex_1stock(self._operator, "000795")
+    def test_000795(self) -> None:
+        stocks = create_ex_1stock(self._operator, Target("000795"), is_sse=False)
         para = Para().with_start_n_end(Date(2002, 1, 1), Date(2003, 1, 1))
         tbls = self._hdl.obtain_data(para=para)
         assert stocks.shape[0] == len(tbls)
 
     def test_download_in_a_day(self) -> None:
-        create_ex_1stock(self._operator, "000795")
+        create_1stock(self._operator, is_sse=False)
         # 正常下载数据
         para = Para().with_start_n_end(
             start=DateTime(year=2022, month=9, day=30, hour=9),
             end=DateTime(year=2022, month=9, day=30, hour=17),
         )
         self._hdl.obtain_data(para=para)
-        para = Para().with_code("000795").with_fuquan(FuquanType.BFQ)
+        para = Para().with_code("000001").with_fuquan(FuquanType.BFQ)
         data = self._hdl.select_data(para=para)
         assert convert_date(data.index.max()) == DateTime(
             year=2022, month=9, day=30, hour=15
         )
 
     def test_download_in_a_day2(self) -> None:
-        create_ex_1stock(self._operator, "000795")
+        create_1stock(self._operator, is_sse=False)
         # 下载收盘后的数据
         para = Para().with_start_n_end(
             start=DateTime(year=2022, month=9, day=30, hour=17),
@@ -60,7 +61,7 @@ class TestBsStockMinuteHandler(Tester):
         assert dataframe_not_valid(data)
 
     def test_download_in_a_day3(self) -> None:
-        create_ex_1stock(self._operator, "000795")
+        create_1stock(self._operator, is_sse=False)
         # 下载收盘后的数据
         try:
             Para().with_start_n_end(
@@ -70,8 +71,8 @@ class TestBsStockMinuteHandler(Tester):
         except ValueError:
             assert True
 
-    def test_download_20_years(self) -> None:
-        create_ex_1stock(self._operator, "301369")
+    def test_301369(self) -> None:
+        create_ex_1stock(self._operator, Target("301369"), is_sse=False)
         para = Para().with_start_n_end(Date(2000, 1, 1), Date.today())
         self._hdl.obtain_data(para=para)
 
@@ -81,7 +82,7 @@ class TestBsStockMinuteHandler(Tester):
 
         :return:
         """
-        create_1stock(self._operator)
+        create_1stock(self._operator, is_sse=False)
         select_para = Para().with_code("000001").with_fuquan(FuquanType.BFQ)
         self._hdl.obtain_data(
             para=Para().with_start_n_end(start=Date(2022, 1, 5), end=Date(2022, 1, 7))
@@ -117,12 +118,12 @@ class TestBsStockMinuteHandler(Tester):
         # 2022/1/4, 2022/1/5, 2022/1/6，2022/1/7, 2022/1/10, 2022/1/3为公休日, 2022/1/8为周六
         assert db.shape[0] == 5 * 240 / 5
 
-    def test_download_tuishi(self):
+    def test_000003(self):
         """
         测试退市股票下载+测试下载数据量
         :return:
         """
-        create_ex_1stock(self._operator, code="000003")
+        create_ex_1stock(self._operator, target=Target("000003"), is_sse=False)
         para = Para().with_start_n_end(Date(2000, 1, 15), Date(2000, 3, 28))
         self._hdl.obtain_data(para=para)
         data = self._hdl.select_data(
@@ -144,7 +145,7 @@ class TestBsStockMinuteHandler(Tester):
 
         :return:
         """
-        create_1stock(self._operator)
+        create_1stock(self._operator, is_sse=False)
         self._hdl.obtain_data(para=self._long_para)
         test_data = self._hdl.select_data(para=self._long_para).reset_index()
         test_data[DATETIME] = test_data[DATETIME].apply(lambda x: str(x))

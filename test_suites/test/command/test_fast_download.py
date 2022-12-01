@@ -1,6 +1,6 @@
 from buffett.common.pendulum import DateTime
 from buffett.task import (
-    StockListTask,
+    SseStockListTask,
     CalendarTask,
     StockProfitTask,
     ConceptListTask,
@@ -10,12 +10,23 @@ from buffett.task import (
 )
 from buffett.task.stock_dividend_task import StockDividendTask
 from test import Tester
+from test.command.tools import create_task_no_subsequent
 
 
 class TestFastDownload(Tester):
     @classmethod
     def _setup_oncemore(cls):
-        pass
+        # 创建任务清单
+        cls._task_cls = [
+            create_task_no_subsequent(CalendarTask),
+            create_task_no_subsequent(SseStockListTask),
+            create_task_no_subsequent(StockProfitTask),
+            create_task_no_subsequent(StockDividendTask),
+            create_task_no_subsequent(ConceptListTask),
+            create_task_no_subsequent(IndustryListTask),
+            create_task_no_subsequent(IndexListTask),
+            create_task_no_subsequent(MoneySupplyTask),
+        ]
 
     def _setup_always(self) -> None:
         pass
@@ -27,20 +38,12 @@ class TestFastDownload(Tester):
 
         :return:
         """
-        secs_before = DateTime.now().subtract(seconds=10)
-        task_cls = [
-            CalendarTask,
-            StockListTask,
-            StockProfitTask,
-            StockDividendTask,
-            ConceptListTask,
-            IndustryListTask,
-            IndexListTask,
-            MoneySupplyTask,
-        ]
+        task_num = len(self._task_cls)
+        operator = self._operator
+        secs_before = DateTime.now().subtract(seconds=task_num)
         tasks = [
-            task_cls[i](operator=self._operator, start_time=secs_before.add(seconds=i))
-            for i in range(0, len(task_cls))
+            self._task_cls[i](operator=operator, start_time=secs_before.add(seconds=i))
+            for i in range(0, task_num)
         ]
-        for task in tasks:
-            task.run()
+        for t in tasks:
+            t.run()

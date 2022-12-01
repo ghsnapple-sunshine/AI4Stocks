@@ -1,10 +1,13 @@
 import requests
 from akshare.utils import demjson
 
+from buffett.adapter.error.data_source import DataSourceError
 from buffett.adapter.pandas import DataFrame, pd
 
 
-def stock_zh_index_daily_em(symbol: str, start_date: str, end_date: str) -> DataFrame:
+def my_stock_zh_index_daily_em(
+    symbol: str, start_date: str, end_date: str
+) -> DataFrame:
     """
     东方财富网-股票指数数据
     https://quote.eastmoney.com/center/hszs.html
@@ -31,6 +34,9 @@ def stock_zh_index_daily_em(symbol: str, start_date: str, end_date: str) -> Data
     r = requests.get(url, params=params)
     data_text = r.text
     data_json = demjson.decode(data_text[data_text.find("{") : -2])
+    if data_json["data"] is None:
+        raise DataSourceError(source="东财", target=symbol)
+
     temp_df = DataFrame([item.split(",") for item in data_json["data"]["klines"]])
     if temp_df.empty:
         return temp_df

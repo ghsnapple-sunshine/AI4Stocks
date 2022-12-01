@@ -1,4 +1,5 @@
 from buffett.common.pendulum import Date
+from buffett.common.target import Target
 from buffett.download import Para
 from buffett.download.handler.reform import ReformHandler
 from buffett.download.handler.stock import DcDailyHandler
@@ -39,7 +40,7 @@ class TestReformMaintain(Tester):
         self._rf_handler.reform_data()
 
         # S2
-        create_ex_1stock(operator=self._operator, code="000004")
+        create_ex_1stock(operator=self._operator, target=Target("000004"))
         para = Para().with_start_n_end(start=Date(2022, 1, 1), end=Date(2022, 7, 1))
         self._ak_handler.obtain_data(para=para)
         self._rf_handler.reform_data()

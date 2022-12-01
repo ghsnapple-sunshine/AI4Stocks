@@ -1,6 +1,7 @@
 from buffett.adapter.akshare import ak
 from buffett.common.constants.col import DATE, ZF, ZDE
 from buffett.common.pendulum import Date
+from buffett.common.target import Target
 from buffett.download import Para
 from buffett.download.handler.stock.bs_daily import BsDailyHandler
 from buffett.download.types import FuquanType
@@ -21,7 +22,7 @@ class TestBsDailyHandler(Tester):
 
         :return:
         """
-        create_1stock(self._operator)
+        create_1stock(self._operator, is_sse=False)
         select_para = Para().with_code("000001").with_fuquan(FuquanType.BFQ)
         self._hdl.obtain_data(
             para=Para().with_start_n_end(start=Date(2022, 1, 5), end=Date(2022, 1, 7))
@@ -58,12 +59,12 @@ class TestBsDailyHandler(Tester):
         assert db.shape[0] == 5
 
     def test_download_1month(self):
-        stocks = create_2stocks(self._operator)
+        stocks = create_2stocks(self._operator, is_sse=False)
         tbls = self._hdl.obtain_data(para=self._short_para)
         assert stocks.shape[0] * 3 == len(tbls)
 
     def test_download_1year(self):
-        stocks = create_2stocks(self._operator)
+        stocks = create_2stocks(self._operator, is_sse=False)
         tbls = self._hdl.obtain_data(para=self._long_para)
         assert stocks.shape[0] * 3 == len(tbls)
 
@@ -72,7 +73,7 @@ class TestBsDailyHandler(Tester):
         测试退市股票下载+测试下载数据量
         :return:
         """
-        create_ex_1stock(self._operator, code="000003")
+        create_ex_1stock(self._operator, target=Target("000003"), is_sse=False)
         para = Para().with_start_n_end(Date(2000, 1, 15), Date(2000, 3, 28))
         self._hdl.obtain_data(para=para)
         data = self._hdl.select_data(
@@ -93,10 +94,20 @@ class TestBsDailyHandler(Tester):
 
         :return:
         """
-        create_1stock(self._operator)
+        create_1stock(self._operator, is_sse=False)
         tbl = self._hdl._download(para=self._great_para)
         self._hdl.obtain_data(para=self._great_para)
         db = self._hdl.select_data(para=self._great_para).reset_index()
         db[DATE] = db[DATE].apply(lambda x: str(x))
         del db[ZF], db[ZDE]
-        assert self.dataframe_almost_equals(tbl, db, join=[DATE])
+        assert self.dataframe_almost_equals(tbl, db, join_columns=[DATE])
+
+    def test_000022(self):
+        """
+        测试退市股票能否正常下载
+
+        :return:
+        """
+        create_ex_1stock(self._operator, Target("000022"), is_sse=False)
+        self._hdl.obtain_data(para=self._great_para)
+        assert True

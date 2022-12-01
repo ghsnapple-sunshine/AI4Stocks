@@ -199,8 +199,10 @@ class TestTaskScheduler(Tester):
         ContinousTask.COUNT = 0
         sch = TaskScheduler(
             operator=self._operator,
-            tasks=[ContinousTask(start_time=DateTime.now().subtract(seconds=2)),
-                   ContinousTask(start_time=DateTime.now().subtract(seconds=1))],
+            tasks=[
+                ContinousTask(start_time=DateTime.now().subtract(seconds=2)),
+                ContinousTask(start_time=DateTime.now().subtract(seconds=1)),
+            ],
         )
         sch.run()
         task_num = self._operator.select_row_num(TASK_RCD)

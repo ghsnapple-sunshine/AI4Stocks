@@ -1,4 +1,5 @@
 # 仅用于测试环境
+from typing import Union
 
 from buffett.adapter.pandas import Series
 from buffett.common.tools import dataframe_not_valid
@@ -7,7 +8,7 @@ from buffett.download.mysql.types import RoleType
 
 
 class DbSweeper:
-    _op = Operator(RoleType.DbTest)
+    _operator = Operator(RoleType.DbTest)
 
     @classmethod
     def cleanup(cls):
@@ -18,42 +19,50 @@ class DbSweeper:
         """
         names = cls._get_table_names()
         for n in names:
-            cls._op.drop_table(name=n)
+            cls._operator.drop_table(name=n)
 
     @classmethod
     def erase(cls):
-        """
-        清除所有表
 
-        :return:
-        """
         names = cls._get_table_names()
         for n in names:
-            cls._op.delete_data(name=n)
+            cls._operator.delete_data(name=n)
 
     @classmethod
-    def cleanup_except(cls, name: str):
+    def cleanup_except(cls, excepts: Union[str, list[str]]):
         """
         删除所有表，除了例外
 
+        :param excepts:
         :return:
         """
-        names = cls._get_table_names()
-        for n in names:
-            if name != n:
-                cls._op.drop_table(name=n)
+        table_names = cls._get_table_names()
+        if isinstance(excepts, str):
+            for n in table_names:
+                if excepts != n:
+                    cls._operator.drop_table(name=n)
+        else:
+            for n in table_names:
+                if n not in excepts:
+                    cls._operator.drop_table(name=n)
 
     @classmethod
-    def erase_except(cls, name: str):
+    def erase_except(cls, excepts: Union[str, list[str]]):
         """
         清空所有表，除了例外
 
+        :param excepts:
         :return:
         """
-        names = cls._get_table_names()
-        for n in names:
-            if name != n:
-                cls._op.delete_data(name=n)
+        table_names = cls._get_table_names()
+        if isinstance(excepts, str):
+            for n in table_names:
+                if excepts != n:
+                    cls._operator.delete_data(name=n)
+        else:
+            for n in table_names:
+                if n not in excepts:
+                    cls._operator.delete_data(name=n)
 
     @classmethod
     def _get_table_names(cls) -> Series:
@@ -63,7 +72,7 @@ class DbSweeper:
         :return:
         """
         sql = "SHOW TABLES"
-        db = cls._op.execute(sql, fetch=True)
+        db = cls._operator.execute(sql, fetch=True)
         if dataframe_not_valid(db):
             return Series(dtype=object)
         return db.iloc[:, 0]

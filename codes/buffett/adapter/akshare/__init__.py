@@ -4,21 +4,20 @@ from akshare import (
     stock_board_concept_hist_em as ak_stock_board_concept_hist_em,
     stock_board_concept_name_em as ak_stock_board_concept_name_em,
     stock_board_industry_cons_em as ak_stock_board_industry_cons_em,
-    # stock_board_industry_hist_em as ak_stock_board_industry_hist_em,
     stock_board_industry_name_em as ak_stock_board_industry_name_em,
     stock_fhps_em as ak_stock_fhps_em,
     stock_info_a_code_name as ak_stock_info_a_code_name,
     stock_profit_forecast as ak_stock_profit_forecast,
-    stock_zh_a_hist as ak_stock_zh_a_hist,
     stock_zh_a_hist_min_em as ak_stock_zh_a_hist_min_em,
     stock_zh_a_spot_em as ak_stock_zh_a_spot_em,
 )
 
-from buffett.adapter.akshare.stock_a_lg_indicator import stock_a_lg_indicator
+from buffett.adapter.akshare.stock_a_lg_indicator import my_stock_a_lg_indicator
 from buffett.adapter.akshare.stock_board_industry_hist_em import (
-    stock_board_industry_hist_em,
+    my_stock_board_industry_hist_em,
 )
-from buffett.adapter.akshare.stock_zh_index_daily_em import stock_zh_index_daily_em
+from buffett.adapter.akshare.stock_zh_a_hist import my_stock_zh_a_hist
+from buffett.adapter.akshare.stock_zh_index_daily_em import my_stock_zh_index_daily_em
 
 
 class ak:
@@ -46,7 +45,7 @@ class ak:
     def stock_board_industry_hist_em(
         symbol: str, period: str, start_date: str, end_date: str, adjust: str
     ):
-        return stock_board_industry_hist_em(
+        return my_stock_board_industry_hist_em(
             symbol=symbol,
             period=period,
             start_date=start_date,
@@ -74,7 +73,7 @@ class ak:
     def stock_zh_a_hist(
         symbol: str, period: str, start_date: str, end_date: str, adjust: str
     ):
-        return ak_stock_zh_a_hist(
+        return my_stock_zh_a_hist(
             symbol=symbol,
             period=period,
             start_date=start_date,
@@ -100,10 +99,10 @@ class ak:
 
     @staticmethod
     def stock_a_lg_indicator(symbol: str):
-        return stock_a_lg_indicator(symbol=symbol)
+        return my_stock_a_lg_indicator(symbol=symbol)
 
     @staticmethod
     def stock_zh_index_daily_em(symbol: str, start_date: str, end_date: str):
-        return stock_zh_index_daily_em(
+        return my_stock_zh_index_daily_em(
             symbol=symbol, start_date=start_date, end_date=end_date
         )

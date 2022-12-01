@@ -1,5 +1,5 @@
 from abc import abstractmethod
-from typing import final
+from typing import final, Optional
 from unittest import TestCase
 
 from buffett.adapter.datacompy import compare
@@ -55,6 +55,14 @@ class SimpleTester(TestCase):
         return cmp
 
     @staticmethod
-    def dataframe_almost_equals(df1: DataFrame, df2: DataFrame, join: list):
-        res = compare(df1, df2, join_columns=join, rel_tol=1e-5)
+    def dataframe_almost_equals(
+        df1: DataFrame,
+        df2: DataFrame,
+        join_columns: Optional[list[str]],
+        on_index: bool = False,
+        rel_tol: float = 1e-5,
+    ):
+        res = compare(
+            df1, df2, join_columns=join_columns, on_index=on_index, rel_tol=rel_tol
+        )
         return res.matches()

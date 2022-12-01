@@ -183,6 +183,11 @@ class TaskScheduler(Singleton):
         if dataframe_not_valid(df):
             return
 
-        task_info = df.sort_values(by=START_TIME).head(1)
-        task = self._create_task(task_info.iloc[0])
-        return task
+        for i in range(0, len(df)):
+            try:
+                task = self._create_task(df.iloc[i])
+                if task is not None:
+                    return task
+            except ImportError:
+                pass
+        return

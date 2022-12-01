@@ -10,18 +10,22 @@ class Connector:
     def __init__(self, role):
         # self._role = role
         if role == RoleType.DbStock:
+            self._port = 3306
             self._user = "stock"
             self._db = "stocks"
             self._pwd = "Changeme_1234"
         elif role == RoleType.DbTest:
+            self._port = 3307
             self._user = "test"
             self._db = "stockstest"
             self._pwd = "Changeme_1234"
         elif role == RoleType.DbInfo:
+            self._port = 3306
             self._user = "prosecutor"
             self._db = "information_schema"
             self._pwd = "Changeme_1234"
         elif role == RoleType.ROOT:
+            self._port = 3306
             self._user = "root"
             self._db = "stocks"
             self._pwd = input("请输入root@localhost的密码")

@@ -1,7 +1,9 @@
 from typing import Union, Type
 
 from buffett.adapter.numpy import np
+from buffett.common.constants.table import BS_STK_LS, STK_LS
 from buffett.common.pendulum import Date
+from buffett.common.target import Target
 from buffett.download import Para
 from buffett.download.handler import Handler
 from buffett.download.handler.reform import ReformHandler as RHandler
@@ -13,17 +15,17 @@ from test import Tester, DbSweeper, create_1stock, create_ex_1stock
 class ReformHandlerTest(Tester):
     @classmethod
     def _setup_oncemore(cls):
-        pass
+        # 初始化StockList
+        create_1stock(operator=cls._operator)
+        create_1stock(operator=cls._operator, is_sse=False)
 
     def _setup_always(self) -> None:
-        DbSweeper.erase()
-        # 初始化StockList
-        create_1stock(operator=self._operator)
+        DbSweeper.erase_except(excepts=[STK_LS, BS_STK_LS])
 
     def _setup_2nd(self):
         # 初始化StockList
-        create_ex_1stock(operator=self._operator, code="000001")
-        create_ex_1stock(operator=self._operator, code="000004")
+        create_ex_1stock(operator=self._operator, target=Target("000001"))
+        create_ex_1stock(operator=self._operator, target=Target("000004"))
 
     def _atom_test(
         self,
@@ -219,7 +221,7 @@ class ReformHandlerTest(Tester):
 
         :return:
         """
-        create_ex_1stock(self._operator, "000795")
+        create_ex_1stock(self._operator, target=Target("000795"))
         para = Para().with_start_n_end(Date(2002, 4, 16), Date(2002, 4, 17))
         BsMinuteHandler(operator=self._operator).obtain_data(para=para)
         RHandler(operator=self._operator).reform_data()

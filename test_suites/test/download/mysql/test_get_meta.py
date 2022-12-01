@@ -13,12 +13,13 @@ from test import Tester, create_1stock
 class TestGetMeta(Tester):
     @classmethod
     def _setup_oncemore(cls):
-        pass
+        # 初始化StockList
+        create_1stock(operator=cls._operator)
+        create_1stock(operator=cls._operator, is_sse=False)
 
     def _setup_always(self) -> None:
         # 可以不用清理数据库
-        # 初始化StockList
-        create_1stock(operator=self._operator)
+        pass
 
     def test_ak_daily(self):
         # 下载日线数据

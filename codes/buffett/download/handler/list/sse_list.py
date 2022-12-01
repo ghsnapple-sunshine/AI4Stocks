@@ -13,6 +13,7 @@ class SseStockListHandler(FastHandler):
     """
     下载沪深股票列表
     """
+
     def __init__(self, operator: Operator):
         super().__init__(operator=operator)
 

@@ -80,5 +80,3 @@ class TestTask(Tester):
         except ValueError as e:
             logging.error("\n" + format_exc())
             assert False
-
-

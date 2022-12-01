@@ -5,7 +5,7 @@ from bs4 import BeautifulSoup
 from buffett.adapter.pandas import pd, DataFrame
 
 
-def stock_a_lg_indicator(symbol: str):
+def my_stock_a_lg_indicator(symbol: str):
     """
     解决akshare中stock_a_lg_indicator的问题。
 

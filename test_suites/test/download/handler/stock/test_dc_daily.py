@@ -2,6 +2,7 @@ from buffett.adapter.akshare import ak
 from buffett.common.constants.col import DATE
 from buffett.common.logger import Logger
 from buffett.common.pendulum import Date
+from buffett.common.target import Target
 from buffett.common.tools import dataframe_not_valid
 from buffett.download import Para
 from buffett.download.handler.stock.dc_daily import DcDailyHandler
@@ -69,26 +70,6 @@ class TestDcDailyHandler(Tester):
         tbls = self._hdl.obtain_data(para=self._long_para)
         assert stocks.shape[0] * 3 == len(tbls)
 
-    def test_download_tuishi(self):
-        """
-        测试退市股票下载+测试下载数据量
-        :return:
-        """
-        create_ex_1stock(self._operator, code="000003")
-        para = Para().with_start_n_end(Date(2000, 1, 15), Date(2000, 3, 28))
-        self._hdl.obtain_data(para=para)
-        data = self._hdl.select_data(
-            para=Para().with_fuquan(FuquanType.BFQ).with_code("000003")
-        )
-        origin_data = ak.stock_zh_a_hist(
-            symbol="000003",
-            period="daily",
-            start_date=para.span.start.format("YYYYMMDD"),
-            end_date=para.span.end.subtract(days=1).format("YYYYMMDD"),
-            adjust=FuquanType.BFQ.ak_format(),
-        )
-        assert data.shape[0] == origin_data.shape[0] != 0
-
     def test_download_20years(self):
         """
         测试下载与数据库保存是否一致
@@ -100,7 +81,7 @@ class TestDcDailyHandler(Tester):
         self._hdl.obtain_data(para=self._great_para)
         db = self._hdl.select_data(para=self._great_para).reset_index()
         db[DATE] = db[DATE].apply(lambda x: str(x))
-        assert self.dataframe_almost_equals(tbl, db, join=[DATE])
+        assert self.dataframe_almost_equals(tbl, db, join_columns=[DATE])
 
     def test_official(self):
         """
@@ -120,3 +101,10 @@ class TestDcDailyHandler(Tester):
         else:
             official_data[DATE] = official_data[DATE].apply(lambda x: str(x))
             assert self.compare_dataframe(test_data, official_data)
+
+    """
+    def test_000022(self):
+        create_ex_1stock(self._operator, '000022')
+        self._hdl.obtain_data(para=self._short_para)
+        assert True
+    """

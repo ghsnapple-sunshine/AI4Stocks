@@ -9,9 +9,9 @@ from buffett.task.industry_daily_task import IndustryDailyTask
 from buffett.task.industry_list_task import IndustryListTask
 from buffett.task.money_supply import MoneySupplyTask
 from buffett.task.scheduler import TaskScheduler
-from buffett.task.stock_daily_task import StockDailyTask
+from buffett.task.stock_daily_task import DcStockDailyTask, BsStockDailyTask
 from buffett.task.stock_dividend_task import StockDividendTask
-from buffett.task.stock_list_task import StockListTask
+from buffett.task.stock_list_task import SseStockListTask, BsStockListTask
 from buffett.task.stock_minute_task import StockMinuteTask
 from buffett.task.stock_pepb_task import StockPePbTask
 from buffett.task.stock_profit_task import StockProfitTask

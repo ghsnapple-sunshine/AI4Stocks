@@ -38,6 +38,8 @@ from buffett.common.constants.col import (
     CXRc,
     JDc,
     ZXGGRc,
+    START_DATE,
+    END_DATE,
 )
 from buffett.common.constants.col.target import (
     INDEX_CODE,
@@ -59,6 +61,18 @@ STK_META = create_meta(
     meta_list=[
         [CODE, ColType.CODE, AddReqType.KEY],
         [NAME, ColType.STOCK_NAME, AddReqType.NONE],
+    ]
+)
+
+"""
+Metadata for BS_STK_LS
+"""
+BS_STK_META = create_meta(
+    meta_list=[
+        [CODE, ColType.CODE, AddReqType.KEY],
+        [NAME, ColType.STOCK_NAME, AddReqType.NONE],
+        [START_DATE, ColType.DATE, AddReqType.NONE],
+        [END_DATE, ColType.DATE, AddReqType.NONE],
     ]
 )
 

@@ -1,15 +1,22 @@
+from buffett.adapter.pendulum import DateTime
 from buffett.common.magic import empty_init
-from buffett.common.pendulum import DateTime
 from buffett.common.wrapper import Wrapper
 from buffett.download.handler.industry import DcIndustryDailyHandler
-from buffett.download.handler.stock import BsMinuteHandler, DcDailyHandler
+from buffett.download.handler.reform import ReformHandler
+from buffett.download.handler.stock import (
+    DcDailyHandler,
+    BsDailyHandler,
+    BsMinuteHandler,
+)
 from buffett.task import (
-    StockDailyTask,
+    BsStockDailyTask,
+    DcStockDailyTask,
     StockReformTask,
     StockMinuteTask,
     IndustryDailyTask,
 )
-from test import Tester, create_2stocks, create_2industries
+from test import Tester, create_1stock, create_1industry
+from test.command.tools import create_task_no_subsequent_n_shorter_span
 
 
 class TestSlowDownload(Tester):
@@ -27,56 +34,62 @@ class TestSlowDownload(Tester):
 
     @classmethod
     def _setup_oncemore(cls):
-
+        # 初始化StockList, IndustryList
+        create_1stock(operator=cls._operator)
+        create_1stock(operator=cls._operator, is_sse=False)
+        create_1industry(operator=cls._operator)
         # 定义动态类
-        cls.StockDailyTaskSubClass = type(
-            "StockDailyTaskSubClass",
-            (StockDailyTask,),
-            cls._get_cls_dict(DcDailyHandler(operator=cls._operator).obtain_data),
-        )
-        cls.StockMinuteTaskSubClass = type(
-            "StockMinuteTaskSubClass",
-            (StockMinuteTask,),
-            cls._get_cls_dict(BsMinuteHandler(operator=cls._operator).obtain_data),
-        )
-        cls.IndustryDailyTaskSubClass = type(
-            "IndustryDailyTaskSubClass",
-            (IndustryDailyTask,),
-            cls._get_cls_dict(
-                DcIndustryDailyHandler(operator=cls._operator).obtain_data
+        cls._task_cls = [
+            create_task_no_subsequent_n_shorter_span(
+                TaskCls=DcStockDailyTask, HandlerCls=DcDailyHandler, para=cls._long_para
             ),
-        )
+            create_task_no_subsequent_n_shorter_span(
+                TaskCls=BsStockDailyTask, HandlerCls=BsDailyHandler, para=cls._long_para
+            ),
+            create_task_no_subsequent_n_shorter_span(
+                TaskCls=StockMinuteTask,
+                HandlerCls=BsMinuteHandler,
+                para=cls._long_para,
+            ),
+            create_task_no_subsequent_n_shorter_span(
+                TaskCls=IndustryDailyTask,
+                HandlerCls=DcIndustryDailyHandler,
+                para=cls._long_para,
+            ),
+            create_task_no_subsequent_n_shorter_span(
+                TaskCls=StockReformTask,
+                HandlerCls=ReformHandler,
+                para=cls._long_para,
+                func="reform_data",
+            ),
+        ]
 
     def _setup_always(self) -> None:
-        # 初始化StockList
-        create_2stocks(operator=self._operator)
-        create_2industries(operator=self._operator)
+        pass
 
     def test_download(self):
         """
         download的镜像测试
+        (股票日线，股票分钟线，行业日线，股票重构）
 
         :return:
         """
-        now = DateTime.now()
+        task_num = len(self._task_cls)
         operator = self._operator
-
+        secs_before = DateTime.now().subtract(seconds=task_num)
         tasks = [
-            self.StockDailyTaskSubClass(),
-            self.StockMinuteTaskSubClass(),
-            self.IndustryDailyTaskSubClass(),
-            StockReformTask(operator=operator, start_time=now.add(seconds=3)),
+            self._task_cls[i](operator=operator, start_time=secs_before.add(seconds=i))
+            for i in range(0, task_num)
         ]
-        for task in tasks:
-            task.run()
+        for t in tasks:
+            t.run()
 
+        # 校验结果
         assert operator.select_row_num("dc_stock_dayinfo_000001_") == 293
         assert operator.select_row_num("dc_stock_dayinfo_000001_qfq") == 293
         assert operator.select_row_num("dc_stock_dayinfo_000001_hfq") == 293
-        assert operator.select_row_num("dc_stock_dayinfo_600000_") == 293
-        assert operator.select_row_num("dc_stock_dayinfo_600000_qfq") == 293
-        assert operator.select_row_num("dc_stock_dayinfo_600000_hfq") == 293
+        assert operator.select_row_num("bs_stock_dayinfo_000001_") == 293
+        assert operator.select_row_num("bs_stock_dayinfo_000001_qfq") == 293
+        assert operator.select_row_num("bs_stock_dayinfo_000001_hfq") == 293
         assert operator.select_row_num("bs_stock_min5info_000001_") == 293 * 240 / 5
-        assert operator.select_row_num("bs_stock_min5info_600000_") == 293 * 240 / 5
         assert operator.select_row_num("dc_industry_dayinfo_bk1029_") == 29
-        assert operator.select_row_num("dc_industry_dayinfo_bk1031_") == 26

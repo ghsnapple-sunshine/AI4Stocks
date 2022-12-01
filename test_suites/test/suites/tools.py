@@ -12,64 +12,73 @@ from buffett.common.constants.col.target import (
     INDEX_CODE,
     INDEX_NAME,
 )
-from buffett.common.constants.table import STK_LS, CNCP_LS, INDUS_LS, INDEX_LS
+from buffett.common.constants.meta.handler import STK_META, BS_STK_META
+from buffett.common.constants.table import (
+    STK_LS,
+    CNCP_LS,
+    INDUS_LS,
+    INDEX_LS,
+    BS_STK_LS,
+)
 from buffett.common.target import Target
 from buffett.download.mysql import Operator
 from buffett.download.mysql.types import ColType, AddReqType
 
 
-def create_1stock(operator: Operator) -> DataFrame:
+def create_1stock(operator: Operator, is_sse: bool = True) -> DataFrame:
     """
     创建只有一支股票的StockList
 
-    :param operator:
+    :param operator:    Operator
+    :param is_sse:      是否为SSE表
     :return:
     """
     data = [["000001", "平安银行"]]
-    return _create_stocks(operator, data)
+    return _create_stocks(operator, data, is_sse)
 
 
-def create_2stocks(operator: Operator) -> DataFrame:
+def create_2stocks(operator: Operator, is_sse: bool = True) -> DataFrame:
     """
     创建有两支股票的StockList
 
-    :param operator:
+    :param operator:    Operator
+    :param is_sse:      是否为SSE表
     :return:
     """
     data = [["000001", "平安银行"], ["600000", "浦发银行"]]
-    return _create_stocks(operator, data)
+    return _create_stocks(operator, data, is_sse)
 
 
-def create_ex_1stock(operator: Operator, code: str) -> DataFrame:
+def create_ex_1stock(
+    operator: Operator, target: Target, is_sse: bool = True
+) -> DataFrame:
     """
     创建只有一支股票的StockList，股票代码需指定
 
-    :param operator:
-    :param code:
+    :param operator:    Operator
+    :param target:      股票对象
+    :param is_sse:      是否为SSE表
     :return:
     """
-    data = [[code, ""]]
-    return _create_stocks(operator, data)
+    data = [[target.code, target.name]]
+    return _create_stocks(operator, data, is_sse)
 
 
-def _create_stocks(operator: Operator, data: list[list[Any]]):
+def _create_stocks(operator: Operator, data: list[list[Any]], is_sse: bool):
     """
     创建stockList
 
-    :param operator:
-    :param data:
+    :param operator:    Operator
+    :param data:        数据
+    :param is_sse:      是否为SSE表
     :return:
     """
-    operator.drop_table(STK_LS)
-    table_meta = create_meta(
-        meta_list=[
-            [CODE, ColType.CODE, AddReqType.KEY],
-            [NAME, ColType.CODE, AddReqType.NONE],
-        ]
-    )
-    operator.create_table(STK_LS, table_meta)
+    table_name = STK_LS if is_sse else BS_STK_LS
+    table_meta = STK_META if is_sse else BS_STK_META
+    operator.drop_table(table_name)
+    operator.create_table(name=table_name, meta=table_meta)
     df = DataFrame(data=data, columns=[CODE, NAME])
-    operator.insert_data(STK_LS, df)
+    operator.insert_data(table_name, df)
     return df
 
 
@@ -104,7 +113,7 @@ def create_ex_1concept(operator: Operator, target: Target) -> DataFrame:
     :return:
     """
     data = [[target.code, target.name]]
-    return _create_stocks(operator, data)
+    return _create_concepts(operator, data)
 
 
 def _create_concepts(operator: Operator, data: list[list[Any]]) -> DataFrame:

@@ -34,24 +34,12 @@ class Task:
             logging.info(
                 f"---------------Start running {self._wrapper.full_name}---------------"
             )
-            """
-            valid_args = isinstance(self._args, tuple)
-            valid_kwargs = isinstance(self._kwargs, dict)
-            if valid_args & valid_kwargs:
-                res = self._wrapper.run(*self._args, **self._kwargs)
-            elif valid_args:
-                res = self._wrapper.run(*self._args)
-            elif valid_kwargs:
-                res = self._wrapper.run(**self._kwargs)
-            else:
-                res = self._wrapper.run()
-            """
             res = self._wrapper.run(*self._args, **self._kwargs)
             logging.info(
                 f"---------------End running {self._wrapper.full_name}---------------"
             )
             new_task = self.get_subsequent_task(success=True)
-        except Exception as e:
+        except Exception:
             logging.error(
                 f"---------------Error occurred when running {self._wrapper.full_name}---------------"
             )

@@ -3,7 +3,7 @@ import requests
 from buffett.adapter.pandas import pd, DataFrame
 
 
-def stock_board_industry_hist_em(
+def my_stock_board_industry_hist_em(
     symbol: str,
     start_date: str,
     end_date: str,

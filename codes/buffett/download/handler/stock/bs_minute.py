@@ -9,7 +9,7 @@ from buffett.common.tools import dataframe_not_valid
 from buffett.download import Para
 from buffett.download.handler.base import SlowHandler
 from buffett.download.handler.calendar import CalendarHandler
-from buffett.download.handler.list import StockListHandler
+from buffett.download.handler.list import BsStockListHandler
 from buffett.download.handler.tools import (
     bs_str_to_datetime,
     bs_check_float,
@@ -27,7 +27,7 @@ class BsMinuteHandler(SlowHandler):
     def __init__(self, operator: Operator):
         super().__init__(
             operator=operator,
-            target_list_handler=StockListHandler(operator=operator),
+            target_list_handler=BsStockListHandler(operator=operator),
             calendar_handler=CalendarHandler(operator=operator),
             recorder=DownloadRecorder(operator=operator),
             source=SourceType.BAOSTOCK,

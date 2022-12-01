@@ -59,12 +59,9 @@ class bs:
     @staticmethod
     def query_stock_basic():
         bs_login()
-        result = bs._resultdata_to_dataframe(
-            bs_query_stock_basic()
-        )
+        result = bs._resultdata_to_dataframe(bs_query_stock_basic())
         bs_logout()
         return result
-
 
     @staticmethod
     def _resultdata_to_dataframe(self: ResultData) -> DataFrame:

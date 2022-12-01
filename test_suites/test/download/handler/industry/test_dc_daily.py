@@ -17,7 +17,7 @@ class TestDcIndustryDailyHandler(Tester):
         cls._cal_hdl.obtain_data()
 
     def _setup_always(self) -> None:
-        DbSweeper.erase_except(name=TRA_CAL)
+        DbSweeper.erase_except(excepts=TRA_CAL)
 
     def test_repeat_download(self) -> None:
         """

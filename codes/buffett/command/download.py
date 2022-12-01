@@ -3,8 +3,8 @@ from buffett.download.mysql import Operator
 from buffett.download.mysql.types import RoleType
 from buffett.task import (
     TaskScheduler,
-    StockListTask,
-    StockDailyTask,
+    SseStockListTask,
+    DcStockDailyTask,
     StockMinuteTask,
     StockReformTask,
     CalendarTask,
@@ -19,7 +19,7 @@ from buffett.task import (
     ConceptDailyTask,
     IndustryConsTask,
     IndexDailyTask,
-    IndustryDailyTask,
+    IndustryDailyTask, BsStockListTask, BsStockDailyTask,
 )
 
 
@@ -28,7 +28,8 @@ def download():
     now = DateTime.now()
     task_cls = [
         CalendarTask,
-        StockListTask,
+        SseStockListTask,
+        BsStockListTask,
         StockProfitTask,
         StockDividendTask,
         ConceptListTask,
@@ -36,12 +37,13 @@ def download():
         IndexListTask,
         MoneySupplyTask,  # Fast
         StockPePbTask,
-        StockListTask,
+        SseStockListTask,
         ConceptConsTask,
         ConceptDailyTask,
         IndustryConsTask,
         IndexDailyTask,  # Medium
-        StockDailyTask,
+        DcStockDailyTask,
+        BsStockDailyTask,
         StockMinuteTask,
         IndustryDailyTask,
         StockReformTask,  # Slow
