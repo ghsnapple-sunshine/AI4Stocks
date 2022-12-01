@@ -22,14 +22,4 @@ class SourceType(ComparableEnum):
         }
         return SOURCE_TYPE_DICT[self]
 
-    def __str__(self):
-        SOURCE_TYPE_DICT = {
-            SourceType.BAOSTOCK: "bs(股票)",
-            SourceType.AKSHARE_DONGCAI: "ak(东财,股票)",
-            SourceType.AKSHARE_DONGCAI_CONCEPT: "ak(东财,概念)",
-            SourceType.AKSHARE_DONGCAI_INDUSTRY: "ak(东财,行业)",
-            SourceType.AKSHARE_DONGCAI_INDEX: "ak(东财,指数)",
-            SourceType.AKSHARE_LGLG_PEPB: "ak(乐股,PEPB)",
-            SourceType.AKSHARE_TONGHUASHUN: "ak(同花顺)",
-        }
-        return SOURCE_TYPE_DICT[self]
+    __str__ = sql_format

@@ -1,9 +1,11 @@
+from __future__ import annotations
+
 from typing import Optional
 
 from pymysql import IntegrityError
 
 from buffett.adapter import logging
-from buffett.adapter.numpy import NAN, np
+from buffett.adapter.numpy import NAN
 from buffett.adapter.pandas import DataFrame, pd
 from buffett.common import create_meta
 from buffett.common.constants.col import (
@@ -17,8 +19,9 @@ from buffett.common.constants.col import (
 )
 from buffett.common.constants.col.my import MONTH_START, DORCD_START, DORCD_END
 from buffett.common.constants.col.target import CODE
+from buffett.common.logger import Logger
 from buffett.common.pendulum import DateSpan, DateTime
-from buffett.common.tools import dataframe_not_valid, dataframe_is_valid
+from buffett.common.tools import dataframe_not_valid, dataframe_is_valid, list_not_valid
 from buffett.download.handler.tools.table_name import TableNameTool
 from buffett.download.mysql import Operator
 from buffett.download.mysql.types import ColType, AddReqType
@@ -27,10 +30,9 @@ from buffett.download.recorder.dl_recorder import DownloadRecorder as DRecorder
 from buffett.download.recorder.rf_recorder import ReformRecorder as RRecorder
 from buffett.download.types import CombType
 
-_ADD_META = create_meta(meta_list=[[CODE, ColType.CODE, AddReqType.KEY]])
-
-GROUP = "group_id"
-GROUP_SIZE = 30
+ADD_META = create_meta(meta_list=[[CODE, ColType.CODE, AddReqType.KEY]])
+DATA_THLD = 1_000_000
+OBJ_THLD = 30
 
 
 class ReformHandler:
@@ -48,7 +50,8 @@ class ReformHandler:
         self._todo_records = DataFrame()
         self._done_records = DataFrame()
         self._meta_cache: dict[CombType, DataFrame] = {}
-        self._stock_group = DataFrame()
+        self._data_caches: list[ReformObject] = []
+        self._data_cache_num = 0
 
     # region 公共方法
     def reform_data(self) -> None:
@@ -57,23 +60,24 @@ class ReformHandler:
 
         :return:
         """
+        # 1. 获取待转换记录
         self._get_todo_records()
         if dataframe_not_valid(self._todo_records):
             return
-
-        self._get_group()
+        # 2. 创建表格
         self._create_tables()
+        # 3. 拼接待转换记录
         comb_records = self._get_comb_records()
-
-        comb_records.groupby(
-            by=[GROUP, FREQ, SOURCE, FUQUAN, START_DATE, END_DATE]
-        ).apply(lambda group: self._reform_n_save_data(group))
-
+        # 4、 分组转换
+        comb_records.groupby(by=[FREQ, SOURCE, FUQUAN]).apply(
+            lambda group: self._reform_n_save_data(group)
+        )
+        # 5、清理现场
         self._reset_datas()
 
-        # endregion
+    # endregion
 
-        # region 私有方法
+    # region 私有方法
 
     def _get_todo_records(self) -> None:
         """
@@ -90,19 +94,6 @@ class ReformHandler:
             todo_records = pd.subtract(todo_records, done_records)
 
         self._todo_records = todo_records
-
-    def _get_group(self) -> None:
-        """
-        将股票代码分组
-
-        :return:
-        """
-        stock_list = self._todo_records[[CODE]].drop_duplicates()
-        row = stock_list.shape[0]
-        group = np.linspace(0, row - 1, row, dtype=int)
-        group = [x // GROUP_SIZE for x in group]
-        stock_list[GROUP] = group
-        self._stock_group = stock_list
 
     def _get_comb_records(self) -> DataFrame:
         """
@@ -121,8 +112,6 @@ class ReformHandler:
         else:
             todo_records[DORCD_START] = NAN
             todo_records[DORCD_END] = NAN
-
-        todo_records = pd.merge(todo_records, self._stock_group, how="left", on=[CODE])
         return todo_records
 
     def _create_tables(self) -> None:
@@ -136,11 +125,13 @@ class ReformHandler:
             done_tables = TableNameTool.get_multi_by_date(self._done_records)
             todo_tables = pd.subtract(todo_tables, done_tables)
 
+        curr_table_names = self._operator.get_table_list()
         for row in todo_tables.itertuples(index=False):
             para = Para.from_tuple(row).with_start(getattr(row, MONTH_START))
             table_name = TableNameTool.get_by_date(para=para)
-            meta = self._get_meta_cache(para=para)
-            self._operator.create_table(name=table_name, meta=meta)
+            if table_name not in curr_table_names:
+                meta = self._get_meta_cache(para=para)
+                self._operator.create_table(name=table_name, meta=meta)
 
     def _get_meta_cache(self, para: Para) -> DataFrame:
         """
@@ -165,15 +156,16 @@ class ReformHandler:
         """
         para = para.clone()
         records = self._todo_records
-        record = records[
-            (records[FREQ] == para.comb.freq)
-            & (records[SOURCE] == para.comb.source)
-            & (records[FUQUAN] == para.comb.fuquan)
-        ].iloc[0, :]
-        para.with_code(code=record[CODE])
+        para.with_code(
+            code=records[
+                (records[FREQ] == para.comb.freq)
+                & (records[SOURCE] == para.comb.source)
+                & (records[FUQUAN] == para.comb.fuquan)
+            ].iloc[0, :][CODE]
+        )
         table_name = TableNameTool.get_by_code(para=para)
         meta = self._operator.get_meta(name=table_name)
-        meta = pd.concat([meta, _ADD_META])
+        meta = pd.concat([meta, ADD_META])
         return meta
 
     def _reform_n_save_data(self, df: DataFrame) -> None:
@@ -183,71 +175,58 @@ class ReformHandler:
         :param df:                  某一组待下载记录
         :return:
         """
-        row = df.iloc[0]
-        para = Para.from_series(row)
-        span = DateSpan(row[START_DATE], row[END_DATE])
-        group_desc = "group {0}info {1}({2}-{3}) {4} {5}".format(
-            para.comb.freq,
-            row[GROUP],
-            df[CODE].min(),
-            df[CODE].max(),
-            para.comb.fuquan,
-            span,
+        row = df.iloc[0, :]
+        ReformObject.initialize(
+            operator=self._operator,
+            comb=CombType(source=row[SOURCE], freq=row[FREQ], fuquan=row[FUQUAN]),
         )
-        logging.info(f"Start to convert {group_desc}")
+        for row in df.itertuples(index=False):
+            obj = ReformObject(row=row)
+            obj.log_start()
+            obj.select_data()
+            self._push_cache(obj)
+        self._pop_caches()
 
-        data = pd.concat_safe(
-            [
-                self._get_required_data(row=row, para=para)
-                for row in df.itertuples(index=False)
-            ]
-        )
+    def _push_cache(self, obj: ReformObject):
+        """
+        把obj压入cache
+
+        :param obj:
+        :return:
+        """
+        self._data_caches.append(obj)
+        self._data_cache_num += obj.data_num
+        if len(self._data_caches) > OBJ_THLD and self._data_cache_num > DATA_THLD:
+            self._pop_caches()
+
+    def _pop_caches(self):
+        """
+        弹出所有cache
+
+        :return:
+        """
+        if list_not_valid(self._data_caches):
+            return
+        comb = self._data_caches[0].para.comb
+        data = pd.concat_safe([x.data for x in self._data_caches])
         if dataframe_is_valid(data):
             key = DATE if DATE in data.columns else DATETIME
             data[MONTH_START] = data[key].apply(lambda x: DateTime(x.year, x.month, 1))
             data.groupby(by=[MONTH_START]).apply(
-                lambda subgroup: self._save_2_database(df=subgroup, para=para)
+                lambda subgroup: self._save_to_database(df=subgroup, comb=comb)
             )
+        self._save_reform_records()
+        self._data_caches = []
 
-        self._save_reform_records(df=df)
-
-        logging.info(f"Successfully convert {group_desc}")
-
-    def _get_required_data(self, row: tuple, para: Para) -> Optional[DataFrame]:
-        """
-        按照指定的范围，读取数据
-
-        :param row:                 读取数据的范围
-        :param para                 freq, source, fuquan
-        :return:
-        """
-        para = para.with_code(getattr(row, CODE))
-        table_name_by_code = TableNameTool.get_by_code(para=para)
-        todo_span = DateSpan(start=getattr(row, START_DATE), end=getattr(row, END_DATE))
-        if pd.isna(getattr(row, DORCD_START)):
-            todo_ls = [todo_span]
-        else:
-            done_span = DateSpan(getattr(row, DORCD_START), getattr(row, DORCD_END))
-            todo_ls = todo_span.subtract(done_span)
-        data = pd.concat_safe(
-            [
-                self._operator.select_data(name=table_name_by_code, span=span)
-                for span in todo_ls
-            ]
-        )
-        if dataframe_is_valid(data):
-            data[CODE] = para.target.code
-        return data
-
-    def _save_2_database(self, df: DataFrame, para: Para) -> None:
+    def _save_to_database(self, df: DataFrame, comb: CombType) -> None:
         """
         把数据存储到数据库
 
         :param df:                  需要存储的数据
-        :param para:                freq, source, fuquan
+        :param comb:                source, freq, fuquan
         :return:
         """
-        para = para.with_start(df.iloc[0][MONTH_START])
+        para = Para().with_comb(comb).with_start(df.iloc[0][MONTH_START])
         table_name_by_date = TableNameTool.get_by_date(para=para)
         del df[MONTH_START]
         try:
@@ -262,55 +241,106 @@ class ReformHandler:
             else:
                 raise e
 
-    def _save_reform_records(self, df: DataFrame):
+    def _save_reform_records(self):
         """
         保存转换记录
 
-        :param df:
         :return:
         """
-        df = pd.concat(  # Assure safe
-            [
-                ReformHandler._get_reform_record(row)
-                for row in df.itertuples(index=False)
-            ]
+        ls = []
+        comb = self._data_caches[0].para.comb
+        source, freq, fuquan = comb.source, comb.freq, comb.fuquan
+        for data in self._data_caches:
+            code = data.para.target.code
+            total_span = data.total_span
+            start, end = total_span.start, total_span.end
+            ls.append([code, source, freq, fuquan, start, end])
+        df = DataFrame(
+            data=ls, columns=[CODE, SOURCE, FREQ, FUQUAN, START_DATE, END_DATE]
         )
         self._rf_recorder.save_to_database(df=df)
-
-    @classmethod
-    def _get_reform_record(cls, row: tuple) -> DataFrame:
-        """
-        获取转换记录（待转换+已转换）
-
-        :param row:
-        :return:
-        """
-        todo_span = DateSpan(getattr(row, START_DATE), getattr(row, END_DATE))
-        if not pd.isna(getattr(row, DORCD_START)):
-            done_span = DateSpan(getattr(row, DORCD_START), getattr(row, DORCD_END))
-            todo_span = todo_span.add(done_span)
-        return DataFrame(
-            [
-                {
-                    CODE: getattr(row, CODE),
-                    FREQ: getattr(row, FREQ),
-                    SOURCE: getattr(row, SOURCE),
-                    FUQUAN: getattr(row, FUQUAN),
-                    START_DATE: todo_span.start,
-                    END_DATE: todo_span.end,
-                }
-            ]
-        )
+        for data in self._data_caches:
+            data.log_end()
 
     # endregion
 
 
-"""
-class ReformHandlerLogger:
-    def __init__(self):
+class ReformObject:
+    _operator = None
+    _comb = None
 
-    def handle_group_start(self, group: DataFrame):
-        group = group[_GROUP].iloc[0]
-        stock_list =
-        logging.info('start to handle group {0}')
-"""
+    @classmethod
+    def initialize(cls, operator: Operator, comb: CombType):
+        cls._operator = operator
+        cls._comb = comb
+
+    def __init__(self, row: tuple):
+        self._para = (
+            Para()
+            .with_comb(self._comb)
+            .with_code(getattr(row, CODE))
+            .with_start_n_end(
+                start=getattr(row, START_DATE), end=getattr(row, END_DATE)
+            )
+        )
+        self._done_span = (
+            None
+            if pd.isna(getattr(row, DORCD_START))
+            else DateSpan(getattr(row, DORCD_START), getattr(row, DORCD_END))
+        )
+        self._data = None
+        self._data_num = 0
+
+    @property
+    def data_num(self):
+        return self._data_num
+
+    @property
+    def data(self) -> Optional[DataFrame]:
+        return self._data
+
+    @property
+    def para(self):
+        return self._para
+
+    @property
+    def total_span(self):
+        return self._para.span.add(self._done_span)
+
+    def select_data(self) -> None:
+        """
+        按照指定的范围，读取数据
+
+        :return:            None
+        """
+
+        table_name_by_code = TableNameTool.get_by_code(para=self._para)
+        todo_ls = self._para.span.subtract(self._done_span)
+        data = pd.concat_safe(
+            [
+                self._operator.select_data(name=table_name_by_code, span=span)
+                for span in todo_ls
+            ]
+        )
+        if dataframe_is_valid(data):
+            data[CODE] = self._para.target.code
+            self._data = data
+            self._data_num = len(data)
+
+    @property
+    def _format_para(self) -> str:
+        para = self._para
+        return "{0} {1}info {2} {3} {4}-{5}".format(
+            para.comb.source,
+            para.comb.freq,
+            para.target.code,
+            para.comb.fuquan,
+            para.span.start,
+            para.span.end,
+        )
+
+    def log_start(self):
+        Logger.info(f"Start to convert {self._format_para}.")
+
+    def log_end(self):
+        Logger.info(f"Successfully convert {self._format_para}")

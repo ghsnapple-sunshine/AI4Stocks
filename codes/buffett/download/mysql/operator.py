@@ -2,6 +2,7 @@ from typing import Optional, Union
 
 from buffett.adapter.pandas import DataFrame
 from buffett.common.constants.col.meta import COLUMN, TYPE, ADDREQ, KEY, PRI
+from buffett.common.constants.col.my import TABLE_NAME
 from buffett.common.constants.col.mysql import FIELD
 from buffett.common.pendulum import DateSpan
 from buffett.common.tools import dataframe_not_valid, list_not_valid, dataframe_is_valid
@@ -159,6 +160,17 @@ class Operator(Connector):
         )
         res = self.execute(sql, fetch=True)
         return res
+
+    def get_table_list(self) -> DataFrame:
+        """
+        获取当前数据库的表格清单
+
+        :return:
+        """
+        sql = "show tables"
+        data = self.execute(sql=sql, fetch=True)
+        data.columns = [TABLE_NAME]
+        return data
 
     def get_meta(self, name: str) -> Optional[DataFrame]:
         """

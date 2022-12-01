@@ -55,7 +55,7 @@ class ReformHandlerTest(Tester):
         rf_record = ReformRecorder(operator=self._operator).select_data()
         assert self.compare_dataframe(dl_record, rf_record)
 
-    def test_ak_daily_10days(self):
+    def test_dc_daily_10days(self):
         """
         测试一支股票，分两次下载10天的日线数据并重组
 
@@ -78,7 +78,7 @@ class ReformHandlerTest(Tester):
             rf_table_names="dc_stock_dayinfo_2022_01_hfq",
         )
 
-    def test_ak_daily_2months(self):
+    def test_dc_daily_2months(self):
         """
         测试一支股票，分两次下载2个月的日线数据并重组
 
@@ -108,7 +108,7 @@ class ReformHandlerTest(Tester):
             ],
         )
 
-    def test_ak_daily_3months(self):
+    def test_dc_daily_3months(self):
         """
         测试一支股票，一次下载3个月的日线数据并重组（覆盖刚好月初-月末场景）
 
@@ -127,7 +127,7 @@ class ReformHandlerTest(Tester):
             ],
         )
 
-    def test_ak_daily_append(self):
+    def test_dc_daily_append(self):
         """
         测试日线增加新股票的场景
 
