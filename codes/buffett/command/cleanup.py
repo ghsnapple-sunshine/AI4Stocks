@@ -1,5 +1,6 @@
 from typing import Optional
 
+from buffett.adapter.wellknown import tqdm
 from buffett.common.error import ParamTypeError
 from buffett.download.mysql import Operator
 from buffett.download.mysql.types import RoleType
@@ -23,8 +24,10 @@ def cleanup(like: Optional[str] = None) -> None:
     [print(f"{x}") for x in to_delete_tbls]
     confirm = input("确认删除这些表格？删除后不可恢复。（y/n）")
     if confirm == "y":
-        for table_name in to_delete_tbls:
-            op.drop_table(name=table_name)
+        with tqdm(total=len(to_delete_tbls)) as pbar:
+            for table_name in to_delete_tbls:
+                op.drop_table(name=table_name)
+                pbar.update(1)
         print("删除完毕。")
     else:
         print("跳过删除。")
