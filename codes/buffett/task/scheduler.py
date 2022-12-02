@@ -4,7 +4,6 @@ from buffett.adapter import logging
 from buffett.adapter.numpy import np
 from buffett.adapter.pandas import Series, DataFrame, pd
 from buffett.adapter.wellknown import sleep
-from buffett.common import create_meta
 from buffett.common.constants.col.task import (
     TASK_ID,
     PARENT_ID,
@@ -16,28 +15,14 @@ from buffett.common.constants.col.task import (
     CREATE_TIME,
     END_TIME,
 )
+from buffett.common.constants.meta.handler import TASK_META
 from buffett.common.constants.table import TASK_RCD
 from buffett.common.interface import Singleton
 from buffett.common.magic import load_class
 from buffett.common.pendulum import DateTime, convert_datetime
 from buffett.common.tools import dataframe_not_valid, list_is_valid, dataframe_is_valid
 from buffett.download.mysql import Operator
-from buffett.download.mysql.types import ColType, AddReqType
 from buffett.task.base.task import Task
-
-_META = create_meta(
-    meta_list=[
-        [TASK_ID, ColType.INT32, AddReqType.KEY],
-        [PARENT_ID, ColType.INT32, AddReqType.NONE],
-        [CLASS, ColType.SHORT_DESC, AddReqType.NONE],
-        [MODULE, ColType.SHORT_DESC, AddReqType.NONE],
-        [CREATE_TIME, ColType.DATETIME, AddReqType.NONE],
-        [START_TIME, ColType.DATETIME, AddReqType.NONE],
-        [END_TIME, ColType.DATETIME, AddReqType.NONE],
-        [SUCCESS, ColType.ENUM_BOOL, AddReqType.NONE],
-        [ERR_MSG, ColType.LONG_DESC, AddReqType.NONE],
-    ]
-)
 
 
 class TaskScheduler(Singleton):
@@ -47,7 +32,7 @@ class TaskScheduler(Singleton):
     def __init__(self, operator: Operator, tasks: Optional[list[Task]] = None):
         super(TaskScheduler, self).__init__()
         self._operator = operator
-        operator.create_table(name=TASK_RCD, meta=_META)
+        operator.create_table(name=TASK_RCD, meta=TASK_META)
         if list_is_valid(tasks):
             self._add_tasks(tasks)
 
@@ -165,7 +150,7 @@ class TaskScheduler(Singleton):
             [{TASK_ID: task.task_id, SUCCESS: success, END_TIME: now, ERR_MSG: err_msg}]
         )
         self._operator.try_insert_data(
-            name=TASK_RCD, df=task_info, meta=_META, update=True
+            name=TASK_RCD, df=task_info, meta=TASK_META, update=True
         )
 
         if isinstance(new_task, Task):
@@ -194,6 +179,6 @@ class TaskScheduler(Singleton):
                 row[SUCCESS] = 0
                 row[ERR_MSG] = "Import task failed."
                 self._operator.try_insert_data(
-                    name=TASK_RCD, df=DataFrame([row]), meta=_META, update=True
+                    name=TASK_RCD, df=DataFrame([row]), meta=TASK_META, update=True
                 )
         return

@@ -26,7 +26,7 @@ from buffett.download import Para
 from buffett.download.handler.base import SlowHandler
 from buffett.download.handler.calendar import CalendarHandler
 from buffett.download.handler.industry.dc_list import DcIndustryListHandler
-from buffett.download.handler.tools import TableNameTool, select_data_slow
+from buffett.download.handler.tools import select_data_slow
 from buffett.download.mysql import Operator
 from buffett.download.recorder import DownloadRecorder
 from buffett.download.types import SourceType, FuquanType, FreqType

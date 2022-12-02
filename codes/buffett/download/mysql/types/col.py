@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from ctypes import Union
-
 from buffett.adapter.enum import Enum
 
 
@@ -15,6 +13,7 @@ class ColType(Enum):
             "VARCHAR(20)": 4,  # ColType.INDEX_NAME
             "FLOAT": 20,  # ColType.FLOAT
             "INT": 21,  # ColType.INT32
+            "BIGINT UNSIGNED": 22,  # ColType.BigInt Unsigned
             "DATE": 10,  # ColType.DATE
             "DATETIME": 11,  # ColType.DATETIME
             "TINYINT UNSIGNED": 100,  # ColType.ENUM
@@ -33,6 +32,7 @@ class ColType(Enum):
 
     FLOAT = 20
     INT32 = 21
+    BIGINT_UNSIGNED = 22
 
     DATE = 10  # 日期
     DATETIME = 11  # 日期时间
@@ -51,6 +51,7 @@ class ColType(Enum):
             ColType.INDEX_NAME: "VARCHAR(20)",
             ColType.FLOAT: "FLOAT",
             ColType.INT32: "INT",
+            ColType.BIGINT_UNSIGNED: "BIGINT UNSIGNED",
             ColType.DATE: "DATE",
             ColType.DATETIME: "DATETIME",
             ColType.ENUM_BOOL: "TINYINT UNSIGNED",

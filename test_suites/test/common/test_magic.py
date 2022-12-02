@@ -4,7 +4,6 @@ from buffett.common.magic.tools import (
     get_func_full_name,
     load_class,
     get_module_name,
-    get_class_name,
     get_name,
 )
 from test import SimpleTester

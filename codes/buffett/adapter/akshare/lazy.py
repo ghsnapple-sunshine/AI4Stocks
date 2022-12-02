@@ -1,4 +1,3 @@
-from akshare import stock_board_concept_name_em
 from akshare.stock_feature.stock_hist_em import code_id_map_em
 
 

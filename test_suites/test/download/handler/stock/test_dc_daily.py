@@ -1,13 +1,11 @@
-from buffett.adapter.akshare import ak
 from buffett.common.constants.col import DATE
 from buffett.common.logger import Logger
 from buffett.common.pendulum import Date
-from buffett.common.target import Target
 from buffett.common.tools import dataframe_not_valid
 from buffett.download import Para
 from buffett.download.handler.stock.dc_daily import DcDailyHandler
 from buffett.download.types import FuquanType
-from test import Tester, create_1stock, create_2stocks, DbSweeper, create_ex_1stock
+from test import Tester, create_1stock, create_2stocks, DbSweeper
 
 
 class TestDcDailyHandler(Tester):

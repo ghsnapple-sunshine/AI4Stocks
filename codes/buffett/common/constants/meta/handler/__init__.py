@@ -51,8 +51,18 @@ from buffett.common.constants.col.target import (
     INDUSTRY_CODE,
     INDUSTRY_NAME,
 )
+from buffett.common.constants.col.task import (
+    TASK_ID,
+    PARENT_ID,
+    CLASS,
+    MODULE,
+    CREATE_TIME,
+    START_TIME,
+    END_TIME,
+    SUCCESS,
+    ERR_MSG,
+)
 from buffett.download.mysql.types import AddReqType, ColType
-
 
 """
 Metadata for STK_LS & LG_STK_LS
@@ -76,7 +86,6 @@ BS_STK_META = create_meta(
     ]
 )
 
-
 """
 Metadata for DC_STOCK_DAYINFO 
 """
@@ -87,8 +96,8 @@ AK_DAILY_META = create_meta(
         [CLOSE, ColType.FLOAT, AddReqType.NONE],
         [HIGH, ColType.FLOAT, AddReqType.NONE],
         [LOW, ColType.FLOAT, AddReqType.NONE],
-        [CJL, ColType.INT32, AddReqType.NONE],
-        [CJE, ColType.FLOAT, AddReqType.NONE],
+        [CJL, ColType.BIGINT_UNSIGNED, AddReqType.NONE],
+        [CJE, ColType.BIGINT_UNSIGNED, AddReqType.NONE],
         [ZF, ColType.FLOAT, AddReqType.NONE],
         [ZDF, ColType.FLOAT, AddReqType.NONE],
         [ZDE, ColType.FLOAT, AddReqType.NONE],
@@ -106,7 +115,6 @@ Metadata for DC_STOCK_MIN5INFO
 """
 AK_MINUTE_META = AK_DAILY_META  # TODO:Seems key should be 'DATETIME'?
 
-
 """
 Metadata for BS_STOCK_MIN5INFO
 """
@@ -117,11 +125,10 @@ BS_MINUTE_META = create_meta(
         [CLOSE, ColType.FLOAT, AddReqType.NONE],
         [HIGH, ColType.FLOAT, AddReqType.NONE],
         [LOW, ColType.FLOAT, AddReqType.NONE],
-        [CJL, ColType.INT32, AddReqType.NONE],
-        [CJE, ColType.FLOAT, AddReqType.NONE],
+        [CJL, ColType.BIGINT_UNSIGNED, AddReqType.NONE],
+        [CJE, ColType.BIGINT_UNSIGNED, AddReqType.NONE],
     ]
 )
-
 
 """
 Metadata for STK_RT
@@ -134,8 +141,8 @@ STK_RT_META = create_meta(
         [CLOSE, ColType.FLOAT, AddReqType.NONE],
         [HIGH, ColType.FLOAT, AddReqType.NONE],
         [LOW, ColType.FLOAT, AddReqType.NONE],
-        [CJL, ColType.INT32, AddReqType.NONE],
-        [CJE, ColType.FLOAT, AddReqType.NONE],
+        [CJL, ColType.BIGINT_UNSIGNED, AddReqType.NONE],
+        [CJE, ColType.BIGINT_UNSIGNED, AddReqType.NONE],
         [ZF, ColType.FLOAT, AddReqType.NONE],
         [ZDF, ColType.FLOAT, AddReqType.NONE],
         [ZDE, ColType.FLOAT, AddReqType.NONE],
@@ -241,5 +248,27 @@ PEPB_META = create_meta(
         [GXL, ColType.FLOAT, AddReqType.NONE],
         [DGXL, ColType.FLOAT, AddReqType.NONE],
         [ZSZ, ColType.FLOAT, AddReqType.NONE],
+    ]
+)
+
+"""
+Metadata for TRA_CAL
+"""
+CAL_META = create_meta(meta_list=[[DATE, ColType.DATE, AddReqType.NONE]])
+
+"""
+Metadata for TASK_RCD
+"""
+TASK_META = create_meta(
+    meta_list=[
+        [TASK_ID, ColType.INT32, AddReqType.KEY],
+        [PARENT_ID, ColType.INT32, AddReqType.NONE],
+        [CLASS, ColType.SHORT_DESC, AddReqType.NONE],
+        [MODULE, ColType.SHORT_DESC, AddReqType.NONE],
+        [CREATE_TIME, ColType.DATETIME, AddReqType.NONE],
+        [START_TIME, ColType.DATETIME, AddReqType.NONE],
+        [END_TIME, ColType.DATETIME, AddReqType.NONE],
+        [SUCCESS, ColType.ENUM_BOOL, AddReqType.NONE],
+        [ERR_MSG, ColType.LONG_DESC, AddReqType.NONE],
     ]
 )

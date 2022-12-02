@@ -1,6 +1,5 @@
 from buffett.adapter.pendulum import Date
 from buffett.common.constants.table import TRA_CAL
-from buffett.common.pendulum import DateSpan
 from buffett.download import Para
 from buffett.download.handler.calendar import CalendarHandler
 from buffett.download.handler.concept import DcConceptDailyHandler

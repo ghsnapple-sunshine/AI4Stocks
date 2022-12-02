@@ -1,4 +1,4 @@
-from buffett.common.pendulum import Date, DateTime, DateSpan
+from buffett.common.pendulum import Date, DateTime
 from buffett.common.wrapper import Wrapper
 from buffett.download import Para
 from buffett.download.handler.concept import DcConceptDailyHandler

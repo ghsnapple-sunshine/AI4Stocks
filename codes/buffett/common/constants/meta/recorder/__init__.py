@@ -18,7 +18,6 @@ DL_RF_META = create_meta(
     ]
 )
 
-
 """
 Metadata for EA_RCD
 """

@@ -2,21 +2,22 @@ from typing import Optional
 
 from buffett.adapter.baostock import bs
 from buffett.adapter.pandas import DataFrame
-from buffett.common import create_meta
 from buffett.common.constants.col import DATE
+from buffett.common.constants.meta.handler import CAL_META
 from buffett.common.constants.table import TRA_CAL
 from buffett.common.pendulum import Date
 from buffett.common.tools import dataframe_not_valid
 from buffett.download import Para
 from buffett.download.handler.base import FastHandler
 from buffett.download.mysql import Operator
-from buffett.download.mysql.types import ColType, AddReqType
-
-_META = create_meta(meta_list=[[DATE, ColType.DATE, AddReqType.NONE]])
 
 
-# 交易日查询
+#
 class CalendarHandler(FastHandler):
+    """
+    交易日查询
+    """
+
     def __init__(self, operator: Operator):
         super().__init__(operator)
 
@@ -35,7 +36,7 @@ class CalendarHandler(FastHandler):
         return calendar
 
     def _save_to_database(self, df: DataFrame):
-        self._operator.create_table(name=TRA_CAL, meta=_META)
+        self._operator.create_table(name=TRA_CAL, meta=CAL_META)
         self._operator.try_insert_data(name=TRA_CAL, df=df)  # 忽略重复Insert
 
     def select_data(self, para: Para = None) -> Optional[DataFrame]:
