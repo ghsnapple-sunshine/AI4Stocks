@@ -1,6 +1,7 @@
 from abc import abstractmethod
 from typing import Optional
 
+from buffett.adapter.error.data_source import DataSourceError
 from buffett.adapter.numpy import NAN
 from buffett.adapter.pandas import DataFrame, pd
 from buffett.common.constants.col import (
@@ -73,7 +74,7 @@ class SlowHandler(Handler):
             todo_records=todo_records, done_records=done_records
         )
         tbs = [
-            self._download_n_save_1stock(row)
+            self._download_n_save_1target(row)
             for row in comb_records.itertuples(index=False)
         ]
         return tbs
@@ -164,35 +165,38 @@ class SlowHandler(Handler):
         )
         return todo_records
 
-    def _download_n_save_1stock(self, row: tuple) -> None:
+    def _download_n_save_1target(self, row: tuple) -> None:
         """
-        下载某一只股票
+        下载某一个股票, [行业, 板块, 指数...]
 
         :param row:
         :return:
         """
-        para = Para.from_tuple(tup=row)
+        try:
+            para = Para.from_tuple(tup=row)
 
-        todo_span = DateSpan(getattr(row, START_DATE), getattr(row, END_DATE))
-        if pd.isna(getattr(row, DORCD_START)):
-            done_span = None
-            data = self._download(para=para.with_span(todo_span))
-        else:
-            done_span = DateSpan(getattr(row, DORCD_START), getattr(row, DORCD_END))
-            todo_ls = todo_span.subtract(done_span)
-            if list_not_valid(todo_ls):
-                self._log_already_downloaded(para=para)
-                return
-            data = pd.concat_safe(
-                [self._download(para=para.with_span(span)) for span in todo_ls]
-            )
+            todo_span = DateSpan(getattr(row, START_DATE), getattr(row, END_DATE))
+            if pd.isna(getattr(row, DORCD_START)):
+                done_span = None
+                data = self._download(para=para.with_span(todo_span))
+            else:
+                done_span = DateSpan(getattr(row, DORCD_START), getattr(row, DORCD_END))
+                todo_ls = todo_span.subtract(done_span)
+                if list_not_valid(todo_ls):
+                    self._log_already_downloaded(para=para)
+                    return
+                data = pd.concat_safe(
+                    [self._download(para=para.with_span(span)) for span in todo_ls]
+                )
 
-        table_name = TableNameTool.get_by_code(para=para)
-        if dataframe_is_valid(data):
-            self._save_to_database(table_name=table_name, df=data)
-        total_span = todo_span if done_span is None else todo_span.add(done_span)
-        self._recorder.save(para=para.with_span(total_span))
-        self._log_success_download(para=para)
+            table_name = TableNameTool.get_by_code(para=para)
+            if dataframe_is_valid(data):
+                self._save_to_database(table_name=table_name, df=data)
+            total_span = todo_span if done_span is None else todo_span.add(done_span)
+            self._recorder.save(para=para.with_span(total_span))
+            self._log_success_download(para=para)
+        except DataSourceError as e:
+            Logger.error(e.msg)  # 捕获到DataSourceError则继续下载（因为他总是会触发）。
 
     @abstractmethod
     def _download(self, para: Para) -> Optional[DataFrame]:

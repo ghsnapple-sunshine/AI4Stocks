@@ -1,13 +1,14 @@
 import requests
 
+from buffett.adapter.akshare.lazy import Lazy
 from buffett.adapter.pandas import pd, DataFrame
 
 
-def my_stock_board_industry_hist_em(
+def my_stock_board_concept_n_industry_hist_em(
     symbol: str,
+    period: str,
     start_date: str,
     end_date: str,
-    period: str,
     adjust: str,
 ) -> DataFrame:
     """
@@ -15,26 +16,22 @@ def my_stock_board_industry_hist_em(
     https://quote.eastmoney.com/bk/90.BK1027.html
 
     :param symbol:          板块代码
+    :param period:          choice of {'daily', 'weekly', 'monthly'}
     :param start_date:      开始时间
     :param end_date:        结束时间
-    :param period:          周期; choice of {"日k", "周k", "月k"}
     :param adjust:          choice of {'': 不复权, "qfq": 前复权, "hfq": 后复权}
     :return:                历史行情
     """
-    period_map = {
-        "日k": "101",
-        "周k": "102",
-        "月k": "103",
-    }
-    adjust_map = {"": "0", "qfq": "1", "hfq": "2"}
+    period_dict = Lazy.get_period_dict()
+    adjust_dict = Lazy.get_adjust_dict()
     url = "https://push2his.eastmoney.com/api/qt/stock/kline/get"
     params = {
         "secid": f"90.{symbol}",
         "ut": "fa5fd1943c7b386f172d6893dbfba10b",
         "fields1": "f1,f2,f3,f4,f5,f6",
         "fields2": "f51,f52,f53,f54,f55,f56,f57,f58,f59,f60,f61",
-        "klt": period_map[period],
-        "fqt": adjust_map[adjust],
+        "klt": period_dict[period],
+        "fqt": adjust_dict[adjust],
         "beg": start_date,
         "end": end_date,
         "smplmt": "10000",

@@ -7,7 +7,7 @@ class FreqType(ComparableEnum):
     MIN5 = 2
 
     def ak_format(self) -> str:
-        RECORD_TYPE_DICT = {FreqType.DAY: "day", FreqType.MIN5: "5"}
+        RECORD_TYPE_DICT = {FreqType.DAY: "daily", FreqType.MIN5: "5"}
         return RECORD_TYPE_DICT[self]
 
     def to_duration(self) -> Duration:

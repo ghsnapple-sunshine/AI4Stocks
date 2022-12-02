@@ -13,8 +13,8 @@ from akshare import (
 )
 
 from buffett.adapter.akshare.stock_a_lg_indicator import my_stock_a_lg_indicator
-from buffett.adapter.akshare.stock_board_industry_hist_em import (
-    my_stock_board_industry_hist_em,
+from buffett.adapter.akshare.stock_board_concept_n_industry_hist_em import (
+    my_stock_board_concept_n_industry_hist_em,
 )
 from buffett.adapter.akshare.stock_zh_a_hist import my_stock_zh_a_hist
 from buffett.adapter.akshare.stock_zh_index_daily_em import my_stock_zh_index_daily_em
@@ -30,10 +30,6 @@ class ak:
         return ak_stock_board_concept_cons_em(symbol)
 
     @staticmethod
-    def stock_board_concept_hist_em(symbol: str, adjust: str):
-        return ak_stock_board_concept_hist_em(symbol=symbol, adjust=adjust)
-
-    @staticmethod
     def stock_board_concept_name_em():
         return ak_stock_board_concept_name_em()
 
@@ -42,10 +38,10 @@ class ak:
         return ak_stock_board_industry_cons_em(symbol)
 
     @staticmethod
-    def stock_board_industry_hist_em(
+    def stock_board_concept_n_industry_hist_em(
         symbol: str, period: str, start_date: str, end_date: str, adjust: str
     ):
-        return my_stock_board_industry_hist_em(
+        return my_stock_board_concept_n_industry_hist_em(
             symbol=symbol,
             period=period,
             start_date=start_date,

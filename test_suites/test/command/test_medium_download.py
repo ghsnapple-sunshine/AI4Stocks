@@ -3,13 +3,10 @@ from buffett.task import (
     StockPePbTask,
     ConceptConsTask,
     IndustryConsTask,
-    ConceptDailyTask,
-    IndexDailyTask,
 )
 from test import (
     Tester,
     create_1stock,
-    create_1index,
     create_1concept,
     create_1industry,
 )
@@ -21,16 +18,14 @@ class TestMediumDownload(Tester):
     def _setup_oncemore(cls):
         # 初始化
         create_1stock(operator=cls._operator)
-        create_1index(operator=cls._operator)
+        # create_1index(operator=cls._operator)
         create_1concept(operator=cls._operator)
         create_1industry(operator=cls._operator)
         # 创建任务清单
         cls._task_cls = [
             create_task_no_subsequent(StockPePbTask),
             create_task_no_subsequent(ConceptConsTask),
-            create_task_no_subsequent(ConceptDailyTask),
             create_task_no_subsequent(IndustryConsTask),
-            create_task_no_subsequent(IndexDailyTask),
         ]
 
     def _setup_always(self) -> None:

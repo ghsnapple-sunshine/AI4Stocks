@@ -1,9 +1,10 @@
 from buffett.adapter.pendulum import Date
 from buffett.common.constants.table import TRA_CAL
+from buffett.common.target import Target
 from buffett.download import Para
 from buffett.download.handler.calendar import CalendarHandler
 from buffett.download.handler.index import DcIndexDailyHandler
-from test import Tester, DbSweeper, create_1index, create_2indexs
+from test import Tester, DbSweeper, create_1index, create_2indexs, create_ex_1index
 
 
 class TestDcIndexDailyHandler(Tester):
@@ -75,3 +76,13 @@ class TestDcIndexDailyHandler(Tester):
         df2 = self._hdl.select_data(para=Para().with_code("399006"))
         df3 = self._cal_hdl.select_data(para=self._long_para)
         assert df1.shape[0] == df2.shape[0] == df3.shape[0]
+
+    def test_000188(self):
+        """
+        测试下载中国波指：无法下载到数据
+        预期：不抛异常
+
+        :return:
+        """
+        create_ex_1index(self._operator, Target("000188"))
+        self._hdl.obtain_data(para=self._great_para)

@@ -35,7 +35,7 @@ def my_stock_zh_index_daily_em(
     data_text = r.text
     data_json = demjson.decode(data_text[data_text.find("{") : -2])
     if data_json["data"] is None:
-        raise DataSourceError(source="东财", target=symbol)
+        raise DataSourceError(source="dc_index", target=symbol)
 
     temp_df = DataFrame([item.split(",") for item in data_json["data"]["klines"]])
     if temp_df.empty:

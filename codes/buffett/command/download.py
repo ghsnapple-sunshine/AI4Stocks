@@ -19,7 +19,9 @@ from buffett.task import (
     ConceptDailyTask,
     IndustryConsTask,
     IndexDailyTask,
-    IndustryDailyTask, BsStockListTask, BsStockDailyTask,
+    IndustryDailyTask,
+    BsStockListTask,
+    BsStockDailyTask,
 )
 
 
@@ -37,7 +39,6 @@ def download():
         IndexListTask,
         MoneySupplyTask,  # Fast
         StockPePbTask,
-        SseStockListTask,
         ConceptConsTask,
         ConceptDailyTask,
         IndustryConsTask,

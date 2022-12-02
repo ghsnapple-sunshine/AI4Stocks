@@ -1,12 +1,8 @@
 import requests
-from akshare.stock_feature.stock_hist_em import code_id_map_em
 
+from buffett.adapter.akshare.lazy import Lazy
 from buffett.adapter.error.data_source import DataSourceError
 from buffett.adapter.pandas import pd, DataFrame
-
-code_id_dict = code_id_map_em()
-adjust_dict = {"qfq": "1", "hfq": "2", "": "0"}
-period_dict = {"daily": "101", "weekly": "102", "monthly": "103"}
 
 
 def my_stock_zh_a_hist(
@@ -27,8 +23,12 @@ def my_stock_zh_a_hist(
     :param adjust:          choice of {"qfq": "前复权", "hfq": "后复权", "": "不复权"}
     :return:
     """
+    code_id_dict = Lazy.get_code_id_dict()
+    period_dict = Lazy.get_period_dict()
+    adjust_dict = Lazy.get_adjust_dict()
+
     if symbol not in code_id_dict:
-        raise DataSourceError(source="东财", target=symbol)
+        raise DataSourceError(source="dc_stock", target=symbol)
 
     url = "https://push2his.eastmoney.com/api/qt/stock/kline/get"
     params = {

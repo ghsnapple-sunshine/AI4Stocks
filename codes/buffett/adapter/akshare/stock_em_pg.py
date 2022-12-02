@@ -4,7 +4,7 @@ from akshare.utils import demjson
 from buffett.adapter.pandas import DataFrame, pd
 
 
-def stock_em_pg() -> DataFrame:
+def my_stock_em_pg() -> DataFrame:
     """
     东方财富网-数据中心-新股数据-配股
     https://data.eastmoney.com/xg/pg/
@@ -92,5 +92,5 @@ def stock_em_pg() -> DataFrame:
 
 
 if __name__ == "__main__":
-    stock_em_pg_df = stock_em_pg()
+    stock_em_pg_df = my_stock_em_pg()
     print(stock_em_pg_df)
