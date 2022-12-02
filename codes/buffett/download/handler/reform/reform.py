@@ -31,7 +31,7 @@ from buffett.download.recorder.rf_recorder import ReformRecorder as RRecorder
 from buffett.download.types import CombType
 
 ADD_META = create_meta(meta_list=[[CODE, ColType.CODE, AddReqType.KEY]])
-DATA_THLD = 1_000_000
+DATA_THLD = 5_000_000
 OBJ_THLD = 30
 
 
