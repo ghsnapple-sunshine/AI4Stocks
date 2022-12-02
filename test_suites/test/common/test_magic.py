@@ -1,7 +1,19 @@
 from buffett.adapter.akshare import ak
-from buffett.common.magic.tools import get_func_params, get_func_full_name
+from buffett.common.magic.tools import (
+    get_func_params,
+    get_func_full_name,
+    load_class,
+    get_module_name,
+    get_class_name,
+    get_name,
+)
 from test import SimpleTester
 from test.suites.acc import Accelerator
+
+
+class InnerA:
+    def print(self):
+        pass
 
 
 class TestMagic(SimpleTester):
@@ -96,9 +108,14 @@ class TestMagic(SimpleTester):
         assert actual == expectation
 
     def test_get_func_full_name(self):
-        class InnerA:
-            def print(self):
-                pass
-
         assert get_func_full_name(InnerA.print) == "test.common.test_magic.print"
         assert get_func_full_name(InnerA().print) == "InnerA.print"
+
+    def test_load_class(self):
+        mdl = get_module_name(InnerA)
+        cls = get_name(InnerA)
+        assert load_class(mdl, cls) == InnerA
+        cls2 = "InnerA2"
+        assert load_class(mdl, cls2) is None
+        mdl2 = mdl + "2"
+        assert load_class(mdl2, cls) is None

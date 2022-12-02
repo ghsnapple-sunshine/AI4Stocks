@@ -1,6 +1,6 @@
 #
 from types import FunctionType
-from typing import Type, Any
+from typing import Type, Any, Optional
 
 from buffett.adapter.importlib import import_module
 
@@ -38,8 +38,13 @@ def get_self(obj):
     return obj.__self__ if hasattr(obj, "__self__") else None
 
 
-def load_class(module: str, cls: str) -> Type:
-    return getattr(import_module(module), cls)
+def load_class(module: str, cls: str) -> Optional[Type]:
+    try:
+        return getattr(import_module(module), cls)
+    except AttributeError:
+        return None
+    except ImportError:
+        return None
 
 
 def empty_init(self) -> None:

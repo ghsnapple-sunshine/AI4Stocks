@@ -51,7 +51,7 @@ class TaskScheduler(Singleton):
         if list_is_valid(tasks):
             self._add_tasks(tasks)
 
-    def _create_task(self, series: Series) -> Task:
+    def _create_task(self, series: Series) -> Optional[Task]:
         """
         根据数据库记录创建Task
 
@@ -59,6 +59,8 @@ class TaskScheduler(Singleton):
         :return:
         """
         task_cls = load_class(series[MODULE], series[CLASS])
+        if task_cls is None:
+            return
         task = task_cls(
             operator=self._operator, start_time=convert_datetime(series[START_TIME])
         )
@@ -111,7 +113,7 @@ class TaskScheduler(Singleton):
             # 20221128变更：新增task时判断下是否有同类型Task未执行完
             df = df[pd.isna(df[SUCCESS])][[CLASS, MODULE]]
             task_filter = task_infos[[CLASS, MODULE]]
-            task_filter = pd.concat([df, task_filter]).drop_duplicates(keep=False)
+            task_filter = pd.subtract(task_filter, df)
             task_infos = pd.merge(
                 task_filter, task_infos, how="left", on=[CLASS, MODULE]
             )
@@ -178,16 +180,20 @@ class TaskScheduler(Singleton):
         df = self._operator.select_data(name=TASK_RCD)
         if dataframe_not_valid(df):
             return
-
-        df = df[pd.isna(df[SUCCESS])]
+        df = df[pd.isna(df[SUCCESS])].sort_values(by=[START_TIME])
         if dataframe_not_valid(df):
             return
 
         for i in range(0, len(df)):
-            try:
-                task = self._create_task(df.iloc[i])
-                if task is not None:
-                    return task
-            except ImportError:
-                pass
+            row = df.iloc[i]
+            task = self._create_task(df.iloc[i])
+            if task is not None:
+                return task
+            else:
+                row[END_TIME] = DateTime.now()
+                row[SUCCESS] = 0
+                row[ERR_MSG] = "Import task failed."
+                self._operator.try_insert_data(
+                    name=TASK_RCD, df=DataFrame([row]), meta=_META, update=True
+                )
         return
