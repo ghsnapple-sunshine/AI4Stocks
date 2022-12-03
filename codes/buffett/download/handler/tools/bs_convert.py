@@ -1,8 +1,8 @@
 from typing import Optional
 
 from buffett.common.constants import (
-    BIGINT_MAX_VALUE,
-    BIGINT_MIN_VALUE,
+    UINT64_MAX_VALUE,
+    UINT64_MIN_VALUE,
     FLOAT_MAX_VALUE,
     FLOAT_MIN_VALUE,
 )
@@ -34,10 +34,11 @@ def bs_check_int(str_int: str) -> Optional[str]:
     """
     if str_int == "":
         return None
-    _int = int(str_int)
-    if (_int > BIGINT_MAX_VALUE) | (_int < BIGINT_MIN_VALUE):
+    _float = float(str_int)
+    _int = int(round(_float, 0))
+    if (_int > UINT64_MAX_VALUE) | (_int < UINT64_MIN_VALUE):
         return None
-    return str_int
+    return str(_int)
 
 
 def bs_check_float(str_float: str) -> Optional[str]:

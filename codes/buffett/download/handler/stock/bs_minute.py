@@ -66,7 +66,7 @@ class BsMinuteHandler(SlowHandler):
         minute_info[HIGH] = minute_info[HIGH].apply(lambda x: bs_check_float(x))
         minute_info[LOW] = minute_info[LOW].apply(lambda x: bs_check_float(x))
         minute_info[CJL] = minute_info[CJL].apply(lambda x: bs_check_int(x))
-        minute_info[CJE] = minute_info[CJE].apply(lambda x: bs_check_float(x))
+        minute_info[CJE] = minute_info[CJE].apply(lambda x: bs_check_int(x))
 
         return minute_info
 
