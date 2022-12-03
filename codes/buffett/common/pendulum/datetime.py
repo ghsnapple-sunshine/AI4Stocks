@@ -220,3 +220,6 @@ class DateTime(Timestamp, Date):
         """
         format_str = f"YYYY{ymd_sep}MM{ymd_sep}DD{joiner}HH{hms_sep}mm{hms_sep}ss"
         return self.format(format_str)
+
+    def __hash__(self):
+        return super(DateTime, self).__hash__()

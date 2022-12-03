@@ -144,3 +144,6 @@ class DateSpan:
 
     def __str__(self):
         return f"({self._start}, {self._end})"
+
+    def __hash__(self):
+        return hash(self._start) ^ hash(self._end)

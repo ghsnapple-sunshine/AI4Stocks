@@ -18,7 +18,7 @@ from buffett.common.error import ParamTypeError
 from buffett.common.error.pre_step import PreStepError
 from buffett.common.interface import ProducerConsumer
 from buffett.common.logger import Logger
-from buffett.common.magic import get_class
+from buffett.common.magic import get_class, empty_method
 from buffett.common.pendulum import DateSpan, Date, convert_datetime, Duration
 from buffett.common.tools import dataframe_not_valid, list_not_valid, dataframe_is_valid
 from buffett.common.wrapper import Wrapper
@@ -56,12 +56,12 @@ class SlowHandler(Handler):
         self._freq = freq
         self._CODE = field_code
         self._NAME = field_name
+        self._calendar = None
+        self._fix_cache = {}
 
     def obtain_data(self, para: Para):
         if not isinstance(para.span, DateSpan):
             raise ParamTypeError("para.span", DateSpan)
-
-        para = self._fix_para(para)
 
         target_list = self._target_list_handler.select_data()
         if dataframe_not_valid(target_list):
@@ -84,37 +84,6 @@ class SlowHandler(Handler):
         )
         prod_cons.run()
         return [None] * len(comb_records)  # 保持输出兼容性
-
-    def _fix_para(self, para: Para) -> Optional[Para]:
-        """
-        修正para中的start和end
-
-        :param para:
-        :return:
-        """
-        start, end = para.span.start, para.span.end
-        end = end if end > Date.today() else Date.today()
-
-        calendar = self._calendar_handler.select_data()
-        if dataframe_not_valid(calendar) or end - start > Duration(
-            days=7
-        ):  # 未获取到calendar则不做额外处理
-            return para
-
-        start_date = Date(start.year, start.month, start.day)
-        dates = []
-        while start_date < end:
-            dates.append(start_date)
-            start_date.add(days=1)
-        dates = DataFrame({DATE: dates})
-
-        dates = dates.join(calendar, how="inner", on=[DATE], rsuffix="_r")
-        if dataframe_not_valid(dates):
-            return
-
-        start = convert_datetime(dates[DATE].min())
-        end = convert_datetime(dates[DATE].max().add(days=1)).add(days=1)
-        return para.clone().with_start_n_end(start, end)
 
     def _get_todo_records(
         self, target_list: DataFrame, done_records: DataFrame, para: Para
@@ -184,14 +153,65 @@ class SlowHandler(Handler):
             self._log_already_downloaded(para=para)
             return
         try:
-            data = pd.concat_safe(
-                [self._download(para=para.with_span(span)) for span in todo_ls]
-            )
+            data_ls = []
+            for span in todo_ls:
+                span = self._fix_span(span)  # Don't worry, it works.
+                if span is not None:
+                    data_ls.append(self._download(para=para.with_span(span)))
+            data = pd.concat_safe(data_ls)
         except DataSourceError as e:  # 捕获到DataSourceError则继续下载（因为他总是会触发）。
             data = None
             Logger.error(e.msg)
         para = para.with_span(span=todo_span.add(done_span))
         return para, data
+
+    def _fix_span(self, span: DateSpan) -> Optional[DateSpan]:
+        """
+        修正para中的start和end
+
+        :param span:
+        :return:
+        """
+        if span in self._fix_cache:
+            return self._fix_cache[span]
+
+        start, end = span.start, span.end
+        end = end if end > Date.today() else Date.today()
+
+        if end - start > Duration(days=7):
+            self._fix_cache[span] = span
+            return span
+        self._load_calendar()
+        if dataframe_not_valid(self._calendar):
+            self._fix_cache[span] = span
+            return span
+
+        start_date = Date(start.year, start.month, start.day)
+        dates = []
+        while start_date < end:
+            dates.append(start_date)
+            start_date = start_date.add(days=1)
+        dates = DataFrame({DATE: dates})
+
+        dates = dates.join(self._calendar, how="inner", on=[DATE], rsuffix="_r")
+        if dataframe_not_valid(dates):
+            self._fix_cache[span] = None
+            return
+        fixed_span = DateSpan(
+            start=convert_datetime(dates[DATE].min()),
+            end=convert_datetime(dates[DATE].max().add(days=1)).add(days=1),
+        )
+        self._fix_cache[span] = fixed_span
+        return fixed_span
+
+    def _load_calendar(self):
+        """
+        加载calendar（只能使用一次）
+
+        :return:
+        """
+        self._calendar = self._calendar_handler.select_data()
+        self._load_calendar = empty_method
 
     @abstractmethod
     def _download(self, para: Para) -> Optional[DataFrame]:
