@@ -16,10 +16,12 @@ from buffett.common.constants.col.my import DORCD_START, DORCD_END
 from buffett.common.constants.col.target import CODE
 from buffett.common.error import ParamTypeError
 from buffett.common.error.pre_step import PreStepError
+from buffett.common.interface import ProducerConsumer
 from buffett.common.logger import Logger
 from buffett.common.magic import get_class
 from buffett.common.pendulum import DateSpan, Date, convert_datetime, Duration
 from buffett.common.tools import dataframe_not_valid, list_not_valid, dataframe_is_valid
+from buffett.common.wrapper import Wrapper
 from buffett.download.handler import Handler
 from buffett.download.handler.tools import TableNameTool
 from buffett.download.mysql import Operator
@@ -55,7 +57,6 @@ class SlowHandler(Handler):
         self._CODE = field_code
         self._NAME = field_name
 
-    # region 公共方法
     def obtain_data(self, para: Para):
         if not isinstance(para.span, DateSpan):
             raise ParamTypeError("para.span", DateSpan)
@@ -73,19 +74,17 @@ class SlowHandler(Handler):
         comb_records = self._get_comb_records(
             todo_records=todo_records, done_records=done_records
         )
-        tbs = [
-            self._download_n_save_1target(row)
-            for row in comb_records.itertuples(index=False)
-        ]
-        return tbs
+        # 使用生产者/消费者模式，异步下载/保存数据
+        prod_cons = ProducerConsumer(
+            producer=Wrapper(self._download_1target),
+            consumer=Wrapper(self._save_1target),
+            queue_size=30,
+            args_map=comb_records.itertuples(index=False),
+            task_num=len(comb_records),
+        )
+        prod_cons.run()
+        return [None] * len(comb_records)  # 保持输出兼容性
 
-    @abstractmethod
-    def select_data(self, para: Para) -> Optional[DataFrame]:
-        pass
-
-    # endregion
-
-    # region 私有方法
     def _fix_para(self, para: Para) -> Optional[Para]:
         """
         修正para中的start和end
@@ -165,38 +164,34 @@ class SlowHandler(Handler):
         )
         return todo_records
 
-    def _download_n_save_1target(self, row: tuple) -> None:
+    def _download_1target(self, row: tuple) -> Optional[tuple[Para, DataFrame]]:
         """
         下载某一个股票, [行业, 板块, 指数...]
 
         :param row:
         :return:
         """
+        para = Para.from_tuple(tup=row)
+        todo_span = para.span
+        self._log_start_download(para=para)
+        done_span = (
+            None
+            if pd.isna(getattr(row, DORCD_START))
+            else DateSpan(getattr(row, DORCD_START), getattr(row, DORCD_END))
+        )
+        todo_ls = todo_span.subtract(done_span)
+        if list_not_valid(todo_ls):
+            self._log_already_downloaded(para=para)
+            return
         try:
-            para = Para.from_tuple(tup=row)
-
-            todo_span = DateSpan(getattr(row, START_DATE), getattr(row, END_DATE))
-            if pd.isna(getattr(row, DORCD_START)):
-                done_span = None
-                data = self._download(para=para.with_span(todo_span))
-            else:
-                done_span = DateSpan(getattr(row, DORCD_START), getattr(row, DORCD_END))
-                todo_ls = todo_span.subtract(done_span)
-                if list_not_valid(todo_ls):
-                    self._log_already_downloaded(para=para)
-                    return
-                data = pd.concat_safe(
-                    [self._download(para=para.with_span(span)) for span in todo_ls]
-                )
-
-            table_name = TableNameTool.get_by_code(para=para)
-            if dataframe_is_valid(data):
-                self._save_to_database(table_name=table_name, df=data)
-            total_span = todo_span if done_span is None else todo_span.add(done_span)
-            self._recorder.save(para=para.with_span(total_span))
-            self._log_success_download(para=para)
-        except DataSourceError as e:
-            Logger.error(e.msg)  # 捕获到DataSourceError则继续下载（因为他总是会触发）。
+            data = pd.concat_safe(
+                [self._download(para=para.with_span(span)) for span in todo_ls]
+            )
+        except DataSourceError as e:  # 捕获到DataSourceError则继续下载（因为他总是会触发）。
+            data = None
+            Logger.error(e.msg)
+        para = para.with_span(span=todo_span.add(done_span))
+        return para, data
 
     @abstractmethod
     def _download(self, para: Para) -> Optional[DataFrame]:
@@ -207,6 +202,22 @@ class SlowHandler(Handler):
         :return:
         """
         pass
+
+    def _save_1target(self, obj: tuple[Para, DataFrame]):
+        """
+        保存某一只股票, [行业, 板块, 指数...]
+
+        :param obj:
+        :return:
+        """
+        if obj is None:
+            return
+        para, data = obj
+        if dataframe_is_valid(data):
+            table_name = TableNameTool.get_by_code(para=para)
+            self._save_to_database(table_name=table_name, df=data)
+        self._recorder.save(para=para)
+        self._log_success_download(para=para)
 
     @abstractmethod
     def _save_to_database(self, table_name: str, df: DataFrame) -> None:
@@ -220,20 +231,28 @@ class SlowHandler(Handler):
         pass
 
     @classmethod
+    def _log_start_download(cls, para: Para):
+        Logger.info(f"Start to Downloaded {cls._format_para(para)}")
+
+    @classmethod
     def _log_success_download(cls, para: Para):
-        Logger.info(
-            "Successfully Download Stock {0} {1} {2} {3}".format(
-                para.comb.freq, para.target.code, para.target.name, para.comb.fuquan
-            )
-        )
+        Logger.info(f"Successfully Download {cls._format_para(para)}")
 
     @classmethod
     def _log_already_downloaded(cls, para: Para):
-        Logger.info(
-            "Have already Downloaded Stock {0} {1} {2} {3}".format(
-                para.comb.freq, para.target.code, para.target.name, para.comb.fuquan
-            )
+        Logger.info(f"Have already Downloaded {cls._format_para(para)}")
+
+    @staticmethod
+    def _format_para(para) -> str:
+        return "{0} {1}info {2} {3} {4}-{5}".format(
+            para.comb.source,
+            para.comb.freq,
+            para.target.code,
+            para.comb.fuquan,
+            para.span.start,
+            para.span.end,
         )
 
-
-# endregion
+    @abstractmethod
+    def select_data(self, para: Para) -> Optional[DataFrame]:
+        pass
