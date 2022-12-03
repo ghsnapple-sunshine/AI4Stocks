@@ -313,7 +313,6 @@ class ReformObject:
 
         :return:            None
         """
-
         table_name_by_code = TableNameTool.get_by_code(para=self._para)
         todo_ls = self._para.span.subtract(self._done_span)
         data = pd.concat_safe(
@@ -327,20 +326,8 @@ class ReformObject:
             self._data = data
             self._data_num = len(data)
 
-    @property
-    def _format_para(self) -> str:
-        para = self._para
-        return "{0} {1}info {2} {3} {4}-{5}".format(
-            para.comb.source,
-            para.comb.freq,
-            para.target.code,
-            para.comb.fuquan,
-            para.span.start,
-            para.span.end,
-        )
-
     def log_start(self):
-        Logger.info(f"Start to convert {self._format_para}.")
+        Logger.info(f"Start to convert {self._para}.")
 
     def log_end(self):
-        Logger.info(f"Successfully convert {self._format_para}")
+        Logger.info(f"Successfully convert {self._para}")

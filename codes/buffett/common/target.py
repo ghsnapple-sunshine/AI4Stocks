@@ -53,3 +53,9 @@ class Target:
     @property
     def name(self) -> Optional[str]:
         return self._name
+
+    def __str__(self):
+        return "{0} {1}".format(
+            "" if self._code is None else self._code,
+            "" if self._name is None else self._name,
+        ).strip(' ')

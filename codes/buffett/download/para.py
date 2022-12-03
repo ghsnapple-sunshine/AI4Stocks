@@ -19,7 +19,7 @@ from buffett.common.constants.col.target import (
 from buffett.common.magic import get_attr_safe
 from buffett.common.pendulum import DateSpan
 from buffett.common.target import Target
-from buffett.download.types import HeadType, CombType, FuquanType, FreqType, SourceType
+from buffett.download.types import CombType, FuquanType, FreqType, SourceType
 
 
 class Para:
@@ -28,7 +28,6 @@ class Para:
         target: Optional[Target] = None,
         comb: Optional[CombType] = None,
         span: Optional[DateSpan] = None,
-        heads: Optional[list[HeadType]] = None,
     ):
         """
         初始化Para for Handler
@@ -36,12 +35,10 @@ class Para:
         :param target:      标的信息
         :param comb:        复合类型
         :param span:        指定的时间周期
-        :param heads:       指定的数据列
         """
         self._target = target
         self._comb = comb
         self._span = span
-        self._heads = heads
 
     @classmethod
     def from_series(cls, series: Series) -> Para:
@@ -342,18 +339,6 @@ class Para:
             self._span = DateSpan(start=start, end=end)
         return self
 
-    def with_heads(self, heads: list[HeadType], condition: bool = True) -> Para:
-        """
-        条件设置heads并返回自身
-
-        :param heads:       指定的数据列
-        :param condition:   条件设置
-        :return:            Self
-        """
-        if condition:
-            self._heads = heads
-        return self
-
     def clone(self) -> Para:
         """
         复制自身
@@ -364,7 +349,6 @@ class Para:
             target=None if self._target is None else self._target.clone(),
             comb=None if self._comb is None else self._comb.clone(),
             span=None if self._span is None else self._span.clone(),
-            heads=None if self._heads is None else self._heads.copy(),
         )
 
     @property
@@ -379,6 +363,11 @@ class Para:
     def span(self) -> Optional[DateSpan]:
         return self._span
 
-    @property
-    def heads(self) -> Optional[list[HeadType]]:
-        return self._heads
+    def __str__(self):
+        return "{0} {1}info {2} {3} {4}".format(
+            self._comb.source,
+            self._comb.freq,
+            self._target,
+            self._comb.fuquan,
+            self._span
+        )

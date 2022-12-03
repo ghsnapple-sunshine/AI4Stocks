@@ -232,26 +232,15 @@ class SlowHandler(Handler):
 
     @classmethod
     def _log_start_download(cls, para: Para):
-        Logger.info(f"Start to Downloaded {cls._format_para(para)}")
+        Logger.info(f"Start to Download {para}")
 
     @classmethod
     def _log_success_download(cls, para: Para):
-        Logger.info(f"Successfully Download {cls._format_para(para)}")
+        Logger.info(f"Successfully Download {para}")
 
     @classmethod
     def _log_already_downloaded(cls, para: Para):
-        Logger.info(f"Have already Downloaded {cls._format_para(para)}")
-
-    @staticmethod
-    def _format_para(para) -> str:
-        return "{0} {1}info {2} {3} {4}-{5}".format(
-            para.comb.source,
-            para.comb.freq,
-            para.target.code,
-            para.comb.fuquan,
-            para.span.start,
-            para.span.end,
-        )
+        Logger.info(f"Have already Downloaded {para}")
 
     @abstractmethod
     def select_data(self, para: Para) -> Optional[DataFrame]:
