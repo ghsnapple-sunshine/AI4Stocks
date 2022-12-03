@@ -1,8 +1,7 @@
-import requests
-
 from buffett.adapter.akshare.lazy import Lazy
 from buffett.adapter.error.data_source import DataSourceError
 from buffett.adapter.pandas import pd, DataFrame
+from buffett.adapter.requests import requests
 
 
 def my_stock_zh_a_hist(

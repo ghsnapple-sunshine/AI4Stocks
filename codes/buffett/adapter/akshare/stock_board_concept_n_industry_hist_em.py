@@ -1,7 +1,6 @@
-import requests
-
 from buffett.adapter.akshare.lazy import Lazy
 from buffett.adapter.pandas import pd, DataFrame
+from buffett.adapter.requests import requests
 
 
 def my_stock_board_concept_n_industry_hist_em(
