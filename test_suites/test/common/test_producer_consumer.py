@@ -7,8 +7,7 @@ from test import SimpleTester
 class TestProducerConsumer(SimpleTester):
     @classmethod
     def _setup_once(cls):
-        cls._results = []
-        cls._count = 0
+        pass
 
     def _setup_always(self) -> None:
         self._results = []
@@ -85,7 +84,7 @@ class TestProducerConsumer(SimpleTester):
             )
             prod_cons.run()
             assert False
-        except RuntimeError:
+        except ValueError:
             print(self._results)
             assert self._results == [2, 3, 4]
 
