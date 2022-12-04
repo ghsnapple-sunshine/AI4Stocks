@@ -42,6 +42,14 @@ class SimpleTester(TestCase):
         """
         pass
 
+    def tearDown(self) -> None:
+        """
+        清理用例现场
+
+        :return:
+        """
+        pass
+
     @staticmethod
     def compare_dataframe(df1: DataFrame, df2: DataFrame):
         """
