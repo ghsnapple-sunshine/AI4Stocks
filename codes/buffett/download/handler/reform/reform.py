@@ -217,6 +217,7 @@ class ReformHandler:
             )
         self._save_reform_records()
         self._data_caches = []
+        self._data_cache_num = 0
 
     def _save_to_database(self, df: DataFrame, comb: CombType) -> None:
         """
