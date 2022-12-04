@@ -1,4 +1,4 @@
-from buffett.adapter.akshare import ak
+from buffett.adapter.baostock import bs
 from buffett.common.constants.col import DATE, ZF, ZDE
 from buffett.common.pendulum import Date
 from buffett.common.target import Target
@@ -68,7 +68,7 @@ class TestBsDailyHandler(Tester):
         tbls = self._hdl.obtain_data(para=self._long_para)
         assert stocks.shape[0] * 3 == len(tbls)
 
-    def test_download_tuishi(self):
+    def test_000003(self):
         """
         测试退市股票下载+测试下载数据量
         :return:
@@ -79,12 +79,13 @@ class TestBsDailyHandler(Tester):
         data = self._hdl.select_data(
             para=Para().with_fuquan(FuquanType.BFQ).with_code("000003")
         )
-        origin_data = ak.stock_zh_a_hist(
-            symbol="000003",
-            period="daily",
-            start_date=para.span.start.format("YYYYMMDD"),
-            end_date=para.span.end.subtract(days=1).format("YYYYMMDD"),
-            adjust=FuquanType.BFQ.ak_format(),
+        origin_data = bs.query_history_k_data_plus(
+            code="sz.000003",
+            fields="date,open,high,low,close,preclose,volume,amount,turn,pctChg",
+            frequency="d",
+            start_date=para.span.start.format("YYYY-MM-DD"),
+            end_date=para.span.end.subtract(days=1).format("YYYY-MM-DD"),
+            adjustflag="3",
         )
         assert data.shape[0] == origin_data.shape[0] != 0
 

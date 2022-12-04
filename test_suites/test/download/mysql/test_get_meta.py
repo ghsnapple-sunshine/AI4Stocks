@@ -1,4 +1,4 @@
-from buffett.common.constants.meta.handler import BS_MINUTE_META, AK_DAILY_META
+from buffett.common.constants.meta.handler import BS_MINUTE_META, DC_DAILY_META
 from buffett.common.pendulum import Date
 from buffett.download import Para
 from buffett.download.handler.stock import (
@@ -33,7 +33,7 @@ class TestGetMeta(Tester):
         )
         table_name = TableNameTool.get_by_code(para=para)
         meta_get = self._operator.get_meta(name=table_name)
-        assert self.compare_dataframe(meta_get, AK_DAILY_META)
+        assert self.compare_dataframe(meta_get, DC_DAILY_META)
 
     def test_bs_minute(self):
         # 下载分钟线数据

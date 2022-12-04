@@ -10,7 +10,7 @@ from buffett.common.constants.col import (
     CJL,
     CJE,
     ZDF,
-    HSL,
+    HSL, PRECLOSE,
 )
 from buffett.common.constants.col.target import CODE, NAME
 from buffett.common.constants.meta.handler import BS_DAILY_META
@@ -47,7 +47,7 @@ class BsDailyHandler(SlowHandler):
         )
 
     def _download(self, para: Para) -> Optional[DataFrame]:
-        fields = "date,open,high,low,close,volume,amount,turn,pctChg"
+        fields = "date,open,high,low,close,preclose,volume,amount,turn,pctChg"
         daily_info = bs.query_history_k_data_plus(
             code=bs_convert_code(para.target.code),
             fields=fields,
@@ -65,6 +65,7 @@ class BsDailyHandler(SlowHandler):
         # 更改类型
         daily_info[OPEN] = daily_info[OPEN].apply(lambda x: bs_check_float(x))
         daily_info[CLOSE] = daily_info[CLOSE].apply(lambda x: bs_check_float(x))
+        daily_info[PRECLOSE] = daily_info[PRECLOSE].apply(lambda x: bs_check_float(x))
         daily_info[HIGH] = daily_info[HIGH].apply(lambda x: bs_check_float(x))
         daily_info[LOW] = daily_info[LOW].apply(lambda x: bs_check_float(x))
         daily_info[CJL] = daily_info[CJL].apply(lambda x: bs_check_int(x))

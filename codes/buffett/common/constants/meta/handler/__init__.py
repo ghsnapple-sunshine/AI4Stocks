@@ -39,7 +39,7 @@ from buffett.common.constants.col import (
     JDc,
     ZXGGRc,
     START_DATE,
-    END_DATE,
+    END_DATE, PRECLOSE,
 )
 from buffett.common.constants.col.target import (
     INDEX_CODE,
@@ -89,7 +89,7 @@ BS_STK_META = create_meta(
 """
 Metadata for DC_STOCK_DAYINFO 
 """
-AK_DAILY_META = create_meta(
+DC_DAILY_META = create_meta(
     meta_list=[
         [DATE, ColType.DATE, AddReqType.KEY],
         [OPEN, ColType.FLOAT, AddReqType.NONE],
@@ -108,12 +108,27 @@ AK_DAILY_META = create_meta(
 """
 Metadata for BS_STOCK_DAYINFO
 """
-BS_DAILY_META = AK_DAILY_META  # TODO:Seems key should be 'DATETIME'?
+BS_DAILY_META = create_meta(
+    meta_list=[
+        [DATE, ColType.DATE, AddReqType.KEY],
+        [OPEN, ColType.FLOAT, AddReqType.NONE],
+        [CLOSE, ColType.FLOAT, AddReqType.NONE],
+        [HIGH, ColType.FLOAT, AddReqType.NONE],
+        [LOW, ColType.FLOAT, AddReqType.NONE],
+        [PRECLOSE, ColType.FLOAT, AddReqType.NONE],
+        [CJL, ColType.BIGINT_UNSIGNED, AddReqType.NONE],
+        [CJE, ColType.BIGINT_UNSIGNED, AddReqType.NONE],
+        [ZF, ColType.FLOAT, AddReqType.NONE],
+        [ZDF, ColType.FLOAT, AddReqType.NONE],
+        [ZDE, ColType.FLOAT, AddReqType.NONE],
+        [HSL, ColType.FLOAT, AddReqType.NONE],
+    ]
+)
 
 """
 Metadata for DC_STOCK_MIN5INFO
 """
-AK_MINUTE_META = AK_DAILY_META  # TODO:Seems key should be 'DATETIME'?
+DC_MINUTE_META = DC_DAILY_META  # TODO:Seems key should be 'DATETIME'?
 
 """
 Metadata for BS_STOCK_MIN5INFO

@@ -16,7 +16,7 @@ from buffett.common.constants.col import (
     HSL,
 )
 from buffett.common.constants.col.target import CODE, NAME
-from buffett.common.constants.meta.handler import AK_DAILY_META
+from buffett.common.constants.meta.handler import DC_DAILY_META
 from buffett.common.tools import dataframe_not_valid
 from buffett.download import Para
 from buffett.download.handler.base.slow import SlowHandler
@@ -86,7 +86,7 @@ class DcDailyHandler(SlowHandler):
         :param df:
         :return:
         """
-        self._operator.create_table(name=table_name, meta=AK_DAILY_META)
+        self._operator.create_table(name=table_name, meta=DC_DAILY_META)
         self._operator.insert_data(table_name, df)
 
     def select_data(self, para: Para) -> Optional[DataFrame]:
