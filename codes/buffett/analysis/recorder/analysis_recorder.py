@@ -2,7 +2,7 @@ from typing import Optional
 
 from buffett.adapter.pandas import DataFrame
 from buffett.analysis.para import Para
-from buffett.analysis.types import AnalysisType
+from buffett.analysis.types import AnalystType
 from buffett.common.constants.col import FREQ, FUQUAN, SOURCE, START_DATE, END_DATE
 from buffett.common.constants.col.analysis import ANALYSIS
 from buffett.common.constants.col.target import CODE
@@ -51,7 +51,7 @@ class AnalysisRecorder(SimpleRecorder):
         df = self._operator.select_data(self._TABLE_NAME)
         if dataframe_not_valid(df):
             return
-        df[ANALYSIS] = df[ANALYSIS].apply(lambda x: AnalysisType(x))
+        df[ANALYSIS] = df[ANALYSIS].apply(lambda x: AnalystType(x))
         df[FREQ] = df[FREQ].apply(lambda x: FreqType(x))
         df[FUQUAN] = df[FUQUAN].apply(lambda x: FuquanType(x))
         df[SOURCE] = df[SOURCE].apply(lambda x: SourceType(x))

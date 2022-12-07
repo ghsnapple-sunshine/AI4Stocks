@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Optional
 
-from buffett.analysis.types import AnalysisType
+from buffett.analysis.types import AnalystType
 from buffett.common.constants.col.analysis import ANALYSIS
 from buffett.common.magic import get_attr_safe
 from buffett.download import Para as DPara
@@ -13,7 +13,7 @@ class Para(DPara):
     Para for Analysis(在Para for Handler的基础上扩展)
     """
 
-    def __init__(self, analysis: Optional[AnalysisType] = None, **kwargs):
+    def __init__(self, analysis: Optional[AnalystType] = None, **kwargs):
         """
         初始化Para for Analysis
 
@@ -23,7 +23,7 @@ class Para(DPara):
         super(Para, self).__init__(**kwargs)
         self._analysis = analysis
 
-    def with_analysis(self, analysis: AnalysisType) -> Para:
+    def with_analysis(self, analysis: AnalystType) -> Para:
         """
         设置analysis并返回自身
 
@@ -34,7 +34,7 @@ class Para(DPara):
         return self
 
     @property
-    def analysis(self) -> AnalysisType:
+    def analysis(self) -> AnalystType:
         """
         得到analysis
 

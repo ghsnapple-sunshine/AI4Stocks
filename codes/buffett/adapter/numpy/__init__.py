@@ -8,6 +8,7 @@ from numpy import (
     ndarray as np_ndarray,
     reshape as np_reshape,
     sum as np_sum,
+    vectorize as np_vectorize,
     zeros as np_zeros,
 )
 
@@ -28,4 +29,5 @@ class np:
     multiply = np_multiply
     sum = np_sum
     reshape = np_reshape
+    vectorize = np_vectorize
     zeros = np_zeros

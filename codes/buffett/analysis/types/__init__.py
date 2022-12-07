@@ -1,1 +1,1 @@
-from buffett.analysis.types.analysis import AnalysisType
+from buffett.analysis.types.analysis import AnalystType

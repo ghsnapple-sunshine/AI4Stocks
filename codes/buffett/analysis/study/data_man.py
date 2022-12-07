@@ -37,18 +37,18 @@ class DataManager:
         self._operator = operator
         self._dl_record = DownloadRecorder(operator=operator).select_data()
 
-    def select_data(self, para: Para, economy=False) -> Optional[DataFrame]:
+    def select_data(self, para: Para, use_economy=False) -> Optional[DataFrame]:
         """
         查询数据
 
         :param para:
-        :param economy:
+        :param use_economy:
         :return:
         """
         para = para.clone()
         #
         if (para.target is not None) and (para.target.code is not None):
-            source = self._determine_source(para=para, economy=economy)
+            source = self._determine_source(para=para, use_economy=use_economy)
             if source is None:
                 return
             para = para.with_source(source)
@@ -59,7 +59,7 @@ class DataManager:
             data = self._select_data(para=para, by_code=False)
             economy_data = (
                 self._select_economy_data(para=para, economy_source=economy_source)
-                if economy
+                if use_economy
                 else None
             )
             data = pd.concat_safe([data, economy_data])
@@ -70,7 +70,7 @@ class DataManager:
         data.index = data[key]
         return data
 
-    def _determine_source(self, para: Para, economy=False) -> Optional[SourceType]:
+    def _determine_source(self, para: Para, use_economy=False) -> Optional[SourceType]:
         """
         para中未指定数据源的情况下选择优先级高的数据源。
 
@@ -89,7 +89,7 @@ class DataManager:
             return None
         if (dl_record[SOURCE] == source).any():
             return source
-        if not economy:
+        if not use_economy:
             return None
         if (dl_record[SOURCE] == economy_source).any():
             return economy_source
