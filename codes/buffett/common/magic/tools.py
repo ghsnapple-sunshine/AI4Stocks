@@ -55,7 +55,7 @@ def empty_method(*args, **kwargs) -> None:
     return
 
 
-def get_attr_safe(obj, att_name) -> None:
+def get_attr_safe(obj, att_name) -> Any:
     return getattr(obj, att_name) if hasattr(obj, att_name) else None
 
 

@@ -25,7 +25,6 @@ class Tester(SimpleTester):
     _great_para = None
 
     @classmethod
-    @final
     def _setup_once(cls):
         """
         按类进行初始化

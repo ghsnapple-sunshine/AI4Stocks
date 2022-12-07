@@ -1,7 +1,7 @@
 from buffett.adapter.pandas import DataFrame, pd
 from buffett.common.constants.col import FREQ, SOURCE, FUQUAN, START_DATE, END_DATE
 from buffett.common.constants.col.my import MONTH_START, TABLE_NAME
-from buffett.common.pendulum import convert_datetime, DateTime
+from buffett.common.pendulum import convert_datetime, DateTime, DateSpan
 from buffett.download import Para
 
 
@@ -39,9 +39,9 @@ class TableNameTool:
         return table_name
 
     @classmethod
-    def get_multi_by_date(cls, records: DataFrame) -> DataFrame:
+    def gets_by_records(cls, records: DataFrame) -> DataFrame:
         """
-        生成已下载记录/待下载记录的Mysql表名
+        获取按时间索引的Mysql表名
 
         :param records:             已下载记录/待下载记录
         :return:
@@ -65,19 +65,46 @@ class TableNameTool:
         return tables
 
     @classmethod
-    def _create_single_series(cls, spans: tuple) -> DataFrame:
+    def _create_single_series(cls, span: tuple) -> DataFrame:
         """
         获取指定时间范围内的时间分段清单
 
-        :param spans:               时间范围
+        :param span:                时间范围
         :return:                    时间分段清单
         """
-        start = convert_datetime(getattr(spans, START_DATE))
-        end = convert_datetime(getattr(spans, END_DATE))
-        month_start = DateTime(start.year, start.month, 1)
+        span = DateSpan(
+            start=convert_datetime(getattr(span, START_DATE)),
+            end=convert_datetime(getattr(span, END_DATE)),
+        )
+        dates = cls._create_by_span(span=span)
+        return DataFrame(
+            {START_DATE: span.start, END_DATE: span.end, MONTH_START: dates}
+        )
 
+    @classmethod
+    def gets_by_span(cls, para: Para):
+        """
+        获取按时间索引的Mysql表名
+
+        :param para:
+        :return:
+        """
+        dates = cls._create_by_span(para.span)
+        para = para.clone()
+        return [cls.get_by_date(para=para.with_start(x)) for x in dates]
+
+    @classmethod
+    def _create_by_span(cls, span: DateSpan):
+        """
+        获取指定时间范围内的月
+
+        :param span:                时间范围
+        :return:                    时间分段清单
+        """
+        start, end = span.start, span.end
+        month_start = DateTime(start.year, start.month, 1)
         dates = []
         while month_start < end:
-            dates.append([start, end, month_start])
+            dates.append(month_start)
             month_start = month_start.add(months=1)
-        return DataFrame(dates, columns=[START_DATE, END_DATE, MONTH_START])
+        return dates

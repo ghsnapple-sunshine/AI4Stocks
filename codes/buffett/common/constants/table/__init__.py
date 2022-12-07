@@ -14,6 +14,7 @@ TRA_CAL = "trade_calendar"
 # COL_DF = 'columns'
 
 # record类
+ANALY_RCD = "analysis_record"
 TASK_RCD = "task_record"
 DL_RCD = "download_record"
 EA_RCD = "easy_record"

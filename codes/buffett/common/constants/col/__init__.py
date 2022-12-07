@@ -57,3 +57,5 @@ M1HB = "m1hb"
 M2 = "m2"
 M2TB = "m2tb"
 M2HB = "m2hb"
+#
+ST = "ST"

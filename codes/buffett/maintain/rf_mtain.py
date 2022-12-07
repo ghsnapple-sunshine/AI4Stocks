@@ -86,7 +86,7 @@ class ReformMaintain:
 
     def _datanum_check(self) -> bool:
         dl_records = self._rf_records  # ！不是bug，基于已转换的部分进行对比
-        table_names_by_date = TableNameTool.get_multi_by_date(dl_records)
+        table_names_by_date = TableNameTool.gets_by_records(dl_records)
 
         dl_records[DL_ROW_NUM] = dl_records.apply(self._get_dl_row_num, axis=1)
         rf_records = pd.concat(  # Assure safe

@@ -18,6 +18,10 @@ def get_now_shift(du: Duration, minus=False) -> DateTime:
 
 
 def create_meta(meta_list: list) -> DataFrame:
+    """
+
+    :rtype: object
+    """
     return DataFrame(data=meta_list, columns=META_COLS)
 
 

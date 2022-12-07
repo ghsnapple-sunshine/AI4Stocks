@@ -120,9 +120,9 @@ class ReformHandler:
 
         :return:                    None
         """
-        todo_tables = TableNameTool.get_multi_by_date(self._todo_records)
+        todo_tables = TableNameTool.gets_by_records(self._todo_records)
         if dataframe_is_valid(self._done_records):
-            done_tables = TableNameTool.get_multi_by_date(self._done_records)
+            done_tables = TableNameTool.gets_by_records(self._done_records)
             todo_tables = pd.subtract(todo_tables, done_tables)
 
         curr_table_names = self._operator.get_table_list()

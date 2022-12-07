@@ -39,7 +39,7 @@ from buffett.common.constants.col import (
     JDc,
     ZXGGRc,
     START_DATE,
-    END_DATE, PRECLOSE,
+    END_DATE, PRECLOSE, ST,
 )
 from buffett.common.constants.col.target import (
     INDEX_CODE,
@@ -122,6 +122,7 @@ BS_DAILY_META = create_meta(
         [ZDF, ColType.FLOAT, AddReqType.NONE],
         [ZDE, ColType.FLOAT, AddReqType.NONE],
         [HSL, ColType.FLOAT, AddReqType.NONE],
+        [ST, ColType.ENUM_BOOL, AddReqType.NONE]
     ]
 )
 
