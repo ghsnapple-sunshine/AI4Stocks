@@ -1,5 +1,5 @@
 from buffett.common.pendulum import DateTime
-from buffett.task import (
+from buffett.task.download import (
     StockPePbTask,
     ConceptConsTask,
     IndustryConsTask,

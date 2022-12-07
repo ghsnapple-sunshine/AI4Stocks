@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from typing import Optional
 
+from buffett.adapter.numpy import np
 from buffett.adapter.pendulum import date
 from buffett.common.error import ParamTypeError
 from buffett.common.pendulum.convert import convert_date, convert_datetime
@@ -80,6 +81,8 @@ class DateSpan:
         condition1 = True if self._start is None else self._start <= dt
         condition2 = True if self._end is None else dt < self._end
         return condition1 and condition2
+
+    is_insides = np.vectorize(is_inside)
 
     def is_cross(self, other: DateSpan) -> bool:
         """

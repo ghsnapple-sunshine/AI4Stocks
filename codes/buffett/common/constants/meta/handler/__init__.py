@@ -122,7 +122,7 @@ BS_DAILY_META = create_meta(
         [ZDF, ColType.FLOAT, AddReqType.NONE],
         [ZDE, ColType.FLOAT, AddReqType.NONE],
         [HSL, ColType.FLOAT, AddReqType.NONE],
-        [ST, ColType.ENUM_BOOL, AddReqType.NONE]
+        # [ST, ColType.ENUM_BOOL, AddReqType.NONE]
     ]
 )
 

@@ -1,5 +1,5 @@
 from buffett.common.pendulum import DateTime
-from buffett.task import (
+from buffett.task.download import (
     SseStockListTask,
     CalendarTask,
     StockProfitTask,
@@ -7,8 +7,8 @@ from buffett.task import (
     IndustryListTask,
     IndexListTask,
     MoneySupplyTask,
+    StockDividendTask
 )
-from buffett.task.stock_dividend_task import StockDividendTask
 from test import Tester
 from test.command.tools import create_task_no_subsequent
 

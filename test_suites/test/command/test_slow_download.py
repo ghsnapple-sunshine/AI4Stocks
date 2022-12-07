@@ -10,7 +10,7 @@ from buffett.download.handler.stock import (
     BsDailyHandler,
     BsMinuteHandler,
 )
-from buffett.task import (
+from buffett.task.download import (
     BsStockDailyTask,
     DcStockDailyTask,
     StockReformTask,
