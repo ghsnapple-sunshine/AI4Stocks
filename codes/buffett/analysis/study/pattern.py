@@ -1,3 +1,5 @@
+from typing import Optional
+
 from buffett.adapter.pandas import pd, DataFrame, Series
 from buffett.adapter.talib import PatternRecognize
 from buffett.analysis import Para
@@ -8,11 +10,12 @@ from buffett.common.constants.col import (
 )
 from buffett.common.constants.col.analysis import EVENT, VALUE
 from buffett.common.constants.meta.analysis import ANALY_EVENT_META
+from buffett.common.tools import dataframe_not_valid
 from buffett.download.mysql import Operator
 
 
 class PatternAnalyst(Analyst):
-    def __init__(self, datasource_op: Operator, operator: Operator):
+    def __init__(self, operator: Operator, datasource_op: Operator):
         super(PatternAnalyst, self).__init__(
             datasource_op=datasource_op,
             operator=operator,
@@ -22,7 +25,7 @@ class PatternAnalyst(Analyst):
             meta=ANALY_EVENT_META,
         )
 
-    def _calculate(self, para: Para):
+    def _calculate(self, para: Para) -> Optional[DataFrame]:
         """
         执行计算逻辑
 
@@ -35,7 +38,8 @@ class PatternAnalyst(Analyst):
         data = self._dataman.select_data(
             para=select_para, use_economy=self._use_economy
         )
-
+        if dataframe_not_valid(data):
+            return
         pattern = PatternRecognize.all(inputs=data)
         pattern = self._convert_pattern(pattern)
         return pattern

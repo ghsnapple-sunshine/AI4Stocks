@@ -41,7 +41,6 @@ from buffett.common.constants.col import (
     START_DATE,
     END_DATE,
     PRECLOSE,
-    ST,
 )
 from buffett.common.constants.col.target import (
     INDEX_CODE,

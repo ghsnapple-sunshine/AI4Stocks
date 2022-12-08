@@ -5,7 +5,7 @@ from buffett.analysis.para import Para
 from buffett.analysis.types import AnalystType
 from buffett.common.constants.col import FREQ, FUQUAN, SOURCE, START_DATE, END_DATE
 from buffett.common.constants.col.analysis import ANALYSIS
-from buffett.common.constants.col.target import CODE
+from buffett.common.constants.col.target import CODE, NAME
 from buffett.common.constants.meta.analysis import ANALY_RCD_META
 from buffett.common.constants.table import ANALY_RCD
 from buffett.common.tools import dataframe_not_valid
@@ -30,6 +30,7 @@ class AnalysisRecorder(SimpleRecorder):
         ls = [
             [
                 para.target.code,
+                para.target.name,
                 para.comb.freq,
                 para.comb.fuquan,
                 para.comb.source,
@@ -38,7 +39,7 @@ class AnalysisRecorder(SimpleRecorder):
                 para.span.end,
             ]
         ]
-        cols = [CODE, FREQ, FUQUAN, SOURCE, ANALYSIS, START_DATE, END_DATE]
+        cols = [CODE, NAME, FREQ, FUQUAN, SOURCE, ANALYSIS, START_DATE, END_DATE]
         data = DataFrame(data=ls, columns=cols)
         self.save_to_database(df=data)
 

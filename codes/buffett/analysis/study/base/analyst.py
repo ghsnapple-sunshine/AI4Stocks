@@ -1,4 +1,5 @@
 from abc import abstractmethod
+from typing import Optional
 
 from buffett.adapter.numpy import NAN
 from buffett.adapter.pandas import pd, DataFrame
@@ -30,7 +31,7 @@ from buffett.common.constants.col.target import (
 from buffett.common.constants.meta.analysis import ANALY_EVENT_META
 from buffett.common.interface import ProducerConsumer
 from buffett.common.logger import LoggerBuilder, Logger
-from buffett.common.pendulum import DateSpan
+from buffett.common.pendulum import DateSpan, convert_datetime
 from buffett.common.tools import dataframe_is_valid, dataframe_not_valid
 from buffett.common.wrapper import Wrapper
 from buffett.download.handler.concept import DcConceptListHandler
@@ -98,19 +99,22 @@ class Analyst:
         )
         prod_cons.run()
 
-    def _calculate_1target(self, row: tuple) -> tuple[Para, DataFrame]:
+    def _calculate_1target(self, row: tuple) -> Optional[tuple[Para, DataFrame]]:
         #
         para = Para.from_tuple(row)
         self._logger.info_calculate_start(para)
         # select & calculate
         result = self._calculate(para)
         # filter & save
+        if dataframe_not_valid(result):
+            return None
         result = result[para.span.is_insides(result[DATETIME])]
         return para, result
 
+
     @staticmethod
     @abstractmethod
-    def _calculate(para: Para) -> DataFrame:
+    def _calculate(para: Para) -> Optional[DataFrame]:
         """
         执行计算逻辑
 
@@ -119,7 +123,7 @@ class Analyst:
         """
         pass
 
-    def _save_1target(self, obj: [Para, DataFrame]):
+    def _save_1target(self, obj: Optional[tuple[Para, DataFrame]]):
         """
         将数据存储到数据库
 
@@ -132,7 +136,7 @@ class Analyst:
         if dataframe_is_valid(data):
             table_name = TableNameTool.get_by_code(para=para)
             self._operator.create_table(name=table_name, meta=self._meta)
-            self._operator.insert_data(name=table_name, df=data)
+            self._operator.insert_data_safe(name=table_name, df=data, meta=self._meta)
             self._recorder.save(para=para)
         self._logger.info_calculate_end(para)
 
@@ -187,8 +191,8 @@ class Analyst:
         # merge
         todo_records = pd.concat([stock_list, index_list, concept_list, industry_list])
         todo_records[FREQ] = FreqType.DAY
-        todo_records[START_DATE] = span.start
-        todo_records[END_DATE] = span.end
+        todo_records[START_DATE] = convert_datetime(span.start)
+        todo_records[END_DATE] = convert_datetime(span.end)
         todo_records[ANALYSIS] = self._analyst
         return todo_records
 
@@ -206,7 +210,9 @@ class Analyst:
             todo_records[DORCD_END] = NAN
             return todo_records
         todo_records = pd.subtract(todo_records, done_records)
-        done_records.rename(columns={START_DATE: DORCD_START, END_DATE: DORCD_END})
+        done_records = done_records.rename(
+            columns={START_DATE: DORCD_START, END_DATE: DORCD_END}
+        )
         comb_list = pd.merge(
             todo_records,
             done_records,

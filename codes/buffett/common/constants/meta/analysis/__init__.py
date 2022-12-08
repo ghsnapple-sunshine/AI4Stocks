@@ -27,7 +27,7 @@ from buffett.common.constants.col.analysis import (
     DF20_PCT95,
     DF20_PCT90,
 )
-from buffett.common.constants.col.target import CODE
+from buffett.common.constants.col.target import CODE, NAME
 from buffett.download.mysql.types import ColType, AddReqType
 
 """
@@ -71,6 +71,7 @@ Metadata for ANALY_RCD
 ANALY_RCD_META = create_meta(
     meta_list=[
         [CODE, ColType.CODE, AddReqType.KEY],
+        [NAME, ColType.INDEX_NAME, AddReqType.NONE],  # 由于INDEX_NAME最长，可以保证兼容性
         [FREQ, ColType.ENUM_BOOL, AddReqType.KEY],
         [FUQUAN, ColType.ENUM_BOOL, AddReqType.KEY],
         [SOURCE, ColType.ENUM_BOOL, AddReqType.KEY],

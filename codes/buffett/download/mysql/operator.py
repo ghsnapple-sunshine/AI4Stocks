@@ -1,6 +1,7 @@
 from typing import Optional, Union
 
 from buffett.adapter.pandas import DataFrame
+from buffett.adapter.pymysql import IntegrityError
 from buffett.common.constants.col.meta import COLUMN, TYPE, ADDREQ, KEY, PRI
 from buffett.common.constants.col.my import TABLE_NAME
 from buffett.common.constants.col.mysql import FIELD
@@ -78,6 +79,33 @@ class Operator(Connector):
             sql, vals = InsertSqlParser.insert(name=name, df=df, ignore=True)
         self.execute_many(sql, vals, commit=True)
 
+    def insert_data_safe(
+        self,
+        name: str,
+        df: DataFrame,
+        meta: Optional[DataFrame] = None,
+        update: bool = False,
+    ) -> None:
+        """
+        先使用insert_data，如果出现keyError，则改用try_insert_data
+
+        :param name:                表名
+        :param df:                  数据
+        :param meta:                表元数据
+        :param update:              True: 插入失败则更新; False: 插入失败则跳过
+        :return:
+        """
+        try:
+            self.insert_data(name=name, df=df)
+        except IntegrityError as e:
+            if e.args[0] == 1062:
+                from buffett.common.logger import Logger
+
+                Logger.warning(e)
+                self.try_insert_data(name=name, df=df, meta=meta, update=update)
+            else:
+                raise e
+
     def drop_table(self, name: str):
         """
         在Mysql中删除表
@@ -122,7 +150,7 @@ class Operator(Connector):
 
         sql = SelectSqlParser.select(
             name=name,
-            cols=[ReqCol.ROW_NUM],  # Don't worry, it works.
+            cols=[ReqCol.row_num()],
             meta=meta,
             span=span,
             groupby=groupby,
@@ -153,7 +181,7 @@ class Operator(Connector):
         groupby = []
         sql = SelectSqlParser.select(
             name=name,
-            cols=[ReqCol.ALL],  # Don't worry, it works.
+            cols=[ReqCol.all()],
             meta=meta,
             span=span,
             groupby=groupby,

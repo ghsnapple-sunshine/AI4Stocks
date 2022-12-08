@@ -35,7 +35,3 @@ class ReqCol:
 
     def simple_format(self) -> str:
         return self._field if self._field == ALL else f"`{self._field}`"
-
-
-ReqCol.ROW_NUM = ReqCol.row_num()
-ReqCol.ALL = ReqCol.all()

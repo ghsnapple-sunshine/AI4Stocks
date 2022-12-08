@@ -6,19 +6,19 @@ from buffett.task.download import TaskScheduler
 
 
 def analysis():
-    select_op = Operator(RoleType.DbStock)
-    insert_op = Operator(RoleType.DbAnaly)
+    operator = Operator(RoleType.DbAnaly)
+    datasource_op = Operator(RoleType.DbStock)
     now = DateTime.now()
     task_cls = [
         TargetPatternRecognizeTask,
     ]
     tasks = [
         task_cls[i](
-            select_op=select_op, insert_op=insert_op, start_time=now.add(seconds=i)
+            operator=operator, datasource_op=datasource_op, start_time=now.add(seconds=i)
         )
         for i in range(0, len(task_cls))
     ]
-    sch = TaskScheduler(operator=insert_op, tasks=tasks)
+    sch = TaskScheduler(operator=operator, datasource_op=datasource_op, tasks=tasks)
     sch.run()
 
 

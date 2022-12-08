@@ -1,5 +1,5 @@
 from abc import abstractmethod
-from typing import final, Optional
+from typing import Optional
 
 from buffett.adapter.akshare import ak
 from buffett.adapter.baostock import bs

@@ -1,5 +1,6 @@
-from buffett.adapter.pendulum import DateTime
+from buffett.adapter.pendulum import DateTime, Date
 from buffett.analysis.study.pattern import PatternAnalyst
+from buffett.common.pendulum import DateSpan
 from buffett.common.wrapper import Wrapper
 from buffett.download.mysql import Operator
 from buffett.task.base import Task
@@ -11,12 +12,13 @@ class TargetPatternRecognizeTask(Task):
     ):
         super().__init__(
             wrapper=Wrapper(
-                PatternAnalyst(datasource_op=select_op, operator=insert_op).calculate
+                PatternAnalyst(operator=operator, datasource_op=datasource_op).calculate
             ),
+            args=(DateSpan(start=Date(2000, 1, 1), end=Date(2021, 12, 31)),),
             start_time=start_time,
         )
-        self._select_op = select_op
-        self._insert_op = insert_op
+        self._operator = operator
+        self._datasource_op = datasource_op
 
     def get_subsequent_task(self, success: bool):
         return None
