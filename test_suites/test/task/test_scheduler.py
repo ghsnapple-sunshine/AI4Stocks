@@ -49,7 +49,7 @@ class InnerD:
 class OneOffTaskA(Task):
     wrapper = Wrapper(InnerA().run)
 
-    def __init__(self, operator: Operator = None, start_time: DateTime = None):
+    def __init__(self, start_time: DateTime = None, **kwargs):
         super(OneOffTaskA, self).__init__(wrapper=self.wrapper, start_time=start_time)
 
     def get_subsequent_task(self, success: bool):

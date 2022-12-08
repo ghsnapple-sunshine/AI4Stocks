@@ -39,7 +39,9 @@ from buffett.common.constants.col import (
     JDc,
     ZXGGRc,
     START_DATE,
-    END_DATE, PRECLOSE, ST,
+    END_DATE,
+    PRECLOSE,
+    ST,
 )
 from buffett.common.constants.col.target import (
     INDEX_CODE,

@@ -1,0 +1,1 @@
+from buffett.task.analysis.pattern import TargetPatternRecognizeTask

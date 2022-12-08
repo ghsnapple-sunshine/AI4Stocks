@@ -6,8 +6,8 @@ from requests.adapters import HTTPAdapter as req_HTTPAdapter
 
 class requests:
     _s = req_Session()
-    _s.mount('http://', req_HTTPAdapter(max_retries=3))
-    _s.mount('https://', req_HTTPAdapter(max_retries=3))
+    _s.mount("http://", req_HTTPAdapter(max_retries=3))
+    _s.mount("https://", req_HTTPAdapter(max_retries=3))
 
     @classmethod
     def get(cls, url: str, params: Optional[dict] = None, verify: bool = True):

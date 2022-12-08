@@ -5,7 +5,7 @@ OPEN = "open"
 CLOSE = "close"
 HIGH = "high"
 LOW = "low"
-PRECLOSE = 'preclose'
+PRECLOSE = "preclose"
 #
 FREQ = "freq"
 FUQUAN = "fuquan"

@@ -26,13 +26,38 @@ from buffett.task.base.task import Task
 
 
 class TaskScheduler(Singleton):
-    def __new__(cls, operator: Operator, tasks: Optional[list[Task]] = None):
-        return super(TaskScheduler, cls).__new__(cls, operator, tasks)
+    def __new__(
+        cls,
+        operator: Operator,
+        datasource_op: Optional[Operator] = None,
+        tasks: Optional[list[Task]] = None,
+    ):
+        """
+        TaskScheduler初始化（兼容读写分离模式）
 
-    def __init__(self, operator: Operator, tasks: Optional[list[Task]] = None):
+        :param operator:            Operator
+        :param datasource_op:       数据源Operator
+        :param tasks:               初始化任务清单
+        """
+        return super(TaskScheduler, cls).__new__(cls, operator, datasource_op, tasks)
+
+    def __init__(
+        self,
+        operator: Operator,
+        datasource_op: Optional[Operator] = None,
+        tasks: Optional[list[Task]] = None,
+    ):
+        """
+        TaskScheduler初始化（兼容读写分离模式）
+
+        :param operator:            Operator
+        :param datasource_op:       数据源Operator
+        :param tasks:               初始化任务清单
+        """
         super(TaskScheduler, self).__init__()
         self._operator = operator
-        operator.create_table(name=TASK_RCD, meta=TASK_META)
+        self._datasource_op = operator if datasource_op is None else datasource_op
+        self._operator.create_table(name=TASK_RCD, meta=TASK_META)
         if list_is_valid(tasks):
             self._add_tasks(tasks)
 
@@ -47,7 +72,9 @@ class TaskScheduler(Singleton):
         if task_cls is None:
             return
         task = task_cls(
-            operator=self._operator, start_time=convert_datetime(series[START_TIME])
+            operator=self._operator,
+            datasource_op=self._datasource_op,
+            start_time=convert_datetime(series[START_TIME]),
         )
         task.task_id = series[TASK_ID]
         return task

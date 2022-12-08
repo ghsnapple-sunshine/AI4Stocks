@@ -1,3 +1,5 @@
+from typing import Optional
+
 from buffett.common.pendulum import DateTime
 from buffett.common.wrapper import Wrapper
 from buffett.download.handler.list import SseStockListHandler, BsStockListHandler
@@ -6,7 +8,9 @@ from buffett.task.base import Task
 
 
 class SseStockListTask(Task):
-    def __init__(self, operator: Operator, start_time: DateTime = None):
+    def __init__(
+        self, operator: Operator, start_time: Optional[DateTime] = None, **kwargs
+    ):
         super().__init__(
             wrapper=Wrapper(SseStockListHandler(operator=operator).obtain_data),
             start_time=start_time,
@@ -25,7 +29,9 @@ class SseStockListTask(Task):
 
 
 class BsStockListTask(Task):
-    def __init__(self, operator: Operator, start_time: DateTime = None):
+    def __init__(
+        self, operator: Operator, start_time: Optional[DateTime] = None, **kwargs
+    ):
         super().__init__(
             wrapper=Wrapper(BsStockListHandler(operator=operator).obtain_data),
             start_time=start_time,

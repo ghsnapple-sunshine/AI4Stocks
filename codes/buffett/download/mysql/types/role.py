@@ -6,3 +6,4 @@ class RoleType(Enum):
     DbTest = 2
     DbInfo = 3
     ROOT = 4
+    DbAnaly = 5

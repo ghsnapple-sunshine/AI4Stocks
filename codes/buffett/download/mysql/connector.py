@@ -29,6 +29,11 @@ class Connector:
             self._user = "root"
             self._db = "stocks"
             self._pwd = input("请输入root@localhost的密码")
+        elif role == RoleType.DbAnaly:
+            self._port = 3306
+            self._user = "analyst"
+            self._db = "analysis"
+            self._pwd = "Changeme_1234"
 
         self._conn = None
         self._cursor = None

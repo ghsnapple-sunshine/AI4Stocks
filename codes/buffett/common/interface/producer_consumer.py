@@ -87,7 +87,7 @@ class Producer(Thread):
 
     def _release_consumer(self):
         # 如果有需要，恢复阻塞中的消费者
-        if not self._runtime.event_not_empty.isSet():
+        if not self._runtime.event_not_empty.is_set():
             self._runtime.event_not_empty.set()
             self._logger.debug_release()
 
@@ -148,7 +148,7 @@ class Consumer(Thread):
 
     def _release_producer(self):
         # 如果有需要，恢复阻塞中的生产者
-        if not self._runtime.event_not_full.isSet():
+        if not self._runtime.event_not_full.is_set():
             self._logger.debug_release()
             self._runtime.event_not_full.set()  # 有空
 
@@ -192,8 +192,8 @@ class Runtime:
     def __init__(self):
         self.err = None
         self.err_msg = None
-        self.event_not_empty = Event()  # isSet() 表示全满，否则表示未满
-        self.event_not_full = Event()  # isSet() 表示全空，否则表示未空
+        self.event_not_empty = Event()  # is_set() 表示全满，否则表示未满
+        self.event_not_full = Event()  # is_set() 表示全空，否则表示未空
         self.event_not_full.set()  # 未满
         self.event_not_empty.clear()  # 全空
 

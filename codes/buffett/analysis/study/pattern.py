@@ -12,10 +12,10 @@ from buffett.download.mysql import Operator
 
 
 class PatternAnalyst(Analyst):
-    def __init__(self, select_op: Operator, insert_op: Operator):
+    def __init__(self, datasource_op: Operator, operator: Operator):
         super(PatternAnalyst, self).__init__(
-            select_op=select_op,
-            insert_op=insert_op,
+            datasource_op=datasource_op,
+            operator=operator,
             analyst=AnalystType.PATTERN,
             use_economy=True,
             offset=5,
@@ -32,7 +32,9 @@ class PatternAnalyst(Analyst):
 
         start = self._calendarman.query(para.span.start, offset=self._offset)
         select_para = para.clone().with_start(start)
-        data = self._dataman.select_data(para=select_para, use_economy=self._use_economy)
+        data = self._dataman.select_data(
+            para=select_para, use_economy=self._use_economy
+        )
 
         pattern = PatternRecognize.all(inputs=data)
         pattern = self._convert_pattern(pattern)

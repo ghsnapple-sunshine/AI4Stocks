@@ -369,5 +369,5 @@ class Para:
             self._comb.freq,
             self._target,
             self._comb.fuquan,
-            self._span
+            self._span,
         )

@@ -65,5 +65,5 @@ class Para(DPara):
             target=None if self._target is None else self._target.clone(),
             comb=None if self._comb is None else self._comb.clone(),
             span=None if self._span is None else self._span.clone(),
-            analysis=self._analysis
+            analysis=self._analysis,
         )

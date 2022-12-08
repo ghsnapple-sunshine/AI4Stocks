@@ -58,4 +58,4 @@ class Target:
         return "{0} {1}".format(
             "" if self._code is None else self._code,
             "" if self._name is None else self._name,
-        ).strip(' ')
+        ).strip(" ")

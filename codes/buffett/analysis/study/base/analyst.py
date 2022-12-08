@@ -1,5 +1,4 @@
 from abc import abstractmethod
-from ctypes import Union
 
 from buffett.adapter.numpy import NAN
 from buffett.adapter.pandas import pd, DataFrame
@@ -14,6 +13,7 @@ from buffett.common.constants.col import (
     START_DATE,
     END_DATE,
     FUQUAN,
+    DATETIME,
 )
 from buffett.common.constants.col.analysis import ANALYSIS
 from buffett.common.constants.col.my import DORCD_START, DORCD_END
@@ -45,8 +45,8 @@ from buffett.download.types import FreqType, SourceType, FuquanType
 class Analyst:
     def __init__(
         self,
-        select_op: Operator,
-        insert_op: Operator,
+        datasource_op: Operator,
+        operator: Operator,
         analyst: AnalystType,
         use_economy: bool,
         offset: int,
@@ -54,12 +54,12 @@ class Analyst:
         use_stock: bool = True,
         use_index: bool = True,
         use_concept: bool = True,
-        use_industry: bool = True
+        use_industry: bool = True,
     ):
         #
-        self._select_op = select_op
-        self._insert_op = insert_op
-        self._analysis = analyst
+        self._datasource_op = datasource_op
+        self._operator = operator
+        self._analyst = analyst
         self._use_economy = use_economy
         self._offset = offset
         self._meta = meta
@@ -69,12 +69,12 @@ class Analyst:
         self._use_industry = use_industry
         #
         if not (use_stock or use_index or use_concept or use_industry):
-            raise ValueError('Should use at least one type of data.')
+            raise ValueError("Should use at least one type of data.")
         #
-        self._logger = LoggerBuilder.build(AnalysisLogger)()
-        self._dataman = DataManager(operator=select_op)
-        self._calendarman = CalendarManager(operator=select_op)
-        self._recorder = AnalysisRecorder(operator=insert_op)
+        self._logger = LoggerBuilder.build(AnalysisLogger)(analyst)
+        self._dataman = DataManager(operator=datasource_op)
+        self._calendarman = CalendarManager(operator=datasource_op)
+        self._recorder = AnalysisRecorder(operator=operator)
 
     def calculate(self, span: DateSpan) -> None:
         """
@@ -103,9 +103,9 @@ class Analyst:
         para = Para.from_tuple(row)
         self._logger.info_calculate_start(para)
         # select & calculate
-        result = self._calculate(data)
+        result = self._calculate(para)
         # filter & save
-        result = result[result.index.values]
+        result = result[para.span.is_insides(result[DATETIME])]
         return para, result
 
     @staticmethod
@@ -114,7 +114,7 @@ class Analyst:
         """
         执行计算逻辑
 
-        :param data:
+        :param para:
         :return:
         """
         pass
@@ -131,8 +131,8 @@ class Analyst:
         para, data = obj
         if dataframe_is_valid(data):
             table_name = TableNameTool.get_by_code(para=para)
-            self._insert_op.create_table(name=table_name, meta=self._meta)
-            self._insert_op.insert_data(name=table_name, df=data)
+            self._operator.create_table(name=table_name, meta=self._meta)
+            self._operator.insert_data(name=table_name, df=data)
             self._recorder.save(para=para)
         self._logger.info_calculate_end(para)
 
@@ -143,7 +143,7 @@ class Analyst:
         :param span
         :return:
         """
-        operator = self._select_op
+        operator = self._datasource_op
         # stock_list
         stock_list = None
         if self._use_stock:
@@ -189,7 +189,7 @@ class Analyst:
         todo_records[FREQ] = FreqType.DAY
         todo_records[START_DATE] = span.start
         todo_records[END_DATE] = span.end
-        todo_records[ANALYSIS] = self._analysis
+        todo_records[ANALYSIS] = self._analyst
         return todo_records
 
     @staticmethod
@@ -216,12 +216,12 @@ class Analyst:
         return comb_list
 
 
-class AnalysisLogger:
-    def __init__(self, analysis: AnalystType):
-        self._analysis = str(analysis)
+class AnalysisLogger(Logger):
+    def __init__(self, analyst: AnalystType):
+        self._analyst = str(analyst)
 
     def info_calculate_start(self, para: Para):
-        Logger.info(f"Start to Calculate {self._analysis} for {para}")
+        Logger.info(f"Start to Calculate {self._analyst} for {para}")
 
     def info_calculate_end(self, para: Para):
-        Logger.info(f"Successfully Calculate {self._analysis} for {para}")
+        Logger.info(f"Successfully Calculate {self._analyst} for {para}")

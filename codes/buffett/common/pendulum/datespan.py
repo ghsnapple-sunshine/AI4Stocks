@@ -32,6 +32,7 @@ class DateSpan:
 
         self._start = convert_date(start)
         self._end = convert_date(end)
+        self._is_insides = np.vectorize(self.is_inside)
 
         if is_start_date and is_end_date and self._start >= self._end:
             raise ValueError(
@@ -82,7 +83,14 @@ class DateSpan:
         condition2 = True if self._end is None else dt < self._end
         return condition1 and condition2
 
-    is_insides = np.vectorize(is_inside)
+    def is_insides(self, dt: Date):
+        """
+        判断日期是否在span内（向量化方法）
+
+        :param dt:            日期
+        :return:              是否在span内
+        """
+        return self._is_insides(dt)
 
     def is_cross(self, other: DateSpan) -> bool:
         """

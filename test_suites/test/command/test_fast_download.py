@@ -7,7 +7,7 @@ from buffett.task.download import (
     IndustryListTask,
     IndexListTask,
     MoneySupplyTask,
-    StockDividendTask
+    StockDividendTask,
 )
 from test import Tester
 from test.command.tools import create_task_no_subsequent

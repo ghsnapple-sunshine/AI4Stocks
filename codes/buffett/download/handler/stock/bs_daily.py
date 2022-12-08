@@ -10,7 +10,8 @@ from buffett.common.constants.col import (
     CJL,
     CJE,
     ZDF,
-    HSL, PRECLOSE,
+    HSL,
+    PRECLOSE,
 )
 from buffett.common.constants.col.target import CODE, NAME
 from buffett.common.constants.meta.handler import BS_DAILY_META

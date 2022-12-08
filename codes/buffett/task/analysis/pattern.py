@@ -6,10 +6,12 @@ from buffett.task.base import Task
 
 
 class TargetPatternRecognizeTask(Task):
-    def __init__(self, select_op: Operator, insert_op: Operator, start_time: DateTime):
+    def __init__(
+        self, operator: Operator, datasource_op: Operator, start_time: DateTime
+    ):
         super().__init__(
             wrapper=Wrapper(
-                PatternAnalyst(select_op=select_op, insert_op=insert_op).calculate
+                PatternAnalyst(datasource_op=select_op, operator=insert_op).calculate
             ),
             start_time=start_time,
         )

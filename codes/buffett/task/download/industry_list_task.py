@@ -1,3 +1,5 @@
+from typing import Optional
+
 from buffett.common.pendulum import DateTime
 from buffett.common.wrapper import Wrapper
 from buffett.download.handler.industry import DcIndustryListHandler
@@ -6,7 +8,9 @@ from buffett.task.base import Task
 
 
 class IndustryListTask(Task):
-    def __init__(self, operator: Operator, start_time: DateTime = None):
+    def __init__(
+        self, operator: Operator, start_time: Optional[DateTime] = None, **kwargs
+    ):
         super().__init__(
             wrapper=Wrapper(DcIndustryListHandler(operator=operator).obtain_data),
             start_time=start_time,
