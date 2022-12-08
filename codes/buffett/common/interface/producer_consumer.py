@@ -35,6 +35,7 @@ class Producer(Thread):
             self._args_map = args_map
             self._run = self._run_with_para
         self._logger = LoggerBuilder.build(ProducerConsumerLogger)(PRODUCER)
+        self._logger.debug_tasknum(task_num)
 
     def _run_with_para(self, args):
         return self._wrapper.run(args)
@@ -83,7 +84,7 @@ class Producer(Thread):
         # 生产
         data = self._run(args)
         self._cache.put_nowait(data)
-        self._logger.debug_execute(data)
+        # self._logger.debug_execute(data)
 
     def _release_consumer(self):
         # 如果有需要，恢复阻塞中的消费者
@@ -97,13 +98,20 @@ class Consumer(Thread):
     消费者
     """
 
-    def __init__(self, queue: Queue, runtime: Runtime, wrapper: Wrapper, task_num: int):
+    def __init__(
+        self,
+        queue: Queue,
+        runtime: Runtime,
+        wrapper: Wrapper,
+        task_num: int,
+    ):
         super(Consumer, self).__init__()
         self._queue = queue
         self._runtime = runtime
         self._wrapper = wrapper
         self._task_num = task_num
         self._logger = LoggerBuilder.build(ProducerConsumerLogger)(CONSUMER)
+        self._logger.debug_tasknum(task_num)
 
     def run(self):
         """
@@ -116,6 +124,14 @@ class Consumer(Thread):
         self._logger.debug_start()
         try:
             for t in range(0, self._task_num):
+                """
+                2022/12/8 修复：
+                    当Producer运行过程中出现异常，且此时Consumer正常，因此Producer无需release Consumer。
+                    而Consumer当检测到队列为空时，开始等待，导致线程无法退出。
+                """
+                if self._runtime.err_msg is not None:
+                    self._logger.debug_end()
+                    return
                 self._wait_myself()
                 self._execute()
                 self._release_producer()
@@ -134,20 +150,32 @@ class Consumer(Thread):
                 self._logger.debug_end(False)
 
     def _wait_myself(self):
-        # 如果队列为空，则阻塞自己；等待恢复。
+        """
+        如果队列为空，则阻塞自己；等待恢复。
+
+        :return:
+        """
         if self._queue.empty():
             self._logger.debug_wait()
             self._runtime.event_not_empty.clear()
             self._runtime.event_not_empty.wait()
 
     def _execute(self):
-        # 消费
+        """
+        消费
+
+        :return:
+        """
         data = self._queue.get_nowait()
         self._wrapper.run(data)
-        self._logger.debug_execute(data)
+        # self._logger.debug_execute(data)
 
     def _release_producer(self):
-        # 如果有需要，恢复阻塞中的生产者
+        """
+        如果有需要，恢复阻塞中的生产者
+
+        :return:
+        """
         if not self._runtime.event_not_full.is_set():
             self._logger.debug_release()
             self._runtime.event_not_full.set()  # 有空
@@ -207,6 +235,9 @@ class ProducerConsumerLogger(Logger):
             self._self = CONSUMER
             self._other = PRODUCER
 
+    def debug_tasknum(self, task_num: int):
+        Logger.debug(f"{self._self} task num is {task_num}.")
+
     def debug_start(self):
         Logger.debug(f"{self._self} start.")
 
@@ -218,6 +249,3 @@ class ProducerConsumerLogger(Logger):
 
     def debug_release(self):
         Logger.debug(f"{self._self} release {self._other}.")
-
-    def debug_execute(self, obj):
-        Logger.debug(f"{self._self} {self._self.lower()[:-1]} {obj}.")
