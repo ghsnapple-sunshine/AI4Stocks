@@ -4,11 +4,12 @@ from buffett.adapter.pandas import DataFrame, pd
 from buffett.analysis import Para
 from buffett.common.constants.col import FREQ, FUQUAN, SOURCE, DATE, DATETIME
 from buffett.common.constants.col.target import CODE
+from buffett.common.constants.meta.handler import META_DICT
 from buffett.common.tools import dataframe_not_valid
 from buffett.download.handler.tools import TableNameTool
 from buffett.download.mysql import Operator
 from buffett.download.recorder import DownloadRecorder
-from buffett.download.types import SourceType
+from buffett.download.types import SourceType, FreqType
 
 SOURCE_DICT: dict[SourceType, tuple[SourceType, SourceType]] = {
     # stock
@@ -136,14 +137,25 @@ class DataManager:
                                 else:       source, freq, fuquan, start, end
         :return:
         """
+        DT = DATE if para.comb.freq == FreqType.DAY else DATETIME
         if by_code:
             table_name = TableNameTool.get_by_code(para=para)
-            return self._operator.select_data(name=table_name, span=para.span)
+            data = self._operator.select_data(
+                name=table_name, span=para.span, meta=META_DICT[para.comb]
+            )
+            sort_by = [DT]
         else:
             table_names = TableNameTool.gets_by_span(para=para)
-            return pd.concat_safe(
+            data = pd.concat_safe(
                 [
-                    self._operator.select_data(name=x, span=para.span)
+                    self._operator.select_data(
+                        name=x, span=para.span, meta=META_DICT[para.comb]
+                    )
                     for x in table_names
                 ]
             )
+            sort_by = [DT, CODE]
+        if dataframe_not_valid(data):
+            return
+        data = data.sort_values(by=sort_by, ascending=True, ignore_index=True)
+        return data
