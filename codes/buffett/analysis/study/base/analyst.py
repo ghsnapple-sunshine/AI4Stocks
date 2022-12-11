@@ -49,8 +49,6 @@ class Analyst:
         datasource_op: Operator,
         operator: Operator,
         analyst: AnalystType,
-        use_economy: bool,
-        offset: int,
         meta: DataFrame = ANALY_EVENT_META,
         use_stock: bool = True,
         use_index: bool = True,
@@ -61,8 +59,6 @@ class Analyst:
         self._datasource_op = datasource_op
         self._operator = operator
         self._analyst = analyst
-        self._use_economy = use_economy
-        self._offset = offset
         self._meta = meta
         self._use_stock = use_stock
         self._use_index = use_index

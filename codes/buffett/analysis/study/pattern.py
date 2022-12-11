@@ -20,8 +20,6 @@ class PatternAnalyst(Analyst):
             datasource_op=datasource_op,
             operator=operator,
             analyst=AnalystType.PATTERN,
-            use_economy=True,
-            offset=5,
             meta=ANALY_EVENT_META,
         )
 
@@ -33,11 +31,9 @@ class PatternAnalyst(Analyst):
         :return:
         """
 
-        start = self._calendarman.query(para.span.start, offset=self._offset)
+        start = self._calendarman.query(para.span.start, offset=-5)
         select_para = para.clone().with_start(start)
-        data = self._dataman.select_data(
-            para=select_para, use_economy=self._use_economy
-        )
+        data = self._dataman.select_data(para=select_para, use_economy=True)
         if dataframe_not_valid(data):
             return
         pattern = PatternRecognize.all(inputs=data)

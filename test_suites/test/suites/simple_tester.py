@@ -66,7 +66,7 @@ class SimpleTester(TestCase):
     def dataframe_almost_equals(
         df1: DataFrame,
         df2: DataFrame,
-        join_columns: Optional[list[str]],
+        join_columns: Optional[list[str]] = None,
         on_index: bool = False,
         rel_tol: float = 1e-5,
     ):
