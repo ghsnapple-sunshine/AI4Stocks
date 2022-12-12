@@ -1,6 +1,6 @@
 cdef class Node:
     cdef public:
-        float val
+        double val
         int size
         Node left, right
 

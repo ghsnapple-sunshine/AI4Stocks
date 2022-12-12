@@ -2,7 +2,7 @@ from buffett.adapter.numpy import np, ndarray
 from buffett.adapter.pandas import DataFrame
 from buffett.adapter.pendulum import DateTime
 from test import SimpleTester
-from buffett.cython.zdf import stat_past_with_period
+from zdf_stat import stat_past_with_period
 
 
 class TestStatisticsAnalyst(SimpleTester):

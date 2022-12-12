@@ -3,18 +3,12 @@
 /* BEGIN: Cython Metadata
 {
     "distutils": {
-        "include_dirs": [
-            "D:\\ProgramFiles\\anaconda3\\lib\\site-packages\\numpy\\core\\include"
-        ],
-        "name": "zdf_stat",
+        "name": "node",
         "sources": [
-            "node.pyx",
-            "tree.pyx",
-            "quantile.pyx",
-            "zdf_stat.pyx"
+            "node.pyx"
         ]
     },
-    "module_name": "zdf_stat"
+    "module_name": "node"
 }
 END: Cython Metadata */
 
@@ -969,7 +963,7 @@ static const char *__pyx_filename;
 
 static const char *__pyx_f[] = {
   "node.pyx",
-  ".\\node.pxd",
+  "node.pxd",
   "stringsource",
 };
 
@@ -979,12 +973,12 @@ struct __pyx_obj_4node_Node;
 /* "node.pxd":1
  * cdef class Node:             # <<<<<<<<<<<<<<
  *     cdef public:
- *         float val
+ *         double val
  */
 struct __pyx_obj_4node_Node {
   PyObject_HEAD
   struct __pyx_vtabstruct_4node_Node *__pyx_vtab;
-  float val;
+  double val;
   int size;
   struct __pyx_obj_4node_Node *left;
   struct __pyx_obj_4node_Node *right;
@@ -1524,7 +1518,7 @@ static int __pyx_pw_4node_4Node_1__init__(PyObject *__pyx_v_self, PyObject *__py
 static int __pyx_pf_4node_4Node___init__(struct __pyx_obj_4node_Node *__pyx_v_self, PyObject *__pyx_v_val) {
   int __pyx_r;
   __Pyx_RefNannyDeclarations
-  float __pyx_t_1;
+  double __pyx_t_1;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
@@ -1537,7 +1531,7 @@ static int __pyx_pf_4node_4Node___init__(struct __pyx_obj_4node_Node *__pyx_v_se
  *         self.size = 1
  *         self.left = None
  */
-  __pyx_t_1 = __pyx_PyFloat_AsFloat(__pyx_v_val); if (unlikely((__pyx_t_1 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 3, __pyx_L1_error)
+  __pyx_t_1 = __pyx_PyFloat_AsDouble(__pyx_v_val); if (unlikely((__pyx_t_1 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 3, __pyx_L1_error)
   __pyx_v_self->val = __pyx_t_1;
 
   /* "node.pyx":4
@@ -1684,7 +1678,7 @@ static int __pyx_f_4node_4Node_right_size(struct __pyx_obj_4node_Node *__pyx_v_s
 /* "node.pxd":3
  * cdef class Node:
  *     cdef public:
- *         float val             # <<<<<<<<<<<<<<
+ *         double val             # <<<<<<<<<<<<<<
  *         int size
  *         Node left, right
  */
@@ -1744,12 +1738,12 @@ static int __pyx_pw_4node_4Node_3val_3__set__(PyObject *__pyx_v_self, PyObject *
 static int __pyx_pf_4node_4Node_3val_2__set__(struct __pyx_obj_4node_Node *__pyx_v_self, PyObject *__pyx_v_value) {
   int __pyx_r;
   __Pyx_RefNannyDeclarations
-  float __pyx_t_1;
+  double __pyx_t_1;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__set__", 0);
-  __pyx_t_1 = __pyx_PyFloat_AsFloat(__pyx_v_value); if (unlikely((__pyx_t_1 == (float)-1) && PyErr_Occurred())) __PYX_ERR(1, 3, __pyx_L1_error)
+  __pyx_t_1 = __pyx_PyFloat_AsDouble(__pyx_v_value); if (unlikely((__pyx_t_1 == (double)-1) && PyErr_Occurred())) __PYX_ERR(1, 3, __pyx_L1_error)
   __pyx_v_self->val = __pyx_t_1;
 
   /* function exit code */
@@ -1765,7 +1759,7 @@ static int __pyx_pf_4node_4Node_3val_2__set__(struct __pyx_obj_4node_Node *__pyx
 
 /* "node.pxd":4
  *     cdef public:
- *         float val
+ *         double val
  *         int size             # <<<<<<<<<<<<<<
  *         Node left, right
  * 
@@ -1846,7 +1840,7 @@ static int __pyx_pf_4node_4Node_4size_2__set__(struct __pyx_obj_4node_Node *__py
 }
 
 /* "node.pxd":5
- *         float val
+ *         double val
  *         int size
  *         Node left, right             # <<<<<<<<<<<<<<
  * 
@@ -2652,7 +2646,7 @@ static PyObject *__pyx_f_4node___pyx_unpickle_Node__set_state(struct __pyx_obj_4
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   int __pyx_t_2;
-  float __pyx_t_3;
+  double __pyx_t_3;
   int __pyx_t_4;
   Py_ssize_t __pyx_t_5;
   int __pyx_t_6;
@@ -2711,7 +2705,7 @@ static PyObject *__pyx_f_4node___pyx_unpickle_Node__set_state(struct __pyx_obj_4
   }
   __pyx_t_1 = __Pyx_GetItemInt_Tuple(__pyx_v___pyx_state, 3, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(2, 12, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_3 = __pyx_PyFloat_AsFloat(__pyx_t_1); if (unlikely((__pyx_t_3 == (float)-1) && PyErr_Occurred())) __PYX_ERR(2, 12, __pyx_L1_error)
+  __pyx_t_3 = __pyx_PyFloat_AsDouble(__pyx_t_1); if (unlikely((__pyx_t_3 == (double)-1) && PyErr_Occurred())) __PYX_ERR(2, 12, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_v___pyx_result->val = __pyx_t_3;
 

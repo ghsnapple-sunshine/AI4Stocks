@@ -19,5 +19,5 @@ ext = [
 setup(ext_modules=cythonize(ext, language_level=3))
 
 
-# cd D:\twinkle-pc-files\documents\AI4Stocks\codes\buffett\cython\zdf_stat
+# cd D:\twinkle-pc-files\documents\AI4Stocks\codes\buffett\cython\zdf
 # python setup.py build_ext --inplace

@@ -3,18 +3,13 @@
 /* BEGIN: Cython Metadata
 {
     "distutils": {
-        "include_dirs": [
-            "D:\\ProgramFiles\\anaconda3\\lib\\site-packages\\numpy\\core\\include"
-        ],
-        "name": "zdf_stat",
+        "depends": [],
+        "name": "quantile",
         "sources": [
-            "node.pyx",
-            "tree.pyx",
-            "quantile.pyx",
-            "zdf_stat.pyx"
+            "quantile.pyx"
         ]
     },
-    "module_name": "zdf_stat"
+    "module_name": "quantile"
 }
 END: Cython Metadata */
 
@@ -983,12 +978,12 @@ struct __pyx_obj_8quantile_Quantile;
 /* "node.pxd":1
  * cdef class Node:             # <<<<<<<<<<<<<<
  *     cdef public:
- *         float val
+ *         double val
  */
 struct __pyx_obj_4node_Node {
   PyObject_HEAD
   struct __pyx_vtabstruct_4node_Node *__pyx_vtab;
-  float val;
+  double val;
   int size;
   struct __pyx_obj_4node_Node *left;
   struct __pyx_obj_4node_Node *right;
@@ -1014,7 +1009,7 @@ struct __pyx_obj_4tree_Tree {
  * 
  * cdef class Quantile:             # <<<<<<<<<<<<<<
  *     cdef int _stat_period, _d0, _d1
- *     cdef float _w0, _w1, _w
+ *     cdef double _w0, _w1, _w
  */
 struct __pyx_obj_8quantile_Quantile {
   PyObject_HEAD
@@ -1022,9 +1017,9 @@ struct __pyx_obj_8quantile_Quantile {
   int _stat_period;
   int _d0;
   int _d1;
-  float _w0;
-  float _w1;
-  float _w;
+  double _w0;
+  double _w1;
+  double _w;
 };
 
 
@@ -1032,7 +1027,7 @@ struct __pyx_obj_8quantile_Quantile {
 /* "node.pxd":1
  * cdef class Node:             # <<<<<<<<<<<<<<
  *     cdef public:
- *         float val
+ *         double val
  */
 
 struct __pyx_vtabstruct_4node_Node {
@@ -1051,14 +1046,14 @@ static struct __pyx_vtabstruct_4node_Node *__pyx_vtabptr_4node_Node;
  */
 
 struct __pyx_vtabstruct_4tree_Tree {
-  void (*add)(struct __pyx_obj_4tree_Tree *, float);
-  struct __pyx_obj_4node_Node *(*_add)(struct __pyx_obj_4tree_Tree *, struct __pyx_obj_4node_Node *, float);
-  void (*delete)(struct __pyx_obj_4tree_Tree *, float);
-  void (*delete_safe)(struct __pyx_obj_4tree_Tree *, float);
-  struct __pyx_obj_4node_Node *(*_delete)(struct __pyx_obj_4tree_Tree *, struct __pyx_obj_4node_Node *, float);
-  int (*contains)(struct __pyx_obj_4tree_Tree *, float);
-  int (*_contains)(struct __pyx_obj_4tree_Tree *, struct __pyx_obj_4node_Node *, float);
-  float (*get_nth)(struct __pyx_obj_4tree_Tree *, int);
+  void (*add)(struct __pyx_obj_4tree_Tree *, double, int __pyx_skip_dispatch);
+  struct __pyx_obj_4node_Node *(*_add)(struct __pyx_obj_4tree_Tree *, struct __pyx_obj_4node_Node *, double);
+  void (*delete)(struct __pyx_obj_4tree_Tree *, double, int __pyx_skip_dispatch);
+  void (*delete_safe)(struct __pyx_obj_4tree_Tree *, double);
+  struct __pyx_obj_4node_Node *(*_delete)(struct __pyx_obj_4tree_Tree *, struct __pyx_obj_4node_Node *, double);
+  int (*contains)(struct __pyx_obj_4tree_Tree *, double);
+  int (*_contains)(struct __pyx_obj_4tree_Tree *, struct __pyx_obj_4node_Node *, double);
+  double (*get_nth)(struct __pyx_obj_4tree_Tree *, int);
   struct __pyx_obj_4node_Node *(*_get_nth)(struct __pyx_obj_4tree_Tree *, struct __pyx_obj_4node_Node *, int);
   struct __pyx_obj_4node_Node *(*_right_rotate)(struct __pyx_obj_4tree_Tree *, struct __pyx_obj_4node_Node *);
   struct __pyx_obj_4node_Node *(*_left_rotate)(struct __pyx_obj_4tree_Tree *, struct __pyx_obj_4node_Node *);
@@ -1076,7 +1071,7 @@ static struct __pyx_vtabstruct_4tree_Tree *__pyx_vtabptr_4tree_Tree;
  */
 
 struct __pyx_vtabstruct_8quantile_Quantile {
-  float (*get_value)(struct __pyx_obj_8quantile_Quantile *, struct __pyx_obj_4tree_Tree *);
+  double (*get_value)(struct __pyx_obj_8quantile_Quantile *, struct __pyx_obj_4tree_Tree *, int __pyx_skip_dispatch);
 };
 static struct __pyx_vtabstruct_8quantile_Quantile *__pyx_vtabptr_8quantile_Quantile;
 
@@ -1228,25 +1223,6 @@ static PyObject* __Pyx_PyInt_SubtractObjC(PyObject *op1, PyObject *op2, long int
     (inplace ? PyNumber_InPlaceSubtract(op1, op2) : PyNumber_Subtract(op1, op2))
 #endif
 
-/* WriteUnraisableException.proto */
-static void __Pyx_WriteUnraisable(const char *name, int clineno,
-                                  int lineno, const char *filename,
-                                  int full_traceback, int nogil);
-
-/* PyErrExceptionMatches.proto */
-#if CYTHON_FAST_THREAD_STATE
-#define __Pyx_PyErr_ExceptionMatches(err) __Pyx_PyErr_ExceptionMatchesInState(__pyx_tstate, err)
-static CYTHON_INLINE int __Pyx_PyErr_ExceptionMatchesInState(PyThreadState* tstate, PyObject* err);
-#else
-#define __Pyx_PyErr_ExceptionMatches(err)  PyErr_ExceptionMatches(err)
-#endif
-
-/* GetAttr.proto */
-static CYTHON_INLINE PyObject *__Pyx_GetAttr(PyObject *, PyObject *);
-
-/* GetAttr3.proto */
-static CYTHON_INLINE PyObject *__Pyx_GetAttr3(PyObject *, PyObject *, PyObject *);
-
 /* PyDictVersioning.proto */
 #if CYTHON_USE_DICT_VERSIONS && CYTHON_USE_TYPE_SLOTS
 #define __PYX_DICT_VERSION_INIT  ((PY_UINT64_T) -1)
@@ -1272,39 +1248,6 @@ static CYTHON_INLINE int __Pyx_object_dict_version_matches(PyObject* obj, PY_UIN
 #define __PYX_UPDATE_DICT_CACHE(dict, value, cache_var, version_var)
 #define __PYX_PY_DICT_LOOKUP_IF_MODIFIED(VAR, DICT, LOOKUP)  (VAR) = (LOOKUP);
 #endif
-
-/* GetModuleGlobalName.proto */
-#if CYTHON_USE_DICT_VERSIONS
-#define __Pyx_GetModuleGlobalName(var, name)  {\
-    static PY_UINT64_T __pyx_dict_version = 0;\
-    static PyObject *__pyx_dict_cached_value = NULL;\
-    (var) = (likely(__pyx_dict_version == __PYX_GET_DICT_VERSION(__pyx_d))) ?\
-        (likely(__pyx_dict_cached_value) ? __Pyx_NewRef(__pyx_dict_cached_value) : __Pyx_GetBuiltinName(name)) :\
-        __Pyx__GetModuleGlobalName(name, &__pyx_dict_version, &__pyx_dict_cached_value);\
-}
-#define __Pyx_GetModuleGlobalNameUncached(var, name)  {\
-    PY_UINT64_T __pyx_dict_version;\
-    PyObject *__pyx_dict_cached_value;\
-    (var) = __Pyx__GetModuleGlobalName(name, &__pyx_dict_version, &__pyx_dict_cached_value);\
-}
-static PyObject *__Pyx__GetModuleGlobalName(PyObject *name, PY_UINT64_T *dict_version, PyObject **dict_cached_value);
-#else
-#define __Pyx_GetModuleGlobalName(var, name)  (var) = __Pyx__GetModuleGlobalName(name)
-#define __Pyx_GetModuleGlobalNameUncached(var, name)  (var) = __Pyx__GetModuleGlobalName(name)
-static CYTHON_INLINE PyObject *__Pyx__GetModuleGlobalName(PyObject *name);
-#endif
-
-/* PySequenceContains.proto */
-static CYTHON_INLINE int __Pyx_PySequence_ContainsTF(PyObject* item, PyObject* seq, int eq) {
-    int result = PySequence_Contains(seq, item);
-    return unlikely(result < 0) ? result : (result == (eq == Py_EQ));
-}
-
-/* Import.proto */
-static PyObject *__Pyx_Import(PyObject *name, PyObject *from_list, int level);
-
-/* ImportFrom.proto */
-static PyObject* __Pyx_ImportFrom(PyObject* module, PyObject* name);
 
 /* PyCFunctionFastCall.proto */
 #if CYTHON_FAST_PYCCALL
@@ -1354,6 +1297,64 @@ static CYTHON_INLINE PyObject* __Pyx_PyObject_CallMethO(PyObject *func, PyObject
 
 /* PyObjectCallOneArg.proto */
 static CYTHON_INLINE PyObject* __Pyx_PyObject_CallOneArg(PyObject *func, PyObject *arg);
+
+/* WriteUnraisableException.proto */
+static void __Pyx_WriteUnraisable(const char *name, int clineno,
+                                  int lineno, const char *filename,
+                                  int full_traceback, int nogil);
+
+/* ArgTypeTest.proto */
+#define __Pyx_ArgTypeTest(obj, type, none_allowed, name, exact)\
+    ((likely((Py_TYPE(obj) == type) | (none_allowed && (obj == Py_None)))) ? 1 :\
+        __Pyx__ArgTypeTest(obj, type, name, exact))
+static int __Pyx__ArgTypeTest(PyObject *obj, PyTypeObject *type, const char *name, int exact);
+
+/* PyErrExceptionMatches.proto */
+#if CYTHON_FAST_THREAD_STATE
+#define __Pyx_PyErr_ExceptionMatches(err) __Pyx_PyErr_ExceptionMatchesInState(__pyx_tstate, err)
+static CYTHON_INLINE int __Pyx_PyErr_ExceptionMatchesInState(PyThreadState* tstate, PyObject* err);
+#else
+#define __Pyx_PyErr_ExceptionMatches(err)  PyErr_ExceptionMatches(err)
+#endif
+
+/* GetAttr.proto */
+static CYTHON_INLINE PyObject *__Pyx_GetAttr(PyObject *, PyObject *);
+
+/* GetAttr3.proto */
+static CYTHON_INLINE PyObject *__Pyx_GetAttr3(PyObject *, PyObject *, PyObject *);
+
+/* GetModuleGlobalName.proto */
+#if CYTHON_USE_DICT_VERSIONS
+#define __Pyx_GetModuleGlobalName(var, name)  {\
+    static PY_UINT64_T __pyx_dict_version = 0;\
+    static PyObject *__pyx_dict_cached_value = NULL;\
+    (var) = (likely(__pyx_dict_version == __PYX_GET_DICT_VERSION(__pyx_d))) ?\
+        (likely(__pyx_dict_cached_value) ? __Pyx_NewRef(__pyx_dict_cached_value) : __Pyx_GetBuiltinName(name)) :\
+        __Pyx__GetModuleGlobalName(name, &__pyx_dict_version, &__pyx_dict_cached_value);\
+}
+#define __Pyx_GetModuleGlobalNameUncached(var, name)  {\
+    PY_UINT64_T __pyx_dict_version;\
+    PyObject *__pyx_dict_cached_value;\
+    (var) = __Pyx__GetModuleGlobalName(name, &__pyx_dict_version, &__pyx_dict_cached_value);\
+}
+static PyObject *__Pyx__GetModuleGlobalName(PyObject *name, PY_UINT64_T *dict_version, PyObject **dict_cached_value);
+#else
+#define __Pyx_GetModuleGlobalName(var, name)  (var) = __Pyx__GetModuleGlobalName(name)
+#define __Pyx_GetModuleGlobalNameUncached(var, name)  (var) = __Pyx__GetModuleGlobalName(name)
+static CYTHON_INLINE PyObject *__Pyx__GetModuleGlobalName(PyObject *name);
+#endif
+
+/* PySequenceContains.proto */
+static CYTHON_INLINE int __Pyx_PySequence_ContainsTF(PyObject* item, PyObject* seq, int eq) {
+    int result = PySequence_Contains(seq, item);
+    return unlikely(result < 0) ? result : (result == (eq == Py_EQ));
+}
+
+/* Import.proto */
+static PyObject *__Pyx_Import(PyObject *name, PyObject *from_list, int level);
+
+/* ImportFrom.proto */
+static PyObject* __Pyx_ImportFrom(PyObject* module, PyObject* name);
 
 /* GetItemInt.proto */
 #define __Pyx_GetItemInt(o, i, type, is_signed, to_py_func, is_list, wraparound, boundscheck)\
@@ -1479,7 +1480,7 @@ static int __Pyx_check_binary_version(void);
 /* InitStrings.proto */
 static int __Pyx_InitStrings(__Pyx_StringTabEntry *t);
 
-static float __pyx_f_8quantile_8Quantile_get_value(struct __pyx_obj_8quantile_Quantile *__pyx_v_self, struct __pyx_obj_4tree_Tree *__pyx_v_tree); /* proto*/
+static double __pyx_f_8quantile_8Quantile_get_value(struct __pyx_obj_8quantile_Quantile *__pyx_v_self, struct __pyx_obj_4tree_Tree *__pyx_v_tree, int __pyx_skip_dispatch); /* proto*/
 
 /* Module declarations from 'node' */
 static PyTypeObject *__pyx_ptype_4node_Node = 0;
@@ -1514,6 +1515,7 @@ static const char __pyx_k_getstate[] = "__getstate__";
 static const char __pyx_k_pyx_type[] = "__pyx_type";
 static const char __pyx_k_quantile[] = "quantile";
 static const char __pyx_k_setstate[] = "__setstate__";
+static const char __pyx_k_get_value[] = "get_value";
 static const char __pyx_k_pyx_state[] = "__pyx_state";
 static const char __pyx_k_reduce_ex[] = "__reduce_ex__";
 static const char __pyx_k_ValueError[] = "ValueError";
@@ -1536,6 +1538,7 @@ static PyObject *__pyx_n_s_Quantile;
 static PyObject *__pyx_n_s_ValueError;
 static PyObject *__pyx_n_s_cline_in_traceback;
 static PyObject *__pyx_n_s_dict;
+static PyObject *__pyx_n_s_get_value;
 static PyObject *__pyx_n_s_getstate;
 static PyObject *__pyx_n_s_import;
 static PyObject *__pyx_n_s_main;
@@ -1563,8 +1566,9 @@ static PyObject *__pyx_kp_s_stringsource;
 static PyObject *__pyx_n_s_test;
 static PyObject *__pyx_n_s_update;
 static int __pyx_pf_8quantile_8Quantile___init__(struct __pyx_obj_8quantile_Quantile *__pyx_v_self, PyObject *__pyx_v_pct, PyObject *__pyx_v_period); /* proto */
-static PyObject *__pyx_pf_8quantile_8Quantile_2__reduce_cython__(struct __pyx_obj_8quantile_Quantile *__pyx_v_self); /* proto */
-static PyObject *__pyx_pf_8quantile_8Quantile_4__setstate_cython__(struct __pyx_obj_8quantile_Quantile *__pyx_v_self, PyObject *__pyx_v___pyx_state); /* proto */
+static PyObject *__pyx_pf_8quantile_8Quantile_2get_value(struct __pyx_obj_8quantile_Quantile *__pyx_v_self, struct __pyx_obj_4tree_Tree *__pyx_v_tree); /* proto */
+static PyObject *__pyx_pf_8quantile_8Quantile_4__reduce_cython__(struct __pyx_obj_8quantile_Quantile *__pyx_v_self); /* proto */
+static PyObject *__pyx_pf_8quantile_8Quantile_6__setstate_cython__(struct __pyx_obj_8quantile_Quantile *__pyx_v_self, PyObject *__pyx_v___pyx_state); /* proto */
 static PyObject *__pyx_pf_8quantile___pyx_unpickle_Quantile(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v___pyx_type, long __pyx_v___pyx_checksum, PyObject *__pyx_v___pyx_state); /* proto */
 static PyObject *__pyx_tp_new_8quantile_Quantile(PyTypeObject *t, PyObject *a, PyObject *k); /*proto*/
 static PyObject *__pyx_int_0;
@@ -1653,9 +1657,9 @@ static int __pyx_pw_8quantile_8Quantile_1__init__(PyObject *__pyx_v_self, PyObje
 }
 
 static int __pyx_pf_8quantile_8Quantile___init__(struct __pyx_obj_8quantile_Quantile *__pyx_v_self, PyObject *__pyx_v_pct, PyObject *__pyx_v_period) {
-  float __pyx_v_q;
-  float __pyx_v_p0;
-  float __pyx_v_p1;
+  double __pyx_v_q;
+  double __pyx_v_p0;
+  double __pyx_v_p1;
   int __pyx_r;
   __Pyx_RefNannyDeclarations
   int __pyx_t_1;
@@ -1663,8 +1667,7 @@ static int __pyx_pf_8quantile_8Quantile___init__(struct __pyx_obj_8quantile_Quan
   int __pyx_t_3;
   int __pyx_t_4;
   PyObject *__pyx_t_5 = NULL;
-  float __pyx_t_6;
-  double __pyx_t_7;
+  double __pyx_t_6;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
@@ -1731,7 +1734,7 @@ static int __pyx_pf_8quantile_8Quantile___init__(struct __pyx_obj_8quantile_Quan
  *         if period < 1:
  *             raise ValueError("'period' should be in (0, )")             # <<<<<<<<<<<<<<
  *         self._stat_period = period
- *         cdef float q = (period - 1) / 100
+ *         cdef double q = (period - 1) / 100
  */
     __pyx_t_2 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__2, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 9, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
@@ -1752,7 +1755,7 @@ static int __pyx_pf_8quantile_8Quantile___init__(struct __pyx_obj_8quantile_Quan
  *         if period < 1:
  *             raise ValueError("'period' should be in (0, )")
  *         self._stat_period = period             # <<<<<<<<<<<<<<
- *         cdef float q = (period - 1) / 100
+ *         cdef double q = (period - 1) / 100
  *         self._d0 = <int>(floor(pct * q))
  */
   __pyx_t_4 = __Pyx_PyInt_As_int(__pyx_v_period); if (unlikely((__pyx_t_4 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 10, __pyx_L1_error)
@@ -1761,7 +1764,7 @@ static int __pyx_pf_8quantile_8Quantile___init__(struct __pyx_obj_8quantile_Quan
   /* "quantile.pyx":11
  *             raise ValueError("'period' should be in (0, )")
  *         self._stat_period = period
- *         cdef float q = (period - 1) / 100             # <<<<<<<<<<<<<<
+ *         cdef double q = (period - 1) / 100             # <<<<<<<<<<<<<<
  *         self._d0 = <int>(floor(pct * q))
  *         self._d1 = self._d0 + 1
  */
@@ -1770,52 +1773,52 @@ static int __pyx_pf_8quantile_8Quantile___init__(struct __pyx_obj_8quantile_Quan
   __pyx_t_5 = __Pyx_PyInt_TrueDivideObjC(__pyx_t_2, __pyx_int_100, 0x64, 0, 0); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 11, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_6 = __pyx_PyFloat_AsFloat(__pyx_t_5); if (unlikely((__pyx_t_6 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 11, __pyx_L1_error)
+  __pyx_t_6 = __pyx_PyFloat_AsDouble(__pyx_t_5); if (unlikely((__pyx_t_6 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 11, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
   __pyx_v_q = __pyx_t_6;
 
   /* "quantile.pyx":12
  *         self._stat_period = period
- *         cdef float q = (period - 1) / 100
+ *         cdef double q = (period - 1) / 100
  *         self._d0 = <int>(floor(pct * q))             # <<<<<<<<<<<<<<
  *         self._d1 = self._d0 + 1
- *         cdef float p0 = self._d0 / q
+ *         cdef double p0 = self._d0 / q
  */
   __pyx_t_5 = PyFloat_FromDouble(__pyx_v_q); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 12, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
   __pyx_t_2 = PyNumber_Multiply(__pyx_v_pct, __pyx_t_5); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 12, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-  __pyx_t_7 = __pyx_PyFloat_AsDouble(__pyx_t_2); if (unlikely((__pyx_t_7 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 12, __pyx_L1_error)
+  __pyx_t_6 = __pyx_PyFloat_AsDouble(__pyx_t_2); if (unlikely((__pyx_t_6 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 12, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_v_self->_d0 = ((int)floor(__pyx_t_7));
+  __pyx_v_self->_d0 = ((int)floor(__pyx_t_6));
 
   /* "quantile.pyx":13
- *         cdef float q = (period - 1) / 100
+ *         cdef double q = (period - 1) / 100
  *         self._d0 = <int>(floor(pct * q))
  *         self._d1 = self._d0 + 1             # <<<<<<<<<<<<<<
- *         cdef float p0 = self._d0 / q
- *         cdef float p1 = self._d1 / q
+ *         cdef double p0 = self._d0 / q
+ *         cdef double p1 = self._d1 / q
  */
   __pyx_v_self->_d1 = (__pyx_v_self->_d0 + 1);
 
   /* "quantile.pyx":14
  *         self._d0 = <int>(floor(pct * q))
  *         self._d1 = self._d0 + 1
- *         cdef float p0 = self._d0 / q             # <<<<<<<<<<<<<<
- *         cdef float p1 = self._d1 / q
+ *         cdef double p0 = self._d0 / q             # <<<<<<<<<<<<<<
+ *         cdef double p1 = self._d1 / q
  *         self._w0 = p1 - pct
  */
   if (unlikely(__pyx_v_q == 0)) {
     PyErr_SetString(PyExc_ZeroDivisionError, "float division");
     __PYX_ERR(0, 14, __pyx_L1_error)
   }
-  __pyx_v_p0 = (((float)__pyx_v_self->_d0) / __pyx_v_q);
+  __pyx_v_p0 = (((double)__pyx_v_self->_d0) / __pyx_v_q);
 
   /* "quantile.pyx":15
  *         self._d1 = self._d0 + 1
- *         cdef float p0 = self._d0 / q
- *         cdef float p1 = self._d1 / q             # <<<<<<<<<<<<<<
+ *         cdef double p0 = self._d0 / q
+ *         cdef double p1 = self._d1 / q             # <<<<<<<<<<<<<<
  *         self._w0 = p1 - pct
  *         self._w1 = pct - p0
  */
@@ -1823,11 +1826,11 @@ static int __pyx_pf_8quantile_8Quantile___init__(struct __pyx_obj_8quantile_Quan
     PyErr_SetString(PyExc_ZeroDivisionError, "float division");
     __PYX_ERR(0, 15, __pyx_L1_error)
   }
-  __pyx_v_p1 = (((float)__pyx_v_self->_d1) / __pyx_v_q);
+  __pyx_v_p1 = (((double)__pyx_v_self->_d1) / __pyx_v_q);
 
   /* "quantile.pyx":16
- *         cdef float p0 = self._d0 / q
- *         cdef float p1 = self._d1 / q
+ *         cdef double p0 = self._d0 / q
+ *         cdef double p1 = self._d1 / q
  *         self._w0 = p1 - pct             # <<<<<<<<<<<<<<
  *         self._w1 = pct - p0
  *         self._w = p1 - p0
@@ -1837,12 +1840,12 @@ static int __pyx_pf_8quantile_8Quantile___init__(struct __pyx_obj_8quantile_Quan
   __pyx_t_5 = PyNumber_Subtract(__pyx_t_2, __pyx_v_pct); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 16, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_6 = __pyx_PyFloat_AsFloat(__pyx_t_5); if (unlikely((__pyx_t_6 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 16, __pyx_L1_error)
+  __pyx_t_6 = __pyx_PyFloat_AsDouble(__pyx_t_5); if (unlikely((__pyx_t_6 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 16, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
   __pyx_v_self->_w0 = __pyx_t_6;
 
   /* "quantile.pyx":17
- *         cdef float p1 = self._d1 / q
+ *         cdef double p1 = self._d1 / q
  *         self._w0 = p1 - pct
  *         self._w1 = pct - p0             # <<<<<<<<<<<<<<
  *         self._w = p1 - p0
@@ -1853,7 +1856,7 @@ static int __pyx_pf_8quantile_8Quantile___init__(struct __pyx_obj_8quantile_Quan
   __pyx_t_2 = PyNumber_Subtract(__pyx_v_pct, __pyx_t_5); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 17, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-  __pyx_t_6 = __pyx_PyFloat_AsFloat(__pyx_t_2); if (unlikely((__pyx_t_6 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 17, __pyx_L1_error)
+  __pyx_t_6 = __pyx_PyFloat_AsDouble(__pyx_t_2); if (unlikely((__pyx_t_6 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 17, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __pyx_v_self->_w1 = __pyx_t_6;
 
@@ -1862,7 +1865,7 @@ static int __pyx_pf_8quantile_8Quantile___init__(struct __pyx_obj_8quantile_Quan
  *         self._w1 = pct - p0
  *         self._w = p1 - p0             # <<<<<<<<<<<<<<
  * 
- *     cdef float get_value(self, Tree tree):
+ *     # cdef double get_value(self, Tree tree):
  */
   __pyx_v_self->_w = (__pyx_v_p1 - __pyx_v_p0);
 
@@ -1887,68 +1890,171 @@ static int __pyx_pf_8quantile_8Quantile___init__(struct __pyx_obj_8quantile_Quan
   return __pyx_r;
 }
 
-/* "quantile.pyx":20
- *         self._w = p1 - p0
+/* "quantile.pyx":21
  * 
- *     cdef float get_value(self, Tree tree):             # <<<<<<<<<<<<<<
+ *     # cdef double get_value(self, Tree tree):
+ *     cpdef double get_value(self, Tree tree):             # <<<<<<<<<<<<<<
  *         """
  *         n
  */
 
-static float __pyx_f_8quantile_8Quantile_get_value(struct __pyx_obj_8quantile_Quantile *__pyx_v_self, struct __pyx_obj_4tree_Tree *__pyx_v_tree) {
-  float __pyx_v_v0;
-  float __pyx_v_v1;
-  float __pyx_r;
+static PyObject *__pyx_pw_8quantile_8Quantile_3get_value(PyObject *__pyx_v_self, PyObject *__pyx_v_tree); /*proto*/
+static double __pyx_f_8quantile_8Quantile_get_value(struct __pyx_obj_8quantile_Quantile *__pyx_v_self, struct __pyx_obj_4tree_Tree *__pyx_v_tree, int __pyx_skip_dispatch) {
+  double __pyx_v_v0;
+  double __pyx_v_v1;
+  double __pyx_r;
   __Pyx_RefNannyDeclarations
-  float __pyx_t_1;
+  PyObject *__pyx_t_1 = NULL;
+  PyObject *__pyx_t_2 = NULL;
+  PyObject *__pyx_t_3 = NULL;
+  PyObject *__pyx_t_4 = NULL;
+  double __pyx_t_5;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("get_value", 0);
+  /* Check if called by wrapper */
+  if (unlikely(__pyx_skip_dispatch)) ;
+  /* Check if overridden in Python */
+  else if (unlikely((Py_TYPE(((PyObject *)__pyx_v_self))->tp_dictoffset != 0) || (Py_TYPE(((PyObject *)__pyx_v_self))->tp_flags & (Py_TPFLAGS_IS_ABSTRACT | Py_TPFLAGS_HEAPTYPE)))) {
+    #if CYTHON_USE_DICT_VERSIONS && CYTHON_USE_PYTYPE_LOOKUP && CYTHON_USE_TYPE_SLOTS
+    static PY_UINT64_T __pyx_tp_dict_version = __PYX_DICT_VERSION_INIT, __pyx_obj_dict_version = __PYX_DICT_VERSION_INIT;
+    if (unlikely(!__Pyx_object_dict_version_matches(((PyObject *)__pyx_v_self), __pyx_tp_dict_version, __pyx_obj_dict_version))) {
+      PY_UINT64_T __pyx_type_dict_guard = __Pyx_get_tp_dict_version(((PyObject *)__pyx_v_self));
+      #endif
+      __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_get_value); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 21, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_1);
+      if (!PyCFunction_Check(__pyx_t_1) || (PyCFunction_GET_FUNCTION(__pyx_t_1) != (PyCFunction)(void*)__pyx_pw_8quantile_8Quantile_3get_value)) {
+        __Pyx_INCREF(__pyx_t_1);
+        __pyx_t_3 = __pyx_t_1; __pyx_t_4 = NULL;
+        if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_3))) {
+          __pyx_t_4 = PyMethod_GET_SELF(__pyx_t_3);
+          if (likely(__pyx_t_4)) {
+            PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_3);
+            __Pyx_INCREF(__pyx_t_4);
+            __Pyx_INCREF(function);
+            __Pyx_DECREF_SET(__pyx_t_3, function);
+          }
+        }
+        __pyx_t_2 = (__pyx_t_4) ? __Pyx_PyObject_Call2Args(__pyx_t_3, __pyx_t_4, ((PyObject *)__pyx_v_tree)) : __Pyx_PyObject_CallOneArg(__pyx_t_3, ((PyObject *)__pyx_v_tree));
+        __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
+        if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 21, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_2);
+        __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+        __pyx_t_5 = __pyx_PyFloat_AsDouble(__pyx_t_2); if (unlikely((__pyx_t_5 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 21, __pyx_L1_error)
+        __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+        __pyx_r = __pyx_t_5;
+        __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+        goto __pyx_L0;
+      }
+      #if CYTHON_USE_DICT_VERSIONS && CYTHON_USE_PYTYPE_LOOKUP && CYTHON_USE_TYPE_SLOTS
+      __pyx_tp_dict_version = __Pyx_get_tp_dict_version(((PyObject *)__pyx_v_self));
+      __pyx_obj_dict_version = __Pyx_get_object_dict_version(((PyObject *)__pyx_v_self));
+      if (unlikely(__pyx_type_dict_guard != __pyx_tp_dict_version)) {
+        __pyx_tp_dict_version = __pyx_obj_dict_version = __PYX_DICT_VERSION_INIT;
+      }
+      #endif
+      __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+      #if CYTHON_USE_DICT_VERSIONS && CYTHON_USE_PYTYPE_LOOKUP && CYTHON_USE_TYPE_SLOTS
+    }
+    #endif
+  }
 
-  /* "quantile.pyx":27
+  /* "quantile.pyx":28
  *         :return:
  *         """
- *         cdef float v0 = tree.get_nth(self._d0)             # <<<<<<<<<<<<<<
- *         cdef float v1 = tree.get_nth(self._d1)
+ *         cdef double v0 = tree.get_nth(self._d0)             # <<<<<<<<<<<<<<
+ *         cdef double v1 = tree.get_nth(self._d1)
  *         return (v0 * self._w0 + v1 * self._w1) / self._w
  */
   __pyx_v_v0 = ((struct __pyx_vtabstruct_4tree_Tree *)__pyx_v_tree->__pyx_vtab)->get_nth(__pyx_v_tree, __pyx_v_self->_d0);
 
-  /* "quantile.pyx":28
+  /* "quantile.pyx":29
  *         """
- *         cdef float v0 = tree.get_nth(self._d0)
- *         cdef float v1 = tree.get_nth(self._d1)             # <<<<<<<<<<<<<<
+ *         cdef double v0 = tree.get_nth(self._d0)
+ *         cdef double v1 = tree.get_nth(self._d1)             # <<<<<<<<<<<<<<
  *         return (v0 * self._w0 + v1 * self._w1) / self._w
  */
   __pyx_v_v1 = ((struct __pyx_vtabstruct_4tree_Tree *)__pyx_v_tree->__pyx_vtab)->get_nth(__pyx_v_tree, __pyx_v_self->_d1);
 
-  /* "quantile.pyx":29
- *         cdef float v0 = tree.get_nth(self._d0)
- *         cdef float v1 = tree.get_nth(self._d1)
+  /* "quantile.pyx":30
+ *         cdef double v0 = tree.get_nth(self._d0)
+ *         cdef double v1 = tree.get_nth(self._d1)
  *         return (v0 * self._w0 + v1 * self._w1) / self._w             # <<<<<<<<<<<<<<
  */
-  __pyx_t_1 = ((__pyx_v_v0 * __pyx_v_self->_w0) + (__pyx_v_v1 * __pyx_v_self->_w1));
+  __pyx_t_5 = ((__pyx_v_v0 * __pyx_v_self->_w0) + (__pyx_v_v1 * __pyx_v_self->_w1));
   if (unlikely(__pyx_v_self->_w == 0)) {
     PyErr_SetString(PyExc_ZeroDivisionError, "float division");
-    __PYX_ERR(0, 29, __pyx_L1_error)
+    __PYX_ERR(0, 30, __pyx_L1_error)
   }
-  __pyx_r = (__pyx_t_1 / __pyx_v_self->_w);
+  __pyx_r = (__pyx_t_5 / __pyx_v_self->_w);
   goto __pyx_L0;
 
-  /* "quantile.pyx":20
- *         self._w = p1 - p0
+  /* "quantile.pyx":21
  * 
- *     cdef float get_value(self, Tree tree):             # <<<<<<<<<<<<<<
+ *     # cdef double get_value(self, Tree tree):
+ *     cpdef double get_value(self, Tree tree):             # <<<<<<<<<<<<<<
  *         """
  *         n
  */
 
   /* function exit code */
   __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_XDECREF(__pyx_t_2);
+  __Pyx_XDECREF(__pyx_t_3);
+  __Pyx_XDECREF(__pyx_t_4);
   __Pyx_WriteUnraisable("quantile.Quantile.get_value", __pyx_clineno, __pyx_lineno, __pyx_filename, 1, 0);
   __pyx_r = 0;
   __pyx_L0:;
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* Python wrapper */
+static PyObject *__pyx_pw_8quantile_8Quantile_3get_value(PyObject *__pyx_v_self, PyObject *__pyx_v_tree); /*proto*/
+static char __pyx_doc_8quantile_8Quantile_2get_value[] = "\n        \350\216\267\345\217\226n\347\231\276\345\210\206\344\275\215\347\232\204\345\200\274\n\n        :param tree:\n        :return:\n        ";
+static PyObject *__pyx_pw_8quantile_8Quantile_3get_value(PyObject *__pyx_v_self, PyObject *__pyx_v_tree) {
+  int __pyx_lineno = 0;
+  const char *__pyx_filename = NULL;
+  int __pyx_clineno = 0;
+  PyObject *__pyx_r = 0;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("get_value (wrapper)", 0);
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_tree), __pyx_ptype_4tree_Tree, 1, "tree", 0))) __PYX_ERR(0, 21, __pyx_L1_error)
+  __pyx_r = __pyx_pf_8quantile_8Quantile_2get_value(((struct __pyx_obj_8quantile_Quantile *)__pyx_v_self), ((struct __pyx_obj_4tree_Tree *)__pyx_v_tree));
+
+  /* function exit code */
+  goto __pyx_L0;
+  __pyx_L1_error:;
+  __pyx_r = NULL;
+  __pyx_L0:;
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static PyObject *__pyx_pf_8quantile_8Quantile_2get_value(struct __pyx_obj_8quantile_Quantile *__pyx_v_self, struct __pyx_obj_4tree_Tree *__pyx_v_tree) {
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  int __pyx_lineno = 0;
+  const char *__pyx_filename = NULL;
+  int __pyx_clineno = 0;
+  __Pyx_RefNannySetupContext("get_value", 0);
+  __Pyx_XDECREF(__pyx_r);
+  __pyx_t_1 = PyFloat_FromDouble(__pyx_f_8quantile_8Quantile_get_value(__pyx_v_self, __pyx_v_tree, 1)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 21, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_r = __pyx_t_1;
+  __pyx_t_1 = 0;
+  goto __pyx_L0;
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_AddTraceback("quantile.Quantile.get_value", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = NULL;
+  __pyx_L0:;
+  __Pyx_XGIVEREF(__pyx_r);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -1960,19 +2066,19 @@ static float __pyx_f_8quantile_8Quantile_get_value(struct __pyx_obj_8quantile_Qu
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_8quantile_8Quantile_3__reduce_cython__(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused); /*proto*/
-static PyObject *__pyx_pw_8quantile_8Quantile_3__reduce_cython__(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused) {
+static PyObject *__pyx_pw_8quantile_8Quantile_5__reduce_cython__(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused); /*proto*/
+static PyObject *__pyx_pw_8quantile_8Quantile_5__reduce_cython__(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused) {
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__reduce_cython__ (wrapper)", 0);
-  __pyx_r = __pyx_pf_8quantile_8Quantile_2__reduce_cython__(((struct __pyx_obj_8quantile_Quantile *)__pyx_v_self));
+  __pyx_r = __pyx_pf_8quantile_8Quantile_4__reduce_cython__(((struct __pyx_obj_8quantile_Quantile *)__pyx_v_self));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_8quantile_8Quantile_2__reduce_cython__(struct __pyx_obj_8quantile_Quantile *__pyx_v_self) {
+static PyObject *__pyx_pf_8quantile_8Quantile_4__reduce_cython__(struct __pyx_obj_8quantile_Quantile *__pyx_v_self) {
   PyObject *__pyx_v_state = 0;
   PyObject *__pyx_v__dict = 0;
   int __pyx_v_use_setstate;
@@ -2229,19 +2335,19 @@ static PyObject *__pyx_pf_8quantile_8Quantile_2__reduce_cython__(struct __pyx_ob
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_8quantile_8Quantile_5__setstate_cython__(PyObject *__pyx_v_self, PyObject *__pyx_v___pyx_state); /*proto*/
-static PyObject *__pyx_pw_8quantile_8Quantile_5__setstate_cython__(PyObject *__pyx_v_self, PyObject *__pyx_v___pyx_state) {
+static PyObject *__pyx_pw_8quantile_8Quantile_7__setstate_cython__(PyObject *__pyx_v_self, PyObject *__pyx_v___pyx_state); /*proto*/
+static PyObject *__pyx_pw_8quantile_8Quantile_7__setstate_cython__(PyObject *__pyx_v_self, PyObject *__pyx_v___pyx_state) {
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__setstate_cython__ (wrapper)", 0);
-  __pyx_r = __pyx_pf_8quantile_8Quantile_4__setstate_cython__(((struct __pyx_obj_8quantile_Quantile *)__pyx_v_self), ((PyObject *)__pyx_v___pyx_state));
+  __pyx_r = __pyx_pf_8quantile_8Quantile_6__setstate_cython__(((struct __pyx_obj_8quantile_Quantile *)__pyx_v_self), ((PyObject *)__pyx_v___pyx_state));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_8quantile_8Quantile_4__setstate_cython__(struct __pyx_obj_8quantile_Quantile *__pyx_v_self, PyObject *__pyx_v___pyx_state) {
+static PyObject *__pyx_pf_8quantile_8Quantile_6__setstate_cython__(struct __pyx_obj_8quantile_Quantile *__pyx_v_self, PyObject *__pyx_v___pyx_state) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
@@ -2562,7 +2668,7 @@ static PyObject *__pyx_f_8quantile___pyx_unpickle_Quantile__set_state(struct __p
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   int __pyx_t_2;
-  float __pyx_t_3;
+  double __pyx_t_3;
   int __pyx_t_4;
   Py_ssize_t __pyx_t_5;
   int __pyx_t_6;
@@ -2615,7 +2721,7 @@ static PyObject *__pyx_f_8quantile___pyx_unpickle_Quantile__set_state(struct __p
   }
   __pyx_t_1 = __Pyx_GetItemInt_Tuple(__pyx_v___pyx_state, 3, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 12, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_3 = __pyx_PyFloat_AsFloat(__pyx_t_1); if (unlikely((__pyx_t_3 == (float)-1) && PyErr_Occurred())) __PYX_ERR(1, 12, __pyx_L1_error)
+  __pyx_t_3 = __pyx_PyFloat_AsDouble(__pyx_t_1); if (unlikely((__pyx_t_3 == (double)-1) && PyErr_Occurred())) __PYX_ERR(1, 12, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_v___pyx_result->_w = __pyx_t_3;
   if (unlikely(__pyx_v___pyx_state == Py_None)) {
@@ -2624,7 +2730,7 @@ static PyObject *__pyx_f_8quantile___pyx_unpickle_Quantile__set_state(struct __p
   }
   __pyx_t_1 = __Pyx_GetItemInt_Tuple(__pyx_v___pyx_state, 4, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 12, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_3 = __pyx_PyFloat_AsFloat(__pyx_t_1); if (unlikely((__pyx_t_3 == (float)-1) && PyErr_Occurred())) __PYX_ERR(1, 12, __pyx_L1_error)
+  __pyx_t_3 = __pyx_PyFloat_AsDouble(__pyx_t_1); if (unlikely((__pyx_t_3 == (double)-1) && PyErr_Occurred())) __PYX_ERR(1, 12, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_v___pyx_result->_w0 = __pyx_t_3;
   if (unlikely(__pyx_v___pyx_state == Py_None)) {
@@ -2633,7 +2739,7 @@ static PyObject *__pyx_f_8quantile___pyx_unpickle_Quantile__set_state(struct __p
   }
   __pyx_t_1 = __Pyx_GetItemInt_Tuple(__pyx_v___pyx_state, 5, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 12, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_3 = __pyx_PyFloat_AsFloat(__pyx_t_1); if (unlikely((__pyx_t_3 == (float)-1) && PyErr_Occurred())) __PYX_ERR(1, 12, __pyx_L1_error)
+  __pyx_t_3 = __pyx_PyFloat_AsDouble(__pyx_t_1); if (unlikely((__pyx_t_3 == (double)-1) && PyErr_Occurred())) __PYX_ERR(1, 12, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_v___pyx_result->_w1 = __pyx_t_3;
 
@@ -2751,8 +2857,9 @@ static void __pyx_tp_dealloc_8quantile_Quantile(PyObject *o) {
 }
 
 static PyMethodDef __pyx_methods_8quantile_Quantile[] = {
-  {"__reduce_cython__", (PyCFunction)__pyx_pw_8quantile_8Quantile_3__reduce_cython__, METH_NOARGS, 0},
-  {"__setstate_cython__", (PyCFunction)__pyx_pw_8quantile_8Quantile_5__setstate_cython__, METH_O, 0},
+  {"get_value", (PyCFunction)__pyx_pw_8quantile_8Quantile_3get_value, METH_O, __pyx_doc_8quantile_8Quantile_2get_value},
+  {"__reduce_cython__", (PyCFunction)__pyx_pw_8quantile_8Quantile_5__reduce_cython__, METH_NOARGS, 0},
+  {"__setstate_cython__", (PyCFunction)__pyx_pw_8quantile_8Quantile_7__setstate_cython__, METH_O, 0},
   {0, 0, 0, 0}
 };
 
@@ -2880,6 +2987,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_ValueError, __pyx_k_ValueError, sizeof(__pyx_k_ValueError), 0, 0, 1, 1},
   {&__pyx_n_s_cline_in_traceback, __pyx_k_cline_in_traceback, sizeof(__pyx_k_cline_in_traceback), 0, 0, 1, 1},
   {&__pyx_n_s_dict, __pyx_k_dict, sizeof(__pyx_k_dict), 0, 0, 1, 1},
+  {&__pyx_n_s_get_value, __pyx_k_get_value, sizeof(__pyx_k_get_value), 0, 0, 1, 1},
   {&__pyx_n_s_getstate, __pyx_k_getstate, sizeof(__pyx_k_getstate), 0, 0, 1, 1},
   {&__pyx_n_s_import, __pyx_k_import, sizeof(__pyx_k_import), 0, 0, 1, 1},
   {&__pyx_n_s_main, __pyx_k_main, sizeof(__pyx_k_main), 0, 0, 1, 1},
@@ -2935,7 +3043,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  *         if period < 1:
  *             raise ValueError("'period' should be in (0, )")             # <<<<<<<<<<<<<<
  *         self._stat_period = period
- *         cdef float q = (period - 1) / 100
+ *         cdef double q = (period - 1) / 100
  */
   __pyx_tuple__2 = PyTuple_Pack(1, __pyx_kp_u_period_should_be_in_0); if (unlikely(!__pyx_tuple__2)) __PYX_ERR(0, 9, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__2);
@@ -3021,7 +3129,7 @@ static int __Pyx_modinit_type_init_code(void) {
   __Pyx_RefNannySetupContext("__Pyx_modinit_type_init_code", 0);
   /*--- Type init code ---*/
   __pyx_vtabptr_8quantile_Quantile = &__pyx_vtable_8quantile_Quantile;
-  __pyx_vtable_8quantile_Quantile.get_value = (float (*)(struct __pyx_obj_8quantile_Quantile *, struct __pyx_obj_4tree_Tree *))__pyx_f_8quantile_8Quantile_get_value;
+  __pyx_vtable_8quantile_Quantile.get_value = (double (*)(struct __pyx_obj_8quantile_Quantile *, struct __pyx_obj_4tree_Tree *, int __pyx_skip_dispatch))__pyx_f_8quantile_8Quantile_get_value;
   if (PyType_Ready(&__pyx_type_8quantile_Quantile) < 0) __PYX_ERR(0, 4, __pyx_L1_error)
   #if PY_VERSION_HEX < 0x030800B1
   __pyx_type_8quantile_Quantile.tp_print = 0;
@@ -3943,101 +4051,6 @@ static PyObject* __Pyx_PyInt_SubtractObjC(PyObject *op1, PyObject *op2, CYTHON_U
 }
 #endif
 
-/* WriteUnraisableException */
-static void __Pyx_WriteUnraisable(const char *name, CYTHON_UNUSED int clineno,
-                                  CYTHON_UNUSED int lineno, CYTHON_UNUSED const char *filename,
-                                  int full_traceback, CYTHON_UNUSED int nogil) {
-    PyObject *old_exc, *old_val, *old_tb;
-    PyObject *ctx;
-    __Pyx_PyThreadState_declare
-#ifdef WITH_THREAD
-    PyGILState_STATE state;
-    if (nogil)
-        state = PyGILState_Ensure();
-#ifdef _MSC_VER
-    else state = (PyGILState_STATE)-1;
-#endif
-#endif
-    __Pyx_PyThreadState_assign
-    __Pyx_ErrFetch(&old_exc, &old_val, &old_tb);
-    if (full_traceback) {
-        Py_XINCREF(old_exc);
-        Py_XINCREF(old_val);
-        Py_XINCREF(old_tb);
-        __Pyx_ErrRestore(old_exc, old_val, old_tb);
-        PyErr_PrintEx(1);
-    }
-    #if PY_MAJOR_VERSION < 3
-    ctx = PyString_FromString(name);
-    #else
-    ctx = PyUnicode_FromString(name);
-    #endif
-    __Pyx_ErrRestore(old_exc, old_val, old_tb);
-    if (!ctx) {
-        PyErr_WriteUnraisable(Py_None);
-    } else {
-        PyErr_WriteUnraisable(ctx);
-        Py_DECREF(ctx);
-    }
-#ifdef WITH_THREAD
-    if (nogil)
-        PyGILState_Release(state);
-#endif
-}
-
-/* PyErrExceptionMatches */
-#if CYTHON_FAST_THREAD_STATE
-static int __Pyx_PyErr_ExceptionMatchesTuple(PyObject *exc_type, PyObject *tuple) {
-    Py_ssize_t i, n;
-    n = PyTuple_GET_SIZE(tuple);
-#if PY_MAJOR_VERSION >= 3
-    for (i=0; i<n; i++) {
-        if (exc_type == PyTuple_GET_ITEM(tuple, i)) return 1;
-    }
-#endif
-    for (i=0; i<n; i++) {
-        if (__Pyx_PyErr_GivenExceptionMatches(exc_type, PyTuple_GET_ITEM(tuple, i))) return 1;
-    }
-    return 0;
-}
-static CYTHON_INLINE int __Pyx_PyErr_ExceptionMatchesInState(PyThreadState* tstate, PyObject* err) {
-    PyObject *exc_type = tstate->curexc_type;
-    if (exc_type == err) return 1;
-    if (unlikely(!exc_type)) return 0;
-    if (unlikely(PyTuple_Check(err)))
-        return __Pyx_PyErr_ExceptionMatchesTuple(exc_type, err);
-    return __Pyx_PyErr_GivenExceptionMatches(exc_type, err);
-}
-#endif
-
-/* GetAttr */
-static CYTHON_INLINE PyObject *__Pyx_GetAttr(PyObject *o, PyObject *n) {
-#if CYTHON_USE_TYPE_SLOTS
-#if PY_MAJOR_VERSION >= 3
-    if (likely(PyUnicode_Check(n)))
-#else
-    if (likely(PyString_Check(n)))
-#endif
-        return __Pyx_PyObject_GetAttrStr(o, n);
-#endif
-    return PyObject_GetAttr(o, n);
-}
-
-/* GetAttr3 */
-static PyObject *__Pyx_GetAttr3Default(PyObject *d) {
-    __Pyx_PyThreadState_declare
-    __Pyx_PyThreadState_assign
-    if (unlikely(!__Pyx_PyErr_ExceptionMatches(PyExc_AttributeError)))
-        return NULL;
-    __Pyx_PyErr_Clear();
-    Py_INCREF(d);
-    return d;
-}
-static CYTHON_INLINE PyObject *__Pyx_GetAttr3(PyObject *o, PyObject *n, PyObject *d) {
-    PyObject *r = __Pyx_GetAttr(o, n);
-    return (likely(r)) ? r : __Pyx_GetAttr3Default(d);
-}
-
 /* PyDictVersioning */
 #if CYTHON_USE_DICT_VERSIONS && CYTHON_USE_TYPE_SLOTS
 static CYTHON_INLINE PY_UINT64_T __Pyx_get_tp_dict_version(PyObject *obj) {
@@ -4063,120 +4076,6 @@ static CYTHON_INLINE int __Pyx_object_dict_version_matches(PyObject* obj, PY_UIN
     return obj_dict_version == __Pyx_get_object_dict_version(obj);
 }
 #endif
-
-/* GetModuleGlobalName */
-#if CYTHON_USE_DICT_VERSIONS
-static PyObject *__Pyx__GetModuleGlobalName(PyObject *name, PY_UINT64_T *dict_version, PyObject **dict_cached_value)
-#else
-static CYTHON_INLINE PyObject *__Pyx__GetModuleGlobalName(PyObject *name)
-#endif
-{
-    PyObject *result;
-#if !CYTHON_AVOID_BORROWED_REFS
-#if CYTHON_COMPILING_IN_CPYTHON && PY_VERSION_HEX >= 0x030500A1
-    result = _PyDict_GetItem_KnownHash(__pyx_d, name, ((PyASCIIObject *) name)->hash);
-    __PYX_UPDATE_DICT_CACHE(__pyx_d, result, *dict_cached_value, *dict_version)
-    if (likely(result)) {
-        return __Pyx_NewRef(result);
-    } else if (unlikely(PyErr_Occurred())) {
-        return NULL;
-    }
-#else
-    result = PyDict_GetItem(__pyx_d, name);
-    __PYX_UPDATE_DICT_CACHE(__pyx_d, result, *dict_cached_value, *dict_version)
-    if (likely(result)) {
-        return __Pyx_NewRef(result);
-    }
-#endif
-#else
-    result = PyObject_GetItem(__pyx_d, name);
-    __PYX_UPDATE_DICT_CACHE(__pyx_d, result, *dict_cached_value, *dict_version)
-    if (likely(result)) {
-        return __Pyx_NewRef(result);
-    }
-    PyErr_Clear();
-#endif
-    return __Pyx_GetBuiltinName(name);
-}
-
-/* Import */
-static PyObject *__Pyx_Import(PyObject *name, PyObject *from_list, int level) {
-    PyObject *empty_list = 0;
-    PyObject *module = 0;
-    PyObject *global_dict = 0;
-    PyObject *empty_dict = 0;
-    PyObject *list;
-    #if PY_MAJOR_VERSION < 3
-    PyObject *py_import;
-    py_import = __Pyx_PyObject_GetAttrStr(__pyx_b, __pyx_n_s_import);
-    if (!py_import)
-        goto bad;
-    #endif
-    if (from_list)
-        list = from_list;
-    else {
-        empty_list = PyList_New(0);
-        if (!empty_list)
-            goto bad;
-        list = empty_list;
-    }
-    global_dict = PyModule_GetDict(__pyx_m);
-    if (!global_dict)
-        goto bad;
-    empty_dict = PyDict_New();
-    if (!empty_dict)
-        goto bad;
-    {
-        #if PY_MAJOR_VERSION >= 3
-        if (level == -1) {
-            if ((1) && (strchr(__Pyx_MODULE_NAME, '.'))) {
-                module = PyImport_ImportModuleLevelObject(
-                    name, global_dict, empty_dict, list, 1);
-                if (!module) {
-                    if (!PyErr_ExceptionMatches(PyExc_ImportError))
-                        goto bad;
-                    PyErr_Clear();
-                }
-            }
-            level = 0;
-        }
-        #endif
-        if (!module) {
-            #if PY_MAJOR_VERSION < 3
-            PyObject *py_level = PyInt_FromLong(level);
-            if (!py_level)
-                goto bad;
-            module = PyObject_CallFunctionObjArgs(py_import,
-                name, global_dict, empty_dict, list, py_level, (PyObject *)NULL);
-            Py_DECREF(py_level);
-            #else
-            module = PyImport_ImportModuleLevelObject(
-                name, global_dict, empty_dict, list, level);
-            #endif
-        }
-    }
-bad:
-    #if PY_MAJOR_VERSION < 3
-    Py_XDECREF(py_import);
-    #endif
-    Py_XDECREF(empty_list);
-    Py_XDECREF(empty_dict);
-    return module;
-}
-
-/* ImportFrom */
-static PyObject* __Pyx_ImportFrom(PyObject* module, PyObject* name) {
-    PyObject* value = __Pyx_PyObject_GetAttrStr(module, name);
-    if (unlikely(!value) && PyErr_ExceptionMatches(PyExc_AttributeError)) {
-        PyErr_Format(PyExc_ImportError,
-        #if PY_MAJOR_VERSION < 3
-            "cannot import name %.230s", PyString_AS_STRING(name));
-        #else
-            "cannot import name %S", name);
-        #endif
-    }
-    return value;
-}
 
 /* PyCFunctionFastCall */
 #if CYTHON_FAST_PYCCALL
@@ -4408,6 +4307,236 @@ static CYTHON_INLINE PyObject* __Pyx_PyObject_CallOneArg(PyObject *func, PyObjec
     return result;
 }
 #endif
+
+/* WriteUnraisableException */
+static void __Pyx_WriteUnraisable(const char *name, CYTHON_UNUSED int clineno,
+                                  CYTHON_UNUSED int lineno, CYTHON_UNUSED const char *filename,
+                                  int full_traceback, CYTHON_UNUSED int nogil) {
+    PyObject *old_exc, *old_val, *old_tb;
+    PyObject *ctx;
+    __Pyx_PyThreadState_declare
+#ifdef WITH_THREAD
+    PyGILState_STATE state;
+    if (nogil)
+        state = PyGILState_Ensure();
+#ifdef _MSC_VER
+    else state = (PyGILState_STATE)-1;
+#endif
+#endif
+    __Pyx_PyThreadState_assign
+    __Pyx_ErrFetch(&old_exc, &old_val, &old_tb);
+    if (full_traceback) {
+        Py_XINCREF(old_exc);
+        Py_XINCREF(old_val);
+        Py_XINCREF(old_tb);
+        __Pyx_ErrRestore(old_exc, old_val, old_tb);
+        PyErr_PrintEx(1);
+    }
+    #if PY_MAJOR_VERSION < 3
+    ctx = PyString_FromString(name);
+    #else
+    ctx = PyUnicode_FromString(name);
+    #endif
+    __Pyx_ErrRestore(old_exc, old_val, old_tb);
+    if (!ctx) {
+        PyErr_WriteUnraisable(Py_None);
+    } else {
+        PyErr_WriteUnraisable(ctx);
+        Py_DECREF(ctx);
+    }
+#ifdef WITH_THREAD
+    if (nogil)
+        PyGILState_Release(state);
+#endif
+}
+
+/* ArgTypeTest */
+static int __Pyx__ArgTypeTest(PyObject *obj, PyTypeObject *type, const char *name, int exact)
+{
+    if (unlikely(!type)) {
+        PyErr_SetString(PyExc_SystemError, "Missing type object");
+        return 0;
+    }
+    else if (exact) {
+        #if PY_MAJOR_VERSION == 2
+        if ((type == &PyBaseString_Type) && likely(__Pyx_PyBaseString_CheckExact(obj))) return 1;
+        #endif
+    }
+    else {
+        if (likely(__Pyx_TypeCheck(obj, type))) return 1;
+    }
+    PyErr_Format(PyExc_TypeError,
+        "Argument '%.200s' has incorrect type (expected %.200s, got %.200s)",
+        name, type->tp_name, Py_TYPE(obj)->tp_name);
+    return 0;
+}
+
+/* PyErrExceptionMatches */
+#if CYTHON_FAST_THREAD_STATE
+static int __Pyx_PyErr_ExceptionMatchesTuple(PyObject *exc_type, PyObject *tuple) {
+    Py_ssize_t i, n;
+    n = PyTuple_GET_SIZE(tuple);
+#if PY_MAJOR_VERSION >= 3
+    for (i=0; i<n; i++) {
+        if (exc_type == PyTuple_GET_ITEM(tuple, i)) return 1;
+    }
+#endif
+    for (i=0; i<n; i++) {
+        if (__Pyx_PyErr_GivenExceptionMatches(exc_type, PyTuple_GET_ITEM(tuple, i))) return 1;
+    }
+    return 0;
+}
+static CYTHON_INLINE int __Pyx_PyErr_ExceptionMatchesInState(PyThreadState* tstate, PyObject* err) {
+    PyObject *exc_type = tstate->curexc_type;
+    if (exc_type == err) return 1;
+    if (unlikely(!exc_type)) return 0;
+    if (unlikely(PyTuple_Check(err)))
+        return __Pyx_PyErr_ExceptionMatchesTuple(exc_type, err);
+    return __Pyx_PyErr_GivenExceptionMatches(exc_type, err);
+}
+#endif
+
+/* GetAttr */
+static CYTHON_INLINE PyObject *__Pyx_GetAttr(PyObject *o, PyObject *n) {
+#if CYTHON_USE_TYPE_SLOTS
+#if PY_MAJOR_VERSION >= 3
+    if (likely(PyUnicode_Check(n)))
+#else
+    if (likely(PyString_Check(n)))
+#endif
+        return __Pyx_PyObject_GetAttrStr(o, n);
+#endif
+    return PyObject_GetAttr(o, n);
+}
+
+/* GetAttr3 */
+static PyObject *__Pyx_GetAttr3Default(PyObject *d) {
+    __Pyx_PyThreadState_declare
+    __Pyx_PyThreadState_assign
+    if (unlikely(!__Pyx_PyErr_ExceptionMatches(PyExc_AttributeError)))
+        return NULL;
+    __Pyx_PyErr_Clear();
+    Py_INCREF(d);
+    return d;
+}
+static CYTHON_INLINE PyObject *__Pyx_GetAttr3(PyObject *o, PyObject *n, PyObject *d) {
+    PyObject *r = __Pyx_GetAttr(o, n);
+    return (likely(r)) ? r : __Pyx_GetAttr3Default(d);
+}
+
+/* GetModuleGlobalName */
+#if CYTHON_USE_DICT_VERSIONS
+static PyObject *__Pyx__GetModuleGlobalName(PyObject *name, PY_UINT64_T *dict_version, PyObject **dict_cached_value)
+#else
+static CYTHON_INLINE PyObject *__Pyx__GetModuleGlobalName(PyObject *name)
+#endif
+{
+    PyObject *result;
+#if !CYTHON_AVOID_BORROWED_REFS
+#if CYTHON_COMPILING_IN_CPYTHON && PY_VERSION_HEX >= 0x030500A1
+    result = _PyDict_GetItem_KnownHash(__pyx_d, name, ((PyASCIIObject *) name)->hash);
+    __PYX_UPDATE_DICT_CACHE(__pyx_d, result, *dict_cached_value, *dict_version)
+    if (likely(result)) {
+        return __Pyx_NewRef(result);
+    } else if (unlikely(PyErr_Occurred())) {
+        return NULL;
+    }
+#else
+    result = PyDict_GetItem(__pyx_d, name);
+    __PYX_UPDATE_DICT_CACHE(__pyx_d, result, *dict_cached_value, *dict_version)
+    if (likely(result)) {
+        return __Pyx_NewRef(result);
+    }
+#endif
+#else
+    result = PyObject_GetItem(__pyx_d, name);
+    __PYX_UPDATE_DICT_CACHE(__pyx_d, result, *dict_cached_value, *dict_version)
+    if (likely(result)) {
+        return __Pyx_NewRef(result);
+    }
+    PyErr_Clear();
+#endif
+    return __Pyx_GetBuiltinName(name);
+}
+
+/* Import */
+static PyObject *__Pyx_Import(PyObject *name, PyObject *from_list, int level) {
+    PyObject *empty_list = 0;
+    PyObject *module = 0;
+    PyObject *global_dict = 0;
+    PyObject *empty_dict = 0;
+    PyObject *list;
+    #if PY_MAJOR_VERSION < 3
+    PyObject *py_import;
+    py_import = __Pyx_PyObject_GetAttrStr(__pyx_b, __pyx_n_s_import);
+    if (!py_import)
+        goto bad;
+    #endif
+    if (from_list)
+        list = from_list;
+    else {
+        empty_list = PyList_New(0);
+        if (!empty_list)
+            goto bad;
+        list = empty_list;
+    }
+    global_dict = PyModule_GetDict(__pyx_m);
+    if (!global_dict)
+        goto bad;
+    empty_dict = PyDict_New();
+    if (!empty_dict)
+        goto bad;
+    {
+        #if PY_MAJOR_VERSION >= 3
+        if (level == -1) {
+            if ((1) && (strchr(__Pyx_MODULE_NAME, '.'))) {
+                module = PyImport_ImportModuleLevelObject(
+                    name, global_dict, empty_dict, list, 1);
+                if (!module) {
+                    if (!PyErr_ExceptionMatches(PyExc_ImportError))
+                        goto bad;
+                    PyErr_Clear();
+                }
+            }
+            level = 0;
+        }
+        #endif
+        if (!module) {
+            #if PY_MAJOR_VERSION < 3
+            PyObject *py_level = PyInt_FromLong(level);
+            if (!py_level)
+                goto bad;
+            module = PyObject_CallFunctionObjArgs(py_import,
+                name, global_dict, empty_dict, list, py_level, (PyObject *)NULL);
+            Py_DECREF(py_level);
+            #else
+            module = PyImport_ImportModuleLevelObject(
+                name, global_dict, empty_dict, list, level);
+            #endif
+        }
+    }
+bad:
+    #if PY_MAJOR_VERSION < 3
+    Py_XDECREF(py_import);
+    #endif
+    Py_XDECREF(empty_list);
+    Py_XDECREF(empty_dict);
+    return module;
+}
+
+/* ImportFrom */
+static PyObject* __Pyx_ImportFrom(PyObject* module, PyObject* name) {
+    PyObject* value = __Pyx_PyObject_GetAttrStr(module, name);
+    if (unlikely(!value) && PyErr_ExceptionMatches(PyExc_AttributeError)) {
+        PyErr_Format(PyExc_ImportError,
+        #if PY_MAJOR_VERSION < 3
+            "cannot import name %.230s", PyString_AS_STRING(name));
+        #else
+            "cannot import name %S", name);
+        #endif
+    }
+    return value;
+}
 
 /* GetItemInt */
 static PyObject *__Pyx_GetItemInt_Generic(PyObject *o, PyObject* j) {

@@ -1,11 +1,10 @@
 import numpy as np
 
-# from buffett.common.interface.c import SizeBalancedTree
-from buffett.common.interface import SizeBalancedTree
+from buffett.cython.zdf.origin import Tree
 from test import SimpleTester
 
 
-class TestSizeBalancedTree(SimpleTester):
+class TestTree(SimpleTester):
     @classmethod
     def _setup_once(cls):
         pass
@@ -19,7 +18,7 @@ class TestSizeBalancedTree(SimpleTester):
 
         :return:
         """
-        tree = SizeBalancedTree()
+        tree = Tree()
         for i in range(0, 10):
             tree.add(i)
             assert tree.size == i + 1
@@ -32,7 +31,7 @@ class TestSizeBalancedTree(SimpleTester):
 
         :return:
         """
-        tree = SizeBalancedTree()
+        tree = Tree()
         for i in np.linspace(0, 9.5, num=20, dtype=int):
             tree.add(i)
         assert tree.size == 20
@@ -43,7 +42,7 @@ class TestSizeBalancedTree(SimpleTester):
 
         :return:
         """
-        tree = SizeBalancedTree()
+        tree = Tree()
         for i in range(0, 10):
             tree.add(i)
         for i in range(0, 10):
@@ -79,7 +78,7 @@ class TestSizeBalancedTree(SimpleTester):
 
     @classmethod
     def _init_tree(cls, ls: list):
-        tree = SizeBalancedTree()
+        tree = Tree()
         for d in ls:
             tree.add(d)
         return tree

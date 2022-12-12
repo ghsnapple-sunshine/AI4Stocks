@@ -1,1 +1,0 @@
-from zdf_stat cimport stat_past_with_period

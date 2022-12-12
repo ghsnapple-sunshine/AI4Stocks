@@ -1,13 +1,56 @@
 from typing import Optional
 
-from buffett.adapter.pandas import DataFrame
+from zdf_stat import stat_past_with_period  # ignore this pycharm error
+
+from buffett.adapter.numpy import np
 from buffett.analysis import Para
 from buffett.analysis.study.base import Analyst
-from buffett.analysis.study.tool.zdf_stat import calculate_zdf
 from buffett.analysis.types import AnalystType
 from buffett.common.constants.meta.analysis import ANALY_ZDF_META
 from buffett.common.tools import dataframe_not_valid
 from buffett.download.mysql import Operator
+from buffett.adapter.pandas import DataFrame
+from buffett.common.constants.col import CLOSE, HIGH, LOW, DATETIME
+from buffett.common.constants.col.analysis import (
+    DF5_PCT99,
+    DF5_PCT95,
+    DF5_PCT90,
+    ZF5_PCT90,
+    ZF5_PCT95,
+    ZF5_PCT99,
+    DF5_MAX,
+    ZF5_MAX,
+    DF20_PCT99,
+    DF20_PCT95,
+    DF20_PCT90,
+    ZF20_PCT90,
+    ZF20_PCT95,
+    ZF20_PCT99,
+    DF20_MAX,
+    ZF20_MAX,
+)
+
+
+CLOSEd, HIGHd, LOWd = 0, 1, 2
+input_columns = [CLOSE, HIGH, LOW]
+output_columns = [
+    DF5_PCT99,
+    DF5_PCT95,
+    DF5_PCT90,
+    ZF5_PCT90,
+    ZF5_PCT95,
+    ZF5_PCT99,
+    DF5_MAX,
+    ZF5_MAX,
+    DF20_PCT99,
+    DF20_PCT95,
+    DF20_PCT90,
+    ZF20_PCT90,
+    ZF20_PCT95,
+    ZF20_PCT99,
+    DF20_MAX,
+    ZF20_MAX,
+]
 
 
 class StatisticsAnalyst(Analyst):
@@ -40,6 +83,15 @@ class StatisticsAnalyst(Analyst):
         data = self._dataman.select_data(para=select_para, use_economy=True)
         if dataframe_not_valid(data):
             return
-        stat = calculate_zdf(data)
+        stat = self._calculate_zdf(data)
         return stat
 
+    @classmethod
+    def _calculate_zdf(cls, df: DataFrame) -> DataFrame:
+        arr = df[input_columns].values
+        stat5 = stat_past_with_period(arr, period=5)
+        stat20 = stat_past_with_period(arr, period=20)
+        stat = np.concatenate([stat5, stat20], axis=1)
+        data = DataFrame(data=stat, columns=output_columns)
+        data[DATETIME] = df.index
+        return data

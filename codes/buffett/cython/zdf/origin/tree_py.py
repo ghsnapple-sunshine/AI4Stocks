@@ -1,8 +1,16 @@
-cdef class Tree:
-    def __init__(self):
-        self._root = None
+from __future__ import annotations
 
-    cdef Node _right_rotate(self, Node node):
+from typing import Optional
+
+from buffett.cython.zdf.origin.node_py import Node
+
+
+class Tree:
+    def __init__(self):
+        self._root: Optional[Node] = None
+
+    @classmethod
+    def _right_rotate(cls, node: Node) -> Node:
         """
         右旋
 
@@ -10,15 +18,16 @@ cdef class Tree:
         :return:        Updated Rotate Node
         """
         # 置换节点
-        cdef Node new_root = node.left
+        new_root = node.left
         node.left = new_root.right
         new_root.right = node
         # 计算size
         new_root.size = node.size
-        node.size = node.left_size() + node.right_size() + 1
+        node.size = node.left_size + node.right_size + 1
         return new_root
 
-    cdef Node _left_rotate(self, Node node):
+    @classmethod
+    def _left_rotate(cls, node: Node) -> Node:
         """
         左旋
 
@@ -26,15 +35,16 @@ cdef class Tree:
         :return:        Updated Rotate Node
         """
         # 置换节点
-        cdef Node new_root = node.right
+        new_root = node.right
         node.right = new_root.left
         new_root.left = node
         # 计算size
         new_root.size = node.size
-        node.size = node.left_size() + node.right_size() + 1
+        node.size = node.left_size + node.right_size + 1
         return new_root
 
-    cdef Node _maintain(self, Node cur):
+    @classmethod
+    def _maintain(cls, cur: Optional[Node]) -> Optional[Node]:
         """
         维护以保持树的平衡。
 
@@ -42,38 +52,37 @@ cdef class Tree:
         :return:
         """
         if cur is None:
-            return cur
-        cdef int left_size = cur.left_size()
-        cdef int left_left_size = 0 if left_size == 0 else cur.left.left_size()
-        cdef int left_right_size = 0 if left_size == 0 else cur.left.right_size()
-        cdef int right_size = cur.right_size()
-        cdef int right_left_size = 0 if right_size == 0 else cur.right.left_size()
-        cdef int right_right_size = 0 if right_size == 0 else cur.right.right_size()
+            return
+        left_size = cur.left_size
+        left_left_size = 0 if left_size == 0 else cur.left.left_size
+        left_right_size = 0 if left_size == 0 else cur.left.right_size
+        right_size = cur.right_size
+        right_left_size = 0 if right_size == 0 else cur.right.left_size
+        right_right_size = 0 if right_size == 0 else cur.right.right_size
 
         if left_left_size > right_size:  # LL型
-            cur = self._right_rotate(cur)  # 右旋
-            cur.right = self._maintain(cur.right)
-            cur = self._maintain(cur)
+            cur = cls._right_rotate(cur)  # 右旋
+            cur.right = cls._maintain(cur.right)
+            cur = cls._maintain(cur)
         elif left_right_size > right_size:  # LR型
-            cur.left = self._left_rotate(cur.left)
-            cur = self._right_rotate(cur)
-            cur.left = self._maintain(cur.left)
-            cur.right = self._maintain(cur.right)
-            cur = self._maintain(cur)
+            cur.left = cls._left_rotate(cur.left)
+            cur = cls._right_rotate(cur)
+            cur.left = cls._maintain(cur.left)
+            cur.right = cls._maintain(cur.right)
+            cur = cls._maintain(cur)
         elif right_left_size > left_size:  # RL型
-            cur.right = self._right_rotate(cur.right)
-            cur = self._left_rotate(cur)
-            cur.left = self._maintain(cur.left)
-            cur.right = self._maintain(cur.right)
-            cur = self._maintain(cur)
+            cur.right = cls._right_rotate(cur.right)
+            cur = cls._left_rotate(cur)
+            cur.left = cls._maintain(cur.left)
+            cur.right = cls._maintain(cur.right)
+            cur = cls._maintain(cur)
         elif right_right_size > left_size:  # RR型
-            cur = self._left_rotate(cur)
-            cur.left = self._maintain(cur.left)
-            cur = self._maintain(cur)
+            cur = cls._left_rotate(cur)
+            cur.left = cls._maintain(cur.left)
+            cur = cls._maintain(cur)
         return cur
 
-    # cdef void add(self, double val):
-    cpdef void add(self, double val):
+    def add(self, val):
         """
         向树中添加元素
 
@@ -82,19 +91,19 @@ cdef class Tree:
         """
         self._root = self._add(self._root, val)
 
-    cdef Node _add(self, Node cur, double val):
+    @classmethod
+    def _add(cls, cur: Optional[Node], val) -> Node:
         if cur is None:
             return Node(val)
         # else
         cur.size += 1
         if val < cur.val:
-            cur.left = self._add(cur.left, val)
+            cur.left = cls._add(cur.left, val)
         else:
-            cur.right = self._add(cur.right, val)
-        return self._maintain(cur)
+            cur.right = cls._add(cur.right, val)
+        return cls._maintain(cur)
 
-    # cdef void delete(self, double val):
-    cpdef void delete(self, double val):
+    def delete(self, val):
         """
         在树中删除目标值
         如果不能确保树中包含待删除的元素，请使用delete_safe
@@ -104,7 +113,7 @@ cdef class Tree:
         """
         self._root = self._delete(self._root, val)
 
-    cdef void delete_safe(self, double val):
+    def delete_safe(self, val):
         """
         在树中删除目标值
 
@@ -114,7 +123,8 @@ cdef class Tree:
         if self.contains(val):
             self._root = self._delete(self._root, val)
 
-    cdef Node _delete(self, Node cur, double val):
+    @classmethod
+    def _delete(cls, cur: Node, val) -> Optional[Node]:
         """
         删除目标值
 
@@ -122,13 +132,11 @@ cdef class Tree:
         :param val:     Target Value(Object) to delete
         :return:        Updated Search Node
         """
-        cdef Node pre, des
-
         cur.size -= 1
         if cur.val > val:
-            cur.left = self._delete(cur.left, val)
+            cur.left = cls._delete(cur.left, val)
         elif cur.val < val:
-            cur.right = self._delete(cur.right, val)
+            cur.right = cls._delete(cur.right, val)
         else:
             left_valid = cur.left is not None
             right_valid = cur.right is not None
@@ -150,13 +158,13 @@ cdef class Tree:
                     pre.left = des.right
                     des.right = cur.right  # 将des节点，替换cur节点
                 des.left = cur.left  # 连接原先的左子树
-                des.size = des.left.size + des.right_size() + 1  # 左子树无需判断，右子树需判断
+                des.size = des.left.size + des.right_size + 1  # 左子树无需判断，右子树需判断
                 cur = des
 
-        cur = self._maintain(cur)
+        cur = cls._maintain(cur)
         return cur
 
-    cdef bint contains(self, double val):
+    def contains(self, val):
         """
         在树中查找目标值
 
@@ -165,7 +173,8 @@ cdef class Tree:
         """
         return self._contains(self._root, val)
 
-    cdef bint _contains(self, Node cur, double val):
+    @classmethod
+    def _contains(cls, cur: Node, val) -> bool:
         """
         查找目标值
 
@@ -178,10 +187,10 @@ cdef class Tree:
         if cur.val == val:
             return True
         if cur.val > val:
-            return self._contains(cur.left, val)
-        return self._contains(cur.right, val)
+            return cls._contains(cur.left, val)
+        return cls._contains(cur.right, val)
 
-    cdef double get_nth(self, int n):
+    def get_nth(self, n: int):
         """
         查找树中第n个元素
 
@@ -192,13 +201,14 @@ cdef class Tree:
         """
         if self._root is None:
             raise ValueError("Empty Size Balanced Tree to get.")
-        cdef int size = self._root.size
+        size = self._root.size
         if n >= size or n <= -size:
             raise ValueError("Exceed the size of the Size Balanced Tree.")
         n = (n + size) % size
-        return self._get_nth(self._root, n).val
+        return self._get_n(self._root, n).val
 
-    cdef Node _get_nth(self, Node cur, int n):
+    @classmethod
+    def _get_n(cls, cur: Node, n: int) -> Node:
         """
         查找第n个元素
 
@@ -207,37 +217,35 @@ cdef class Tree:
                         n=0 indicates the first value(object)
         :return:
         """
-        cdef int left_size = cur.left_size()
+        left_size = cur.left_size
         if left_size == n:
             return cur
         elif left_size > n:
-            return self._get_nth(cur.left, n)
+            return cls._get_n(cur.left, n)
         # elif left_size < n:
-        return self._get_nth(cur.right, n - left_size - 1)
+        return cls._get_n(cur.right, n - left_size - 1)
 
-    property is_empty:
-        def __get__(self):
-            """
-            判断树是否为空
+    @property
+    def is_empty(self):
+        """
+        判断树是否为空
 
-            :return:
-            """
-            return self._root is not None
+        :return:
+        """
+        return self._root is not None
 
-    property not_empty:
-        def __get__(self):
-            """
-            判断树是否非空
+    @property
+    def not_empty(self):
+        """
+        判断树是否非空
 
-            :return:
-            """
-            return self._root is None
+        :return:
+        """
+        return self._root is None
 
-    property size:
-        def __get__(self):
-            """
-            获取树的size
+    @property
+    def size(self):
+        return 0 if self._root is None else self._root.size
 
-            :return:
-            """
-            return 0 if self._root is None else self._root.size
+
+
