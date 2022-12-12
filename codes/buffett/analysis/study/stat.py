@@ -3,13 +3,10 @@ from typing import Optional
 from zdf_stat import stat_past_with_period  # ignore this pycharm error
 
 from buffett.adapter.numpy import np
+from buffett.adapter.pandas import DataFrame
 from buffett.analysis import Para
 from buffett.analysis.study.base import Analyst
 from buffett.analysis.types import AnalystType
-from buffett.common.constants.meta.analysis import ANALY_ZDF_META
-from buffett.common.tools import dataframe_not_valid
-from buffett.download.mysql import Operator
-from buffett.adapter.pandas import DataFrame
 from buffett.common.constants.col import CLOSE, HIGH, LOW, DATETIME
 from buffett.common.constants.col.analysis import (
     DF5_PCT99,
@@ -29,7 +26,9 @@ from buffett.common.constants.col.analysis import (
     DF20_MAX,
     ZF20_MAX,
 )
-
+from buffett.common.constants.meta.analysis import ANALY_ZDF_META
+from buffett.common.tools import dataframe_not_valid
+from buffett.download.mysql import Operator
 
 CLOSEd, HIGHd, LOWd = 0, 1, 2
 input_columns = [CLOSE, HIGH, LOW]
@@ -62,7 +61,7 @@ class StatisticsAnalyst(Analyst):
         super(StatisticsAnalyst, self).__init__(
             datasource_op=datasource_op,
             operator=operator,
-            analyst=AnalystType.PATTERN,
+            analyst=AnalystType.STAT_ZDF,
             meta=ANALY_ZDF_META,
             use_stock=True,
             use_index=False,

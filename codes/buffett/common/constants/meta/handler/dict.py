@@ -3,9 +3,6 @@ from buffett.common.constants.meta.handler.definition import (
     BS_MINUTE_META,
     DC_DAILY_META,
     DC_MINUTE_META,
-    INDEX_META,
-    CNCP_META,
-    INDUS_META,
 )
 from buffett.download.types import CombType, SourceType, FreqType, FuquanType
 

@@ -64,7 +64,6 @@ from buffett.common.constants.col.task import (
     ERR_MSG,
 )
 from buffett.download.mysql.types import AddReqType, ColType
-from buffett.download.types import CombType
 
 """
 Metadata for STK_LS & LG_STK_LS

@@ -1,4 +1,3 @@
-from buffett.common.constants.meta.handler.dict import META_DICT
 from buffett.common.constants.meta.handler.definition import (
     STK_META,
     BS_STK_META,
@@ -17,3 +16,4 @@ from buffett.common.constants.meta.handler.definition import (
     CAL_META,
     TASK_META,
 )
+from buffett.common.constants.meta.handler.dict import META_DICT

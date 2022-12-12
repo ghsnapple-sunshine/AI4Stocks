@@ -6,6 +6,8 @@ from buffett.download import Para
 
 
 class TableNameTool:
+    _GROUPBY = [FREQ, SOURCE, FUQUAN]
+
     @classmethod
     def get_by_code(cls, para: Para) -> str:
         """
@@ -47,7 +49,7 @@ class TableNameTool:
         :return:
         """
         records = (
-            records.groupby(by=[FREQ, SOURCE, FUQUAN])
+            records.groupby(by=cls._GROUPBY)
             .aggregate({START_DATE: "min", END_DATE: "max"})
             .reset_index()
         )

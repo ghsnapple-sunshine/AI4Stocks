@@ -7,6 +7,7 @@ from buffett.analysis import Para
 from buffett.analysis.recorder.analysis_recorder import AnalysisRecorder
 from buffett.analysis.study.calendar_man import CalendarManager
 from buffett.analysis.study.data_man import DataManager
+from buffett.analysis.study.tool.table_name import TableNameTool
 from buffett.analysis.types import AnalystType
 from buffett.common.constants.col import (
     SOURCE,
@@ -38,7 +39,6 @@ from buffett.download.handler.concept import DcConceptListHandler
 from buffett.download.handler.index import DcIndexListHandler
 from buffett.download.handler.industry import DcIndustryListHandler
 from buffett.download.handler.list import SseStockListHandler, BsStockListHandler
-from buffett.download.handler.tools import TableNameTool
 from buffett.download.mysql import Operator
 from buffett.download.types import FreqType, SourceType, FuquanType
 
@@ -216,6 +216,18 @@ class Analyst:
             on=[CODE, SOURCE, FREQ, FUQUAN, ANALYSIS],
         )
         return comb_list
+
+    def select_data(self, para: Para) -> Optional[DataFrame]:
+        """
+        从数据库中筛选数据
+
+        :param para:
+        :return:
+        """
+        table_name = TableNameTool.get_by_code(para)
+        data = self._operator.select_data(name=table_name, meta=self._meta, span=para.span)
+        return data
+
 
 
 class AnalysisLogger(Logger):
