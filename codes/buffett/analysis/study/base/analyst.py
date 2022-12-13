@@ -141,47 +141,10 @@ class Analyst:
         :param span
         :return:
         """
-        operator = self._datasource_op
-        # stock_list
-        stock_list = None
-        if self._use_stock:
-            sse_stock_list = SseStockListHandler(operator=operator).select_data()
-            bs_stock_list = BsStockListHandler(operator=operator).select_data()[
-                [CODE, NAME]
-            ]
-            stock_list = pd.concat([sse_stock_list, bs_stock_list]).drop_duplicates()
-            stock_list[SOURCE] = SourceType.ANALYSIS_STOCK
-            stock_list[FUQUAN] = FuquanType.HFQ
-        # index_list
-        index_list = None
-        if self._use_index:
-            index_list = (
-                DcIndexListHandler(operator=operator)
-                .select_data()
-                .rename(columns={INDEX_CODE: CODE, INDEX_NAME: NAME})
-            )
-            index_list[SOURCE] = SourceType.ANALYSIS_INDEX
-            index_list[FUQUAN] = FuquanType.BFQ
-        # concept_list
-        concept_list = None
-        if self._use_concept:
-            concept_list = (
-                DcConceptListHandler(operator=operator)
-                .select_data()
-                .rename(columns={CONCEPT_CODE: CODE, CONCEPT_NAME: NAME})
-            )
-            concept_list[SOURCE] = SourceType.ANALYSIS_CONCEPT
-            concept_list[FUQUAN] = FuquanType.BFQ
-        # industry_list
-        industry_list = None
-        if self._use_industry:
-            industry_list = (
-                DcIndustryListHandler(operator=operator)
-                .select_data()
-                .rename(columns={INDUSTRY_CODE: CODE, INDUSTRY_NAME: NAME})
-            )
-            industry_list[SOURCE] = SourceType.ANALYSIS_INDUSTRY
-            industry_list[FUQUAN] = FuquanType.BFQ
+        stock_list = self._get_stock_list()
+        index_list = self._get_index_list()
+        concept_list = self._get_concept_list()
+        industry_list = self._get_industry_list()
         # merge
         todo_records = pd.concat([stock_list, index_list, concept_list, industry_list])
         todo_records[FREQ] = FreqType.DAY
@@ -189,6 +152,88 @@ class Analyst:
         todo_records[END_DATE] = convert_datetime(span.end)
         todo_records[ANALYSIS] = self._analyst
         return todo_records
+
+    def _get_stock_list(self) -> Optional[DataFrame]:
+        """
+        获取股票清单
+
+        :return:
+        """
+        if not self._use_stock:
+            return
+        sse_stock_list = SseStockListHandler(operator=self._datasource_op).select_data()
+        bs_stock_list = BsStockListHandler(operator=self._datasource_op).select_data()
+        sse_valid = dataframe_is_valid(sse_stock_list)
+        bs_valid = dataframe_is_valid(bs_stock_list)
+        if sse_valid and bs_valid:
+            bs_stock_list = bs_stock_list[[CODE, NAME]]
+            add_stock_list = pd.subtract(bs_stock_list, sse_stock_list)
+            stock_list = pd.concat([sse_stock_list, add_stock_list])
+        elif sse_valid:
+            stock_list = sse_stock_list
+        elif bs_valid:
+            stock_list = bs_stock_list[[CODE, NAME]]
+        else:
+            stock_list = None
+        if dataframe_not_valid(stock_list):
+            return
+        stock_list[SOURCE] = SourceType.ANALYSIS_STOCK
+        stock_list[FUQUAN] = FuquanType.HFQ
+        return stock_list
+
+    def _get_index_list(self):
+        """
+        获取指数清单
+
+        :return:
+        """
+        if not self._use_index:
+            return
+        index_list = DcIndexListHandler(operator=self._datasource_op).select_data()
+        if dataframe_not_valid(index_list):
+            return
+        index_list = index_list.rename(columns={INDEX_CODE: CODE, INDEX_NAME: NAME})
+        index_list[SOURCE] = SourceType.ANALYSIS_INDEX
+        index_list[FUQUAN] = FuquanType.BFQ
+        return index_list
+
+    def _get_concept_list(self) -> Optional[DataFrame]:
+        """
+        获取概念清单
+
+        :return:
+        """
+        if not self._use_concept:
+            return
+        concept_list = DcConceptListHandler(operator=self._datasource_op).select_data()
+        if dataframe_not_valid(concept_list):
+            return
+        concept_list = concept_list.rename(
+            columns={CONCEPT_CODE: CODE, CONCEPT_NAME: NAME}
+        )
+        concept_list[SOURCE] = SourceType.ANALYSIS_CONCEPT
+        concept_list[FUQUAN] = FuquanType.BFQ
+        return concept_list
+
+    def _get_industry_list(self) -> Optional[DataFrame]:
+        """
+        获取行业清单
+
+        :return:
+        """
+        if self._use_industry:
+            return
+        industry_list = DcIndustryListHandler(
+            operator=self._datasource_op
+        ).select_data()
+        if dataframe_not_valid(industry_list):
+            return
+        industry_list = industry_list.rename(
+            columns={INDUSTRY_CODE: CODE, INDUSTRY_NAME: NAME}
+        )
+        industry_list[SOURCE] = SourceType.ANALYSIS_INDUSTRY
+        industry_list[FUQUAN] = FuquanType.BFQ
+        return industry_list
 
     @staticmethod
     def _get_comb_records(todo_records: DataFrame, done_records: DataFrame):
@@ -203,7 +248,10 @@ class Analyst:
             todo_records[DORCD_START] = NAN
             todo_records[DORCD_END] = NAN
             return todo_records
-        todo_records = pd.subtract(todo_records, done_records)
+        todo_records_without_name = todo_records[
+            [CODE, SOURCE, FREQ, FUQUAN, ANALYSIS, START_DATE, END_DATE]
+        ]
+        todo_records = pd.subtract(todo_records_without_name, done_records)
         done_records = done_records.rename(
             columns={START_DATE: DORCD_START, END_DATE: DORCD_END}
         )

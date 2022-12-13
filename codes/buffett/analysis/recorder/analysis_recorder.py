@@ -30,7 +30,6 @@ class AnalysisRecorder(SimpleRecorder):
         ls = [
             [
                 para.target.code,
-                para.target.name,
                 para.comb.freq,
                 para.comb.fuquan,
                 para.comb.source,
@@ -39,7 +38,7 @@ class AnalysisRecorder(SimpleRecorder):
                 para.span.end,
             ]
         ]
-        cols = [CODE, NAME, FREQ, FUQUAN, SOURCE, ANALYSIS, START_DATE, END_DATE]
+        cols = [CODE, FREQ, FUQUAN, SOURCE, ANALYSIS, START_DATE, END_DATE]
         data = DataFrame(data=ls, columns=cols)
         self.save_to_database(df=data)
 
