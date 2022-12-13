@@ -63,7 +63,7 @@ class StatZdfAnalyst(Analyst):
             operator=operator,
             analyst=AnalystType.STAT_ZDF,
             meta=ANALY_ZDF_META,
-            use_stock=True
+            use_stock=True,
         )
 
     def _calculate(self, para: Para) -> Optional[DataFrame]:

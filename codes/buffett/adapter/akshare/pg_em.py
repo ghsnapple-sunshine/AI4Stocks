@@ -19,7 +19,7 @@ def my_stock_em_pg() -> DataFrame:
         params = {
             "sortColumns": "EQUITY_RECORD_DATE",
             "sortTypes": "-1",
-            "pageSize": "50",
+            "pageSize": "500",
             "pageNumber": f"{n}",
             "reportName": "RPT_IPO_ALLOTMENT",
             "columns": "ALL",

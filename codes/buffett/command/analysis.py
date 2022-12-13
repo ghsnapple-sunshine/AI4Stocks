@@ -9,13 +9,12 @@ def analysis():
     operator = Operator(RoleType.DbAnaly)
     datasource_op = Operator(RoleType.DbStock)
     now = DateTime.now()
-    task_cls = [
-        TargetPatternRecognizeTask,
-        TargetStatZdfTask
-    ]
+    task_cls = [TargetPatternRecognizeTask, TargetStatZdfTask]
     tasks = [
         task_cls[i](
-            operator=operator, datasource_op=datasource_op, start_time=now.add(seconds=i)
+            operator=operator,
+            datasource_op=datasource_op,
+            start_time=now.add(seconds=i),
         )
         for i in range(0, len(task_cls))
     ]

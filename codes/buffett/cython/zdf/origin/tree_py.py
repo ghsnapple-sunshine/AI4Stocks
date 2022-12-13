@@ -246,6 +246,3 @@ class Tree:
     @property
     def size(self):
         return 0 if self._root is None else self._root.size
-
-
-

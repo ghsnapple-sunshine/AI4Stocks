@@ -1,7 +1,7 @@
 from buffett.common.pendulum import DateTime
 from buffett.download.mysql import Operator
 from buffett.download.mysql.types import RoleType
-from buffett.task import (
+from buffett.task.download import (
     TaskScheduler,
     SseStockListTask,
     DcStockDailyTask,
@@ -9,6 +9,7 @@ from buffett.task import (
     StockReformTask,
     CalendarTask,
     StockProfitTask,
+    StockFhpgTask,
     StockDividendTask,
     ConceptListTask,
     IndustryListTask,
@@ -33,6 +34,7 @@ def download():
         SseStockListTask,
         BsStockListTask,
         StockProfitTask,
+        StockFhpgTask,
         StockDividendTask,
         ConceptListTask,
         IndustryListTask,
@@ -55,3 +57,7 @@ def download():
     ]
     sch = TaskScheduler(operator=operator, tasks=tasks)
     sch.run()
+
+
+if __name__ == "__main__":
+    download()

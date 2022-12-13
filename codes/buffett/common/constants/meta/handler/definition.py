@@ -41,6 +41,14 @@ from buffett.common.constants.col import (
     START_DATE,
     END_DATE,
     PRECLOSE,
+    TYPE,
+    PXBLc,
+    SGBLc,
+    PGBLc,
+    PGJGc,
+    ZFBLc,
+    ZFGSc,
+    ZFJGc,
 )
 from buffett.common.constants.col.target import (
     INDEX_CODE,
@@ -290,3 +298,21 @@ TASK_META = create_meta(
     ]
 )
 
+
+"""
+Metadata for stock_fhpg
+"""
+STK_FHPG_META = create_meta(
+    meta_list=[
+        [CODE, ColType.CODE, AddReqType.KEY],
+        [DATE, ColType.DATE, AddReqType.KEY],
+        [TYPE, ColType.ENUM_BOOL, AddReqType.KEY],
+        [PXBLc, ColType.FLOAT, AddReqType.NONE],
+        [SGBLc, ColType.FLOAT, AddReqType.NONE],
+        [PGBLc, ColType.FLOAT, AddReqType.NONE],
+        [PGJGc, ColType.FLOAT, AddReqType.NONE],
+        [ZFBLc, ColType.FLOAT, AddReqType.NONE],
+        [ZFGSc, ColType.FLOAT, AddReqType.NONE],
+        [ZFJGc, ColType.FLOAT, AddReqType.NONE],
+    ]
+)

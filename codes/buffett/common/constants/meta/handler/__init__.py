@@ -7,6 +7,7 @@ from buffett.common.constants.meta.handler.definition import (
     BS_MINUTE_META,
     STK_RT_META,
     STK_DVD_META,
+    STK_FHPG_META,
     INDEX_META,
     INDUS_META,
     INDUS_CONS_META,

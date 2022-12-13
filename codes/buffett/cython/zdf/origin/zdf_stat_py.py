@@ -17,9 +17,7 @@ def stat_past_with_period(arr: ndarray, period: int) -> ndarray:
         lows.add(arr[i, LOWd])
     for i in range(period, num):
         # 计算
-        res[i, 0:6] = [
-            q.get_value(closes) for q in quans
-        ]  # 1%, 5%, 10%, 90%, 95%, 99%
+        res[i, 0:6] = [q.get_value(closes) for q in quans]  # 1%, 5%, 10%, 90%, 95%, 99%
         res[i, 6] = lows.get_nth(-1)  # 最高
         res[i, 7] = highs.get_nth(0)  # 最低
         # 更新值

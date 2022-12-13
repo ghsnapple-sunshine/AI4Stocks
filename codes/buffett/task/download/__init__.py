@@ -11,6 +11,7 @@ from buffett.task.download.money_supply import MoneySupplyTask
 from buffett.task.download.scheduler import TaskScheduler
 from buffett.task.download.stock_daily_task import DcStockDailyTask, BsStockDailyTask
 from buffett.task.download.stock_dividend_task import StockDividendTask
+from buffett.task.download.stock_fhpg_task import StockFhpgTask
 from buffett.task.download.stock_list_task import SseStockListTask, BsStockListTask
 from buffett.task.download.stock_minute_task import StockMinuteTask
 from buffett.task.download.stock_pepb_task import StockPePbTask

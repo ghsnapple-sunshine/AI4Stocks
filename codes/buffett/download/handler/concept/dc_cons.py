@@ -5,7 +5,7 @@ from buffett.adapter.pandas import DataFrame, pd
 from buffett.common.constants.col.target import CONCEPT_CODE, CONCEPT_NAME, CODE, NAME
 from buffett.common.constants.meta.handler import CNCP_CONS_META
 from buffett.common.constants.table import CNCP_CONS_LS
-from buffett.common.error.pre_step import PreStepError
+from buffett.common.error import PreStepError
 from buffett.common.logger import Logger
 from buffett.common.tools import dataframe_not_valid
 from buffett.download.handler.base import FastHandler

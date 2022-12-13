@@ -50,6 +50,7 @@ class Analyst:
         analyst: AnalystType,
         meta: DataFrame = ANALY_EVENT_META,
         use_stock: bool = True,
+        use_stock_minute: bool = False,
         use_index: bool = True,
         use_concept: bool = True,
         use_industry: bool = True,
@@ -60,6 +61,7 @@ class Analyst:
         self._analyst = analyst
         self._meta = meta
         self._use_stock = use_stock
+        self._use_stock_minute = use_stock_minute
         self._use_index = use_index
         self._use_concept = use_concept
         self._use_industry = use_industry
@@ -161,6 +163,19 @@ class Analyst:
         """
         if not self._use_stock:
             return
+        stock_list = self.__get_stock_list()
+        if dataframe_not_valid(stock_list):
+            return
+        stock_list[SOURCE] = SourceType.ANALYSIS_STOCK
+        stock_list[FUQUAN] = FuquanType.HFQ
+        return stock_list
+
+    def __get_stock_list(self) -> Optional[DataFrame]:
+        """
+        _get_stock_list的子方法
+
+        :return:
+        """
         sse_stock_list = SseStockListHandler(operator=self._datasource_op).select_data()
         bs_stock_list = BsStockListHandler(operator=self._datasource_op).select_data()
         sse_valid = dataframe_is_valid(sse_stock_list)
@@ -175,10 +190,6 @@ class Analyst:
             stock_list = bs_stock_list[[CODE, NAME]]
         else:
             stock_list = None
-        if dataframe_not_valid(stock_list):
-            return
-        stock_list[SOURCE] = SourceType.ANALYSIS_STOCK
-        stock_list[FUQUAN] = FuquanType.HFQ
         return stock_list
 
     def _get_index_list(self):

@@ -59,3 +59,12 @@ M2TB = "m2tb"
 M2HB = "m2hb"
 #
 ST = "ST"
+#
+TYPE = "type"
+PXBLc = "派息比例"
+SGBLc = "送股比例"
+PGBLc = "配股比例"
+PGJGc = "配股价格"
+ZFBLc = "增发比例"
+ZFGSc = "增发股数"
+ZFJGc = "增发价格"

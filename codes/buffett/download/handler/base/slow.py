@@ -14,8 +14,7 @@ from buffett.common.constants.col import (
 )
 from buffett.common.constants.col.my import DORCD_START, DORCD_END
 from buffett.common.constants.col.target import CODE
-from buffett.common.error import ParamTypeError
-from buffett.common.error.pre_step import PreStepError
+from buffett.common.error import ParamTypeError, PreStepError
 from buffett.common.interface import ProducerConsumer
 from buffett.common.logger import Logger
 from buffett.common.magic import get_class, empty_method

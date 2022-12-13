@@ -1,5 +1,6 @@
 from buffett.common.pendulum import DateTime
 from buffett.task.download import (
+    StockFhpgTask,
     StockPePbTask,
     ConceptConsTask,
     IndustryConsTask,
@@ -18,11 +19,13 @@ class TestMediumDownload(Tester):
     def _setup_oncemore(cls):
         # 初始化
         create_1stock(operator=cls._operator)
+        create_1stock(operator=cls._operator, is_sse=False)
         # create_1index(operator=cls._operator)
         create_1concept(operator=cls._operator)
         create_1industry(operator=cls._operator)
         # 创建任务清单
         cls._task_cls = [
+            create_task_no_subsequent(StockFhpgTask),
             create_task_no_subsequent(StockPePbTask),
             create_task_no_subsequent(ConceptConsTask),
             create_task_no_subsequent(IndustryConsTask),
