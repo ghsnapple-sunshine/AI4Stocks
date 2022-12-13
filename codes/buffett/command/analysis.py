@@ -1,7 +1,7 @@
 from buffett.common.pendulum import DateTime
 from buffett.download.mysql import Operator
 from buffett.download.mysql.types import RoleType
-from buffett.task.analysis import TargetPatternRecognizeTask
+from buffett.task.analysis import TargetPatternRecognizeTask, TargetStatZdfTask
 from buffett.task.download import TaskScheduler
 
 
@@ -11,6 +11,7 @@ def analysis():
     now = DateTime.now()
     task_cls = [
         TargetPatternRecognizeTask,
+        TargetStatZdfTask
     ]
     tasks = [
         task_cls[i](

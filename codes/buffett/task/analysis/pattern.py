@@ -1,5 +1,5 @@
 from buffett.adapter.pendulum import DateTime, Date
-from buffett.analysis.study.pattern import PatternAnalyst
+from buffett.analysis.study import PatternAnalyst
 from buffett.common.pendulum import DateSpan
 from buffett.common.wrapper import Wrapper
 from buffett.download.mysql import Operator

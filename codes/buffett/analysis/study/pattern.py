@@ -30,11 +30,11 @@ class PatternAnalyst(Analyst):
         :param para:
         :return:
         """
-
         start = self._calendarman.query(para.span.start, offset=-5)
         select_para = para.clone().with_start(start)
         data = self._dataman.select_data(para=select_para, use_economy=True)
         if dataframe_not_valid(data):
+            self._logger.warning_calculate_end(para=para)
             return
         pattern = PatternRecognize.all(inputs=data)
         pattern = self._convert_pattern(pattern)

@@ -5,8 +5,7 @@ from buffett.adapter.numpy import NAN
 from buffett.adapter.pandas import pd, DataFrame
 from buffett.analysis import Para
 from buffett.analysis.recorder.analysis_recorder import AnalysisRecorder
-from buffett.analysis.study.calendar_man import CalendarManager
-from buffett.analysis.study.data_man import DataManager
+from buffett.analysis.study.supporter import CalendarManager, DataManager
 from buffett.analysis.study.tool.table_name import TableNameTool
 from buffett.analysis.types import AnalystType
 from buffett.common.constants.col import (
@@ -106,7 +105,6 @@ class Analyst:
             return None
         result = result[para.span.is_insides(result[DATETIME])]
         return para, result
-
 
     @staticmethod
     @abstractmethod
@@ -225,9 +223,10 @@ class Analyst:
         :return:
         """
         table_name = TableNameTool.get_by_code(para)
-        data = self._operator.select_data(name=table_name, meta=self._meta, span=para.span)
+        data = self._operator.select_data(
+            name=table_name, meta=self._meta, span=para.span
+        )
         return data
-
 
 
 class AnalysisLogger(Logger):
@@ -239,3 +238,8 @@ class AnalysisLogger(Logger):
 
     def info_calculate_end(self, para: Para):
         Logger.info(f"Successfully Calculate {self._analyst} for {para}")
+
+    def warning_calculate_end(self, para: Para):
+        Logger.info(
+            f"End Calculate {self._analyst} for {para}, nothing is found for calculation."
+        )

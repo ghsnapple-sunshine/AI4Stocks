@@ -1,6 +1,6 @@
 from buffett.analysis import Para
 from buffett.analysis.study.pattern import PatternAnalyst
-from buffett.analysis.study.stat import StatisticsAnalyst
+from buffett.analysis.study.stat_zdf import StatZdfAnalyst
 from buffett.analysis.types import AnalystType
 from buffett.common.tools import dataframe_is_valid
 from buffett.download.handler.calendar import CalendarHandler
@@ -61,7 +61,7 @@ class TestAnalyst(AnalysisTester):
 
         :return:
         """
-        handler = StatisticsAnalyst(
+        handler = StatZdfAnalyst(
             datasource_op=self._select_op, operator=self._insert_op
         )
         handler.calculate(span=self._long_para.span)

@@ -52,21 +52,18 @@ output_columns = [
 ]
 
 
-class StatisticsAnalyst(Analyst):
+class StatZdfAnalyst(Analyst):
     def __init__(
         self,
         datasource_op: Operator,
         operator: Operator,
     ):
-        super(StatisticsAnalyst, self).__init__(
+        super(StatZdfAnalyst, self).__init__(
             datasource_op=datasource_op,
             operator=operator,
             analyst=AnalystType.STAT_ZDF,
             meta=ANALY_ZDF_META,
-            use_stock=True,
-            use_index=False,
-            use_concept=False,
-            use_industry=False,
+            use_stock=True
         )
 
     def _calculate(self, para: Para) -> Optional[DataFrame]:
@@ -80,7 +77,8 @@ class StatisticsAnalyst(Analyst):
         end = self._calendarman.query(para.span.end, offset=20)
         select_para = para.clone().with_start_n_end(start, end)
         data = self._dataman.select_data(para=select_para, use_economy=True)
-        if dataframe_not_valid(data):
+        if dataframe_not_valid(data) or len(data) < 40:
+            self._logger.warning_calculate_end(para=para)
             return
         stat = self._calculate_zdf(data)
         return stat
