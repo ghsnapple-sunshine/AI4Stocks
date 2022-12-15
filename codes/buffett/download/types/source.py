@@ -2,47 +2,47 @@ from buffett.common import ComparableEnum
 
 
 class SourceType(ComparableEnum):
-    BAOSTOCK = 1
-    AKSHARE_DONGCAI = 10
-    AKSHARE_DONGCAI_CONCEPT = 11
-    AKSHARE_DONGCAI_INDUSTRY = 12
-    AKSHARE_DONGCAI_INDEX = 13
-    AKSHARE_LGLG_PEPB = 20
-    AKSHARE_TONGHUASHUN = 30
-    ANALYSIS_STOCK = 40
-    ANALYSIS_CONCEPT = 41
-    ANALYSIS_INDUSTRY = 42
-    ANALYSIS_INDEX = 43
+    BS = 1
+    AK_DC = 10
+    AK_DC_CONCEPT = 11
+    AK_DC_INDUSTRY = 12
+    AK_DC_INDEX = 13
+    AK_LG_PEPB = 20
+    AK_TSH = 30
+    ANA = 40
+    ANA_CONCEPT = 41
+    ANA_INDUSTRY = 42
+    ANA_INDEX = 43
 
     def sql_format(self):
         SOURCE_TYPE_DICT = {
-            SourceType.BAOSTOCK: "bs_stock",
-            SourceType.AKSHARE_DONGCAI: "dc_stock",
-            SourceType.AKSHARE_DONGCAI_CONCEPT: "dc_concept",
-            SourceType.AKSHARE_DONGCAI_INDUSTRY: "dc_industry",
-            SourceType.AKSHARE_DONGCAI_INDEX: "dc_index",
-            SourceType.AKSHARE_LGLG_PEPB: "lg_pepb",
-            SourceType.AKSHARE_TONGHUASHUN: "th_stock",
-            SourceType.ANALYSIS_STOCK: "analysis_stock",
-            SourceType.ANALYSIS_CONCEPT: "analysis_concept",
-            SourceType.ANALYSIS_INDUSTRY: "analysis_industry",
-            SourceType.ANALYSIS_INDEX: "analysis_index",
+            SourceType.BS: "bs_stock",
+            SourceType.AK_DC: "dc_stock",
+            SourceType.AK_DC_CONCEPT: "dc_concept",
+            SourceType.AK_DC_INDUSTRY: "dc_industry",
+            SourceType.AK_DC_INDEX: "dc_index",
+            SourceType.AK_LG_PEPB: "lg_pepb",
+            SourceType.AK_TSH: "th_stock",
+            SourceType.ANA: "analysis_stock",
+            SourceType.ANA_CONCEPT: "analysis_concept",
+            SourceType.ANA_INDUSTRY: "analysis_industry",
+            SourceType.ANA_INDEX: "analysis_index",
         }
         return SOURCE_TYPE_DICT[self]
 
     def is_dongcai(self) -> bool:
         SOURCE_TYPE_DICT = {
-            SourceType.BAOSTOCK: False,
-            SourceType.AKSHARE_DONGCAI: True,
-            SourceType.AKSHARE_DONGCAI_CONCEPT: True,
-            SourceType.AKSHARE_DONGCAI_INDUSTRY: True,
-            SourceType.AKSHARE_DONGCAI_INDEX: True,
-            SourceType.AKSHARE_LGLG_PEPB: False,
-            SourceType.AKSHARE_TONGHUASHUN: False,
-            SourceType.ANALYSIS_STOCK: False,
-            SourceType.ANALYSIS_CONCEPT: False,
-            SourceType.ANALYSIS_INDUSTRY: False,
-            SourceType.ANALYSIS_INDEX: False,
+            SourceType.BS: False,
+            SourceType.AK_DC: True,
+            SourceType.AK_DC_CONCEPT: True,
+            SourceType.AK_DC_INDUSTRY: True,
+            SourceType.AK_DC_INDEX: True,
+            SourceType.AK_LG_PEPB: False,
+            SourceType.AK_TSH: False,
+            SourceType.ANA: False,
+            SourceType.ANA_CONCEPT: False,
+            SourceType.ANA_INDUSTRY: False,
+            SourceType.ANA_INDEX: False,
         }
         return SOURCE_TYPE_DICT[self]
 

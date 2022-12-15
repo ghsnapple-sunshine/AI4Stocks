@@ -20,3 +20,5 @@ TASK_RCD = "task_record"
 DL_RCD = "download_record"
 EA_RCD = "easy_record"
 RF_RCD = "reform_record"
+#
+FQ_FAC = "fuquan_factor"

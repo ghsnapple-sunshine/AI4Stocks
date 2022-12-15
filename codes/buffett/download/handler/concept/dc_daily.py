@@ -50,7 +50,7 @@ class DcConceptDailyHandler(SlowHandler):
             target_list_handler=DcConceptListHandler(operator=operator),
             calendar_handler=CalendarHandler(operator=operator),
             recorder=DownloadRecorder(operator=operator),
-            source=SourceType.AKSHARE_DONGCAI_CONCEPT,
+            source=SourceType.AK_DC_CONCEPT,
             fuquans=[FuquanType.BFQ],
             freq=FreqType.DAY,
             field_code=CONCEPT_CODE,

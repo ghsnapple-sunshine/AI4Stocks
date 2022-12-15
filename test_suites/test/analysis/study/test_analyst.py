@@ -1,6 +1,5 @@
 from buffett.analysis import Para
-from buffett.analysis.study.pattern import PatternAnalyst
-from buffett.analysis.study.stat_zdf import StatZdfAnalyst
+from buffett.analysis.study import PatternAnalyst, StatZdfAnalyst, FuquanAnalyst
 from buffett.analysis.types import AnalystType
 from buffett.common.tools import dataframe_is_valid
 from buffett.download.handler.calendar import CalendarHandler
@@ -8,7 +7,7 @@ from buffett.download.handler.concept import DcConceptDailyHandler
 from buffett.download.handler.index import DcIndexDailyHandler
 from buffett.download.handler.industry import DcIndustryDailyHandler
 from buffett.download.handler.stock import DcDailyHandler
-from buffett.download.types import SourceType, FreqType, FuquanType
+from buffett.download.types import SourceType, FreqType, FuquanType, CombType
 from test import create_1stock, create_1index, create_1industry, create_1concept
 from test.analysis.analysis_tester import AnalysisTester
 
@@ -22,13 +21,13 @@ class TestAnalyst(AnalysisTester):
     def _setup_oncemore(cls):
         create_1stock(operator=cls._operator)
         create_1stock(operator=cls._operator, is_sse=False)
-        DcDailyHandler(operator=cls._operator).obtain_data(para=cls._long_para)
+        cls._daily_handler = DcDailyHandler(operator=cls._operator).obtain_data(para=cls._long_para)
         create_1index(operator=cls._operator)
-        DcIndexDailyHandler(operator=cls._operator).obtain_data(para=cls._long_para)
+        cls._index_handler = DcIndexDailyHandler(operator=cls._operator).obtain_data(para=cls._long_para)
         create_1concept(operator=cls._operator)
-        DcConceptDailyHandler(operator=cls._operator).obtain_data(para=cls._long_para)
+        cls._concept_handler = DcConceptDailyHandler(operator=cls._operator).obtain_data(para=cls._long_para)
         create_1industry(operator=cls._operator)
-        DcIndustryDailyHandler(operator=cls._operator).obtain_data(para=cls._long_para)
+        cls._industry_handler = DcIndustryDailyHandler(operator=cls._operator).obtain_data(para=cls._long_para)
         CalendarHandler(operator=cls._operator).obtain_data()
 
     def _setup_always(self) -> None:
@@ -46,7 +45,7 @@ class TestAnalyst(AnalysisTester):
         handler.calculate(span=self._long_para.span)
         select_para = (
             Para()
-            .with_source(SourceType.ANALYSIS_STOCK)
+            .with_source(SourceType.ANA)
             .with_freq(FreqType.DAY)
             .with_fuquan(FuquanType.HFQ)
             .with_code("000001")
@@ -67,7 +66,7 @@ class TestAnalyst(AnalysisTester):
         handler.calculate(span=self._long_para.span)
         select_para = (
             Para()
-            .with_source(SourceType.ANALYSIS_STOCK)
+            .with_source(SourceType.ANA)
             .with_freq(FreqType.DAY)
             .with_fuquan(FuquanType.HFQ)
             .with_code("000001")

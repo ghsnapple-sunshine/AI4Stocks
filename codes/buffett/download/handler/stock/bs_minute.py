@@ -30,7 +30,7 @@ class BsMinuteHandler(SlowHandler):
             target_list_handler=BsStockListHandler(operator=operator),
             calendar_handler=CalendarHandler(operator=operator),
             recorder=DownloadRecorder(operator=operator),
-            source=SourceType.BAOSTOCK,
+            source=SourceType.BS,
             fuquans=[FuquanType.BFQ],
             freq=FreqType.MIN5,
             field_code=CODE,

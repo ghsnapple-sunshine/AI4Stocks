@@ -6,6 +6,7 @@ from buffett.adapter.pandas import pd, DataFrame
 from buffett.analysis import Para
 from buffett.analysis.recorder.analysis_recorder import AnalysisRecorder
 from buffett.analysis.study.supporter import CalendarManager, DataManager
+from buffett.analysis.study.tool.stock_list import get_stock_list
 from buffett.analysis.study.tool.table_name import TableNameTool
 from buffett.analysis.types import AnalystType
 from buffett.common.constants.col import (
@@ -37,7 +38,6 @@ from buffett.common.wrapper import Wrapper
 from buffett.download.handler.concept import DcConceptListHandler
 from buffett.download.handler.index import DcIndexListHandler
 from buffett.download.handler.industry import DcIndustryListHandler
-from buffett.download.handler.list import SseStockListHandler, BsStockListHandler
 from buffett.download.mysql import Operator
 from buffett.download.types import FreqType, SourceType, FuquanType
 
@@ -163,33 +163,11 @@ class Analyst:
         """
         if not self._use_stock:
             return
-        stock_list = self.__get_stock_list()
+        stock_list = get_stock_list(operator=self._datasource_op)
         if dataframe_not_valid(stock_list):
             return
-        stock_list[SOURCE] = SourceType.ANALYSIS_STOCK
+        stock_list[SOURCE] = SourceType.ANA
         stock_list[FUQUAN] = FuquanType.HFQ
-        return stock_list
-
-    def __get_stock_list(self) -> Optional[DataFrame]:
-        """
-        _get_stock_list的子方法
-
-        :return:
-        """
-        sse_stock_list = SseStockListHandler(operator=self._datasource_op).select_data()
-        bs_stock_list = BsStockListHandler(operator=self._datasource_op).select_data()
-        sse_valid = dataframe_is_valid(sse_stock_list)
-        bs_valid = dataframe_is_valid(bs_stock_list)
-        if sse_valid and bs_valid:
-            bs_stock_list = bs_stock_list[[CODE, NAME]]
-            add_stock_list = pd.subtract(bs_stock_list, sse_stock_list)
-            stock_list = pd.concat([sse_stock_list, add_stock_list])
-        elif sse_valid:
-            stock_list = sse_stock_list
-        elif bs_valid:
-            stock_list = bs_stock_list[[CODE, NAME]]
-        else:
-            stock_list = None
         return stock_list
 
     def _get_index_list(self):
@@ -204,7 +182,7 @@ class Analyst:
         if dataframe_not_valid(index_list):
             return
         index_list = index_list.rename(columns={INDEX_CODE: CODE, INDEX_NAME: NAME})
-        index_list[SOURCE] = SourceType.ANALYSIS_INDEX
+        index_list[SOURCE] = SourceType.ANA_INDEX
         index_list[FUQUAN] = FuquanType.BFQ
         return index_list
 
@@ -222,7 +200,7 @@ class Analyst:
         concept_list = concept_list.rename(
             columns={CONCEPT_CODE: CODE, CONCEPT_NAME: NAME}
         )
-        concept_list[SOURCE] = SourceType.ANALYSIS_CONCEPT
+        concept_list[SOURCE] = SourceType.ANA_CONCEPT
         concept_list[FUQUAN] = FuquanType.BFQ
         return concept_list
 
@@ -242,7 +220,7 @@ class Analyst:
         industry_list = industry_list.rename(
             columns={INDUSTRY_CODE: CODE, INDUSTRY_NAME: NAME}
         )
-        industry_list[SOURCE] = SourceType.ANALYSIS_INDUSTRY
+        industry_list[SOURCE] = SourceType.ANA_INDUSTRY
         industry_list[FUQUAN] = FuquanType.BFQ
         return industry_list
 

@@ -38,7 +38,7 @@ class TestLgStockPePbHandler(Tester):
             CODE: "000001",
             FREQ: FreqType.DAY,
             FUQUAN: FuquanType.BFQ,
-            SOURCE: SourceType.AKSHARE_LGLG_PEPB,
+            SOURCE: SourceType.AK_LG_PEPB,
             START_DATE: self._long_para.span.start,
             END_DATE: self._long_para.span.end,
             DORCD_START: NAN,

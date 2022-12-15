@@ -18,7 +18,7 @@ class TestTableName(SimpleTester):
         para = (
             Para()
             .with_code("000001")
-            .with_source(SourceType.AKSHARE_DONGCAI)
+            .with_source(SourceType.AK_DC)
             .with_fuquan(FuquanType.BFQ)
             .with_freq(FreqType.DAY)
         )
@@ -30,7 +30,7 @@ class TestTableName(SimpleTester):
         para = (
             Para()
             .with_code("000001")
-            .with_source(SourceType.AKSHARE_DONGCAI)
+            .with_source(SourceType.AK_DC)
             .with_fuquan(FuquanType.HFQ)
             .with_freq(FreqType.DAY)
         )
@@ -42,7 +42,7 @@ class TestTableName(SimpleTester):
         para = (
             Para()
             .with_code("000001")
-            .with_source(SourceType.AKSHARE_DONGCAI)
+            .with_source(SourceType.AK_DC)
             .with_fuquan(FuquanType.QFQ)
             .with_freq(FreqType.DAY)
         )
@@ -54,7 +54,7 @@ class TestTableName(SimpleTester):
         para = (
             Para()
             .with_code("000001")
-            .with_source(SourceType.BAOSTOCK)
+            .with_source(SourceType.BS)
             .with_fuquan(FuquanType.BFQ)
             .with_freq(FreqType.MIN5)
         )
@@ -66,7 +66,7 @@ class TestTableName(SimpleTester):
         para = (
             Para()
             .with_code("000001")
-            .with_source(SourceType.AKSHARE_DONGCAI_INDEX)
+            .with_source(SourceType.AK_DC_INDEX)
             .with_fuquan(FuquanType.BFQ)
             .with_freq(FreqType.DAY)
         )
@@ -78,7 +78,7 @@ class TestTableName(SimpleTester):
         para = (
             Para()
             .with_code("BK1039")
-            .with_source(SourceType.AKSHARE_DONGCAI_INDUSTRY)
+            .with_source(SourceType.AK_DC_INDUSTRY)
             .with_fuquan(FuquanType.BFQ)
             .with_freq(FreqType.DAY)
         )
@@ -90,7 +90,7 @@ class TestTableName(SimpleTester):
         para = (
             Para()
             .with_code("BK0493")
-            .with_source(SourceType.AKSHARE_DONGCAI_CONCEPT)
+            .with_source(SourceType.AK_DC_CONCEPT)
             .with_fuquan(FuquanType.BFQ)
             .with_freq(FreqType.DAY)
         )
@@ -102,7 +102,7 @@ class TestTableName(SimpleTester):
         para = (
             Para()
             .with_start(Date(2022, 1, 1))
-            .with_source(SourceType.AKSHARE_DONGCAI)
+            .with_source(SourceType.AK_DC)
             .with_fuquan(FuquanType.BFQ)
             .with_freq(FreqType.DAY)
         )

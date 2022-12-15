@@ -38,7 +38,7 @@ class LgPePbHandler(MediumHandler):
             operator=operator,
             target_list_handler=SseStockListHandler(operator=operator),
             recorder=DownloadRecorder(operator=operator),
-            source=SourceType.AKSHARE_LGLG_PEPB,
+            source=SourceType.AK_LG_PEPB,
             fuquan=FuquanType.BFQ,
             freq=FreqType.DAY,
             field_code=CODE,

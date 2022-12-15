@@ -40,7 +40,7 @@ class BsDailyHandler(SlowHandler):
             target_list_handler=BsStockListHandler(operator=operator),
             calendar_handler=CalendarHandler(operator=operator),
             recorder=DownloadRecorder(operator=operator),
-            source=SourceType.BAOSTOCK,
+            source=SourceType.BS,
             fuquans=[FuquanType.BFQ, FuquanType.HFQ, FuquanType.QFQ],
             freq=FreqType.DAY,
             field_code=CODE,

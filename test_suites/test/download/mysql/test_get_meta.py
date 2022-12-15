@@ -28,7 +28,7 @@ class TestGetMeta(Tester):
         para = (
             para.with_code("000001")
             .with_freq(FreqType.DAY)
-            .with_source(SourceType.AKSHARE_DONGCAI)
+            .with_source(SourceType.AK_DC)
             .with_fuquan(FuquanType.BFQ)
         )
         table_name = TableNameTool.get_by_code(para=para)
@@ -42,7 +42,7 @@ class TestGetMeta(Tester):
         para = (
             para.with_code("000001")
             .with_freq(FreqType.MIN5)
-            .with_source(SourceType.BAOSTOCK)
+            .with_source(SourceType.BS)
             .with_fuquan(FuquanType.BFQ)
         )
         table_name = TableNameTool.get_by_code(para=para)

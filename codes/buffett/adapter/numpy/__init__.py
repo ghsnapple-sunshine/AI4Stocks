@@ -1,5 +1,6 @@
 from numpy import (
     NAN as np_NAN,
+    abs as np_abs,
     arange as np_arange,
     array as np_array,
     concatenate as np_concatenate,
@@ -14,6 +15,7 @@ from numpy import (
     reshape as np_reshape,
     sum as np_sum,
     vectorize as np_vectorize,
+    unique as np_unique,
     zeros as np_zeros,
 )
 
@@ -27,6 +29,7 @@ float64 = np_float64
 
 class np:
     # methods
+    abs = np_abs
     arange = np_arange
     array = np_array
     concatenate = np_concatenate
@@ -40,4 +43,5 @@ class np:
     random = np_random
     reshape = np_reshape
     vectorize = np_vectorize
+    unique = np_unique
     zeros = np_zeros

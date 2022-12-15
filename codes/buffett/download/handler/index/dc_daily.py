@@ -30,7 +30,7 @@ class DcIndexDailyHandler(SlowHandler):
             target_list_handler=DcIndexListHandler(operator=operator),
             calendar_handler=CalendarHandler(operator=operator),
             recorder=DownloadRecorder(operator=operator),
-            source=SourceType.AKSHARE_DONGCAI_INDEX,
+            source=SourceType.AK_DC_INDEX,
             fuquans=[FuquanType.BFQ],
             freq=FreqType.DAY,
             field_code=INDEX_CODE,

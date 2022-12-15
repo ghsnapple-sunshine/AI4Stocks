@@ -53,7 +53,7 @@ class DcIndustryDailyHandler(SlowHandler):
             target_list_handler=DcIndustryListHandler(operator=operator),
             calendar_handler=CalendarHandler(operator=operator),
             recorder=DownloadRecorder(operator=operator),
-            source=SourceType.AKSHARE_DONGCAI_INDUSTRY,
+            source=SourceType.AK_DC_INDUSTRY,
             fuquans=[FuquanType.BFQ],
             freq=FreqType.DAY,
             field_code=INDUSTRY_CODE,

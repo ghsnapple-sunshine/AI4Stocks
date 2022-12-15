@@ -49,6 +49,8 @@ from buffett.common.constants.col import (
     ZFBLc,
     ZFGSc,
     ZFJGc,
+    A,
+    B,
 )
 from buffett.common.constants.col.target import (
     INDEX_CODE,
@@ -314,5 +316,18 @@ STK_FHPG_META = create_meta(
         [ZFBLc, ColType.FLOAT, AddReqType.NONE],
         [ZFGSc, ColType.FLOAT, AddReqType.NONE],
         [ZFJGc, ColType.FLOAT, AddReqType.NONE],
+    ]
+)
+
+"""
+Metadata for fuquan_factor
+"""
+FQ_FAC_META = create_meta(
+    meta_list=[
+        [CODE, ColType.CODE, AddReqType.KEY],
+        [START_DATE, ColType.DATE, AddReqType.KEY],
+        [END_DATE, ColType.DATE, AddReqType.KEY],
+        [A, ColType.DOUBLE, AddReqType.NONE],
+        [B, ColType.DOUBLE, AddReqType.NONE],
     ]
 )

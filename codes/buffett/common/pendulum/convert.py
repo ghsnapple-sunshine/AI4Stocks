@@ -1,5 +1,6 @@
 from typing import Optional, Union
 
+from buffett.adapter.numpy import np
 from buffett.adapter.pendulum import date, datetime
 from buffett.common.error import ParamTypeError
 from buffett.common.pendulum.date import Date
@@ -27,7 +28,10 @@ def convert_date(dt: Optional[date]) -> Union[Date, DateTime, None]:
         return Date(dt.year, dt.month, dt.day)
     elif dt is None:
         return None
-    raise ParamTypeError("dt", Union[date, None])
+    raise ParamTypeError("dt", Optional[date])
+
+
+convert_dates = np.vectorize(convert_date)
 
 
 def convert_datetime(dt: Optional[date]) -> Union[Date, DateTime, None]:
@@ -51,4 +55,7 @@ def convert_datetime(dt: Optional[date]) -> Union[Date, DateTime, None]:
         return DateTime(dt.year, dt.month, dt.day)
     elif dt is None:
         return None
-    raise ParamTypeError("dt", Union[date, None])
+    raise ParamTypeError("dt", Optional[date])
+
+
+convert_datetimes = np.vectorize(convert_datetime)

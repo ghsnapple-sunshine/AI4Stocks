@@ -49,7 +49,7 @@ class DcDailyHandler(SlowHandler):
             target_list_handler=SseStockListHandler(operator=operator),
             calendar_handler=CalendarHandler(operator=operator),
             recorder=DownloadRecorder(operator=operator),
-            source=SourceType.AKSHARE_DONGCAI,
+            source=SourceType.AK_DC,
             fuquans=[FuquanType.BFQ, FuquanType.HFQ, FuquanType.QFQ],
             freq=FreqType.DAY,
             field_code=CODE,

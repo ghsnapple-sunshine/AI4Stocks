@@ -22,6 +22,5 @@ def select_data_slow(operator: Operator, para: Para) -> Optional[DataFrame]:
     df = operator.select_data(name=table_name, span=para.span)
     if dataframe_not_valid(df):
         return
-    df.index = df[KEY]
-    del df[KEY]
+    df = df.set_index(KEY)
     return df

@@ -1,3 +1,5 @@
+from typing import Optional
+
 import pandas as pd
 
 from buffett.adapter.akshare import ak
@@ -104,10 +106,15 @@ class DcFhpgHandler(Handler):
             return "sz" + code
         raise NotImplemented
 
-    def select_data(self):
+    def select_data(self, index: bool = True) -> Optional[DataFrame]:
         """
         获取分红配股数据
 
         :return:
         """
-        return self._operator.select_data(name=STK_FHPG, meta=STK_FHPG_META)
+        df = self._operator.select_data(name=STK_FHPG, meta=STK_FHPG_META)
+        if dataframe_not_valid(df):
+            return
+        if index:
+            df = df.set_index([DATE])
+        return df

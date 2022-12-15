@@ -68,3 +68,6 @@ PGJGc = "配股价格"
 ZFBLc = "增发比例"
 ZFGSc = "增发股数"
 ZFJGc = "增发价格"
+#
+A = "a"
+B = "b"

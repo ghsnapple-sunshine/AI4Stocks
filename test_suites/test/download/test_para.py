@@ -17,7 +17,7 @@ class TestPara(SimpleTester):
 
     def test_from_series_partial(self):
         freq = FreqType.DAY
-        source = SourceType.BAOSTOCK
+        source = SourceType.BS
         fuquan = FuquanType.BFQ
         series = Series({FREQ: freq, SOURCE: source, FUQUAN: fuquan})
         para = Para.from_series(series)
@@ -29,7 +29,7 @@ class TestPara(SimpleTester):
 
     def test_from_series_incorrect_key(self):
         freq = FreqType.DAY
-        source = SourceType.BAOSTOCK
+        source = SourceType.BS
         fuquan = FuquanType.BFQ
         series = Series({0: freq, SOURCE: source, FUQUAN: fuquan})
         para = Para.from_series(series)
@@ -41,7 +41,7 @@ class TestPara(SimpleTester):
 
     def test_from_series_all(self):
         freq = FreqType.DAY
-        source = SourceType.BAOSTOCK
+        source = SourceType.BS
         fuquan = FuquanType.BFQ
         code = "000001"
         name = "平安银行"

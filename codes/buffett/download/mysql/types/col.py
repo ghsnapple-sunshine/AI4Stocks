@@ -14,6 +14,7 @@ class ColType(Enum):
             "FLOAT": 20,  # ColType.FLOAT
             "INT": 21,  # ColType.INT32
             "BIGINT UNSIGNED": 22,  # ColType.BigInt Unsigned
+            "DOUBLE": 23,  # ColType.Double
             "DATE": 10,  # ColType.DATE
             "DATETIME": 11,  # ColType.DATETIME
             "TINYINT UNSIGNED": 100,  # ColType.ENUM
@@ -33,6 +34,7 @@ class ColType(Enum):
     FLOAT = 20
     INT32 = 21
     BIGINT_UNSIGNED = 22
+    DOUBLE = 23
 
     DATE = 10  # 日期
     DATETIME = 11  # 日期时间
@@ -52,6 +54,7 @@ class ColType(Enum):
             ColType.FLOAT: "FLOAT",
             ColType.INT32: "INT",
             ColType.BIGINT_UNSIGNED: "BIGINT UNSIGNED",
+            ColType.DOUBLE: "DOUBLE",
             ColType.DATE: "DATE",
             ColType.DATETIME: "DATETIME",
             ColType.ENUM_BOOL: "TINYINT UNSIGNED",

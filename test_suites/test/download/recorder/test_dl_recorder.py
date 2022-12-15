@@ -27,7 +27,7 @@ class TestDownloadRecorder(Tester):
                 "000001",
                 FreqType.DAY,
                 FuquanType.BFQ,
-                SourceType.AKSHARE_DONGCAI,
+                SourceType.AK_DC,
                 Date(2000, 1, 1),
                 Date(2022, 1, 1),
             ]
@@ -40,7 +40,7 @@ class TestDownloadRecorder(Tester):
         code = "000002"
         freq = FreqType.DAY
         fuquan = FuquanType.BFQ
-        source = SourceType.AKSHARE_DONGCAI
+        source = SourceType.AK_DC
         start_date = Date(2000, 1, 1)
         end_date = Date(2022, 1, 1)
         para = (
@@ -59,7 +59,7 @@ class TestDownloadRecorder(Tester):
         # 验证数据正确
         assert data[data[CODE] == "000001"][FREQ][0] == FreqType.DAY
         assert data[data[CODE] == "000001"][FUQUAN][0] == FuquanType.BFQ
-        assert data[data[CODE] == "000001"][SOURCE][0] == SourceType.AKSHARE_DONGCAI
+        assert data[data[CODE] == "000001"][SOURCE][0] == SourceType.AK_DC
         assert data[data[CODE] == "000001"][START_DATE][0].date() == Date(2000, 1, 1)
         assert data[data[CODE] == "000001"][END_DATE][0].date() == Date(2022, 1, 1)
         # 验证记录是否存在

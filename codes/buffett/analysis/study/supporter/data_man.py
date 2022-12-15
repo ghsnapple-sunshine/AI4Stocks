@@ -13,18 +13,18 @@ from buffett.download.types import SourceType, FreqType
 
 SOURCE_DICT: dict[SourceType, tuple[SourceType, SourceType]] = {
     # stock
-    SourceType.AKSHARE_DONGCAI: (SourceType.AKSHARE_DONGCAI, SourceType.BAOSTOCK),
-    SourceType.BAOSTOCK: (SourceType.BAOSTOCK, SourceType.AKSHARE_DONGCAI),
-    SourceType.ANALYSIS_STOCK: (SourceType.AKSHARE_DONGCAI, SourceType.BAOSTOCK),
+    SourceType.AK_DC: (SourceType.AK_DC, SourceType.BS),
+    SourceType.BS: (SourceType.BS, SourceType.AK_DC),
+    SourceType.ANA: (SourceType.AK_DC, SourceType.BS),
     # index
-    SourceType.ANALYSIS_INDEX: (SourceType.AKSHARE_DONGCAI_INDEX, None),
-    SourceType.AKSHARE_DONGCAI_INDEX: (SourceType.AKSHARE_DONGCAI_INDEX, None),
+    SourceType.ANA_INDEX: (SourceType.AK_DC_INDEX, None),
+    SourceType.AK_DC_INDEX: (SourceType.AK_DC_INDEX, None),
     # concept
-    SourceType.ANALYSIS_CONCEPT: (SourceType.AKSHARE_DONGCAI_CONCEPT, None),
-    SourceType.AKSHARE_DONGCAI_CONCEPT: (SourceType.AKSHARE_DONGCAI_CONCEPT, None),
+    SourceType.ANA_CONCEPT: (SourceType.AK_DC_CONCEPT, None),
+    SourceType.AK_DC_CONCEPT: (SourceType.AK_DC_CONCEPT, None),
     # industry
-    SourceType.ANALYSIS_INDUSTRY: (SourceType.AKSHARE_DONGCAI_INDUSTRY, None),
-    SourceType.AKSHARE_DONGCAI_INDUSTRY: (SourceType.AKSHARE_DONGCAI_INDUSTRY, None),
+    SourceType.ANA_INDUSTRY: (SourceType.AK_DC_INDUSTRY, None),
+    SourceType.AK_DC_INDUSTRY: (SourceType.AK_DC_INDUSTRY, None),
 }
 
 
@@ -38,18 +38,21 @@ class DataManager:
         self._operator = operator
         self._dl_record = DownloadRecorder(operator=operator).select_data()
 
-    def select_data(self, para: Para, use_economy=False) -> Optional[DataFrame]:
+    def select_data(
+        self, para: Para, economy: bool = False, index: bool = True
+    ) -> Optional[DataFrame]:
         """
         查询数据
 
         :param para:
-        :param use_economy:
+        :param economy:
+        :param index:
         :return:
         """
         para = para.clone()
         #
         if (para.target is not None) and (para.target.code is not None):
-            source = self._determine_source(para=para, use_economy=use_economy)
+            source = self._determine_source(para=para, economy=economy)
             if source is None:
                 return
             para = para.with_source(source)
@@ -60,18 +63,19 @@ class DataManager:
             data = self._select_data(para=para, by_code=False)
             economy_data = (
                 self._select_economy_data(para=para, economy_source=economy_source)
-                if use_economy
+                if economy
                 else None
             )
             data = pd.concat_safe([data, economy_data])
         #
         if dataframe_not_valid(data):
             return
-        key = DATE if DATE in data.columns else DATETIME
-        data.index = data[key]
+        if index:
+            key = DATE if para.comb.freq == FreqType.DAY else DATETIME
+            data = data.set_index(key)
         return data
 
-    def _determine_source(self, para: Para, use_economy=False) -> Optional[SourceType]:
+    def _determine_source(self, para: Para, economy=False) -> Optional[SourceType]:
         """
         para中未指定数据源的情况下选择优先级高的数据源。
 
@@ -90,7 +94,7 @@ class DataManager:
             return None
         if (dl_record[SOURCE] == source).any():
             return source
-        if not use_economy:
+        if not economy:
             return None
         if (dl_record[SOURCE] == economy_source).any():
             return economy_source
