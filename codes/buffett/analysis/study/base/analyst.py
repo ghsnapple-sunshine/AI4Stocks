@@ -6,8 +6,7 @@ from buffett.adapter.pandas import pd, DataFrame
 from buffett.analysis import Para
 from buffett.analysis.recorder.analysis_recorder import AnalysisRecorder
 from buffett.analysis.study.supporter import CalendarManager, DataManager
-from buffett.analysis.study.tool.stock_list import get_stock_list
-from buffett.analysis.study.tool.table_name import TableNameTool
+from buffett.analysis.study.tool import get_stock_list, TableNameTool
 from buffett.analysis.types import AnalystType
 from buffett.common.constants.col import (
     SOURCE,

@@ -4,7 +4,7 @@ from buffett.adapter.numpy import np, ndarray
 from buffett.adapter.pandas import DataFrame, pd
 from buffett.analysis import Para
 from buffett.analysis.study.supporter import DataManager
-from buffett.analysis.study.tool.stock_list import get_stock_list
+from buffett.analysis.study.tool import get_stock_list
 from buffett.common.constants.col import (
     DATE,
     CLOSE,
