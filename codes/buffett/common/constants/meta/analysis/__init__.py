@@ -28,7 +28,7 @@ from buffett.common.constants.col.analysis import (
     DF20_PCT95,
     DF20_PCT90,
 )
-from buffett.common.constants.col.target import CODE, NAME
+from buffett.common.constants.col.target import CODE
 from buffett.download.mysql.types import ColType, AddReqType
 
 """

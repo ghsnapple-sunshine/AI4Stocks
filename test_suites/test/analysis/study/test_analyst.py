@@ -21,13 +21,21 @@ class TestAnalyst(AnalysisTester):
     def _setup_oncemore(cls):
         create_1stock(operator=cls._operator)
         create_1stock(operator=cls._operator, is_sse=False)
-        cls._daily_handler = DcDailyHandler(operator=cls._operator).obtain_data(para=cls._long_para)
+        cls._daily_handler = DcDailyHandler(operator=cls._operator).obtain_data(
+            para=cls._long_para
+        )
         create_1index(operator=cls._operator)
-        cls._index_handler = DcIndexDailyHandler(operator=cls._operator).obtain_data(para=cls._long_para)
+        cls._index_handler = DcIndexDailyHandler(operator=cls._operator).obtain_data(
+            para=cls._long_para
+        )
         create_1concept(operator=cls._operator)
-        cls._concept_handler = DcConceptDailyHandler(operator=cls._operator).obtain_data(para=cls._long_para)
+        cls._concept_handler = DcConceptDailyHandler(
+            operator=cls._operator
+        ).obtain_data(para=cls._long_para)
         create_1industry(operator=cls._operator)
-        cls._industry_handler = DcIndustryDailyHandler(operator=cls._operator).obtain_data(para=cls._long_para)
+        cls._industry_handler = DcIndustryDailyHandler(
+            operator=cls._operator
+        ).obtain_data(para=cls._long_para)
         CalendarHandler(operator=cls._operator).obtain_data()
 
     def _setup_always(self) -> None:
