@@ -23,12 +23,11 @@ class TestFuquanAnalyst(AnalysisTester):
 
         :return:
         """
-        create_1stock(operator=cls._operator)
-        create_1stock(operator=cls._operator, is_sse=False)
+        create_1stock(operator=cls._operator, source="both")
         cls._fhpg_handler = DcFhpgHandler(operator=cls._operator)
         cls._fhpg_handler.obtain_data()
         create_2stocks(operator=cls._operator)
-        create_2stocks(operator=cls._operator, is_sse=False)
+        create_2stocks(operator=cls._operator, source="bs")
         cls._daily_handler = DcDailyHandler(operator=cls._operator)
         cls._minute_handler = BsMinuteHandler(operator=cls._operator)
         cls._daily_handler.obtain_data(para=cls._long_para)

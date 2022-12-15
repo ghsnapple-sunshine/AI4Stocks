@@ -1,4 +1,6 @@
-from typing import Any
+from typing import Any, Literal
+
+import pandas as pd
 
 from buffett.adapter.pandas import DataFrame
 from buffett.common import create_meta
@@ -25,61 +27,80 @@ from buffett.download.mysql import Operator
 from buffett.download.mysql.types import ColType, AddReqType
 
 
-def create_1stock(operator: Operator, is_sse: bool = True) -> DataFrame:
+def create_1stock(
+    operator: Operator, source: Literal["sse", "bs", "both"] = "sse"
+) -> DataFrame:
     """
     创建只有一支股票的StockList
 
     :param operator:    Operator
-    :param is_sse:      是否为SSE表
+    :param source:      数据源
     :return:
     """
     data = [["000001", "平安银行"]]
-    return _create_stocks(operator, data, is_sse)
+    return _create_stocks(operator, data, source)
 
 
-def create_2stocks(operator: Operator, is_sse: bool = True) -> DataFrame:
+def create_2stocks(
+    operator: Operator, source: Literal["sse", "bs", "both"] = "sse"
+) -> DataFrame:
     """
     创建有两支股票的StockList
 
     :param operator:    Operator
-    :param is_sse:      是否为SSE表
+    :param source:      数据源
     :return:
     """
     data = [["000001", "平安银行"], ["600000", "浦发银行"]]
-    return _create_stocks(operator, data, is_sse)
+    return _create_stocks(operator, data, source)
 
 
 def create_ex_1stock(
-    operator: Operator, target: Target, is_sse: bool = True
+    operator: Operator, target: Target, source: Literal["sse", "bs", "both"] = "sse"
 ) -> DataFrame:
     """
     创建只有一支股票的StockList，股票代码需指定
 
     :param operator:    Operator
     :param target:      股票对象
-    :param is_sse:      是否为SSE表
+    :param source:      数据源
     :return:
     """
     data = [[target.code, target.name]]
-    return _create_stocks(operator, data, is_sse)
+    return _create_stocks(operator, data, source)
 
 
-def _create_stocks(operator: Operator, data: list[list[Any]], is_sse: bool):
+def _create_stocks(
+    operator: Operator, data: list[list[Any]], source: Literal["sse", "bs", "both"]
+):
     """
-    创建stockList
+    创建StockList
 
-    :param operator:    Operator
-    :param data:        数据
-    :param is_sse:      是否为SSE表
+    :param operator:        Operator
+    :param data:            data
+    :param source:          数据源
     :return:
     """
-    table_name = STK_LS if is_sse else BS_STK_LS
-    table_meta = STK_META if is_sse else BS_STK_META
-    operator.drop_table(table_name)
-    operator.create_table(name=table_name, meta=table_meta)
-    df = DataFrame(data=data, columns=[CODE, NAME])
-    operator.insert_data(table_name, df)
-    return df
+
+    def __create_stocks(is_sse: bool):
+        """
+        创建stockList
+
+        :param is_sse:      是否为SSE表
+        :return:
+        """
+        table_name = STK_LS if is_sse else BS_STK_LS
+        table_meta = STK_META if is_sse else BS_STK_META
+        operator.drop_table(table_name)
+        operator.create_table(name=table_name, meta=table_meta)
+        df = DataFrame(data=data, columns=[CODE, NAME])
+        operator.insert_data(table_name, df)
+        return df
+
+    dic = {"sse": [True], "bs": [False], "both": [True, False]}
+    datas = [__create_stocks(x) for x in dic[source]]
+    data = pd.concat(datas)
+    return data
 
 
 def create_1concept(operator: Operator) -> DataFrame:

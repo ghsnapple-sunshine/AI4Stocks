@@ -39,8 +39,7 @@ class TestSlowDownload(Tester):
     @classmethod
     def _setup_oncemore(cls):
         # 初始化StockList, ConceptList, IndustryList, IndexList
-        create_1stock(operator=cls._operator)
-        create_1stock(operator=cls._operator, is_sse=False)
+        create_1stock(operator=cls._operator, source="both")
         create_1concept(operator=cls._operator)
         create_1industry(operator=cls._operator)
         create_1index(operator=cls._operator)

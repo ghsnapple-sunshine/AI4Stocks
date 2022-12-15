@@ -19,8 +19,7 @@ class TestAnalyst(AnalysisTester):
 
     @classmethod
     def _setup_oncemore(cls):
-        create_1stock(operator=cls._operator)
-        create_1stock(operator=cls._operator, is_sse=False)
+        create_1stock(operator=cls._operator, source="both")
         cls._daily_handler = DcDailyHandler(operator=cls._operator).obtain_data(
             para=cls._long_para
         )

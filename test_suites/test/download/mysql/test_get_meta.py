@@ -14,8 +14,7 @@ class TestGetMeta(Tester):
     @classmethod
     def _setup_oncemore(cls):
         # 初始化StockList
-        create_1stock(operator=cls._operator)
-        create_1stock(operator=cls._operator, is_sse=False)
+        create_1stock(operator=cls._operator, source="both")
 
     def _setup_always(self) -> None:
         # 可以不用清理数据库
