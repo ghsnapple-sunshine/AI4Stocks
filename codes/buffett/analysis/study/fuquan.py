@@ -143,33 +143,35 @@ class FuquanAnalyst:
         add_index = inter_dates.index - 1
         add_index = add_index[add_index >= 0]  # 避免出现-1索引
         add_dates = data_dates.loc[add_index]
-        start, end = data_dates.iloc[0, 0], data_dates.iloc[-1, 0]
-        fhpg_info = (
-            pd.concat(
-                [
-                    inter_dates[[DATE]],
-                    add_dates[[DATE]],
-                    DataFrame({DATE: [start, end]}),
-                ]
-            )
-            .drop_duplicates()
-            .sort_values(by=[DATE])
-        )
+        fhpg_info = pd.concat(
+            [
+                inter_dates[[DATE]],
+                add_dates[[DATE]],
+            ]
+        ).sort_values(by=[DATE])
+        # 增加首尾
+        st_ed = np.array([data_dates.iloc[0, 0], data_dates.iloc[-1, 0]])
+        st_ed = st_ed[st_ed != np.array([fhpg_info.iloc[0, 0], fhpg_info.iloc[-1, 0]])]
+        fhpg_info = pd.concat(
+            [
+                fhpg_info,
+                DataFrame({DATE: st_ed}),
+            ]
+        ).sort_values(by=[DATE])
         # 筛选数据
         bfq_info = pd.merge(fhpg_info, bfq_info, on=[DATE], how="left")
         hfq_info = pd.merge(fhpg_info, hfq_info, on=[DATE], how="left")
         # 计算a， b
-        data = None
-        for COL in COLs:
-            data = self._calc_segment(
-                bfq_arr=bfq_info[COL].values,
-                hfq_arr=hfq_info[COL].values,
-                dates=fhpg_info[DATE].values,
-            )
-            if pd.isna(data[A]).any():
-                self._logger.warning_regression_result(COL)
-            else:
-                break
+        data = self._calc_segment(
+            bfq_arr=bfq_info[CLOSE].values,
+            hfq_arr=hfq_info[CLOSE].values,
+            date_arr=fhpg_info[DATE].values,
+        )
+        self._fix_segment(
+            data=data,
+            bfq_info=bfq_info,
+            hfq_info=hfq_info,
+        )
         data[CODE] = code
         self._logger.info_end_calculate(code)
         return data
@@ -267,30 +269,29 @@ class FuquanAnalyst:
         else:
             ix = np.concatenate([ix, [num - 1]])
         # 计算a, b
-        data = None
-        for COL in COLs:
-            data = self._calc_segment(
-                bfq_info[COL].values[ix],
-                hfq_info[COL].values[ix],
-                bfq_info[DATE].values[ix],
-            )
-            if pd.isna(data[A]).any():
-                self._logger.warning_regression_result(COL)
-            else:
-                break
+        data = self._calc_segment(
+            bfq_arr=bfq_info[CLOSE].values[ix],
+            hfq_arr=hfq_info[CLOSE].values[ix],
+            date_arr=bfq_info[DATE].values[ix],
+        )
+        self._fix_segment(
+            data=data,
+            bfq_info=bfq_info,
+            hfq_info=hfq_info,
+        )
         data[CODE] = code
         #
         self._logger.info_end_calculate(code)
         return data
 
     @classmethod
-    def _calc_segment(cls, bfq_arr: ndarray, hfq_arr: ndarray, dates: ndarray):
+    def _calc_segment(cls, bfq_arr: ndarray, hfq_arr: ndarray, date_arr: ndarray):
         """
         计算每个分段的a,b
 
         :param bfq_arr:    不复权数据（日线）
         :param hfq_arr:    复权数据（日线）
-        :param dates:       日期
+        :param date_arr:       日期
         :return:
         """
         # 使用头和尾计算插值a, b
@@ -304,10 +305,37 @@ class FuquanAnalyst:
         a = (y0 - y1) / (x0 - x1)
         b = y0 - a * x0
         #
-        rs, re = dates[0:num:2], dates[1:num:2]
+        rs, re = date_arr[0:num:2], date_arr[1:num:2]
         res = np.concatenate([rs, re, a, b]).reshape((num // 2, 4), order="F")
         res = DataFrame(res, columns=[START_DATE, END_DATE, A, B])
         return res
+
+    @classmethod
+    def _fix_segment(
+        cls, data: DataFrame, bfq_info: DataFrame, hfq_info: DataFrame
+    ) -> None:
+        """
+        对于首尾相同导致除0的计算进行修正
+
+        :param data:
+        :param bfq_info:
+        :param hfq_info:
+        :return:
+        """
+        if not pd.isna(data[A]).any():
+            return
+        a_ = data[A].values
+        bfq_low, bfq_high = bfq_info[LOW].values, bfq_info[HIGH].values
+        hfq_low, hfq_high = hfq_info[LOW].values, hfq_info[HIGH].values
+        for i in range(len(a_)):
+            if not pd.isna(a_[i]):
+                continue
+            region = [2 * i, 2 * i + 1]
+            bfq_arr = np.array([np.min(bfq_low[region]), np.max(bfq_high[region])])
+            hfq_arr = np.array([np.min(hfq_low[region]), np.max(hfq_high[region])])
+            date_arr = np.array([data[START_DATE].iloc[i], data[END_DATE].iloc[i]])
+            fix_data = cls._calc_segment(bfq_arr=bfq_arr, hfq_arr=hfq_arr, date_arr=date_arr)
+            data.iloc[i, 2:] = fix_data.iloc[0, 2:]  # 覆盖原NA结果
 
     def _save_to_database(self, data: DataFrame) -> None:
         """
@@ -410,7 +438,3 @@ class FuquanAnalystLogger(Logger):
     @classmethod
     def info_end_calculate(cls, code):
         Logger.info(f"Successfully calculate Fuquan Factor for {code}.")
-
-    @classmethod
-    def warning_regression_result(cls, COL: str):
-        Logger.warning(f"Detect Invalid value in regression result with {COL}.")
