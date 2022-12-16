@@ -1,9 +1,12 @@
+from buffett.adapter.pendulum import Date
+from buffett.analysis import Para
 from buffett.analysis.study import FuquanAnalyst
 from buffett.common.constants.col import OPEN, CLOSE, HIGH, LOW
+from buffett.common.target import Target
 from buffett.download.handler.stock import DcDailyHandler, BsMinuteHandler
 from buffett.download.handler.stock.dc_fhpg import DcFhpgHandler
 from buffett.download.types import FuquanType, SourceType, FreqType
-from test import create_1stock, create_2stocks
+from test import create_1stock, create_2stocks, create_ex_1stock, DbSweeper
 from test.analysis.analysis_tester import AnalysisTester
 
 
@@ -23,21 +26,15 @@ class TestFuquanAnalyst(AnalysisTester):
 
         :return:
         """
-        create_1stock(operator=cls._operator, source="both")
         cls._fhpg_handler = DcFhpgHandler(operator=cls._operator)
-        cls._fhpg_handler.obtain_data()
-        create_2stocks(operator=cls._operator)
-        create_2stocks(operator=cls._operator, source="bs")
         cls._daily_handler = DcDailyHandler(operator=cls._operator)
         cls._minute_handler = BsMinuteHandler(operator=cls._operator)
-        cls._daily_handler.obtain_data(para=cls._long_para)
-        cls._minute_handler.obtain_data(para=cls._long_para)
         cls._analyst = FuquanAnalyst(
             datasource_op=cls._select_op, operator=cls._insert_op
         )
 
     def _setup_always(self) -> None:
-        pass
+        DbSweeper.erase()
 
     def test_fuquan(self):
         """
@@ -45,6 +42,12 @@ class TestFuquanAnalyst(AnalysisTester):
 
         :return:
         """
+        # 准备数据
+        create_1stock(operator=self._operator, source="both")
+        self._fhpg_handler.obtain_data()
+        create_2stocks(operator=self._operator, source="both")
+        self._daily_handler.obtain_data(para=self._long_para)
+        self._minute_handler.obtain_data(para=self._long_para)
         # 测试计算复权因子
         self._analyst.calculate(span=self._long_para.span)
         bfq_para = (
@@ -74,3 +77,47 @@ class TestFuquanAnalyst(AnalysisTester):
         assert self.dataframe_almost_equals(
             bfq_min_data[[OPEN, CLOSE, HIGH, LOW]], mconv1, on_index=True
         )
+
+    def test_000023(self):
+        """
+        现网异常数据
+        （某个除权周期首尾有相同的收盘价）
+
+        :return:
+        """
+        # 准备数据
+        create_ex_1stock(
+            operator=self._operator, target=Target("000023"), source="both"
+        )
+        self._fhpg_handler.obtain_data()
+        para = (
+            Para()
+            .with_start_n_end(Date(2016, 1, 1), Date(2017, 12, 31))
+            .with_code("000023")
+            .with_fuquan(FuquanType.BFQ)
+        )
+        self._daily_handler.obtain_data(para=para)
+        # 测试计算复权因子
+        self._analyst.calculate(span=para.span)
+
+    def test_000686(self):
+        """
+        现网异常数据
+        （某个除权日有两条除权记录）
+
+        :return:
+        """
+        # 准备数据
+        create_ex_1stock(
+            operator=self._operator, target=Target("000686"), source="both"
+        )
+        self._fhpg_handler.obtain_data()
+        para = (
+            Para()
+            .with_start_n_end(Date(2007, 7, 1), Date(2007, 8, 31))
+            .with_code("000686")
+            .with_fuquan(FuquanType.BFQ)
+        )
+        self._daily_handler.obtain_data(para=para)
+        # 测试计算复权因子
+        self._analyst.calculate(span=self._great_para.span)

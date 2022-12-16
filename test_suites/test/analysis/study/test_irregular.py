@@ -40,7 +40,9 @@ class TestAnalystIrregular(AnalysisTester):
         :return:
         """
         # prepare
-        create_ex_1stock(operator=self._operator, target=Target("001227"), source="both")
+        create_ex_1stock(
+            operator=self._operator, target=Target("001227"), source="both"
+        )
         select_para = Para().with_start_n_end(Date(2000, 1, 1), Date(2022, 12, 31))
         DcDailyHandler(operator=self._operator).obtain_data(para=select_para)
         CalendarHandler(operator=self._operator).obtain_data()

@@ -1,7 +1,11 @@
 from buffett.common.pendulum import DateTime
 from buffett.download.mysql import Operator
 from buffett.download.mysql.types import RoleType
-from buffett.task.analysis import TargetPatternRecognizeTask, TargetStatZdfTask
+from buffett.task.analysis import (
+    TargetPatternRecognizeTask,
+    TargetStatZdfTask,
+    FuquanFactorTask,
+)
 from buffett.task.download import TaskScheduler
 
 
@@ -9,7 +13,7 @@ def analysis():
     operator = Operator(RoleType.DbAnaly)
     datasource_op = Operator(RoleType.DbStock)
     now = DateTime.now()
-    task_cls = [TargetPatternRecognizeTask, TargetStatZdfTask]
+    task_cls = [TargetPatternRecognizeTask, TargetStatZdfTask, FuquanFactorTask]
     tasks = [
         task_cls[i](
             operator=operator,

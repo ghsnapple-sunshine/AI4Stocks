@@ -21,7 +21,7 @@ from buffett.common.constants.col.target import CODE
 from buffett.common.constants.meta.handler.definition import FQ_FAC_META
 from buffett.common.constants.table import FQ_FAC
 from buffett.common.error import PreStepError
-from buffett.common.logger import Logger
+from buffett.common.logger import Logger, LoggerBuilder
 from buffett.common.pendulum import (
     DateSpan,
     convert_date,
@@ -41,6 +41,7 @@ ED = 0.06
 THD3 = 0.999
 EPS = 1e-10
 TAG = "tag"
+COLs = [CLOSE, OPEN, HIGH, LOW]
 
 
 class FuquanAnalyst:
@@ -50,6 +51,7 @@ class FuquanAnalyst:
         self._fhpg_handler = DcFhpgHandler(operator=self._datasource_op)
         self._dataman = DataManager(operator=self._datasource_op)
         self._factor = None
+        self._logger = LoggerBuilder.build(FuquanAnalystLogger)()
 
     def calculate(self, span: DateSpan):
         """
@@ -121,8 +123,9 @@ class FuquanAnalyst:
         :param span:
         :return:            拟合表
         """
-        # 获取数据
         code = fhpg_info[CODE].values[0]
+        self._logger.info_start_calculate(code)
+        # 获取数据
         bfq_info = self._dataman.select_data(
             para=Para().with_comb(BFQ_COMB).with_span(span).with_code(code), index=False
         )
@@ -133,7 +136,8 @@ class FuquanAnalyst:
         )
         # 过滤fhgp_info
         data_dates = bfq_info[[DATE]]
-        fhpg_info = DataFrame({DATE: fhpg_info[DATE], TAG: 0})
+        # 股票可能一天有两条记录（e.g.派息+增发），因此需要去重
+        fhpg_info = DataFrame({DATE: fhpg_info[DATE], TAG: 0}).drop_duplicates()
         inter_dates = pd.merge(data_dates, fhpg_info, how="left", on=[DATE])
         inter_dates = inter_dates[inter_dates[TAG] == 0]
         add_index = inter_dates.index - 1
@@ -143,8 +147,8 @@ class FuquanAnalyst:
         fhpg_info = (
             pd.concat(
                 [
-                    inter_dates,
-                    add_dates,
+                    inter_dates[[DATE]],
+                    add_dates[[DATE]],
                     DataFrame({DATE: [start, end]}),
                 ]
             )
@@ -155,12 +159,19 @@ class FuquanAnalyst:
         bfq_info = pd.merge(fhpg_info, bfq_info, on=[DATE], how="left")
         hfq_info = pd.merge(fhpg_info, hfq_info, on=[DATE], how="left")
         # 计算a， b
-        data = self._calc_segment(
-            bfq_info=bfq_info[CLOSE].values,
-            hfq_info=hfq_info[CLOSE].values,
-            dates=fhpg_info[DATE].values,
-        )
+        data = None
+        for COL in COLs:
+            data = self._calc_segment(
+                bfq_arr=bfq_info[COL].values,
+                hfq_arr=hfq_info[COL].values,
+                dates=fhpg_info[DATE].values,
+            )
+            if pd.isna(data[A]).any():
+                self._logger.warning_regression_result(COL)
+            else:
+                break
         data[CODE] = code
+        self._logger.info_end_calculate(code)
         return data
 
     def _calc_without_fhpg(self, stock_list: DataFrame, span) -> DataFrame:
@@ -185,6 +196,7 @@ class FuquanAnalyst:
         :param span:
         :return:
         """
+        self._logger.info_start_calculate(code)
         # 获取数据
         bfq_info = self._dataman.select_data(
             para=Para().with_comb(BFQ_COMB).with_span(span).with_code(code), index=False
@@ -194,19 +206,18 @@ class FuquanAnalyst:
         hfq_info = self._dataman.select_data(
             para=Para().with_comb(HFQ_COMB).with_span(span).with_code(code), index=False
         )
-        dates = bfq_info[DATE].values
-        bfq_info = bfq_info[CLOSE].values
-        hfq_info = hfq_info[CLOSE].values
+        bfq_arr = bfq_info[CLOSE].values
+        hfq_arr = hfq_info[CLOSE].values
+        num = len(bfq_arr)
         """
         向量夹角公式：
      　　cosα = A*B / (|A|*|B|)
         A = (x1,y1),B = (x2,y2);
 　　     cosα =(x1*x2+y1*y2) / √((x1^2+y1^2)*(x2^2+y2^2))
         """
-        num = len(dates)
-        x1, x2, x3 = bfq_info[:-2], bfq_info[1:-1], bfq_info[2:]  # [  2,...]
+        x1, x2, x3 = bfq_arr[:-2], bfq_arr[1:-1], bfq_arr[2:]  # [  2,...]
         vx1, vx2, vx3 = x1 - x2, x1 - x3, x2 - x3
-        y1, y2, y3 = hfq_info[:-2], hfq_info[1:-1], hfq_info[2:]
+        y1, y2, y3 = hfq_arr[:-2], hfq_arr[1:-1], hfq_arr[2:]
         vy1, vy2 = y1 - y2, y1 - y3
         _a0 = vx1 * vx2 + vy1 * vy2 + EPS
         _a1 = ((vx1**2 + vy1**2) * (vx2**2 + vy2**2)) ** 0.5 + EPS
@@ -255,17 +266,30 @@ class FuquanAnalyst:
             ix = np.concatenate([ix, [num - 1, num - 1]])
         else:
             ix = np.concatenate([ix, [num - 1]])
-        data = self._calc_segment(bfq_info[ix], hfq_info[ix], dates[ix])
+        # 计算a, b
+        data = None
+        for COL in COLs:
+            data = self._calc_segment(
+                bfq_info[COL].values[ix],
+                hfq_info[COL].values[ix],
+                bfq_info[DATE].values[ix],
+            )
+            if pd.isna(data[A]).any():
+                self._logger.warning_regression_result(COL)
+            else:
+                break
         data[CODE] = code
+        #
+        self._logger.info_end_calculate(code)
         return data
 
     @classmethod
-    def _calc_segment(cls, bfq_info: ndarray, hfq_info: ndarray, dates: ndarray):
+    def _calc_segment(cls, bfq_arr: ndarray, hfq_arr: ndarray, dates: ndarray):
         """
         计算每个分段的a,b
 
-        :param bfq_info:    不复权数据（日线）
-        :param hfq_info:    复权数据（日线）
+        :param bfq_arr:    不复权数据（日线）
+        :param hfq_arr:    复权数据（日线）
         :param dates:       日期
         :return:
         """
@@ -274,9 +298,9 @@ class FuquanAnalyst:
         有a * x0 + b = y0, a * x1 + b = y1 (x = bfq_data, y = hfq_data)
         则a = (y0 - y1) / (x0 - x1), b = y0 - ax0
         """
-        num = len(bfq_info)
-        x0, x1 = bfq_info[0:num:2], bfq_info[1:num:2]
-        y0, y1 = hfq_info[0:num:2], hfq_info[1:num:2]
+        num = len(bfq_arr)
+        x0, x1 = bfq_arr[0:num:2], bfq_arr[1:num:2]
+        y0, y1 = hfq_arr[0:num:2], hfq_arr[1:num:2]
         a = (y0 - y1) / (x0 - x1)
         b = y0 - a * x0
         #
@@ -285,7 +309,7 @@ class FuquanAnalyst:
         res = DataFrame(res, columns=[START_DATE, END_DATE, A, B])
         return res
 
-    def _save_to_database(self, data):
+    def _save_to_database(self, data: DataFrame) -> None:
         """
         将数据保存至数据库
 
@@ -304,11 +328,11 @@ class FuquanAnalyst:
         :return:
         """
         data = self._prepare_for_reform(code=code, df=df)
-        x = data[[OPEN, HIGH, LOW, CLOSE]].values
+        x = data[COLs].values
         a = data[[A]].values
         b = data[[B]].values
         y = x * a + b
-        res = DataFrame(y, columns=[OPEN, HIGH, LOW, CLOSE])
+        res = DataFrame(y, columns=COLs)
         res.index = df.index
         return res
 
@@ -321,7 +345,7 @@ class FuquanAnalyst:
         :return:
         """
         data = self._prepare_for_reform(code=code, df=df)
-        y = data[[OPEN, HIGH, LOW, CLOSE]].values
+        y = data[COLs].values
         a = data[[A]].values
         b = data[[B]].values
         """
@@ -329,7 +353,7 @@ class FuquanAnalyst:
         x = (y - b) / a
         """
         x = (y - b) / a
-        res = DataFrame(x, columns=[OPEN, HIGH, LOW, CLOSE])
+        res = DataFrame(x, columns=COLs)
         res.index = df.index
         return res
 
@@ -386,3 +410,7 @@ class FuquanAnalystLogger(Logger):
     @classmethod
     def info_end_calculate(cls, code):
         Logger.info(f"Successfully calculate Fuquan Factor for {code}.")
+
+    @classmethod
+    def warning_regression_result(cls, COL: str):
+        Logger.warning(f"Detect Invalid value in regression result with {COL}.")
