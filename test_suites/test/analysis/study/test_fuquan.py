@@ -103,7 +103,7 @@ class TestFuquanAnalyst(AnalysisTester):
     def test_000686(self):
         """
         现网异常数据
-        （某个除权日有两条除权记录）
+        （除权日有两条记录）
 
         :return:
         """
@@ -125,6 +125,7 @@ class TestFuquanAnalyst(AnalysisTester):
     def test_000672(self):
         """
         现网异常数据
+        （连续两个交易日除权）
 
         :return:
         """
@@ -144,3 +145,25 @@ class TestFuquanAnalyst(AnalysisTester):
         # 测试计算复权因子
         self._analyst.calculate(span=para.span)
 
+    def test_000638(self):
+        """
+        现网异常数据
+        (除权日停牌）
+
+        :return:
+        """
+
+        # 准备数据
+        create_ex_1stock(
+            operator=self._operator, target=Target("000638"), source="both"
+        )
+        self._fhpg_handler.obtain_data()
+        para = (
+            Para()
+            .with_start_n_end(Date(2000, 1, 1), Date(2020, 12, 31))
+            .with_code("000638")
+            .with_fuquan(FuquanType.BFQ)
+        )
+        self._daily_handler.obtain_data(para=para)
+        # 测试计算复权因子
+        self._analyst.calculate(span=para.span)

@@ -1,6 +1,6 @@
 from typing import Optional
 
-from buffett.adapter.numpy import np, ndarray
+from buffett.adapter.numpy import np, ndarray, NAN
 from buffett.adapter.pandas import DataFrame, pd
 from buffett.analysis import Para
 from buffett.analysis.study.supporter import DataManager
@@ -34,14 +34,12 @@ from buffett.download.types import CombType, SourceType, FreqType, FuquanType
 
 HFQ_COMB = CombType(source=SourceType.AK_DC, freq=FreqType.DAY, fuquan=FuquanType.HFQ)
 BFQ_COMB = CombType(source=SourceType.AK_DC, freq=FreqType.DAY, fuquan=FuquanType.BFQ)
-THD1 = 0.9
-ST = 0.02
-THD2 = 0.995
-ED = 0.06
-THD3 = 0.999
+THD1, THD2, THD3 = 0.9, 0.995, 0.999
+ST, ED = 0.02, 0.06
 EPS = 1e-10
 TAG = "tag"
 COLs = [CLOSE, OPEN, HIGH, LOW]
+CUR_DATE, PRE_DATE = "current_date", "previous_date"
 
 
 class FuquanAnalyst:
@@ -66,6 +64,7 @@ class FuquanAnalyst:
         fhpg_infos = self._fhpg_handler.select_data(index=False)
         if dataframe_not_valid(fhpg_infos):
             raise PreStepError(FuquanAnalyst, DcFhpgHandler)
+        fhpg_infos = fhpg_infos[span.is_insides(fhpg_infos[DATE])]
         # 获取不含分红配股信息的StockList
         stocks_without_f = self._split_stock_list(
             fhpg_infos=fhpg_infos, stock_list=stock_list
@@ -107,10 +106,12 @@ class FuquanAnalyst:
         :return:
         """
         span = DateSpan(convert_date(span.start), convert_date(span.end))
-
-        data = fhpg_infos.groupby(by=[CODE]).apply(
-            lambda x: self._calc_1stock_with_fhpg(fhpg_info=x, span=span)
-        )
+        groups = fhpg_infos.groupby(by=[CODE])
+        datas = [
+            self._calc_1stock_with_fhpg(fhpg_info=group, span=span)
+            for code, group in groups
+        ]
+        data = pd.concat(datas)
         return data
 
     def _calc_1stock_with_fhpg(
@@ -135,29 +136,29 @@ class FuquanAnalyst:
             para=Para().with_comb(HFQ_COMB).with_span(span).with_code(code), index=False
         )
         # 过滤fhgp_info
-        data_dates = bfq_info[[DATE]]
-        # 股票可能一天有两条记录（e.g.派息+增发），因此需要去重
-        fhpg_info = DataFrame({DATE: fhpg_info[DATE], TAG: 0}).drop_duplicates()
-        inter_dates = pd.merge(data_dates, fhpg_info, how="left", on=[DATE])
-        inter_dates = inter_dates[inter_dates[TAG] == 0]
-        add_index = inter_dates.index - 1
-        add_index = add_index[add_index >= 0]  # 避免出现-1索引
-        add_dates = data_dates.loc[add_index]
-        fhpg_info = pd.concat(
+        _st, _ed = bfq_info[DATE].iloc[0], bfq_info[DATE].iloc[-1]
+        _f0 = DataFrame(
+            {
+                DATE: bfq_info[DATE],
+                CUR_DATE: bfq_info[DATE],
+                PRE_DATE: np.concatenate([[NAN], bfq_info[DATE].values[:-1]]),
+            }
+        )
+        # 将除权日与数据起始日连接，作为区间起点
+        # 股票可能一天有两条记录（e.g.派息+增发），数据起始日也可能与除权日重叠，因此需要去重
+        # 指定的span可能大于不复权和后复权数据的区间，因此需要筛选
+        _f1 = pd.concat(
             [
-                inter_dates[[DATE]],
-                add_dates[[DATE]],
+                DataFrame({DATE: [_st]}),
+                fhpg_info[(fhpg_info[DATE] >= _st) & (fhpg_info[DATE] <= _ed)][[DATE]],
             ]
-        ).sort_values(by=[DATE])
-        # 增加首尾
-        st_ed = np.array([data_dates.iloc[0, 0], data_dates.iloc[-1, 0]])
-        st_ed = st_ed[st_ed != np.array([fhpg_info.iloc[0, 0], fhpg_info.iloc[-1, 0]])]
-        fhpg_info = pd.concat(
-            [
-                fhpg_info,
-                DataFrame({DATE: st_ed}),
-            ]
-        ).sort_values(by=[DATE])
+        ).drop_duplicates()
+        _f2 = pd.merge(_f1, _f0, how="outer", on=[DATE], sort=True)
+        _f3 = _f2.fillna(method="bfill")
+        _f4 = pd.merge(_f1, _f3, how="left", on=[DATE])
+        _f5 = np.concatenate([_f4[CUR_DATE].values, _f4[PRE_DATE].values[1:], [_ed]])
+        _f5.sort()
+        fhpg_info = DataFrame({DATE: _f5})
         # 筛选数据
         bfq_info = pd.merge(fhpg_info, bfq_info, on=[DATE], how="left")
         hfq_info = pd.merge(fhpg_info, hfq_info, on=[DATE], how="left")
@@ -334,7 +335,9 @@ class FuquanAnalyst:
             bfq_arr = np.array([np.min(bfq_low[region]), np.max(bfq_high[region])])
             hfq_arr = np.array([np.min(hfq_low[region]), np.max(hfq_high[region])])
             date_arr = np.array([data[START_DATE].iloc[i], data[END_DATE].iloc[i]])
-            fix_data = cls._calc_segment(bfq_arr=bfq_arr, hfq_arr=hfq_arr, date_arr=date_arr)
+            fix_data = cls._calc_segment(
+                bfq_arr=bfq_arr, hfq_arr=hfq_arr, date_arr=date_arr
+            )
             data.iloc[i, 2:] = fix_data.iloc[0, 2:]  # 覆盖原NA结果
 
     def _save_to_database(self, data: DataFrame) -> None:
