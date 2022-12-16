@@ -95,16 +95,15 @@ class Analyst:
         )
         prod_cons.run()
 
-    def _calculate_1target(self, row: tuple) -> Optional[tuple[Para, DataFrame]]:
+    def _calculate_1target(self, row: tuple) -> tuple[Para, DataFrame]:
         #
         para = Para.from_tuple(row)
         self._logger.info_calculate_start(para)
         # select & calculate
         result = self._calculate(para)
         # filter & save
-        if dataframe_not_valid(result):
-            return None
-        result = result[para.span.is_insides(result[DATETIME])]
+        if dataframe_is_valid(result):
+            result = result[para.span.is_insides(result[DATETIME])]
         return para, result
 
     @staticmethod
@@ -118,21 +117,19 @@ class Analyst:
         """
         pass
 
-    def _save_1target(self, obj: Optional[tuple[Para, DataFrame]]):
+    def _save_1target(self, obj: tuple[Para, DataFrame]):
         """
         将数据存储到数据库
 
         :param obj:
         :return:
         """
-        if obj is None:
-            return
         para, data = obj
         if dataframe_is_valid(data):
             table_name = TableNameTool.get_by_code(para=para)
             self._operator.create_table(name=table_name, meta=self._meta)
             self._operator.insert_data_safe(name=table_name, df=data, meta=self._meta)
-            self._recorder.save(para=para)
+        self._recorder.save(para=para)
         self._logger.info_calculate_end(para)
 
     def _get_todo_records(self, span: DateSpan) -> DataFrame:
