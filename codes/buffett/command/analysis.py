@@ -1,3 +1,4 @@
+from buffett.common.logger import Logger, LogType
 from buffett.common.pendulum import DateTime
 from buffett.download.mysql import Operator
 from buffett.download.mysql.types import RoleType
@@ -27,4 +28,5 @@ def analysis():
 
 
 if __name__ == "__main__":
+    Logger.Level = LogType.DEBUG
     analysis()

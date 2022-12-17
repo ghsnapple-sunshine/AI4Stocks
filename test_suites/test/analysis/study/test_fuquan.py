@@ -167,3 +167,47 @@ class TestFuquanAnalyst(AnalysisTester):
         self._daily_handler.obtain_data(para=para)
         # 测试计算复权因子
         self._analyst.calculate(span=para.span)
+
+    def test_001202(self):
+        """
+        现网异常数据
+        (区间内无数据）
+
+        :return:
+        """
+        # 准备数据
+        create_ex_1stock(
+            operator=self._operator, target=Target("001202"), source="both"
+        )
+        self._fhpg_handler.obtain_data()
+        para = (
+            Para()
+            .with_start_n_end(Date(2000, 1, 1), Date(2021, 12, 31))
+            .with_code("001202")
+            .with_fuquan(FuquanType.BFQ)
+        )
+        self._daily_handler.obtain_data(para=para)
+        # 测试计算复权因子
+        self._analyst.calculate(span=para.span)
+
+    def test_301127(self):
+        """
+        现网异常数据
+        (只有一条数据）
+
+        :return:
+        """
+        # 准备数据
+        create_ex_1stock(
+            operator=self._operator, target=Target("301127"), source="both"
+        )
+        self._fhpg_handler.obtain_data()
+        para = (
+            Para()
+            .with_start_n_end(Date(2000, 1, 1), Date(2021, 12, 31))
+            .with_code("301127")
+            .with_fuquan(FuquanType.BFQ)
+        )
+        self._daily_handler.obtain_data(para=para)
+        # 测试计算复权因子
+        self._analyst.calculate(span=para.span)
