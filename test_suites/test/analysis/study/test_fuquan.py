@@ -29,9 +29,6 @@ class TestFuquanAnalyst(AnalysisTester):
         cls._fhpg_handler = DcFhpgHandler(operator=cls._operator)
         cls._daily_handler = DcDailyHandler(operator=cls._operator)
         cls._minute_handler = BsMinuteHandler(operator=cls._operator)
-        cls._analyst = FuquanAnalyst(
-            datasource_op=cls._select_op, operator=cls._insert_op
-        )
 
     def _setup_always(self) -> None:
         DbSweeper.erase()
@@ -48,6 +45,9 @@ class TestFuquanAnalyst(AnalysisTester):
         create_2stocks(operator=self._operator, source="both")
         self._daily_handler.obtain_data(para=self._long_para)
         self._minute_handler.obtain_data(para=self._long_para)
+        self._analyst = FuquanAnalyst(
+            datasource_op=self._select_op, operator=self._insert_op
+        )
         # 测试计算复权因子
         self._analyst.calculate(span=self._long_para.span)
         bfq_para = (
@@ -85,20 +85,7 @@ class TestFuquanAnalyst(AnalysisTester):
 
         :return:
         """
-        # 准备数据
-        create_ex_1stock(
-            operator=self._operator, target=Target("000023"), source="both"
-        )
-        self._fhpg_handler.obtain_data()
-        para = (
-            Para()
-            .with_start_n_end(Date(2016, 1, 1), Date(2017, 12, 31))
-            .with_code("000023")
-            .with_fuquan(FuquanType.BFQ)
-        )
-        self._daily_handler.obtain_data(para=para)
-        # 测试计算复权因子
-        self._analyst.calculate(span=para.span)
+        self._atom_test(code="000023", start=Date(2016, 1, 1), end=Date(2017, 12, 31))
 
     def test_000686(self):
         """
@@ -107,20 +94,7 @@ class TestFuquanAnalyst(AnalysisTester):
 
         :return:
         """
-        # 准备数据
-        create_ex_1stock(
-            operator=self._operator, target=Target("000686"), source="both"
-        )
-        self._fhpg_handler.obtain_data()
-        para = (
-            Para()
-            .with_start_n_end(Date(2007, 7, 1), Date(2007, 8, 31))
-            .with_code("000686")
-            .with_fuquan(FuquanType.BFQ)
-        )
-        self._daily_handler.obtain_data(para=para)
-        # 测试计算复权因子
-        self._analyst.calculate(span=self._great_para.span)
+        self._atom_test(code="000686", start=Date(2007, 7, 1), end=Date(2007, 8, 31))
 
     def test_000672(self):
         """
@@ -129,21 +103,7 @@ class TestFuquanAnalyst(AnalysisTester):
 
         :return:
         """
-
-        # 准备数据
-        create_ex_1stock(
-            operator=self._operator, target=Target("000672"), source="both"
-        )
-        self._fhpg_handler.obtain_data()
-        para = (
-            Para()
-            .with_start_n_end(Date(2000, 1, 1), Date(2020, 12, 31))
-            .with_code("000672")
-            .with_fuquan(FuquanType.BFQ)
-        )
-        self._daily_handler.obtain_data(para=para)
-        # 测试计算复权因子
-        self._analyst.calculate(span=para.span)
+        self._atom_test(code="000672", start=Date(2000, 1, 1), end=Date(2020, 12, 31))
 
     def test_000638(self):
         """
@@ -152,21 +112,7 @@ class TestFuquanAnalyst(AnalysisTester):
 
         :return:
         """
-
-        # 准备数据
-        create_ex_1stock(
-            operator=self._operator, target=Target("000638"), source="both"
-        )
-        self._fhpg_handler.obtain_data()
-        para = (
-            Para()
-            .with_start_n_end(Date(2000, 1, 1), Date(2020, 12, 31))
-            .with_code("000638")
-            .with_fuquan(FuquanType.BFQ)
-        )
-        self._daily_handler.obtain_data(para=para)
-        # 测试计算复权因子
-        self._analyst.calculate(span=para.span)
+        self._atom_test(code="000638", start=Date(2000, 1, 1), end=Date(2020, 12, 31))
 
     def test_001202(self):
         """
@@ -175,20 +121,7 @@ class TestFuquanAnalyst(AnalysisTester):
 
         :return:
         """
-        # 准备数据
-        create_ex_1stock(
-            operator=self._operator, target=Target("001202"), source="both"
-        )
-        self._fhpg_handler.obtain_data()
-        para = (
-            Para()
-            .with_start_n_end(Date(2000, 1, 1), Date(2021, 12, 31))
-            .with_code("001202")
-            .with_fuquan(FuquanType.BFQ)
-        )
-        self._daily_handler.obtain_data(para=para)
-        # 测试计算复权因子
-        self._analyst.calculate(span=para.span)
+        self._atom_test(code="001202", start=Date(2000, 1, 1), end=Date(2021, 12, 31))
 
     def test_301127(self):
         """
@@ -197,17 +130,28 @@ class TestFuquanAnalyst(AnalysisTester):
 
         :return:
         """
-        # 准备数据
-        create_ex_1stock(
-            operator=self._operator, target=Target("301127"), source="both"
-        )
+        self._atom_test(code="301127", start=Date(2000, 1, 1), end=Date(2021, 12, 31))
+
+    def _atom_test(self, code: str, start: Date, end: Date):
+        """
+        原子测试
+
+        :param code:
+        :param start:
+        :param end:
+        :return:
+        """
+        create_ex_1stock(operator=self._operator, target=Target(code), source="both")
         self._fhpg_handler.obtain_data()
         para = (
             Para()
-            .with_start_n_end(Date(2000, 1, 1), Date(2021, 12, 31))
-            .with_code("301127")
+            .with_start_n_end(start, end)
+            .with_code(code)
             .with_fuquan(FuquanType.BFQ)
         )
         self._daily_handler.obtain_data(para=para)
+        self._analyst = FuquanAnalyst(
+            datasource_op=self._select_op, operator=self._insert_op
+        )
         # 测试计算复权因子
         self._analyst.calculate(span=para.span)

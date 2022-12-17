@@ -36,7 +36,7 @@ class DataManager:
 
     def __init__(self, operator: Operator):
         self._operator = operator
-        self._dl_record = None
+        self._dl_record = DownloadRecorder(operator=self._operator).select_data()
 
     def select_data(
         self, para: Para, economy: bool = False, index: bool = True
@@ -49,8 +49,6 @@ class DataManager:
         :param index:
         :return:
         """
-        #
-        self._dl_record = DownloadRecorder(operator=self._operator).select_data()
         para = para.clone()
         #
         if (para.target is not None) and (para.target.code is not None):
