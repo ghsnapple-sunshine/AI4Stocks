@@ -6,6 +6,7 @@ from buffett.task.analysis import (
     TargetPatternRecognizeTask,
     TargetStatZdfTask,
     FuquanFactorTask,
+    ConvertStockMinuteTask,
 )
 from buffett.task.download import TaskScheduler
 
@@ -14,7 +15,12 @@ def analysis():
     operator = Operator(RoleType.DbAnaly)
     datasource_op = Operator(RoleType.DbStock)
     now = DateTime.now()
-    task_cls = [TargetPatternRecognizeTask, TargetStatZdfTask, FuquanFactorTask]
+    task_cls = [
+        # TargetPatternRecognizeTask,
+        # TargetStatZdfTask,
+        # FuquanFactorTask,
+        ConvertStockMinuteTask,
+    ]
     tasks = [
         task_cls[i](
             operator=operator,
@@ -28,5 +34,5 @@ def analysis():
 
 
 if __name__ == "__main__":
-    Logger.Level = LogType.DEBUG
+    # Logger.Level = LogType.DEBUG
     analysis()

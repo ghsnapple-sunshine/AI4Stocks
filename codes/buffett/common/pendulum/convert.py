@@ -1,6 +1,7 @@
 from typing import Optional, Union
 
-from buffett.adapter.numpy import np
+from buffett.adapter.numpy import datetime64, np
+from buffett.adapter.pandas import pd
 from buffett.adapter.pendulum import date, datetime
 from buffett.common.error import ParamTypeError
 from buffett.common.pendulum.date import Date
@@ -14,6 +15,8 @@ def convert_date(dt: Optional[date]) -> Union[Date, DateTime, None]:
     :param dt:
     :return:
     """
+    if isinstance(dt, datetime64):
+        dt = pd.to_datetime(dt)
     if isinstance(dt, datetime):
         return DateTime(
             year=dt.year,
@@ -24,9 +27,9 @@ def convert_date(dt: Optional[date]) -> Union[Date, DateTime, None]:
             second=dt.second,
             microsecond=dt.microsecond,
         )
-    elif isinstance(dt, date):
+    if isinstance(dt, date):
         return Date(dt.year, dt.month, dt.day)
-    elif dt is None:
+    if dt is None:
         return None
     raise ParamTypeError("dt", Optional[date])
 
@@ -41,6 +44,8 @@ def convert_datetime(dt: Optional[date]) -> Union[Date, DateTime, None]:
     :param dt:
     :return:
     """
+    if isinstance(dt, datetime64):
+        dt = pd.to_datetime(dt)
     if isinstance(dt, datetime):
         return DateTime(
             year=dt.year,
@@ -51,9 +56,9 @@ def convert_datetime(dt: Optional[date]) -> Union[Date, DateTime, None]:
             second=dt.second,
             microsecond=dt.microsecond,
         )
-    elif isinstance(dt, date):
+    if isinstance(dt, date):
         return DateTime(dt.year, dt.month, dt.day)
-    elif dt is None:
+    if dt is None:
         return None
     raise ParamTypeError("dt", Optional[date])
 

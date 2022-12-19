@@ -374,15 +374,18 @@ class FuquanAnalyst:
                 B: factor[B],
             }
         ).sort_values(by=[KEY])
-        factor = factor
         df = df.reset_index()
         df = pd.merge(df, factor, how="left", on=[KEY])
         if pd.isna(df[A].iloc[0]):
-            dates = factor[DATE]
-            date = dates[dates < df[DATE].iloc[0]].max()
-            df_f = factor[factor[DATE] == date]
-            df[A].iloc[0] = df_f[A]
-            df[B].iloc[0] = df_f[B]
+            dates = factor[KEY]
+            date = dates[dates < df[KEY].iloc[0]]
+            if dataframe_is_valid(date):
+                max_date = dates.loc[-1, START_DATE]
+                df_f = factor[factor[KEY] == max_date].iloc[0]
+                df.loc[0, A] = df_f[A]
+                df.loc[0, B] = df_f[B]
+            else:
+                self._logger.warning_data_error(code=code, key=KEY, df=df)
         df = df.fillna(method="ffill")
         return df
 
@@ -401,3 +404,9 @@ class FuquanAnalystLogger(Logger):
         Logger.warning(
             f"End calculate Fuquan Factor for {code}, nothing is found for calculation."
         )
+
+    @classmethod
+    def warning_data_error(cls, code: str, key: str, df: DataFrame):
+        error_data = df[pd.isna(df[A])][key]
+        span = DateSpan(error_data.min(), error_data.max())
+        Logger.warning(f"Fuquan Factor for {code} is missed in {span}.")

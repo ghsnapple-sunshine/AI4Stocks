@@ -1,0 +1,48 @@
+from typing import Optional
+
+from buffett.adapter.pandas import DataFrame
+from buffett.analysis import Para
+from buffett.analysis.study.base import Analyst
+from buffett.analysis.study.fuquan import FuquanAnalyst
+from buffett.analysis.types import AnalystType
+from buffett.common.constants.meta.analysis import BS_MIN5_META
+from buffett.common.tools import dataframe_not_valid
+from buffett.download.mysql import Operator
+from buffett.download.types import FuquanType
+
+
+class ConvertStockMinuteAnalyst(Analyst):
+    def __init__(self, operator: Operator, datasource_op: Operator):
+        super(ConvertStockMinuteAnalyst, self).__init__(
+            datasource_op=datasource_op,
+            operator=operator,
+            analyst=AnalystType.CONV_MIN5,
+            meta=BS_MIN5_META,
+            use_stock=False,
+            use_stock_minute=True,
+            use_index=False,
+            use_concept=False,
+            use_industry=False,
+        )
+        self._fuquan_analyst = FuquanAnalyst(
+            operator=operator, datasource_op=datasource_op
+        )
+
+    def _calculate(self, para: Para) -> Optional[DataFrame]:
+        """
+        执行计算逻辑
+
+        :param para:
+        :return:
+        """
+        bfq_info = self._dataman.select_data(
+            para=para.clone().with_fuquan(FuquanType.BFQ), economy=True
+        )
+        if dataframe_not_valid(bfq_info):
+            self._logger.warning_calculate_end(para=para)
+            return
+        hfq_info = self._fuquan_analyst.reform_to_hfq(
+            code=para.target.code, df=bfq_info
+        )
+        hfq_info = hfq_info.reset_index()
+        return hfq_info

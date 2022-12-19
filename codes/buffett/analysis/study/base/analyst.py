@@ -65,7 +65,9 @@ class Analyst:
         self._use_concept = use_concept
         self._use_industry = use_industry
         #
-        if not (use_stock or use_index or use_concept or use_industry):
+        if not (
+            use_stock or use_stock_minute or use_index or use_concept or use_industry
+        ):
             raise ValueError("Should use at least one type of data.")
         #
         self._logger = LoggerBuilder.build(AnalysisLogger)(analyst)
@@ -145,7 +147,6 @@ class Analyst:
         industry_list = self._get_industry_list()
         # merge
         todo_records = pd.concat([stock_list, index_list, concept_list, industry_list])
-        todo_records[FREQ] = FreqType.DAY
         todo_records[START_DATE] = convert_datetime(span.start)
         todo_records[END_DATE] = convert_datetime(span.end)
         todo_records[ANALYSIS] = self._analyst
@@ -157,13 +158,17 @@ class Analyst:
 
         :return:
         """
-        if not self._use_stock:
+        if not (self._use_stock or self._use_stock_minute):
             return
         stock_list = get_stock_list(operator=self._datasource_op)
         if dataframe_not_valid(stock_list):
             return
         stock_list[SOURCE] = SourceType.ANA
         stock_list[FUQUAN] = FuquanType.HFQ
+        freq = DataFrame({FREQ: [FreqType.DAY, FreqType.MIN5]}).iloc[
+            [self._use_stock, self._use_stock_minute]
+        ]
+        stock_list = pd.merge(stock_list, freq, how="cross")
         return stock_list
 
     def _get_index_list(self):
@@ -180,6 +185,7 @@ class Analyst:
         index_list = index_list.rename(columns={INDEX_CODE: CODE, INDEX_NAME: NAME})
         index_list[SOURCE] = SourceType.ANA_INDEX
         index_list[FUQUAN] = FuquanType.BFQ
+        index_list[FREQ] = FreqType.DAY
         return index_list
 
     def _get_concept_list(self) -> Optional[DataFrame]:
@@ -198,6 +204,7 @@ class Analyst:
         )
         concept_list[SOURCE] = SourceType.ANA_CONCEPT
         concept_list[FUQUAN] = FuquanType.BFQ
+        concept_list[FREQ] = FreqType.DAY
         return concept_list
 
     def _get_industry_list(self) -> Optional[DataFrame]:
@@ -218,6 +225,7 @@ class Analyst:
         )
         industry_list[SOURCE] = SourceType.ANA_INDUSTRY
         industry_list[FUQUAN] = FuquanType.BFQ
+        industry_list[FREQ] = FreqType.DAY
         return industry_list
 
     @staticmethod

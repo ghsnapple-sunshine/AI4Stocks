@@ -61,12 +61,12 @@ class BsMinuteHandler(SlowHandler):
         ]
 
         # 更改类型
-        minute_info[OPEN] = minute_info[OPEN].apply(lambda x: bs_check_float(x))
-        minute_info[CLOSE] = minute_info[CLOSE].apply(lambda x: bs_check_float(x))
-        minute_info[HIGH] = minute_info[HIGH].apply(lambda x: bs_check_float(x))
-        minute_info[LOW] = minute_info[LOW].apply(lambda x: bs_check_float(x))
-        minute_info[CJL] = minute_info[CJL].apply(lambda x: bs_check_int(x))
-        minute_info[CJE] = minute_info[CJE].apply(lambda x: bs_check_int(x))
+        minute_info.loc[:, [OPEN, CLOSE, HIGH, LOW]] = minute_info.loc[
+            :, [OPEN, CLOSE, HIGH, LOW]
+        ].applymap(lambda x: bs_check_float(x))
+        minute_info.loc[:, [CJL, CJE]] = minute_info.loc[:, [CJL, CJE]].applymap(
+            lambda x: bs_check_int(x)
+        )
 
         return minute_info
 

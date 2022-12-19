@@ -4,6 +4,7 @@ from numpy import (
     arange as np_arange,
     array as np_array,
     concatenate as np_concatenate,
+    datetime64 as np_datetime64,
     float64 as np_float64,
     linspace as np_linspace,
     max as np_max,
@@ -25,6 +26,7 @@ NAN = np_NAN
 # Types
 ndarray = np_ndarray
 float64 = np_float64
+datetime64 = np_datetime64
 
 
 class np:

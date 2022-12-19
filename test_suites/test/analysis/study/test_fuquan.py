@@ -132,6 +132,15 @@ class TestFuquanAnalyst(AnalysisTester):
         """
         self._atom_test(code="301127", start=Date(2000, 1, 1), end=Date(2021, 12, 31))
 
+    def test_000605(self):
+        """
+        现网异常数据
+        （还不知道原因）
+
+        :return:
+        """
+        self._atom_test(code="000605", start=Date(2000, 1, 1), end=Date(2021, 12, 31))
+
     def _atom_test(self, code: str, start: Date, end: Date):
         """
         原子测试

@@ -53,11 +53,7 @@ output_columns = [
 
 
 class StatZdfAnalyst(Analyst):
-    def __init__(
-        self,
-        datasource_op: Operator,
-        operator: Operator,
-    ):
+    def __init__(self, operator: Operator, datasource_op: Operator):
         super(StatZdfAnalyst, self).__init__(
             datasource_op=datasource_op,
             operator=operator,
