@@ -94,7 +94,7 @@ class DcFhpgHandler(Handler):
         :return:
         """
         self._operator.create_table(name=STK_FHPG, meta=STK_FHPG_META)
-        self._operator.insert_data(name=STK_FHPG, df=df)
+        self._operator.insert_data_safe(name=STK_FHPG, meta=STK_FHPG_META, df=df)
 
     @staticmethod
     def _convert_code(code: str) -> str:
