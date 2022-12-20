@@ -130,7 +130,7 @@ class TaskScheduler(Singleton):
                 task_filter, task_infos, how="left", on=[CLASS, MODULE]
             )
 
-        start = self._operator.select_row_num(name=TASK_RCD) + 1
+        start = self._operator.select_row_num(name=TASK_RCD, meta=TASK_META) + 1
         task_infos[TASK_ID] = np.arange(
             start=start, stop=start + len(task_infos), dtype=int
         )

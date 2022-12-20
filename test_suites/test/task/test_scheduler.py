@@ -204,7 +204,7 @@ class TestTaskScheduler(Tester):
             ],
         )
         sch.run()
-        task_num = self._operator.select_row_num(TASK_RCD)
+        task_num = self._operator.select_row_num(name=TASK_RCD, meta=TASK_META)
         assert task_num == 2
 
     def test_add_task_success(self):
@@ -219,5 +219,5 @@ class TestTaskScheduler(Tester):
             tasks=[ContinousTask(start_time=DateTime.now().subtract(days=1))],
         )
         sch.run()
-        task_num = self._operator.select_row_num(TASK_RCD)
+        task_num = self._operator.select_row_num(name=TASK_RCD, meta=TASK_META)
         assert task_num == 2

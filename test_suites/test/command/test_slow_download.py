@@ -1,4 +1,9 @@
 from buffett.adapter.pendulum import DateTime
+from buffett.common.constants.meta.handler import (
+    BS_DAILY_META,
+    DC_DAILY_META,
+    BS_MINUTE_META,
+)
 from buffett.common.magic import empty_init
 from buffett.common.wrapper import Wrapper
 from buffett.download.handler.concept import DcConceptDailyHandler
@@ -100,11 +105,35 @@ class TestSlowDownload(Tester):
             t.run()
 
         # 校验结果
-        assert operator.select_row_num("dc_stock_dayinfo_000001_") == 293
-        # assert operator.select_row_num("dc_stock_dayinfo_000001_qfq") == 293
-        assert operator.select_row_num("dc_stock_dayinfo_000001_hfq") == 293
-        assert operator.select_row_num("bs_stock_dayinfo_000001_") == 293
-        # assert operator.select_row_num("bs_stock_dayinfo_000001_qfq") == 293
-        assert operator.select_row_num("bs_stock_dayinfo_000001_hfq") == 293
-        assert operator.select_row_num("bs_stock_min5info_000001_") == 293 * 240 / 5
-        assert operator.select_row_num("dc_industry_dayinfo_bk1029_") == 29
+        assert (
+            operator.select_row_num(name="dc_stock_dayinfo_000001_", meta=DC_DAILY_META)
+            == 293
+        )
+        assert (
+            operator.select_row_num(
+                name="dc_stock_dayinfo_000001_hfq", meta=DC_DAILY_META
+            )
+            == 293
+        )
+        assert (
+            operator.select_row_num(name="bs_stock_dayinfo_000001_", meta=BS_DAILY_META)
+            == 293
+        )
+        assert (
+            operator.select_row_num(
+                name="bs_stock_dayinfo_000001_hfq", meta=BS_DAILY_META
+            )
+            == 293
+        )
+        assert (
+            operator.select_row_num(
+                name="bs_stock_min5info_000001_", meta=BS_MINUTE_META
+            )
+            == 293 * 240 / 5
+        )
+        assert (
+            operator.select_row_num(
+                name="dc_industry_dayinfo_bk1029_", meta=DC_DAILY_META
+            )
+            == 29
+        )

@@ -61,7 +61,7 @@ class TestSelect(Tester):
 
     def test_select_row_num_with_groupby(self):
         db = self._operator.select_row_num(
-            name=self._table_name, groupby=[CODE, DATETIME]
+            name=self._table_name, meta=self._meta, groupby=[CODE, DATETIME]
         )
         df = self._df.groupby(by=[CODE, DATETIME]).apply(
             lambda x: DataFrame(
@@ -78,7 +78,7 @@ class TestSelect(Tester):
     def test_select_row_num_with_groupby_n_where(self):
         span = DateSpan(start=Date(2022, 1, 1), end=Date(2022, 1, 3))
         db = self._operator.select_row_num(
-            name=self._table_name, groupby=[CODE], span=span
+            name=self._table_name, meta=self._meta, groupby=[CODE], span=span
         )
         df = (
             self._df[self._df[DATETIME].apply(lambda x: span.is_inside(x))]

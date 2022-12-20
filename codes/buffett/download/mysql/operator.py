@@ -129,7 +129,7 @@ class Operator(Connector):
     def select_row_num(
         self,
         name: str,
-        meta: Optional[DataFrame] = None,
+        meta: Optional[DataFrame],
         span: Optional[DateSpan] = None,
         groupby: Optional[list[str]] = None,
     ) -> Union[None, int, DataFrame]:

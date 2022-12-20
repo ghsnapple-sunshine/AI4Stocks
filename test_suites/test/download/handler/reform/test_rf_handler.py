@@ -44,11 +44,15 @@ class ReformHandlerTest(Tester):
         dl_table_names = (
             dl_table_names if isinstance(dl_table_names, list) else [dl_table_names]
         )
-        dl_data = np.sum([self._operator.select_row_num(x) for x in dl_table_names])
+        dl_data = np.sum(
+            [self._operator.select_row_num(name=x, meta=None) for x in dl_table_names]
+        )
         rf_table_names = (
             rf_table_names if isinstance(rf_table_names, list) else [rf_table_names]
         )
-        rf_data = np.sum([self._operator.select_row_num(x) for x in rf_table_names])
+        rf_data = np.sum(
+            [self._operator.select_row_num(name=x, meta=None) for x in rf_table_names]
+        )
         assert dl_data == rf_data
         dl_record = DownloadRecorder(operator=self._operator).select_data()
         rf_record = ReformRecorder(operator=self._operator).select_data()

@@ -5,6 +5,7 @@ from buffett.common.constants.col import FREQ, SOURCE, FUQUAN, START_DATE, END_D
 from buffett.common.constants.col.my import TABLE_NAME, DORCD_START, DORCD_END
 from buffett.common.constants.col.mysql import ROW_NUM
 from buffett.common.constants.col.target import CODE
+from buffett.common.constants.meta.handler import META_DICT
 from buffett.common.logger import Logger
 from buffett.common.magic import empty_method
 from buffett.common.pendulum import DateSpan, DateTime
@@ -130,7 +131,9 @@ class ReformMaintain:
         """
         para = Para.from_series(row)
         table_name_by_code = TableNameTool.get_by_code(para)
-        row_num = self._operator.select_row_num(table_name_by_code, span=para.span)
+        row_num = self._operator.select_row_num(
+            name=table_name_by_code, meta=META_DICT[para.comb], span=para.span
+        )
         self._logger.get_data_info(table_name_by_code)
         return row_num
 
@@ -143,7 +146,7 @@ class ReformMaintain:
         """
         span = DateSpan(getattr(row, START_DATE), getattr(row, END_DATE))
         row_num = self._operator.select_row_num(
-            name=getattr(row, TABLE_NAME), span=span, groupby=[CODE]
+            name=getattr(row, TABLE_NAME), meta=None, span=span, groupby=[CODE]
         )
         if dataframe_is_valid(row_num):
             row_num[FREQ], row_num[FUQUAN], row_num[SOURCE], row_num[TABLE_NAME] = (
