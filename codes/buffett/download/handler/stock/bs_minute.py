@@ -49,7 +49,7 @@ class BsMinuteHandler(SlowHandler):
             adjustflag=para.comb.fuquan.bs_format(),
         )
         if dataframe_not_valid(minute_info):
-            return minute_info
+            return DataFrame()
 
         # 重命名
         minute_info = minute_info.rename(columns=_RENAME)
