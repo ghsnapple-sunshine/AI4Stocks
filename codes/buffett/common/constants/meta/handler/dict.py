@@ -17,11 +17,11 @@ META_DICT = {
         freq=FreqType.DAY,
         fuquan=FuquanType.HFQ,
     ): BS_DAILY_META,
-    CombType(
-        source=SourceType.BS,
-        freq=FreqType.DAY,
-        fuquan=FuquanType.QFQ,
-    ): BS_DAILY_META,
+    # CombType(
+    #     source=SourceType.BS,
+    #     freq=FreqType.DAY,
+    #     fuquan=FuquanType.QFQ,
+    # ): BS_DAILY_META,
     CombType(
         source=SourceType.BS,
         freq=FreqType.MIN5,
@@ -37,11 +37,11 @@ META_DICT = {
         freq=FreqType.DAY,
         fuquan=FuquanType.HFQ,
     ): DC_DAILY_META,
-    CombType(
-        source=SourceType.AK_DC,
-        freq=FreqType.DAY,
-        fuquan=FuquanType.QFQ,
-    ): DC_DAILY_META,
+    # CombType(
+    #     source=SourceType.AK_DC,
+    #     freq=FreqType.DAY,
+    #     fuquan=FuquanType.QFQ,
+    # ): DC_DAILY_META,
     CombType(
         source=SourceType.AK_DC,
         freq=FreqType.MIN5,

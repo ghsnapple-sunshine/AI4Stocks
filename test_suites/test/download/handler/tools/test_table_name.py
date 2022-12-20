@@ -37,17 +37,17 @@ class TestTableName(SimpleTester):
         table_name = TableNameTool.get_by_code(para=para)
         assert table_name == "dc_stock_dayinfo_000001_hfq"
 
-    @staticmethod
-    def test_get_by_code_qfq():
-        para = (
-            Para()
-            .with_code("000001")
-            .with_source(SourceType.AK_DC)
-            .with_fuquan(FuquanType.QFQ)
-            .with_freq(FreqType.DAY)
-        )
-        table_name = TableNameTool.get_by_code(para=para)
-        assert table_name == "dc_stock_dayinfo_000001_qfq"
+    # @staticmethod
+    # def test_get_by_code_qfq():
+    #     para = (
+    #         Para()
+    #         .with_code("000001")
+    #         .with_source(SourceType.AK_DC)
+    #         .with_fuquan(FuquanType.QFQ)
+    #         .with_freq(FreqType.DAY)
+    #     )
+    #     table_name = TableNameTool.get_by_code(para=para)
+    #     assert table_name == "dc_stock_dayinfo_000001_qfq"
 
     @staticmethod
     def test_get_by_code_bfq_min5():

@@ -9,13 +9,13 @@ class FuquanType(ComparableEnum):
     """
 
     BFQ = 3
-    QFQ = 2
+    # QFQ = 2
     HFQ = 1
 
     def ak_format(self) -> str:
         FUQUAN_TYPE_DICT = {
             FuquanType.BFQ: "",
-            FuquanType.QFQ: "qfq",
+            # FuquanType.QFQ: "qfq",
             FuquanType.HFQ: "hfq",
         }
         return FUQUAN_TYPE_DICT[self]
@@ -26,7 +26,7 @@ class FuquanType(ComparableEnum):
     def __str__(self):
         FUQIAN_TYPE_DICT = {
             FuquanType.BFQ: "bfq",
-            FuquanType.QFQ: "qfq",
+            # FuquanType.QFQ: "qfq",
             FuquanType.HFQ: "hfq",
         }
         return FUQIAN_TYPE_DICT[self]
