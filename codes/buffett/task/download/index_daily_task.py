@@ -1,6 +1,6 @@
 from typing import Optional
 
-from buffett.common.pendulum import Date, DateTime
+from buffett.common.pendulum import Date, DateTime, convert_date
 from buffett.common.wrapper import Wrapper
 from buffett.download import Para
 from buffett.download.handler.index import DcIndexDailyHandler
@@ -14,7 +14,7 @@ class IndexDailyTask(Task):
     ):
         super().__init__(
             wrapper=Wrapper(DcIndexDailyHandler(operator=operator).obtain_data),
-            args=(Para().with_start_n_end(start=Date(2000, 1, 1), end=Date.today()),),
+            args=(Para().with_start_n_end(start=Date(1990, 1, 1), end=Date.today()),),
             start_time=start_time,
         )
         self._operator = operator
@@ -22,7 +22,7 @@ class IndexDailyTask(Task):
     def get_subsequent_task(self, success: bool):
         if success:
             return IndexDailyTask(
-                operator=self._operator, start_time=self._start_time.add(days=1)
+                operator=self._operator, start_time=convert_date(self._start_time.add(days=1))
             )
         else:
             return IndexDailyTask(

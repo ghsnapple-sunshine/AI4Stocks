@@ -8,7 +8,7 @@ from buffett.task.analysis import (
     FuquanFactorTask,
     ConvertStockMinuteTask,
 )
-from buffett.task.download import TaskScheduler
+from buffett.task.base import TaskScheduler
 
 
 def analysis():

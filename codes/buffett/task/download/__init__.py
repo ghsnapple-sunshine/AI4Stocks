@@ -8,7 +8,6 @@ from buffett.task.download.industry_cons_task import IndustryConsTask
 from buffett.task.download.industry_daily_task import IndustryDailyTask
 from buffett.task.download.industry_list_task import IndustryListTask
 from buffett.task.download.money_supply import MoneySupplyTask
-from buffett.task.download.scheduler import TaskScheduler
 from buffett.task.download.stock_daily_task import DcStockDailyTask, BsStockDailyTask
 from buffett.task.download.stock_dividend_task import StockDividendTask
 from buffett.task.download.stock_fhpg_task import StockFhpgTask

@@ -14,7 +14,7 @@ class StockDividendTask(Task):
     ):
         super().__init__(
             wrapper=Wrapper(DcDividendHandler(operator=operator).obtain_data),
-            args=(Para().with_start_n_end(start=Date(2000, 1, 1), end=Date.today()),),
+            args=(Para().with_start_n_end(start=Date(1990, 1, 1), end=Date.today()),),
             start_time=start_time,
         )
         self._operator = operator

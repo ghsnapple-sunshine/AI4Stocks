@@ -14,8 +14,7 @@ from buffett.common.constants.table import TASK_RCD
 from buffett.common.magic import get_module_name, get_name
 from buffett.common.pendulum import DateTime, Duration
 from buffett.common.wrapper import Wrapper
-from buffett.task.base import Task
-from buffett.task.download import TaskScheduler
+from buffett.task.base import Task, TaskScheduler
 from test import DbSweeper, Tester
 
 

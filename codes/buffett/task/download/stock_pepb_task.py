@@ -14,7 +14,7 @@ class StockPePbTask(Task):
     ):
         super().__init__(
             wrapper=Wrapper(LgPePbHandler(operator=operator).obtain_data),
-            args=(DateSpan(start=Date(2000, 1, 1), end=Date.today()),),
+            args=(DateSpan(start=Date(1990, 1, 1), end=Date.today()),),
             start_time=start_time,
         )
         self._operator = operator

@@ -1,8 +1,8 @@
 from buffett.common.pendulum import DateTime
 from buffett.download.mysql import Operator
 from buffett.download.mysql.types import RoleType
+from buffett.task.base import TaskScheduler
 from buffett.task.download import (
-    TaskScheduler,
     SseStockListTask,
     DcStockDailyTask,
     StockMinuteTask,
@@ -28,7 +28,6 @@ from buffett.task.download import (
 
 def download():
     operator = Operator(RoleType.DbStock)
-    now = DateTime.now()
     task_cls = [
         CalendarTask,
         SseStockListTask,
@@ -52,7 +51,7 @@ def download():
         StockReformTask,  # Slow
     ]
     tasks = [
-        task_cls[i](operator=operator, start_time=now.add(seconds=i))
+        task_cls[i](operator=operator, start_time=DateTime.today())
         for i in range(0, len(task_cls))
     ]
     sch = TaskScheduler(operator=operator, tasks=tasks)
