@@ -53,6 +53,7 @@ class DcConceptDailyHandler(SlowHandler):
             source=SourceType.AK_DC_CONCEPT,
             fuquans=[FuquanType.BFQ],
             freq=FreqType.DAY,
+            meta=DC_DAILY_META,
             field_code=CONCEPT_CODE,
             field_name=CONCEPT_NAME,
         )
@@ -73,17 +74,6 @@ class DcConceptDailyHandler(SlowHandler):
         # 转换date
         daily_info[DATE] = daily_info[DATE].apply(lambda x: Date.from_str(x))
         return daily_info
-
-    def _save_to_database(self, table_name: str, df: DataFrame) -> None:
-        """
-        将下载的数据存放到数据库
-
-        :param table_name:
-        :param df:
-        :return:
-        """
-        self._operator.create_table(name=table_name, meta=DC_DAILY_META)
-        self._operator.insert_data(table_name, df)
 
     def select_data(self, para: Para) -> Optional[DataFrame]:
         """

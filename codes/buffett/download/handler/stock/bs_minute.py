@@ -33,6 +33,7 @@ class BsMinuteHandler(SlowHandler):
             source=SourceType.BS,
             fuquans=[FuquanType.BFQ],
             freq=FreqType.MIN5,
+            meta=BS_MINUTE_META,
             field_code=CODE,
             field_name=NAME,
         )
@@ -79,17 +80,6 @@ class BsMinuteHandler(SlowHandler):
         elif code[0] == "3":
             return "sz." + code
         raise NotImplemented
-
-    def _save_to_database(self, table_name: str, df: DataFrame) -> None:
-        """
-        将下载的数据存放到数据库
-
-        :param table_name:
-        :param df:
-        :return:
-        """
-        self._operator.create_table(name=table_name, meta=BS_MINUTE_META)
-        self._operator.insert_data(table_name, df)
 
     def select_data(self, para: Para) -> Optional[DataFrame]:
         """

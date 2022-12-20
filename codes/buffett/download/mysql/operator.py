@@ -83,7 +83,7 @@ class Operator(Connector):
         self,
         name: str,
         df: DataFrame,
-        meta: Optional[DataFrame] = None,
+        meta: Optional[DataFrame],
         update: bool = False,
     ) -> None:
         """

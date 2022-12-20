@@ -44,6 +44,7 @@ class BsDailyHandler(SlowHandler):
             # fuquans=[FuquanType.BFQ, FuquanType.HFQ, FuquanType.QFQ],
             fuquans=[FuquanType.BFQ, FuquanType.HFQ],
             freq=FreqType.DAY,
+            meta=BS_DAILY_META,
             field_code=CODE,
             field_name=NAME,
         )
@@ -76,17 +77,6 @@ class BsDailyHandler(SlowHandler):
         daily_info[ZDF] = daily_info[ZDF].apply(lambda x: bs_check_float(x))
 
         return daily_info
-
-    def _save_to_database(self, table_name: str, df: DataFrame) -> None:
-        """
-        将下载的数据存放到数据库
-
-        :param table_name:
-        :param df:
-        :return:
-        """
-        self._operator.create_table(name=table_name, meta=BS_DAILY_META)
-        self._operator.insert_data(table_name, df)
 
     def select_data(self, para: Para) -> Optional[DataFrame]:
         """

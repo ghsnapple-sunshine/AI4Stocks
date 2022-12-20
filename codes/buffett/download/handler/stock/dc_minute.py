@@ -53,6 +53,7 @@ class DcMinuteHandler(SlowHandler):
             source=SourceType.AK_DC,
             fuquans=[FuquanType.BFQ],
             freq=FreqType.MIN5,
+            meta=DC_MINUTE_META,
             field_code=CODE,
             field_name=NAME,
         )
@@ -77,17 +78,6 @@ class DcMinuteHandler(SlowHandler):
 
         minute_info = minute_info.rename(columns=_RENAME)  # 重命名
         return minute_info
-
-    def _save_to_database(self, table_name: str, df: DataFrame):
-        """
-        将下载的数据存放到数据库
-
-        :param table_name:
-        :param df:
-        :return:
-        """
-        self._operator.create_table(name=table_name, meta=DC_MINUTE_META)
-        self._operator.insert_data(name=table_name, df=df)
 
     def select_data(self, para: Para) -> Optional[DataFrame]:
         """

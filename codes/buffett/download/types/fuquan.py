@@ -9,7 +9,7 @@ class FuquanType(ComparableEnum):
     """
 
     BFQ = 3
-    # QFQ = 2
+    QFQ = 2
     HFQ = 1
 
     def ak_format(self) -> str:

@@ -43,6 +43,7 @@ class SlowHandler(Handler):
         source: SourceType,
         fuquans: list[FuquanType],
         freq: FreqType,
+        meta: DataFrame,
         field_code: str,
         field_name: str,
     ):
@@ -53,6 +54,7 @@ class SlowHandler(Handler):
         self._source = source
         self._fuquans = fuquans
         self._freq = freq
+        self._meta = meta
         self._CODE = field_code
         self._NAME = field_name
         self._calendar = None
@@ -238,7 +240,6 @@ class SlowHandler(Handler):
         self._recorder.save(para=para)
         self._log_success_download(para=para)
 
-    @abstractmethod
     def _save_to_database(self, table_name: str, df: DataFrame) -> None:
         """
         将下载的数据存放到数据库
@@ -247,7 +248,8 @@ class SlowHandler(Handler):
         :param df:
         :return:
         """
-        pass
+        self._operator.create_table(name=table_name, meta=self._meta)
+        self._operator.insert_data_safe(name=table_name, df=df, meta=self._meta)
 
     @classmethod
     def _log_start_download(cls, para: Para):
