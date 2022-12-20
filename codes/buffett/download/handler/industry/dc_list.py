@@ -37,4 +37,4 @@ class DcIndustryListHandler(FastHandler):
 
         :return:
         """
-        return self._operator.select_data(INDUS_LS)
+        return self._operator.select_data(name=INDUS_LS, meta=INDUS_META)

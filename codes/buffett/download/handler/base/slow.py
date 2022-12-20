@@ -54,7 +54,7 @@ class SlowHandler(Handler):
         self._source = source
         self._fuquans = fuquans
         self._freq = freq
-        self._meta = meta
+        self._META = meta
         self._CODE = field_code
         self._NAME = field_name
         self._calendar = None
@@ -248,8 +248,8 @@ class SlowHandler(Handler):
         :param df:
         :return:
         """
-        self._operator.create_table(name=table_name, meta=self._meta)
-        self._operator.insert_data_safe(name=table_name, df=df, meta=self._meta)
+        self._operator.create_table(name=table_name, meta=self._META)
+        self._operator.insert_data_safe(name=table_name, df=df, meta=self._META)
 
     @classmethod
     def _log_start_download(cls, para: Para):

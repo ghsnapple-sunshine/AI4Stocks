@@ -33,4 +33,4 @@ class SseStockListHandler(FastHandler):
 
         :return:
         """
-        return self._operator.select_data(STK_LS)
+        return self._operator.select_data(name=STK_LS, meta=STK_META)

@@ -120,7 +120,7 @@ class TaskScheduler(Singleton):
         """
         task_infos = DataFrame([x.info for x in tasks])
 
-        df = self._operator.select_data(name=TASK_RCD)
+        df = self._operator.select_data(name=TASK_RCD, meta=TASK_META)
         if dataframe_is_valid(df):
             # 20221128变更：新增task时判断下是否有同类型Task未执行完
             df = df[pd.isna(df[SUCCESS])][[CLASS, MODULE]]
@@ -148,7 +148,7 @@ class TaskScheduler(Singleton):
         """
         task_info = task.info
         # 20221128变更：新增task时判断下是否有同类型Task未执行完
-        curr_tasks = self._operator.select_data(name=TASK_RCD)
+        curr_tasks = self._operator.select_data(name=TASK_RCD, meta=TASK_META)
         if dataframe_is_valid(curr_tasks):
             find = (
                 pd.isna(curr_tasks[SUCCESS])  # Task未完成
@@ -189,7 +189,7 @@ class TaskScheduler(Singleton):
 
         :return:
         """
-        df = self._operator.select_data(name=TASK_RCD)
+        df = self._operator.select_data(name=TASK_RCD, meta=TASK_META)
         if dataframe_not_valid(df):
             return
         df = df[pd.isna(df[SUCCESS])].sort_values(by=[START_TIME])

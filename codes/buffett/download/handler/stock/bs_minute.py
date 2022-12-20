@@ -94,4 +94,4 @@ class BsMinuteHandler(SlowHandler):
             .with_freq(self._freq)
             .with_fuquan(self._fuquans[0])
         )
-        return select_data_slow(operator=self._operator, para=para)
+        return select_data_slow(operator=self._operator, meta=self._META, para=para)

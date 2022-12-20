@@ -35,4 +35,4 @@ class DcIndexListHandler(FastHandler):
 
         :return:
         """
-        return self._operator.select_data(name=INDEX_LS)
+        return self._operator.select_data(name=INDEX_LS, meta=INDEX_META)

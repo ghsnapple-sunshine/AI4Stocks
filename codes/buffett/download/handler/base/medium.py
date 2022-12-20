@@ -136,4 +136,4 @@ class MediumHandler(Handler):
         )
 
         table_name = TableNameTool.get_by_code(para=para)
-        return self._operator.select_data(name=table_name)
+        return self._operator.select_data(name=table_name, meta=self._META)

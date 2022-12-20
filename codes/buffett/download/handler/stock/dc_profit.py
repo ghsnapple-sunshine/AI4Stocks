@@ -88,4 +88,4 @@ class DcProfitHandler(FastHandler):
 
         :return:
         """
-        return self._operator.select_data(name=STK_PROFIT)
+        return self._operator.select_data(name=STK_PROFIT, meta=self._get_meta())

@@ -61,12 +61,12 @@ class TestBsDailyHandler(Tester):
     def test_download_1month(self):
         stocks = create_2stocks(self._operator, source="bs")
         tbls = self._hdl.obtain_data(para=self._short_para)
-        assert stocks.shape[0] * 3 == len(tbls)
+        assert stocks.shape[0] * 2 == len(tbls)
 
     def test_download_1year(self):
         stocks = create_2stocks(self._operator, source="bs")
         tbls = self._hdl.obtain_data(para=self._long_para)
-        assert stocks.shape[0] * 3 == len(tbls)
+        assert stocks.shape[0] * 2 == len(tbls)
 
     def test_000003(self):
         """

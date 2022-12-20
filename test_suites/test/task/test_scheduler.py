@@ -10,6 +10,7 @@ from buffett.common.constants.col.task import (
     END_TIME,
     SUCCESS,
 )
+from buffett.common.constants.meta.handler import TASK_META
 from buffett.common.constants.table import TASK_RCD
 from buffett.common.magic import get_module_name, get_name
 from buffett.common.pendulum import DateTime, Duration
@@ -104,7 +105,7 @@ class TestTaskScheduler(Tester):
         sch = TaskScheduler(operator=self._operator, tasks=tasks)
         sch.run()
         # actual
-        actual = self._operator.select_data(name=TASK_RCD)
+        actual = self._operator.select_data(name=TASK_RCD, meta=TASK_META)
         del actual[CREATE_TIME], actual[START_TIME], actual[END_TIME]  # 这三列不参与比较
         # expect
         task_id = [1, 2, 3]
@@ -150,22 +151,22 @@ class TestTaskScheduler(Tester):
 
     def test_run_with_new_task_n_error(self):
         self._run_with_3tasks()
-        actual = self._operator.select_data(name=TASK_RCD)
+        actual = self._operator.select_data(name=TASK_RCD, meta=TASK_META)
         assert actual[actual[SUCCESS] == 0].shape[0] == 1
         assert actual.shape[0] == 5
 
     def test_run_2times(self):
         self._run_with_3tasks()
         self._run_with_3tasks()
-        actual = self._operator.select_data(name=TASK_RCD)
+        actual = self._operator.select_data(name=TASK_RCD, meta=TASK_META)
         assert actual.shape[0] == 10  # 20221128：创建case判断重复时，不再考虑已完成case，因此预期从5->10
 
     def test_run_2times_add_task(self):
         self._run_with_1task()
-        actual = self._operator.select_data(name=TASK_RCD)
+        actual = self._operator.select_data(name=TASK_RCD, meta=TASK_META)
         assert actual.shape[0] == 1
         self._run_with_3tasks()
-        actual = self._operator.select_data(name=TASK_RCD)
+        actual = self._operator.select_data(name=TASK_RCD, meta=TASK_META)
         assert actual.shape[0] == 6  # 20221128：创建case判断重复时，不再考虑已完成case，因此预期从5->6
 
     def _run_with_3tasks(self):

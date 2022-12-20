@@ -15,6 +15,7 @@ from buffett.common.constants.col import (
     M2TB,
     M2HB,
 )
+from buffett.common.constants.meta.handler.definition import MONEY_SPLY_META
 from buffett.common.constants.table import MONEY_SPLY
 from buffett.common.pendulum import Date
 from buffett.download.handler.base import FastHandler
@@ -32,21 +33,6 @@ _RENAME = {
     "m2YOY": M2TB,
     "m2ChainRelative": M2HB,
 }
-
-_META = create_meta(
-    meta_list=[
-        [DATE, ColType.DATE, AddReqType.KEY],
-        [MO, ColType.FLOAT, AddReqType.NONE],
-        [M0TB, ColType.FLOAT, AddReqType.NONE],
-        [M0HB, ColType.FLOAT, AddReqType.NONE],
-        [M1, ColType.FLOAT, AddReqType.NONE],
-        [M1TB, ColType.FLOAT, AddReqType.NONE],
-        [M1HB, ColType.FLOAT, AddReqType.NONE],
-        [M2, ColType.FLOAT, AddReqType.NONE],
-        [M2TB, ColType.FLOAT, AddReqType.NONE],
-        [M2HB, ColType.FLOAT, AddReqType.NONE],
-    ]
-)
 
 _YEAR = "statYear"
 _MONTH = "statMonth"
@@ -70,7 +56,7 @@ class BsMoneySupplyHandler(FastHandler):
         return money_supply
 
     def _save_to_database(self, df: DataFrame) -> None:
-        self._operator.create_table(name=MONEY_SPLY, meta=_META)
+        self._operator.create_table(name=MONEY_SPLY, meta=MONEY_SPLY_META)
         self._operator.try_insert_data(name=MONEY_SPLY, df=df)  # 忽略重复Insert
 
     def select_data(self) -> Optional[DataFrame]:
@@ -79,4 +65,4 @@ class BsMoneySupplyHandler(FastHandler):
 
         :return:
         """
-        return self._operator.select_data(MONEY_SPLY)
+        return self._operator.select_data(name=MONEY_SPLY, meta=MONEY_SPLY_META)

@@ -19,6 +19,7 @@ from buffett.common.constants.col import (
 )
 from buffett.common.constants.col.my import MONTH_START, DORCD_START, DORCD_END
 from buffett.common.constants.col.target import CODE
+from buffett.common.constants.meta.handler import META_DICT
 from buffett.common.logger import Logger
 from buffett.common.pendulum import DateSpan, DateTime
 from buffett.common.tools import dataframe_not_valid, dataframe_is_valid, list_not_valid
@@ -318,7 +319,9 @@ class ReformObject:
         todo_ls = self._para.span.subtract(self._done_span)
         data = pd.concat_safe(
             [
-                self._operator.select_data(name=table_name_by_code, span=span)
+                self._operator.select_data(
+                    name=table_name_by_code, meta=META_DICT[self._para.comb], span=span
+                )
                 for span in todo_ls
             ]
         )

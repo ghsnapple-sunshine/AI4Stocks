@@ -24,7 +24,7 @@ class EasyRecorder(SimpleRecorder):
         self.save_to_database(df=data)
 
     def select_data(self, cls: type) -> Optional[DateSpan]:
-        df = self._operator.select_data(EA_RCD)
+        df = self._operator.select_data(name=EA_RCD, meta=EA_META)
         if dataframe_not_valid(df):
             return
         df = df[(df[CLASS] == get_name(cls)) & (df[MODULE] == get_module_name(cls))]

@@ -48,7 +48,7 @@ class AnalysisRecorder(SimpleRecorder):
 
         :return:
         """
-        df = self._operator.select_data(self._TABLE_NAME)
+        df = self._operator.select_data(name=self._TABLE_NAME, meta=ANALY_RCD_META)
         if dataframe_not_valid(df):
             return
         df[ANALYSIS] = df[ANALYSIS].apply(lambda x: AnalystType(x))

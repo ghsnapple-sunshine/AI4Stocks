@@ -36,7 +36,7 @@ class SimpleRecorder:
 
         :return:
         """
-        df = self._operator.select_data(self._TABLE_NAME)
+        df = self._operator.select_data(self._TABLE_NAME, meta=self._META)
         if dataframe_not_valid(df):
             return
         df[FREQ] = df[FREQ].apply(lambda x: FreqType(x))

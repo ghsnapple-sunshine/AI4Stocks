@@ -163,7 +163,7 @@ class Operator(Connector):
     def select_data(
         self,
         name: str,
-        meta: Optional[DataFrame] = None,
+        meta: Optional[DataFrame],
         span: Optional[DateSpan] = None,
     ) -> Optional[DataFrame]:
         """

@@ -51,6 +51,15 @@ from buffett.common.constants.col import (
     ZFJGc,
     A,
     B,
+    MO,
+    M0TB,
+    M0HB,
+    M1,
+    M1TB,
+    M1HB,
+    M2,
+    M2TB,
+    M2HB,
 )
 from buffett.common.constants.col.target import (
     INDEX_CODE,
@@ -329,5 +338,23 @@ FQ_FAC_META = create_meta(
         [END_DATE, ColType.DATE, AddReqType.KEY],
         [A, ColType.DOUBLE, AddReqType.NONE],
         [B, ColType.DOUBLE, AddReqType.NONE],
+    ]
+)
+
+"""
+Metadata for money_supply
+"""
+MONEY_SPLY_META = create_meta(
+    meta_list=[
+        [DATE, ColType.DATE, AddReqType.KEY],
+        [MO, ColType.FLOAT, AddReqType.NONE],
+        [M0TB, ColType.FLOAT, AddReqType.NONE],
+        [M0HB, ColType.FLOAT, AddReqType.NONE],
+        [M1, ColType.FLOAT, AddReqType.NONE],
+        [M1TB, ColType.FLOAT, AddReqType.NONE],
+        [M1HB, ColType.FLOAT, AddReqType.NONE],
+        [M2, ColType.FLOAT, AddReqType.NONE],
+        [M2TB, ColType.FLOAT, AddReqType.NONE],
+        [M2HB, ColType.FLOAT, AddReqType.NONE],
     ]
 )

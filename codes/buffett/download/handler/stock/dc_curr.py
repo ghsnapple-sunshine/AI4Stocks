@@ -71,4 +71,4 @@ class DcCurrHandler(FastHandler):
 
         :return:
         """
-        return self._operator.select_data(STK_RT)
+        return self._operator.select_data(name=STK_RT, meta=STK_RT_META)

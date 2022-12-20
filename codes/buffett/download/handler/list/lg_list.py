@@ -35,4 +35,4 @@ class LgStockListHandler(FastHandler):
 
         :return:
         """
-        return self._operator.select_data(LG_STK_LS)
+        return self._operator.select_data(name=LG_STK_LS, meta=STK_META)

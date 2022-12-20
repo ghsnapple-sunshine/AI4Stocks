@@ -71,4 +71,4 @@ class DcIndustryConsHandler(FastHandler):
 
         :return:
         """
-        return self._operator.select_data(INDUS_CONS_LS)
+        return self._operator.select_data(name=INDUS_CONS_LS, meta=INDUS_CONS_META)

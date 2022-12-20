@@ -2,6 +2,7 @@ from pandas import DataFrame
 
 from buffett.common.constants.col.meta import META_COLS
 from buffett.common.constants.col.target import CODE, NAME
+from buffett.common.constants.meta.handler import STK_META
 from buffett.common.constants.table import STK_LS
 from buffett.common.tools import dataframe_not_valid
 from buffett.download.mysql.types import ColType, AddReqType
@@ -19,7 +20,7 @@ class TestDbSweeper(Tester):
     def test_sweep(self):
         self._create_table()
         DbSweeper.cleanup()
-        data = self._operator.select_data(STK_LS)
+        data = self._operator.select_data(name=STK_LS, meta=STK_META)
         assert dataframe_not_valid(data)
 
     def _create_table(self):

@@ -57,4 +57,4 @@ class BsStockListHandler(FastHandler):
 
         :return:
         """
-        return self._operator.select_data(BS_STK_LS)
+        return self._operator.select_data(name=BS_STK_LS, meta=BS_STK_META)

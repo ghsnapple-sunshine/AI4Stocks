@@ -9,12 +9,13 @@ from test import Tester, DbSweeper
 
 
 class TestSelect(Tester):
+    _meta = None
     _df = None
 
     @classmethod
     def _setup_oncemore(cls):
         DbSweeper.cleanup()
-        meta = create_meta(
+        cls._meta = create_meta(
             meta_list=[
                 [CODE, ColType.CODE, AddReqType.KEY],
                 [DATETIME, ColType.DATETIME, AddReqType.KEY],
@@ -22,7 +23,7 @@ class TestSelect(Tester):
                 [CLOSE, ColType.FLOAT, AddReqType.NONE],
             ]
         )
-        cls._operator.create_table(name=cls._table_name, meta=meta)
+        cls._operator.create_table(name=cls._table_name, meta=cls._meta)
         data = [
             ["000001", DateTime(2022, 1, 1), 10.0, 10.5],
             ["000001", DateTime(2022, 1, 2), 10.5, 11.0],
@@ -40,17 +41,21 @@ class TestSelect(Tester):
         pass
 
     def test_select(self):
-        db = self._operator.select_data(name=self._table_name)
+        db = self._operator.select_data(name=self._table_name, meta=self._meta)
         assert self.compare_dataframe(db, self._df)
 
     def test_select_row_num(self):
-        db_row_num = self._operator.select_row_num(name=self._table_name)
+        db_row_num = self._operator.select_row_num(
+            name=self._table_name, meta=self._meta
+        )
         df_row_num = self._df.shape[0]
         assert df_row_num == db_row_num
 
     def test_select_with_span(self):
         span = DateSpan(start=Date(2022, 1, 1), end=Date(2022, 1, 4))
-        db = self._operator.select_data(name=self._table_name, span=span)
+        db = self._operator.select_data(
+            name=self._table_name, meta=self._meta, span=span
+        )
         df = self._df[self._df[DATETIME].apply(lambda x: span.is_inside(x))]
         assert self.compare_dataframe(db, df)
 

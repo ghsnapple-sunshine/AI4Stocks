@@ -47,7 +47,7 @@ class CalendarHandler(FastHandler):
         :return:
         """
         span = None if para is None else para.span
-        df = self._operator.select_data(TRA_CAL, span=span)
+        df = self._operator.select_data(name=TRA_CAL, meta=CAL_META, span=span)
         if dataframe_not_valid(df):
             return
         df.index = df[DATE]

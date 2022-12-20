@@ -86,4 +86,4 @@ class BsDailyHandler(SlowHandler):
         :return:
         """
         para = para.clone().with_freq(self._freq).with_source(self._source)
-        return select_data_slow(operator=self._operator, para=para)
+        return select_data_slow(operator=self._operator, meta=self._META, para=para)

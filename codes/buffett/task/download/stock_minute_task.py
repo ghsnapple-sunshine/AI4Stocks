@@ -22,7 +22,8 @@ class StockMinuteTask(Task):
     def get_subsequent_task(self, success: bool):
         if success:
             return StockMinuteTask(
-                operator=self._operator, start_time=convert_date(self._start_time.add(days=1))
+                operator=self._operator,
+                start_time=convert_date(self._start_time.add(days=1)),
             )
         else:
             return StockMinuteTask(

@@ -68,4 +68,4 @@ class DcConceptConsHandler(FastHandler):
 
         :return:
         """
-        return self._operator.select_data(CNCP_CONS_LS)
+        return self._operator.select_data(name=CNCP_CONS_LS, meta=CNCP_CONS_META)

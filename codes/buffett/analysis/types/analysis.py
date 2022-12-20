@@ -14,13 +14,13 @@ class AnalystType(ComparableEnum):
             cls.PATTERN: "Pattern",
             cls.STAT_ZDF: "Stat(ZDF)",
             cls.FUQUAN: "FuquanFactor",
-            cls.CONV_MIN5: "Conv(Min5)"
+            cls.CONV_MIN5: "Conv(Min5)",
         }
         cls._SQL_DICT = {
             cls.PATTERN: "pattern",
             cls.STAT_ZDF: "zdf",
             cls.FUQUAN: "fuquan",
-            cls.CONV_MIN5: "conv"
+            cls.CONV_MIN5: "conv",
         }
         cls._initialize = empty_method
 
