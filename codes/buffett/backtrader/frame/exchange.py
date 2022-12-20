@@ -96,7 +96,7 @@ class ExchangeBuilder:
         self.item.set_clock(clock=clock)
         clock_man = (
             CMBuilder()
-            .with_calendar(operator=operator, datespan=datespan)
+            .with_calendar(operator=operator, span=datespan)
             .with_clock(clock=clock)
             .build()
         )

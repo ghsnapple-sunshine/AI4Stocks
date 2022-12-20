@@ -4,7 +4,7 @@ from buffett.common.pendulum import Date
 from buffett.common.tools import dataframe_not_valid
 from buffett.download import Para
 from buffett.download.handler.stock.dc_daily import DcDailyHandler
-from buffett.download.types import FuquanType
+from buffett.download.types import FuquanType, SourceType, FreqType
 from test import Tester, create_1stock, create_2stocks, DbSweeper
 
 
@@ -100,9 +100,25 @@ class TestDcDailyHandler(Tester):
             official_data[DATE] = official_data[DATE].apply(lambda x: str(x))
             assert self.compare_dataframe(test_data, official_data)
 
-    """
-    def test_000022(self):
-        create_ex_1stock(self._operator, '000022')
-        self._hdl.obtain_data(para=self._short_para)
-        assert True
-    """
+    def test_000001(self):
+        """
+        现网问题
+        （下载了当日的数据）  # TODO: 暂未复现
+
+        :return:
+        """
+        create_1stock(self._operator)
+        para = Para().with_start_n_end(Date(2000, 1, 1), Date(2022, 12, 13))
+        self._hdl.obtain_data(para=para)
+        para2 = Para().with_start_n_end(Date(2000, 1, 1), Date.today())
+        self._hdl.obtain_data(para=para2)
+        para3 = (
+            Para()
+            .with_start_n_end(Date.today(), Date.today().add(days=1))
+            .with_code("000001")
+            .with_source(SourceType.AK_DC)
+            .with_freq(FreqType.DAY)
+            .with_fuquan(FuquanType.BFQ)
+        )
+        data = self._hdl.select_data(para=para3)
+        assert dataframe_not_valid(data)

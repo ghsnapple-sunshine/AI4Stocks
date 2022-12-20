@@ -3,7 +3,7 @@ from buffett.common.target import Target
 from buffett.download import Para
 from buffett.download.handler.reform import ReformHandler
 from buffett.download.handler.stock import DcDailyHandler
-from buffett.maintain import ReformMaintain
+from buffett.download.maintain import ReformMaintain
 from test import Tester, create_2stocks, create_ex_1stock, DbSweeper
 
 

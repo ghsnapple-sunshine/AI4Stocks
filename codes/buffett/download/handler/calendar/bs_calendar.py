@@ -24,7 +24,7 @@ class CalendarHandler(FastHandler):
     def _download(self) -> DataFrame:
         #### 获取交易日信息 ####
         calendar = bs.query_trade_dates(
-            start_date="2000-01-01",
+            start_date="1990-01-01",
             end_date=Date.today().add(months=2).format("YYYY-MM-01"),
         )
 
@@ -50,5 +50,5 @@ class CalendarHandler(FastHandler):
         df = self._operator.select_data(name=TRA_CAL, meta=CAL_META, span=span)
         if dataframe_not_valid(df):
             return
-        df.index = df[DATE]
+        df = df.set_index(DATE)
         return df

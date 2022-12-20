@@ -12,6 +12,7 @@ from buffett.common.constants.col import (
     ZDF,
     HSL,
     PRECLOSE,
+    ST,
 )
 from buffett.common.constants.col.target import CODE, NAME
 from buffett.common.constants.meta.handler import BS_DAILY_META
@@ -30,7 +31,7 @@ from buffett.download.mysql import Operator
 from buffett.download.recorder import DownloadRecorder
 from buffett.download.types import FuquanType, SourceType, FreqType
 
-_RENAME = {"volume": CJL, "amount": CJE, "turn": HSL, "pctChg": ZDF}
+_RENAME = {"volume": CJL, "amount": CJE, "turn": HSL, "pctChg": ZDF, "isST": ST}
 
 
 class BsDailyHandler(SlowHandler):
@@ -50,7 +51,7 @@ class BsDailyHandler(SlowHandler):
         )
 
     def _download(self, para: Para) -> Optional[DataFrame]:
-        fields = "date,open,high,low,close,preclose,volume,amount,turn,pctChg"
+        fields = "date,open,high,low,close,preclose,volume,amount,turn,pctChg,isST"
         daily_info = bs.query_history_k_data_plus(
             code=bs_convert_code(para.target.code),
             fields=fields,

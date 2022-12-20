@@ -1,7 +1,7 @@
 from buffett.adapter.pandas import DataFrame
+from buffett.analysis import Para
 from buffett.backtrader.frame.clock import Clock
 from buffett.backtrader.interface.time_sequence import ITimeSequence as Sequence
-from buffett.common.constants.col import DATE
 from buffett.common.pendulum import DateSpan as Span, convert_date
 from buffett.download.handler.calendar import CalendarHandler
 from buffett.download.mysql import Operator
@@ -25,7 +25,7 @@ class ClockManager(Sequence):
         time = "Final Stage"
         is_end = True
         if tick < self.max_tick:
-            time = convert_date(self._calendar.iloc[tick, 0]).format("YYYY-MM-DD")
+            time = convert_date(self._calendar.index[tick]).format("YYYY-MM-DD")
             is_end = False
         self._clock.turn_next(time, is_end=is_end)
 
@@ -41,11 +41,8 @@ class ClockManagerBuilder:
     def __init__(self):
         self.item = ClockManagerBuilder.ClockManagerUnderBuilt()
 
-    def with_calendar(self, operator: Operator, datespan: Span):
-        tbl = CalendarHandler(operator=operator).select_data()
-        calendar = tbl[tbl[DATE].apply(lambda x: datespan.is_inside(x))]
-        # calendar = tbl[tbl[DATE].apply(lambda x: datespan.start <= x <= datespan.end)] dataSpan definition changed
-        # calendar = tbl[datespan.start <= tbl[DATE] <= datespan.end] Error
+    def with_calendar(self, operator: Operator, span: Span):
+        calendar = CalendarHandler(operator=operator).select_data(para=Para().with_span(span))
         self.item.set_calendar(calendar=calendar)
         return self
 

@@ -9,7 +9,7 @@ from buffett.download.mysql import Operator
 class CalendarManager:
     def __init__(self, operator: Operator):
         self._calendar = CalendarHandler(operator=operator).select_data()
-        self._calendar.index = range(0, len(self._calendar))
+        self._calendar = self._calendar.reset_index()
         self._calendar_list = self._calendar[DATE].to_list()
         self._calendar_dict = dict(
             (k, convert_date(v)) for k, v in self._calendar[DATE].items()

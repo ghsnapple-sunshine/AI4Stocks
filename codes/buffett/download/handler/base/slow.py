@@ -244,12 +244,12 @@ class SlowHandler(Handler):
         """
         将下载的数据存放到数据库
 
-        :param table_name:
-        :param df:
+        :param table_name:      数据表名
+        :param df:              数据
         :return:
         """
         self._operator.create_table(name=table_name, meta=self._META)
-        self._operator.insert_data_safe(name=table_name, df=df, meta=self._META)
+        self._operator.insert_data_safe(name=table_name, df=df, meta=self._META, update=True)
 
     @classmethod
     def _log_start_download(cls, para: Para):

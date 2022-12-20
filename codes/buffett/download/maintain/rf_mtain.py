@@ -1,5 +1,3 @@
-import os
-
 from buffett.adapter.pandas import DataFrame, pd, Series
 from buffett.common.constants.col import FREQ, SOURCE, FUQUAN, START_DATE, END_DATE
 from buffett.common.constants.col.my import TABLE_NAME, DORCD_START, DORCD_END
@@ -7,34 +5,25 @@ from buffett.common.constants.col.mysql import ROW_NUM
 from buffett.common.constants.col.target import CODE
 from buffett.common.constants.meta.handler import META_DICT
 from buffett.common.logger import Logger
-from buffett.common.magic import empty_method
-from buffett.common.pendulum import DateSpan, DateTime
+from buffett.common.pendulum import DateSpan
 from buffett.common.tools import dataframe_not_valid, dataframe_is_valid
 from buffett.download import Para
 from buffett.download.handler.tools import TableNameTool
+from buffett.download.maintain.base import BaseMaintain
 from buffett.download.mysql import Operator
 from buffett.download.recorder import DownloadRecorder, ReformRecorder
 
 DL_ROW_NUM = "dl_row_num"
 
 
-class ReformMaintain:
-    _save = True
-
-    @classmethod
-    def set_save_report(cls, save: bool):
-        cls._save = save
-        if cls._save:
-            cls._save_report = cls._call_save_report
-        else:
-            cls._save_report = empty_method
-
+class ReformMaintain(BaseMaintain):
     def __init__(self, operator: Operator):
+        super(ReformMaintain, self).__init__(folder="rf_maintain")
         self._operator = operator
         self._dl_recorder = DownloadRecorder(operator)
         self._rf_recorder = ReformRecorder(operator)
-        self._dl_records = DataFrame()
-        self._rf_records = DataFrame()
+        self._dl_records = None
+        self._rf_records = None
         self._logger = ReformMaintainLogger()
 
     def run(self) -> bool:
@@ -113,14 +102,6 @@ class ReformMaintain:
         if not result:  # 打印错误信息
             error_records.apply(self._logger.data_num_error, axis=1)
         return result
-
-    @classmethod
-    def _call_save_report(cls, df: DataFrame):
-        _dir = f"e:/BuffettData/rf_maintain/{DateTime.now().format('YYYYMMDD_HHmmss')}/"
-        os.makedirs(_dir)
-        df.to_csv(f"{_dir}report.csv", header=True, index=False, encoding="gbk")
-
-    _save_report = _call_save_report
 
     def _get_dl_row_num(self, row: Series) -> int:
         """

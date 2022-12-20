@@ -26,11 +26,11 @@ def create_meta(meta_list: list) -> DataFrame:
 
 
 def dataframe_is_valid(df: DataFrame) -> bool:
-    return isinstance(df, DataFrame) and not df.empty
+    return isinstance(df, DataFrame) and not (df.empty or df.index.empty)
 
 
 def dataframe_not_valid(df: DataFrame) -> bool:
-    return not isinstance(df, DataFrame) or df.empty
+    return not isinstance(df, DataFrame) or (df.empty and df.index.empty)
 
 
 def span_is_valid(span: DateSpan) -> bool:

@@ -59,7 +59,7 @@ from buffett.common.constants.col import (
     M1HB,
     M2,
     M2TB,
-    M2HB,
+    M2HB, ST,
 )
 from buffett.common.constants.col.target import (
     INDEX_CODE,
@@ -142,7 +142,7 @@ BS_DAILY_META = create_meta(
         [ZDF, ColType.FLOAT, AddReqType.NONE],
         [ZDE, ColType.FLOAT, AddReqType.NONE],
         [HSL, ColType.FLOAT, AddReqType.NONE],
-        # [ST, ColType.ENUM_BOOL, AddReqType.NONE]
+        [ST, ColType.ENUM_BOOL, AddReqType.NONE]
     ]
 )
 

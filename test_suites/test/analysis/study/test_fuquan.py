@@ -135,7 +135,7 @@ class TestFuquanAnalyst(AnalysisTester):
     def test_000605(self):
         """
         现网异常数据
-        （还不知道原因）
+        （2000/1-2000/6缺失数据）
 
         :return:
         """

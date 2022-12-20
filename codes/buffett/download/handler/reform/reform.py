@@ -2,9 +2,6 @@ from __future__ import annotations
 
 from typing import Optional
 
-from pymysql import IntegrityError
-
-from buffett.adapter import logging
 from buffett.adapter.numpy import NAN
 from buffett.adapter.pandas import DataFrame, pd
 from buffett.common import create_meta
@@ -231,17 +228,8 @@ class ReformHandler:
         para = Para().with_comb(comb).with_start(df.iloc[0][MONTH_START])
         table_name_by_date = TableNameTool.get_by_date(para=para)
         del df[MONTH_START]
-        try:
-            self._operator.insert_data(name=table_name_by_date, df=df)
-        except IntegrityError as e:
-            if e.args[0] == 1062:
-                logging.warning(e)
-                meta = self._get_meta_cache(para=para)
-                self._operator.try_insert_data(
-                    name=table_name_by_date, df=df, meta=meta
-                )
-            else:
-                raise e
+        meta = self._get_meta_cache(para=para)
+        self._operator.insert_data_safe(name=table_name_by_date, df=df, meta=meta)
 
     def _save_reform_records(self):
         """

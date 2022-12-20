@@ -5,6 +5,7 @@ from pandas import (
     Series as pd_Series,
     concat as pd_concat,
     isna as pd_isna,
+    notna as pd_notna,
     NaT as pd_NAT,
     merge as pd_merge,
     to_datetime as pd_to_datetime,
@@ -28,6 +29,7 @@ class pd:
     # methods
     concat = pd_concat
     isna = pd_isna
+    notna = pd_notna
     NAT = pd_NAT
     merge = pd_merge
     read_csv = pd_read_csv
