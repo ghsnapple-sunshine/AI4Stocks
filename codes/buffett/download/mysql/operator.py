@@ -101,7 +101,7 @@ class Operator(Connector):
             if e.args[0] == 1062:
                 from buffett.common.logger import Logger
 
-                Logger.warning(e)
+                # Logger.warning(e)
                 self.try_insert_data(name=name, df=df, meta=meta, update=update)
             else:
                 raise e
