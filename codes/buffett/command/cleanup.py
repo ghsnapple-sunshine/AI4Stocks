@@ -25,6 +25,7 @@ def cleanup() -> None:
         print("输入错误。")
         return
     #
+    op = next(op)
     tbls = op.execute("show tables", fetch=True)
     if dataframe_not_valid(tbls):
         print("数据库为空")
