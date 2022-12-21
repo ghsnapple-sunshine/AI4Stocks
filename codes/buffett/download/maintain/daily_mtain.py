@@ -91,11 +91,12 @@ class StockDailyMaintain(BaseMaintain):
         :return:
         """
         code, bs_info, dc_info = infos
-        dc_info = dc_info[dc_info.index < Date.today()]
         bs_valid, dc_valid = dataframe_is_valid(bs_info), dataframe_is_valid(dc_info)
         bs_miss, dc_miss = None, None
         if bs_valid:
             bs_info = bs_info[bs_info[CJL] > 0]  # 过滤停牌日
+        if dc_valid:
+            dc_info = dc_info[dc_info.index < Date.today()]
         if bs_valid and dc_valid:
             merge_info = pd.merge(
                 bs_info,
