@@ -58,6 +58,7 @@ M2 = "m2"
 M2TB = "m2tb"
 M2HB = "m2hb"
 #
+TP = "tingpai"
 ST = "ST"
 #
 TYPE = "type"

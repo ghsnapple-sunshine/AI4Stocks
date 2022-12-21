@@ -112,3 +112,15 @@ class TestBsDailyHandler(Tester):
         create_ex_1stock(self._operator, Target("000022"), source="bs")
         self._hdl.obtain_data(para=self._great_para)
         assert True
+
+    def test_000001(self):
+        """
+        测试成交量为0的时间段
+
+        :return:
+        """
+        create_1stock(self._operator, source="bs")
+        self._hdl.obtain_data(
+            para=Para().with_start_n_end(Date(1992, 2, 1), Date(1992, 3, 1))
+        )
+        assert True

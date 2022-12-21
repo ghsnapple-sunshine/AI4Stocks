@@ -13,6 +13,7 @@ from buffett.common.constants.col import (
     HSL,
     PRECLOSE,
     ST,
+    TP,
 )
 from buffett.common.constants.col.target import CODE, NAME
 from buffett.common.constants.meta.handler import BS_DAILY_META
@@ -31,7 +32,14 @@ from buffett.download.mysql import Operator
 from buffett.download.recorder import DownloadRecorder
 from buffett.download.types import FuquanType, SourceType, FreqType
 
-_RENAME = {"volume": CJL, "amount": CJE, "turn": HSL, "pctChg": ZDF, "isST": ST}
+_RENAME = {
+    "volume": CJL,
+    "amount": CJE,
+    "turn": HSL,
+    "pctChg": ZDF,
+    "isST": ST,
+    "tradestatus": TP,
+}
 
 
 class BsDailyHandler(SlowHandler):
@@ -51,7 +59,7 @@ class BsDailyHandler(SlowHandler):
         )
 
     def _download(self, para: Para) -> Optional[DataFrame]:
-        fields = "date,open,high,low,close,preclose,volume,amount,turn,pctChg,isST"
+        fields = "date,open,high,low,close,preclose,volume,amount,turn,pctChg,tradestatus,isST"
         daily_info = bs.query_history_k_data_plus(
             code=bs_convert_code(para.target.code),
             fields=fields,
@@ -67,15 +75,14 @@ class BsDailyHandler(SlowHandler):
         daily_info = daily_info.rename(columns=_RENAME)
 
         # 更改类型
-        daily_info[OPEN] = daily_info[OPEN].apply(lambda x: bs_check_float(x))
-        daily_info[CLOSE] = daily_info[CLOSE].apply(lambda x: bs_check_float(x))
-        daily_info[PRECLOSE] = daily_info[PRECLOSE].apply(lambda x: bs_check_float(x))
-        daily_info[HIGH] = daily_info[HIGH].apply(lambda x: bs_check_float(x))
-        daily_info[LOW] = daily_info[LOW].apply(lambda x: bs_check_float(x))
-        daily_info[CJL] = daily_info[CJL].apply(lambda x: bs_check_int(x))
-        daily_info[CJE] = daily_info[CJE].apply(lambda x: bs_check_float(x))
-        daily_info[HSL] = daily_info[HSL].apply(lambda x: bs_check_float(x))
-        daily_info[ZDF] = daily_info[ZDF].apply(lambda x: bs_check_float(x))
+        daily_info.loc[
+            :, [OPEN, CLOSE, PRECLOSE, HIGH, LOW, HSL, ZDF]
+        ] = daily_info.loc[:, [OPEN, CLOSE, PRECLOSE, HIGH, LOW, HSL, ZDF]].applymap(
+            lambda x: bs_check_float(x)
+        )
+        daily_info.loc[:, [CJL, CJE]] = daily_info.loc[:, [CJL, CJE]].applymap(
+            lambda x: bs_check_int(x)
+        )
 
         return daily_info
 
