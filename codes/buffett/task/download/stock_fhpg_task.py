@@ -19,10 +19,10 @@ class StockFhpgTask(Task):
 
     def get_subsequent_task(self, success: bool):
         if success:
-            return DcFhpgHandler(
+            return StockFhpgTask(
                 operator=self._operator, start_time=self._start_time.add(days=7)
             )
         else:
-            return DcFhpgHandler(
+            return StockFhpgTask(
                 operator=self._operator, start_time=self._start_time.add(minutes=5)
             )
