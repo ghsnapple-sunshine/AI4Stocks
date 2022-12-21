@@ -193,8 +193,7 @@ class DateTime(Timestamp, Date):
     @classmethod
     def today(cls) -> DateTime:
         result = super(DateTime, cls).today()
-        result.__class__ = DateTime
-        return result
+        return DateTime(result.year, result.month, result.day)
 
     def format(self, fmt, locale=None):
         """
