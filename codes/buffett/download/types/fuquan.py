@@ -23,6 +23,14 @@ class FuquanType(ComparableEnum):
     def bs_format(self) -> str:
         return str(self.value)
 
+    def ths_format(self) -> str:
+        FUQUAN_TYPE_DICT = {
+            FuquanType.BFQ: "00",
+            FuquanType.QFQ: "01",
+            FuquanType.HFQ: "02",
+        }
+        return FUQUAN_TYPE_DICT[self]
+
     def __str__(self):
         FUQIAN_TYPE_DICT = {
             FuquanType.BFQ: "bfq",

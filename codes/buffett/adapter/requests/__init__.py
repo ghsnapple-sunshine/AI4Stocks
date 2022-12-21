@@ -10,11 +10,13 @@ class requests:
     _s.mount("https://", req_HTTPAdapter(max_retries=3))
 
     @classmethod
-    def get(cls, url: str, params: Optional[dict] = None, verify: bool = True):
-        """
-        if params is None:
-            return cls._s.get(url, verify=verify, timeout=60)
-        else:
-            return cls._s.get(url, params=params, verify=verify, timeout=60)
-        """
-        return cls._s.get(url, params=params, verify=verify, timeout=60)
+    def get(
+        cls,
+        url: str,
+        params: Optional[dict] = None,
+        verify: bool = True,
+        headers: Optional[dict] = None,
+    ):
+        return cls._s.get(
+            url, params=params, verify=verify, timeout=60, headers=headers
+        )
