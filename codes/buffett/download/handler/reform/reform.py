@@ -128,43 +128,8 @@ class ReformHandler:
             para = Para.from_tuple(row).with_start(getattr(row, MONTH_START))
             table_name = TableNameTool.get_by_date(para=para)
             if table_name not in curr_table_names:
-                meta = self._get_meta_cache(para=para)
+                meta = META_DICT[para.comb]
                 self._operator.create_table(name=table_name, meta=meta)
-
-    def _get_meta_cache(self, para: Para) -> DataFrame:
-        """
-        获取表格元数据
-
-        :param para:                freq, source, fuquan
-        :return:
-        """
-        if para.comb in self._meta_cache.keys():
-            meta = self._meta_cache[para.comb]
-        else:
-            meta = self._create_meta(para=para)
-            self._meta_cache[para.comb] = meta
-        return meta
-
-    def _create_meta(self, para: Para) -> DataFrame:
-        """
-        按照原表的结构创建Meta
-
-        :param para:                freq, source, fuquan
-        :return:                    meta
-        """
-        para = para.clone()
-        records = self._todo_records
-        para.with_code(
-            code=records[
-                (records[FREQ] == para.comb.freq)
-                & (records[SOURCE] == para.comb.source)
-                & (records[FUQUAN] == para.comb.fuquan)
-            ].iloc[0, :][CODE]
-        )
-        table_name = TableNameTool.get_by_code(para=para)
-        meta = self._operator.get_meta(name=table_name)
-        meta = pd.concat([meta, ADD_META])
-        return meta
 
     def _reform_n_save_data(self, df: DataFrame) -> None:
         """
@@ -228,7 +193,7 @@ class ReformHandler:
         para = Para().with_comb(comb).with_start(df.iloc[0][MONTH_START])
         table_name_by_date = TableNameTool.get_by_date(para=para)
         del df[MONTH_START]
-        meta = self._get_meta_cache(para=para)
+        meta = META_DICT[comb]
         self._operator.insert_data_safe(name=table_name_by_date, df=df, meta=meta)
 
     def _save_reform_records(self):

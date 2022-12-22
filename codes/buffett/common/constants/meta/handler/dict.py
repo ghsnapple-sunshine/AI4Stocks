@@ -3,6 +3,7 @@ from buffett.common.constants.meta.handler.definition import (
     BS_MINUTE_META,
     DC_DAILY_META,
     DC_MINUTE_META,
+    PEPB_META,
 )
 from buffett.download.types import CombType, SourceType, FreqType, FuquanType
 
@@ -17,11 +18,6 @@ META_DICT = {
         freq=FreqType.DAY,
         fuquan=FuquanType.HFQ,
     ): BS_DAILY_META,
-    # CombType(
-    #     source=SourceType.BS,
-    #     freq=FreqType.DAY,
-    #     fuquan=FuquanType.QFQ,
-    # ): BS_DAILY_META,
     CombType(
         source=SourceType.BS,
         freq=FreqType.MIN5,
@@ -37,11 +33,6 @@ META_DICT = {
         freq=FreqType.DAY,
         fuquan=FuquanType.HFQ,
     ): DC_DAILY_META,
-    # CombType(
-    #     source=SourceType.AK_DC,
-    #     freq=FreqType.DAY,
-    #     fuquan=FuquanType.QFQ,
-    # ): DC_DAILY_META,
     CombType(
         source=SourceType.AK_DC,
         freq=FreqType.MIN5,
@@ -62,4 +53,9 @@ META_DICT = {
         freq=FreqType.DAY,
         fuquan=FuquanType.BFQ,
     ): DC_DAILY_META,
+    CombType(
+        source=SourceType.AK_LG_PEPB,
+        freq=FreqType.DAY,
+        fuquan=FuquanType.BFQ,
+    ): PEPB_META,
 }
