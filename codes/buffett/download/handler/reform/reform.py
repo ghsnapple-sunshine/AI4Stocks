@@ -43,6 +43,7 @@ class ReformHandler:
         self._dl_recorder = DRecorder(operator=operator)
         self._rf_recorder = RRecorder(operator=operator)
         self._reset_datas()
+        self._meta_cache = {}
 
     def _reset_datas(self):
         self._todo_records = DataFrame()
@@ -128,7 +129,7 @@ class ReformHandler:
             para = Para.from_tuple(row).with_start(getattr(row, MONTH_START))
             table_name = TableNameTool.get_by_date(para=para)
             if table_name not in curr_table_names:
-                meta = META_DICT[para.comb]
+                meta = self._get_meta_cache(para.comb)
                 self._operator.create_table(name=table_name, meta=meta)
 
     def _reform_n_save_data(self, df: DataFrame) -> None:
@@ -193,7 +194,7 @@ class ReformHandler:
         para = Para().with_comb(comb).with_start(df.iloc[0][MONTH_START])
         table_name_by_date = TableNameTool.get_by_date(para=para)
         del df[MONTH_START]
-        meta = META_DICT[comb]
+        meta = self._get_meta_cache(comb)
         self._operator.insert_data_safe(name=table_name_by_date, df=df, meta=meta)
 
     def _save_reform_records(self):
@@ -216,6 +217,19 @@ class ReformHandler:
         self._rf_recorder.save_to_database(df=df)
         for data in self._data_caches:
             data.log_end()
+
+    def _get_meta_cache(self, comb: CombType) -> DataFrame:
+        """
+        获取表格元数据
+
+        :param comb:                freq, source, fuquan
+        :return:
+        """
+        meta = self._meta_cache.get(comb)
+        if meta is None:
+            meta = pd.concat([META_DICT[comb], ADD_META])
+            self._meta_cache[comb] = meta
+        return meta
 
     # endregion
 
