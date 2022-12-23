@@ -3,18 +3,19 @@ import json
 from buffett.adapter.error.data_source import DataSourceError
 from buffett.adapter.numpy import np
 from buffett.adapter.pandas import DataFrame
-from buffett.adapter.requests import ProxyRequests
+from buffett.adapter.request import ProxyRequests
 
 
 def my_stock_zh_a_hist_ths(
     symbol: str,
     adjust: str,
+    request: ProxyRequests
 ) -> DataFrame:
 
     url = f"https://d.10jqka.com.cn/v6/line/hs_{symbol}/{adjust}/all.js"
-    r = ProxyRequests.get(url=url, proxy="random", timeout=5)
-    if r.status_code == 200:
-        data_text = r.text
+    response = request.get(url=url, proxy="random", timeout=5)
+    if response.status_code == 200:
+        data_text = response.text
         data_json = json.loads(data_text[data_text.find("{") : data_text.find("}") + 1])
         price = json.loads("[" + data_json["price"] + "]")
         total = int(data_json["total"])
@@ -42,10 +43,3 @@ def my_stock_zh_a_hist_ths(
         )
         return df
     raise DataSourceError("ths", symbol)
-
-
-if __name__ == "__main__":
-    ProxyRequests.load(file_name="tonghuashun")
-    df = my_stock_zh_a_hist_ths(symbol="000001", adjust="00")
-    ProxyRequests.save(file_name="tonghuashun")
-    print(df)

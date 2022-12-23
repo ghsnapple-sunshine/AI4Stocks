@@ -1,7 +1,7 @@
 from akshare.utils import demjson
 
 from buffett.adapter.pandas import DataFrame, pd
-from buffett.adapter.requests import Requests
+from buffett.adapter.request import Requests
 
 
 def my_stock_em_pg() -> DataFrame:

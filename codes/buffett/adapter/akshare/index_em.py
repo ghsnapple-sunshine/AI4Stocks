@@ -2,7 +2,7 @@ from akshare.utils import demjson
 
 from buffett.adapter.error.data_source import DataSourceError
 from buffett.adapter.pandas import DataFrame, pd
-from buffett.adapter.requests import Requests
+from buffett.adapter.request import Requests
 
 
 def my_stock_zh_index_daily_em(

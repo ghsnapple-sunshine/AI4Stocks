@@ -2,7 +2,7 @@ from akshare.stock_feature.stock_a_indicator import get_token_lg
 from bs4 import BeautifulSoup
 
 from buffett.adapter.pandas import pd, DataFrame
-from buffett.adapter.requests import Requests
+from buffett.adapter.request import Requests
 
 
 def my_stock_a_lg_indicator(symbol: str):
