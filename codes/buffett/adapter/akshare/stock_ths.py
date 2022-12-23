@@ -3,11 +3,11 @@ import json
 from buffett.adapter.error.data_source import DataSourceError
 from buffett.adapter.numpy import np
 from buffett.adapter.pandas import DataFrame
-from buffett.adapter.requests import requests
+from buffett.adapter.requests import Requests
 
 headers = {
     "User-Agent": "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 "
-                  "Safari/537.36 QIHU 360SE "
+    "Safari/537.36 QIHU 360SE "
 }
 
 
@@ -17,7 +17,7 @@ def my_stock_zh_a_hist_ths(
 ) -> DataFrame:
 
     url = f"https://d.10jqka.com.cn/v6/line/hs_{symbol}/{adjust}/all.js"
-    r = requests.get(url=url, headers=headers)
+    r = Requests.get(url=url, headers=headers)
     if r.status_code == 200:
         data_text = r.text
         data_json = json.loads(data_text[data_text.find("{") : data_text.find("}") + 1])

@@ -2,7 +2,7 @@ from akshare.stock_feature.stock_a_indicator import get_token_lg
 from bs4 import BeautifulSoup
 
 from buffett.adapter.pandas import pd, DataFrame
-from buffett.adapter.requests import requests
+from buffett.adapter.requests import Requests
 
 
 def my_stock_a_lg_indicator(symbol: str):
@@ -14,7 +14,7 @@ def my_stock_a_lg_indicator(symbol: str):
     """
     if symbol == "all":
         url = "https://www.legulegu.com/stocklist"
-        r = requests.get(url, verify=False)
+        r = Requests.get(url, verify=False)
         soup = BeautifulSoup(r.text, "lxml")
         node_list = soup.find_all(attrs={"class": "col-xs-6"})
         href_list = [item.find("a")["href"] for item in node_list]
@@ -28,7 +28,7 @@ def my_stock_a_lg_indicator(symbol: str):
         url = f"https://www.legulegu.com/api/s/base-info/"
         token = get_token_lg()
         params = {"id": symbol, "token": token}
-        r = requests.get(url, params=params, verify=False)
+        r = Requests.get(url, params=params, verify=False)
         temp_json = r.json()
         temp_df = DataFrame(
             temp_json["data"]["items"], columns=temp_json["data"]["fields"]

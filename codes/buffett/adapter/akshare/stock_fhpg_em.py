@@ -2,7 +2,7 @@ from akshare.utils import demjson
 
 from buffett.adapter.error.data_source import DataSourceError
 from buffett.adapter.pandas import DataFrame
-from buffett.adapter.requests import requests
+from buffett.adapter.requests import Requests
 
 
 def stock_fhpg_em(symbol: str):
@@ -15,7 +15,7 @@ def stock_fhpg_em(symbol: str):
     """
     url = "https://push2.eastmoney.com/api/qt/stock/cqcx/get"
     params = {"id": symbol}
-    r = requests.get(url, params=params)
+    r = Requests.get(url, params=params)
     data_text = r.text
     data_json = demjson.decode(data_text)
     if data_json["data"] is None:

@@ -2,7 +2,7 @@ from akshare.utils import demjson
 
 from buffett.adapter.error.data_source import DataSourceError
 from buffett.adapter.pandas import DataFrame, pd
-from buffett.adapter.requests import requests
+from buffett.adapter.requests import Requests
 
 
 def my_stock_zh_index_daily_em(
@@ -31,7 +31,7 @@ def my_stock_zh_index_daily_em(
         "end": end_date,
         "_": "1596700547039",
     }
-    r = requests.get(url, params=params)
+    r = Requests.get(url, params=params)
     data_text = r.text
     data_json = demjson.decode(data_text[data_text.find("{") : -2])
     if data_json["data"] is None:

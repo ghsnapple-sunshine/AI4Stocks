@@ -12,6 +12,7 @@ from pandas import (
     to_numeric as pd_to_numeric,
     read_csv as pd_read_csv,
     read_feather as pd_read_feather,
+    read_html as pd_read_html,
     Timestamp as pd_Timestamp,
     Timedelta as pd_Timedelta,
 )
@@ -34,6 +35,7 @@ class pd:
     merge = pd_merge
     read_csv = pd_read_csv
     read_feather = pd_read_feather
+    read_html = pd_read_html
     to_datetime = pd_to_datetime
     to_numeric = pd_to_numeric
 

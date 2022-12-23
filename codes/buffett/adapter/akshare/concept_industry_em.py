@@ -1,6 +1,6 @@
 from buffett.adapter.akshare.lazy import Lazy
 from buffett.adapter.pandas import pd, DataFrame
-from buffett.adapter.requests import requests
+from buffett.adapter.requests import Requests
 
 
 def my_stock_board_concept_n_industry_hist_em(
@@ -37,7 +37,7 @@ def my_stock_board_concept_n_industry_hist_em(
         "lmt": "1000000",
         "_": "1626079488673",
     }
-    r = requests.get(url, params=params)
+    r = Requests.get(url, params=params)
     data_json = r.json()
     temp_df = DataFrame([item.split(",") for item in data_json["data"]["klines"]])
     if temp_df.empty:

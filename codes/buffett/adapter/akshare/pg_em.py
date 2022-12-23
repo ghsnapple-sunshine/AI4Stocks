@@ -1,7 +1,7 @@
 from akshare.utils import demjson
 
 from buffett.adapter.pandas import DataFrame, pd
-from buffett.adapter.requests import requests
+from buffett.adapter.requests import Requests
 
 
 def my_stock_em_pg() -> DataFrame:
@@ -28,7 +28,7 @@ def my_stock_em_pg() -> DataFrame:
             "source": "WEB",
             "client": "WEB",
         }
-        r = requests.get(url, params=params)
+        r = Requests.get(url, params=params)
         data_json = demjson.decode(r.text)
         if data_json["result"] is None:
             break

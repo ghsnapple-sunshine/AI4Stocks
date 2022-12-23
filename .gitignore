@@ -1,3 +1,4 @@
 
 *.pyc
 *.rar
+/codes/buffett/adapter/requests/pool

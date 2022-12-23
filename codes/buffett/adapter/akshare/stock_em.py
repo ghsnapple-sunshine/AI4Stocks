@@ -1,7 +1,7 @@
 from buffett.adapter.akshare.lazy import Lazy
 from buffett.adapter.error.data_source import DataSourceError
 from buffett.adapter.pandas import pd, DataFrame
-from buffett.adapter.requests import requests
+from buffett.adapter.requests import Requests
 
 
 def my_stock_zh_a_hist(
@@ -41,7 +41,7 @@ def my_stock_zh_a_hist(
         "end": end_date,
         "_": "1623766962675",
     }
-    r = requests.get(url, params=params)
+    r = Requests.get(url, params=params)
     data_json = r.json()
     if not (data_json["data"] and data_json["data"]["klines"]):
         return DataFrame()
