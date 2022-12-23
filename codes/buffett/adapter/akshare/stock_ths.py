@@ -3,12 +3,7 @@ import json
 from buffett.adapter.error.data_source import DataSourceError
 from buffett.adapter.numpy import np
 from buffett.adapter.pandas import DataFrame
-from buffett.adapter.requests import Requests
-
-headers = {
-    "User-Agent": "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 "
-    "Safari/537.36 QIHU 360SE "
-}
+from buffett.adapter.requests import ProxyRequests
 
 
 def my_stock_zh_a_hist_ths(
@@ -17,7 +12,7 @@ def my_stock_zh_a_hist_ths(
 ) -> DataFrame:
 
     url = f"https://d.10jqka.com.cn/v6/line/hs_{symbol}/{adjust}/all.js"
-    r = Requests.get(url=url, headers=headers)
+    r = ProxyRequests.get(url=url, proxy="random", timeout=5)
     if r.status_code == 200:
         data_text = r.text
         data_json = json.loads(data_text[data_text.find("{") : data_text.find("}") + 1])
@@ -34,7 +29,7 @@ def my_stock_zh_a_hist_ths(
         price[:, 2] = price[:, 2] + price[:, 0]
         price[:, 3] = price[:, 3] + price[:, 0]
         price = price / 100
-        volumn = json.loads("[" + data_json["volumn"] + "]")
+        volume = json.loads("[" + data_json["volumn"] + "]")
         df = DataFrame(
             {
                 "date": full_dates,
@@ -42,7 +37,7 @@ def my_stock_zh_a_hist_ths(
                 "open": price[:, 1],
                 "high": price[:, 2],
                 "close": price[:, 3],
-                "chengjiaoliang": volumn,
+                "chengjiaoliang": volume,
             }
         )
         return df
@@ -50,5 +45,7 @@ def my_stock_zh_a_hist_ths(
 
 
 if __name__ == "__main__":
+    ProxyRequests.load(file_name="tonghuashun")
     df = my_stock_zh_a_hist_ths(symbol="000001", adjust="00")
+    ProxyRequests.save(file_name="tonghuashun")
     print(df)

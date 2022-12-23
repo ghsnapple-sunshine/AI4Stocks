@@ -1,13 +1,15 @@
 from json import loads, JSONDecodeError
 from random import Random
 from typing import Optional
+from pickle import load, dump
 
 from random_user_agent.user_agent import UserAgent
 from requests import Response, Session as req_Session, get as req_get
 from requests.adapters import HTTPAdapter as req_HTTPAdapter, ProxyError
 
-from buffett.adapter.numpy import np
+from buffett.adapter.numpy import np, ndarray
 from buffett.adapter.pandas import DataFrame, pd
+from buffett.common.constants import UINT64_MAX_VALUE
 from buffett.common.logger import Logger, LoggerBuilder
 from buffett.common.magic import get_class_name
 from buffett.common.tools import dataframe_is_valid
@@ -16,7 +18,8 @@ ADDRESS = "address"
 HOST = "host"
 IP = "ip"
 PORT = "port"
-DB_POOL = "pool"
+PATH = "E:/BuffettData/proxy_pool/"
+DB_POOL = "E:/BuffettData/proxy_pool/pool"
 TAG = "tag"
 
 
@@ -58,24 +61,29 @@ class Requests:
 
 class ProxyRequestsLogger(Logger):
     @classmethod
-    def info_get_start(cls, source: str):
+    def info_get_proxy_start(cls, source: str):
         cls.info(f"Get proxy from {source} start.")
 
     @classmethod
-    def info_get_success(cls, source: str):
-        cls.info(f"Get proxy from {source} success.")
-
-    @classmethod
-    def info_get_fail_with_error(cls, source: Optional[str], err: Exception):
-        cls.info(f"Get proxy from {source} with {get_class_name(err)}")
-
-    @classmethod
-    def info_save_success(cls):
+    def info_save_proxy_success(cls):
         cls.info(f"Save proxy success.")
 
     @classmethod
-    def info_get_fail_with_code(cls, source: str, code: int):
-        cls.info(f"Get proxy from {source} with code {code}.")
+    def info_get_data_success(cls, source: str, proxy: str = ""):
+        proxy = "" if proxy == "" else f" with {proxy}"
+        cls.info(f"Get from {source}{proxy} success.")
+
+    @classmethod
+    def info_get_data_fail_with_error(
+        cls, source: str, err: Exception, proxy: str = ""
+    ):
+        proxy = "" if proxy == "" else f" with {proxy}"
+        cls.info(f"Get from {source}{proxy} {get_class_name(err)}")
+
+    @classmethod
+    def info_get_data_fail_with_code(cls, source: str, code: int, proxy: str = ""):
+        proxy = "" if proxy == "" else f" with {proxy}"
+        cls.info(f"Get from {source}{proxy} code:{code}.")
 
     @classmethod
     def info_test_success(cls, proxy: str):
@@ -91,10 +99,10 @@ class ProxyRequestsLogger(Logger):
 
 
 class WeightedRandom:
-    INIT = 1024
+    INIT = 2**20
 
-    def __init__(self, items: list[str]):
-        self._items = np.array(items)
+    def __init__(self, items: ndarray):
+        self._items = items
         self._num = len(items)
         self._order = dict((v, k) for k, v in enumerate(items))
         self._weights = np.array([1] * self._num) * self.INIT
@@ -162,7 +170,7 @@ class ProxyRequests:
         """
         SOURCE = "proxylist.fatezero.org"
         # 下载
-        cls._logger.info_get_start(SOURCE)
+        cls._logger.info_get_proxy_start(SOURCE)
         req = cls.get(url="http://proxylist.fatezero.org/proxy.list")
         if req.status_code != 200:
             cls._logger.info_get_fail(SOURCE, req.status_code)
@@ -198,8 +206,8 @@ class ProxyRequests:
             cls.combine(dfs_[[ADDRESS]])
 
         SOURCE = "www.kuaidaili.com"
-        cls._logger.info_get_start(SOURCE)
-        cls._load()
+        cls._logger.info_get_proxy_start(SOURCE)
+        cls.load()
         # 下载
         i = 1
         dfs = []
@@ -216,13 +224,12 @@ class ProxyRequests:
             try:
                 df = pd.read_html(req.text)
                 dfs.extend(df)
-                cls._logger.info_get_success(url)
                 if i % 20 == 0:
                     save_dfs(dfs)
                     dfs = []
                 i += 1
             except ValueError as e:
-                cls._logger.info_get_fail_with_error(url, e)
+                cls._logger.info_get_data_fail_with_error(url, e)
                 pass
         save_dfs(dfs)
 
@@ -234,7 +241,7 @@ class ProxyRequests:
         :param proxies:
         :return:
         """
-        cls._load()
+        cls.load()
         if dataframe_is_valid(cls._proxies):
             all_proxies = pd.concat([cls._proxies, proxies]).drop_duplicates()
             add_proxies = pd.subtract(all_proxies, cls._proxies)
@@ -245,24 +252,43 @@ class ProxyRequests:
             all_proxies = cls.verify(proxies=all_proxies)
         cls._proxies = all_proxies
         cls._proxies.to_feather(DB_POOL)
-        cls._logger.info_save_success()
+        cls._logger.info_save_proxy_success()
 
     @classmethod
-    def _load(cls, force: bool = False) -> None:
+    def load(cls, file_name: Optional[str] = None) -> None:
         """
-        加载保存的proxy
+        加载保存的proxy和weight
 
-        :param force:       强制加载
+        :param file_name:       已训练过weights的文件名
         :return:
         """
-        if not force and cls._proxies is not None:
-            cls._weights = WeightedRandom(cls._proxies[ADDRESS].tolist())
+        if cls._proxies is None:
+            try:
+                cls._proxies = pd.read_feather(DB_POOL)
+            except IOError as e:
+                print(e)
+        #
+        if file_name is not None:
+            try:
+                with open(PATH + file_name, "rb") as weight_file:
+                    cls._weights = load(file=weight_file)
+            except IOError as e:
+                print(e)
+        if cls._weights is None:  # Contains situation when load weights failed and...
+            cls._weights = WeightedRandom(cls._proxies[ADDRESS].values)
+
+    @classmethod
+    def save(cls, file_name: str):
+        """
+        保存weight
+
+        :param file_name:     待保存的weights的文件名
+        :return:
+        """
+        if cls._weights is None:
             return
-        try:
-            cls._proxies = pd.read_feather(DB_POOL)
-            cls._weights = WeightedRandom(cls._proxies[ADDRESS].tolist())
-        except IOError:
-            pass
+        with open(PATH + file_name, "wb") as weight_file:
+            dump(cls._weights, file=weight_file)
 
     @classmethod
     def get(
@@ -270,9 +296,9 @@ class ProxyRequests:
         url: str,
         proxy: Optional[str] = None,
         timeout: int = 5,
-        max_retries: int = 100,
+        max_retries: int = UINT64_MAX_VALUE,
         **kwargs,
-    ) -> Optional[Response]:
+    ) -> Response:
         """
 
         :param url
@@ -281,38 +307,62 @@ class ProxyRequests:
         :param max_retries:     设置以避免死循环
         :return:
         """
-        headers = {"User-Agent": cls._ua.get_random_user_agent()}
-        item = None
-        if proxy is None:
-            proxies = None
-        else:
-            item = cls._weights.random_item() if proxy == "random" else proxy
-            proxies = {"http": item, "https": item}
+        if proxy is not None and proxy.lower() == "random":
+            return cls._get_with_random(url, timeout, max_retries, **kwargs)
+
+        proxies = None if proxy is None else {"http": proxy, "https": proxy}
         #
         response = None
-        punish = 4
-        for i in range(max_retries):
+        for i in range(4):
             try:
+                headers = {"User-Agent": cls._ua.get_random_user_agent()}
                 response = req_get(
                     url, headers=headers, proxies=proxies, timeout=timeout, **kwargs
                 )
                 break
             except ConnectionError as e:  # Sometimes the header is invalid...
-                cls._logger.info_get_fail_with_error(url, e)
+                cls._logger.info_get_data_fail_with_error(url, e, proxy=proxy)
                 continue
+            except Exception as e:
+                cls._logger.info_get_data_fail_with_error(url, e, proxy=proxy)
+                break
+        return response
+
+    @classmethod
+    def _get_with_random(
+        cls,
+        url: str,
+        timeout: int = 5,
+        max_retries: int = UINT64_MAX_VALUE,
+        **kwargs,
+    ) -> Response:
+        #
+        response = None
+        for i in range(max_retries):
+            punish = 1
+            item = cls._weights.random_item()
+            proxies = {"http": item, "https": item}
+            try:
+                headers = {"User-Agent": cls._ua.get_random_user_agent()}
+                response = req_get(
+                    url, headers=headers, proxies=proxies, timeout=timeout, **kwargs
+                )
+                if response.status_code == 200:
+                    cls._logger.info_get_data_success(url, proxy=item)
+                    break
+            except ConnectionError as e:  # Sometimes the header is invalid...
+                cls._logger.info_get_data_fail_with_error(url, e, proxy=item)
             except ProxyError as e:
                 punish = 8
-                cls._logger.info_get_fail_with_error(url, e)
-                break
+                cls._logger.info_get_data_fail_with_error(url, e, proxy=item)
             except Exception as e:
-                cls._logger.info_get_fail_with_error(url, e)
-                break
-        # 更新权重
-        if proxy == "random":
-            if response is None:
-                cls._weights.set_weight(item, cls._weights.get_weight(item) / punish)
-            else:
+                punish = 4
+                cls._logger.info_get_data_fail_with_error(url, e, proxy=item)
+            # 更新权重
+            if response is not None:
                 cls._weights.reset_weight(item)
+            elif punish > 1:
+                cls._weights.set_weight(item, cls._weights.get_weight(item) / punish)
         return response
 
     @classmethod
@@ -340,7 +390,7 @@ class ProxyRequests:
 
         # 如未指定验证对象，则验证已保存的代理
         if proxies is None:
-            cls._load()
+            cls.load()
             proxies = cls._proxies
         if proxies.empty:
             return DataFrame()
@@ -351,6 +401,7 @@ class ProxyRequests:
         filter_proxies = filter_proxies[filter_proxies[TAG]]
         filter_proxies = filter_proxies[[ADDRESS]].reset_index(drop=True)
         return filter_proxies
+
 
 
 if __name__ == "__main__":
