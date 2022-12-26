@@ -1,5 +1,5 @@
 from buffett.analysis import Para
-from buffett.analysis.study import PatternAnalyst, StatZdfAnalyst, FuquanAnalyst
+from buffett.analysis.study import PatternAnalyst, StatZdfAnalyst
 from buffett.analysis.types import AnalystType
 from buffett.common.tools import dataframe_is_valid
 from buffett.download.handler.calendar import CalendarHandler
@@ -7,7 +7,7 @@ from buffett.download.handler.concept import DcConceptDailyHandler
 from buffett.download.handler.index import DcIndexDailyHandler
 from buffett.download.handler.industry import DcIndustryDailyHandler
 from buffett.download.handler.stock import DcDailyHandler
-from buffett.download.types import SourceType, FreqType, FuquanType, CombType
+from buffett.download.types import SourceType, FreqType, FuquanType
 from test import create_1stock, create_1index, create_1industry, create_1concept
 from test.analysis.analysis_tester import AnalysisTester
 

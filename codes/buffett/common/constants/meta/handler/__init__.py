@@ -3,6 +3,7 @@ from buffett.common.constants.meta.handler.definition import (
     BS_STK_META,
     DC_DAILY_META,
     BS_DAILY_META,
+    TH_DAILY_META,
     DC_MINUTE_META,
     BS_MINUTE_META,
     STK_RT_META,

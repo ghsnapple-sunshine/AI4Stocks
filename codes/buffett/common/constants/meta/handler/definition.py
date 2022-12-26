@@ -59,7 +59,9 @@ from buffett.common.constants.col import (
     M1HB,
     M2,
     M2TB,
-    M2HB, ST, TP,
+    M2HB,
+    ST,
+    TP,
 )
 from buffett.common.constants.col.target import (
     INDEX_CODE,
@@ -143,7 +145,22 @@ BS_DAILY_META = create_meta(
         [ZDE, ColType.FLOAT, AddReqType.NONE],
         [HSL, ColType.FLOAT, AddReqType.NONE],
         [TP, ColType.ENUM_BOOL, AddReqType.NONE],
-        [ST, ColType.ENUM_BOOL, AddReqType.NONE]
+        [ST, ColType.ENUM_BOOL, AddReqType.NONE],
+    ]
+)
+
+
+"""
+Metadata for THS_STOCK_DAYINFO 
+"""
+TH_DAILY_META = create_meta(
+    meta_list=[
+        [DATE, ColType.DATE, AddReqType.KEY],
+        [OPEN, ColType.FLOAT, AddReqType.NONE],
+        [CLOSE, ColType.FLOAT, AddReqType.NONE],
+        [HIGH, ColType.FLOAT, AddReqType.NONE],
+        [LOW, ColType.FLOAT, AddReqType.NONE],
+        [CJL, ColType.BIGINT_UNSIGNED, AddReqType.NONE],
     ]
 )
 

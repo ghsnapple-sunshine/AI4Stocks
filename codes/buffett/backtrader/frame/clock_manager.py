@@ -42,7 +42,9 @@ class ClockManagerBuilder:
         self.item = ClockManagerBuilder.ClockManagerUnderBuilt()
 
     def with_calendar(self, operator: Operator, span: Span):
-        calendar = CalendarHandler(operator=operator).select_data(para=Para().with_span(span))
+        calendar = CalendarHandler(operator=operator).select_data(
+            para=Para().with_span(span)
+        )
         self.item.set_calendar(calendar=calendar)
         return self
 

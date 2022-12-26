@@ -6,3 +6,4 @@ from buffett.download.handler.stock.dc_dividend import DcDividendHandler
 from buffett.download.handler.stock.dc_minute import DcMinuteHandler
 from buffett.download.handler.stock.dc_profit import DcProfitHandler
 from buffett.download.handler.stock.lg_pepb import LgPePbHandler
+from buffett.download.handler.stock.th_daily import ThDailyHandler

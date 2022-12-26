@@ -240,3 +240,7 @@ class ProxyRequestsLogger(Logger):
     @classmethod
     def info_test_fail_with_code(cls, proxy: str, code: int):
         cls.info(f"Test {proxy} failed with code {code}.")
+
+    @classmethod
+    def info_save_proxy_success(cls):
+        cls.info("Save proxy success.")

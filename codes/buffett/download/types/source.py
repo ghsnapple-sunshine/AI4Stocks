@@ -8,7 +8,7 @@ class SourceType(ComparableEnum):
     AK_DC_INDUSTRY = 12
     AK_DC_INDEX = 13
     AK_LG_PEPB = 20
-    AK_TSH = 30
+    AK_TH = 30
     ANA = 40
     ANA_CONCEPT = 41
     ANA_INDUSTRY = 42
@@ -22,7 +22,7 @@ class SourceType(ComparableEnum):
             SourceType.AK_DC_INDUSTRY: "dc_industry",
             SourceType.AK_DC_INDEX: "dc_index",
             SourceType.AK_LG_PEPB: "lg_pepb",
-            SourceType.AK_TSH: "th_stock",
+            SourceType.AK_TH: "th_stock",
             SourceType.ANA: "analysis_stock",
             SourceType.ANA_CONCEPT: "analysis_concept",
             SourceType.ANA_INDUSTRY: "analysis_industry",
@@ -38,7 +38,7 @@ class SourceType(ComparableEnum):
             SourceType.AK_DC_INDUSTRY: True,
             SourceType.AK_DC_INDEX: True,
             SourceType.AK_LG_PEPB: False,
-            SourceType.AK_TSH: False,
+            SourceType.AK_TH: False,
             SourceType.ANA: False,
             SourceType.ANA_CONCEPT: False,
             SourceType.ANA_INDUSTRY: False,

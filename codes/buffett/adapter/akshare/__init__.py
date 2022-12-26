@@ -18,6 +18,7 @@ from buffett.adapter.akshare.index_em import my_stock_zh_index_daily_em
 from buffett.adapter.akshare.stock_em import my_stock_zh_a_hist
 from buffett.adapter.akshare.stock_fhpg_em import stock_fhpg_em
 from buffett.adapter.akshare.stock_list_lg import my_stock_a_lg_indicator
+from buffett.adapter.akshare.stock_th import my_stock_zh_a_hist_ths
 
 
 class ak:
@@ -106,3 +107,15 @@ class ak:
     @staticmethod
     def stock_zh_a_fhpg_em(symbol: str):
         return stock_fhpg_em(symbol=symbol)
+
+    @staticmethod
+    def stock_zh_a_hist_ths(symbol: str, adjust: str):
+        """
+        下载同花顺股票日线
+
+        :param symbol:      股票代码
+        :param adjust:      choice of {"00", "01", "02"}
+                            "00": 不复权,  "01": 前复权， “02": 后复权
+        :return:
+        """
+        return my_stock_zh_a_hist_ths(symbol=symbol, adjust=adjust)
