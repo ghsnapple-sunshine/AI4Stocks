@@ -1,7 +1,18 @@
-from buffett.adapter.numpy import NAN
+from typing import Optional
+
+from buffett.adapter.numpy import np
 from buffett.adapter.pandas import pd, DataFrame
 from buffett.adapter.pendulum import Date
-from buffett.common.constants.col import CJL, CLOSE, DATE, START_DATE, END_DATE, SOURCE
+from buffett.common.constants.col import (
+    CLOSE,
+    SOURCE,
+    TP,
+    CJE,
+    OPEN,
+    HIGH,
+    LOW,
+    CJL,
+)
 from buffett.common.constants.col.target import CODE
 from buffett.common.error import PreStepError
 from buffett.common.interface import ProducerConsumer
@@ -10,17 +21,36 @@ from buffett.common.tools import dataframe_not_valid, dataframe_is_valid
 from buffett.common.wrapper import Wrapper
 from buffett.download import Para
 from buffett.download.handler.calendar import CalendarHandler
-from buffett.download.handler.stock import BsDailyHandler, DcDailyHandler
+from buffett.download.handler.stock import (
+    BsDailyHandler,
+    DcDailyHandler,
+    ThDailyHandler,
+)
+from buffett.download.maintain.base import BaseMaintain
 from buffett.download.mysql import Operator
 from buffett.download.recorder import DownloadRecorder
 from buffett.download.types import CombType, SourceType, FreqType, FuquanType
-from buffett.download.maintain.base import BaseMaintain
 
+#
 BS_COMB = CombType(source=SourceType.BS, freq=FreqType.DAY, fuquan=FuquanType.BFQ)
 DC_COMB = CombType(source=SourceType.AK_DC, freq=FreqType.DAY, fuquan=FuquanType.BFQ)
-CLOSEr = CLOSE + "_r"
-BS, DC = "bs", "dc"
-ID, SPAN = "id", "span"
+TH_COMB = CombType(source=SourceType.AK_TH, freq=FreqType.DAY, fuquan=FuquanType.BFQ)
+#
+FIELDS = [HIGH, LOW, OPEN, CLOSE]
+HIGHb, LOWb, OPENb, CLOSEb = FIELDSb = [x + "_b" for x in FIELDS]
+HIGHd, LOWd, OPENd, CLOSEd = FIELDSd = [x + "_d" for x in FIELDS]
+HIGHt, LOWt, OPENt, CLOSEt = FIELDSt = [x + "_t" for x in FIELDS]
+ALL_FIELDS = np.array([FIELDSb, FIELDSd, FIELDSt], dtype=object)
+#
+RENAMEb = dict((FIELDS[x], FIELDSb[x]) for x in range(4))
+RENAMEd = dict((FIELDS[x], FIELDSd[x]) for x in range(4))
+RENAMEt = dict((FIELDS[x], FIELDSt[x]) for x in range(4))
+#
+USE = "use"
+BS, DC, TH = "bs", "dc", "th"
+UNC = "uncertain"
+#
+ID = "id"
 
 
 class StockDailyMaintain(BaseMaintain):
@@ -30,15 +60,19 @@ class StockDailyMaintain(BaseMaintain):
         self._dl_recorder = DownloadRecorder(operator=operator)
         self._bs_handler = BsDailyHandler(operator=operator)
         self._dc_handler = DcDailyHandler(operator=operator)
+        self._th_handler = ThDailyHandler(
+            operator=operator, target_list_handler=None
+        )  # TODO: 待优化
         self._calendar_handler = CalendarHandler(operator=operator)
         self._check_results = None
         self._calendar = None
         self._logger = LoggerBuilder.build(StockDailyMaintainLogger)()
 
-    def run(self) -> bool:
+    def run(self, save: bool = True) -> Optional[DataFrame]:
         """
-        检查股票的baostock, dongcai的日线数据是否匹配
+        检查股票的baostock, dongcai, tonghuashun的日线数据是否匹配
 
+        :param save:       保存结果至磁盘
         :return:
         """
         # 准备工作空间
@@ -50,7 +84,7 @@ class StockDailyMaintain(BaseMaintain):
         #
         dl_records = self._dl_recorder.select_data()
         if dataframe_not_valid(dl_records):
-            return True
+            return
         codes = dl_records[
             (dl_records[SOURCE] == SourceType.BS)
             | (dl_records[SOURCE] == SourceType.AK_DC)
@@ -64,10 +98,15 @@ class StockDailyMaintain(BaseMaintain):
         )
         prod_cons.run()
         data = pd.concat_safe(self._check_results)
-        self._save_report(df=data)
-        return dataframe_not_valid(data)
+        data = self._determine_use(data)
+        if save:
+            self._save_report(df=data, feather=True, csv=True)
+        else:
+            return data
 
-    def _get_data_for_1stock(self, code: str) -> tuple[str, DataFrame, DataFrame]:
+    def _get_data_for_1stock(
+        self, code: str
+    ) -> tuple[str, DataFrame, DataFrame, DataFrame]:
         """
         分别获取baostock和dongcai的某支股票的数据
 
@@ -81,71 +120,95 @@ class StockDailyMaintain(BaseMaintain):
         dc_info = self._dc_handler.select_data(
             para=Para().with_code(code).with_comb(DC_COMB)
         )
-        return code, bs_info, dc_info
+        th_info = self._th_handler.select_data(
+            para=Para().with_code(code).with_comb(TH_COMB)
+        )
+        return code, bs_info, dc_info, th_info
 
-    def _check_1stock(self, infos: tuple[str, DataFrame, DataFrame]) -> None:
+    def _check_1stock(self, infos: tuple[str, DataFrame, DataFrame, DataFrame]) -> None:
         """
         检查某支股票的baostock, dongcai的日线数据是否匹配
 
         :param infos:        code, bs_info, dc_info
         :return:
         """
-        code, bs_info, dc_info = infos
-        bs_valid, dc_valid = dataframe_is_valid(bs_info), dataframe_is_valid(dc_info)
-        bs_miss, dc_miss = None, None
+        code, bs_info, dc_info, th_info = infos
+        bs_valid, dc_valid, th_valid = valids = [
+            dataframe_is_valid(x) for x in infos[1:]
+        ]
+        sum_valids = sum(valids)
         if bs_valid:
-            bs_info = bs_info[bs_info[CJL] > 0]  # 过滤停牌日
+            # 过滤停牌日和成交量（额）为0的日期
+            # bs数据中有成交量不为0但成交额为0，疑似bug导致的脏数据
+            bs_info = bs_info[
+                (bs_info[TP] > 0) & (bs_info[CJL] > 0) & (bs_info[CJE] > 0)
+            ]
+            bs_info = bs_info.rename(columns=RENAMEb)[FIELDSb]
         if dc_valid:
             dc_info = dc_info[dc_info.index < Date.today()]
-        if bs_valid and dc_valid:
+            dc_info = dc_info.rename(columns=RENAMEd)[FIELDSd]
+        if th_valid:
+            th_info = th_info[(th_info[CJL] > 0)]
+            th_info = th_info.rename(columns=RENAMEt)[FIELDSt]
+        infos = bs_info, dc_info, th_info
+        if sum_valids == 0:
+            merge_info = None
+        elif sum_valids == 1:
+            merge_info = np.array(infos, dtype=object)[valids][0]
+        elif sum_valids == 2:
+            _m0, _m1 = np.array(infos, dtype=object)[valids]
+            _f0, _f1 = ALL_FIELDS[valids]
             merge_info = pd.merge(
-                bs_info,
-                dc_info,
-                how="outer",
-                left_index=True,
-                right_index=True,
-                suffixes=["", "_r"],
+                _m0, _m1, how="outer", left_index=True, right_index=True
             )
-            bs_miss = merge_info[pd.isna(merge_info[CLOSE])][[CLOSEr]]
-            dc_miss = merge_info[pd.isna(merge_info[CLOSEr])][[CLOSE]]
-        elif not bs_valid and dc_valid:
-            bs_miss = dc_info[[CLOSE]]
-        elif bs_valid and not dc_valid:
-            dc_miss = bs_info[[CLOSE]]
-        if dataframe_is_valid(bs_miss) or dataframe_is_valid(dc_miss):
-            self._check_results.append(
-                DataFrame(
-                    data=[[code, self._describe(bs_miss), self._describe(dc_miss)]],
-                    columns=[CODE, BS, DC],
-                )
-            )
-            self._logger.info_maintain_end(code=code, success=False)
         else:
-            self._logger.info_maintain_end(code=code, success=True)
+            merge_info = pd.merge(
+                bs_info, dc_info, how="outer", left_index=True, right_index=True
+            )
+            merge_info = pd.merge(
+                merge_info, th_info, how="outer", left_index=True, right_index=True
+            )
+        if dataframe_is_valid(merge_info):
+            merge_info = merge_info.reset_index()
+            merge_info[CODE] = code
+            self._check_results.append(merge_info)
+        self._logger.info_maintain_end(code=code)
 
-    def _describe(self, dates) -> str:
-        """
-        将dates拆分成若干个可被描述的区间，
+    @staticmethod
+    def _determine_use(data: DataFrame):
+        def compare(filed1, filed2):
+            return (
+                (data[filed1[0]] == data[filed2[0]])
+                & (data[filed1[1]] == data[filed2[1]])
+                & (data[filed1[2]] == data[filed2[2]])
+                & (data[filed1[3]] == data[filed2[3]])
+            )
 
-        :param dates:
-        :return:
-        """
-        if dataframe_not_valid(dates):
-            return ""
-        merge = pd.merge(self._calendar, dates, how="left", on=[DATE])
-        merge.loc[pd.notna(merge.iloc[:, -1]), ID] = NAN
-        merge = merge.fillna(method="ffill")
-        dates = pd.merge(dates, merge, how="left", on=[DATE])
-        dates = DataFrame(
-            {START_DATE: dates.index, END_DATE: dates.index, ID: dates[ID]}
+        data[USE] = UNC
+        na_d, na_b, na_t = (
+            pd.isna(data[CLOSEd]),
+            pd.isna(data[CLOSEb]),
+            pd.isna(data[CLOSEt]),
         )
-        groupby_dates = dates.groupby(by=[ID]).aggregate(
-            {START_DATE: "min", END_DATE: "max"}
+        nna_d, nna_b, nna_t = (
+            pd.notna(data[CLOSEd]),
+            pd.notna(data[CLOSEb]),
+            pd.notna(data[CLOSEt]),
         )
-        groupby_dates[SPAN] = groupby_dates.apply(
-            lambda x: f"[{x[START_DATE]},{x[END_DATE]}]", axis=1
-        )
-        return ", ".join(groupby_dates[SPAN].tolist())
+        data.loc[nna_d & na_b & na_t, USE] = DC
+        data.loc[na_d & nna_b & na_t, USE] = BS
+        data.loc[na_d & na_b & nna_t, USE] = TH
+        # 3 data.loc[na_d & nna_b & nna_t & compare(FIELDSb, FIELDSt), USE] = BS
+        # 1 data.loc[nna_d & nna_b & na_t & compare(FIELDSd, FIELDSb), USE] = DC
+        # 2 data.loc[nna_d & na_b & nna_t & compare(FIELDSd, FIELDSt), USE] = DC
+        # 6 data.loc[na_d & nna_b & nna_t & compare(FIELDSb, FIELDSt), USE] = BS
+        # 4 data.loc[nna_d & nna_b & na_t & compare(FIELDSd, FIELDSb), USE] = DC
+        # 5 data.loc[nna_d & na_b & nna_t & compare(FIELDSd, FIELDSt), USE] = DC
+        # 3+6必须先执行，因为nna_d & nna_b & nna_t的情况下结果应该是DC
+        data.loc[nna_b & nna_t & compare(FIELDSb, FIELDSt), USE] = BS  # 3+6
+        data.loc[nna_d & nna_b & compare(FIELDSd, FIELDSb), USE] = DC  # 1+4
+        data.loc[nna_d & nna_t & compare(FIELDSd, FIELDSt), USE] = DC  # 2+5
+        return data
 
 
 class StockDailyMaintainLogger(Logger):
@@ -154,6 +217,5 @@ class StockDailyMaintainLogger(Logger):
         Logger.info(f"Start maintain daily download for {code}.")
 
     @classmethod
-    def info_maintain_end(cls, code: str, success: bool):
-        supp = "" if success else ", diff exists"
-        Logger.info(f"Successfully maintain daily download for {code}{supp}.")
+    def info_maintain_end(cls, code: str):
+        Logger.info(f"Successfully maintain daily download for {code}.")

@@ -1,3 +1,5 @@
+from typing import Optional
+
 from buffett.adapter.pandas import DataFrame, pd, Series
 from buffett.common.constants.col import FREQ, SOURCE, FUQUAN, START_DATE, END_DATE
 from buffett.common.constants.col.my import TABLE_NAME, DORCD_START, DORCD_END
@@ -26,22 +28,24 @@ class ReformMaintain(BaseMaintain):
         self._rf_records = None
         self._logger = ReformMaintainLogger()
 
-    def run(self) -> bool:
+    def run(self, save: bool = True) -> Optional[DataFrame]:
+        """
+        检查Reform的结果
+
+        :param save:
+        :return:
+        """
         self._dl_records = self._dl_recorder.select_data()
         self._rf_records = self._rf_recorder.select_data()
         if dataframe_not_valid(self._dl_records) or dataframe_not_valid(
             self._rf_records
         ):
-            return True
-
-        result = self._region_check() and self._datanum_check()
-        # 恢复现场
-        self._dl_records = DataFrame()
-        self._rf_records = DataFrame()
+            return True if save else None
+        result = pd.concat_safe([self._region_check(), self._datanum_check(save)])
         # 返回结果
-        return result
+        return dataframe_not_valid(result) if save else result
 
-    def _region_check(self) -> bool:
+    def _region_check(self) -> Optional[DataFrame]:
         """
         检查reform_records是否有超出dl_records范围外的数据
 
@@ -49,7 +53,7 @@ class ReformMaintain(BaseMaintain):
         """
         rf_records = pd.subtract(self._rf_records, self._dl_records)
         if dataframe_not_valid(rf_records):
-            return True
+            return
 
         dl_records = self._dl_records.rename(
             columns={START_DATE: DORCD_START, END_DATE: DORCD_END}
@@ -62,8 +66,7 @@ class ReformMaintain(BaseMaintain):
             | (merge_records[END_DATE] > merge_records[DORCD_END])
         ]
 
-        result = dataframe_not_valid(error_records)
-        if not result:  # 打印错误信息
+        if dataframe_is_valid(error_records):  # 打印错误信息
             start_date_errors = error_records[
                 error_records[START_DATE] < error_records[DORCD_START]
             ]
@@ -72,9 +75,15 @@ class ReformMaintain(BaseMaintain):
                 error_records[END_DATE] > error_records[DORCD_END]
             ]
             end_date_errors.apply(self._logger.end_date_error, axis=1)
-        return result
+        return error_records
 
-    def _datanum_check(self) -> bool:
+    def _datanum_check(self, save: bool) -> Optional[DataFrame]:
+        """
+        检查reform_records和dl_records的数据量
+
+        :param save:        保存结果到磁盘
+        :return:
+        """
         dl_records = self._rf_records  # ！不是bug，基于已转换的部分进行对比
         table_names_by_date = TableNameTool.gets_by_records(dl_records)
 
@@ -85,7 +94,9 @@ class ReformMaintain(BaseMaintain):
                 for row in table_names_by_date.itertuples(index=False)
             ]
         )
-        self._save_report(rf_records)
+        if save:
+            self._save_report(df=rf_records, csv=True, feather=False)
+
         rf_records = (
             rf_records.groupby(by=[CODE, FREQ, SOURCE, FUQUAN])
             .aggregate({ROW_NUM: "sum"})
@@ -97,11 +108,9 @@ class ReformMaintain(BaseMaintain):
         error_records = merge_records[
             merge_records[ROW_NUM] != merge_records[DL_ROW_NUM]
         ]
-
-        result = dataframe_not_valid(error_records)
-        if not result:  # 打印错误信息
+        if dataframe_is_valid(error_records):  # 打印错误信息
             error_records.apply(self._logger.data_num_error, axis=1)
-        return result
+        return error_records
 
     def _get_dl_row_num(self, row: Series) -> int:
         """
