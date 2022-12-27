@@ -16,7 +16,7 @@ from buffett.common.constants.col import (
 )
 from buffett.common.constants.col.my import USE, BS, DC
 from buffett.common.constants.col.target import CODE
-from buffett.common.constants.meta.handler.definition import DAILY_MTAIN_META
+from buffett.common.constants.meta.handler import DAILY_MTAIN_META
 from buffett.common.constants.table import DAILY_MTAIN
 from buffett.common.error import PreStepError
 from buffett.common.interface import ProducerConsumer
@@ -50,7 +50,6 @@ RENAMEb = dict((FIELDS[x], FIELDSb[x]) for x in range(4))
 RENAMEd = dict((FIELDS[x], FIELDSd[x]) for x in range(4))
 RENAMEt = dict((FIELDS[x], FIELDSt[x]) for x in range(4))
 #
-
 BS_DC, DC_TH, TH_BS = "bs_dc_err", "dc_th_err", "th_bs_err"
 MIN = "min_err"
 UNC = -1
@@ -247,10 +246,11 @@ class StockDailyMaintain(BaseMaintain):
         :param df:
         :return:
         """
-        self._operator.drop_table(name=DAILY_MTAIN)
         self._operator.create_table(name=DAILY_MTAIN, meta=DAILY_MTAIN_META)
         df = df[[DATE, CODE, USE]]
-        self._operator.insert_data_safe(name=DAILY_MTAIN, meta=DAILY_MTAIN_META, df=df)
+        self._operator.insert_data_safe(
+            name=DAILY_MTAIN, meta=DAILY_MTAIN_META, df=df, update=True
+        )
 
 
 class StockDailyMaintainLogger(Logger):

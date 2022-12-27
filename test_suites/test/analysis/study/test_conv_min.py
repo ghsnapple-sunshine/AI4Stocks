@@ -39,13 +39,13 @@ class TestStockConvertMinuteAnalyst(AnalysisTester):
     def _setup_always(self) -> None:
         pass
 
-    def test_run(self):
+    def test_calculate(self):
         row = self._min5_handler.select_data(para=self._long_para).shape[0]
         self._conv_analyst.calculate(span=self._long_para.span)
         row2 = self._conv_analyst.select_data(
             para=Para()
             .with_code("000001")
-            .with_analysis(AnalystType.CONV_MIN5)
+            .with_analysis(AnalystType.CONV)
             .with_source(SourceType.ANA)
             .with_freq(FreqType.MIN5)
             .with_fuquan(FuquanType.HFQ)

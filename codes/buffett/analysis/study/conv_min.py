@@ -16,7 +16,7 @@ class ConvertStockMinuteAnalyst(Analyst):
         super(ConvertStockMinuteAnalyst, self).__init__(
             datasource_op=datasource_op,
             operator=operator,
-            analyst=AnalystType.CONV_MIN5,
+            analyst=AnalystType.CONV,
             meta=BS_MIN5_META,
             use_stock=False,
             use_stock_minute=True,

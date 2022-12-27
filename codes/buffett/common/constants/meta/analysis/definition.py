@@ -10,6 +10,12 @@ from buffett.common.constants.col import (
     CLOSE,
     HIGH,
     LOW,
+    DATE,
+    CJL,
+    CJE,
+    ZDF,
+    HSL,
+    ST,
 )
 from buffett.common.constants.col.analysis import (
     EVENT,
@@ -96,5 +102,23 @@ BS_MIN5_META = create_meta(
         [CLOSE, ColType.FLOAT, AddReqType.NONE],
         [HIGH, ColType.FLOAT, AddReqType.NONE],
         [LOW, ColType.FLOAT, AddReqType.NONE],
+    ]
+)
+
+"""
+Metadata for CONV_DAILY
+"""
+CONV_DAILY_META = create_meta(
+    meta_list=[
+        [DATE, ColType.DATE, AddReqType.KEY],
+        [OPEN, ColType.FLOAT, AddReqType.NONE],
+        [CLOSE, ColType.FLOAT, AddReqType.NONE],
+        [HIGH, ColType.FLOAT, AddReqType.NONE],
+        [LOW, ColType.FLOAT, AddReqType.NONE],
+        [CJL, ColType.BIGINT_UNSIGNED, AddReqType.NONE],
+        [CJE, ColType.BIGINT_UNSIGNED, AddReqType.NONE],
+        [ZDF, ColType.FLOAT, AddReqType.NONE],
+        [HSL, ColType.FLOAT, AddReqType.NONE],
+        [ST, ColType.ENUM_BOOL, AddReqType.NONE],
     ]
 )

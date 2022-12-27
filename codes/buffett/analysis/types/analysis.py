@@ -6,7 +6,7 @@ class AnalystType(ComparableEnum):
     PATTERN = 1
     STAT_ZDF = 2
     FUQUAN = 3
-    CONV_MIN5 = 4
+    CONV = 4
 
     @classmethod
     def _initialize(cls):
@@ -14,13 +14,13 @@ class AnalystType(ComparableEnum):
             cls.PATTERN: "Pattern",
             cls.STAT_ZDF: "Stat(ZDF)",
             cls.FUQUAN: "FuquanFactor",
-            cls.CONV_MIN5: "Conv(Min5)",
+            cls.CONV: "Conv",
         }
         cls._SQL_DICT = {
             cls.PATTERN: "pattern",
             cls.STAT_ZDF: "zdf",
             cls.FUQUAN: "fuquan",
-            cls.CONV_MIN5: "conv",
+            cls.CONV: "conv",
         }
         cls._initialize = empty_method
 

@@ -1,3 +1,4 @@
+from buffett.analysis.study.conv_day import ConvertStockDailyAnalyst
 from buffett.analysis.study.conv_min import ConvertStockMinuteAnalyst
 from buffett.analysis.study.fuquan import FuquanAnalyst
 from buffett.analysis.study.pattern import PatternAnalyst

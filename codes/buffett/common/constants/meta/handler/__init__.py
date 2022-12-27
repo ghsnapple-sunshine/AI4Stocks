@@ -17,5 +17,6 @@ from buffett.common.constants.meta.handler.definition import (
     PEPB_META,
     CAL_META,
     TASK_META,
+    DAILY_MTAIN_META,
 )
 from buffett.common.constants.meta.handler.dict import META_DICT

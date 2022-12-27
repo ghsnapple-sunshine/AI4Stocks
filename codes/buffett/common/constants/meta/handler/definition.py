@@ -63,6 +63,7 @@ from buffett.common.constants.col import (
     ST,
     TP,
 )
+from buffett.common.constants.col.my import USE
 from buffett.common.constants.col.target import (
     INDEX_CODE,
     INDEX_NAME,
@@ -84,7 +85,6 @@ from buffett.common.constants.col.task import (
     SUCCESS,
     ERR_MSG,
 )
-from buffett.download.maintain.daily_mtain import USE
 from buffett.download.mysql.types import AddReqType, ColType
 
 """
@@ -386,6 +386,6 @@ DAILY_MTAIN_META = create_meta(
     meta_list=[
         [DATE, ColType.DATE, AddReqType.KEY],
         [CODE, ColType.CODE, AddReqType.KEY],
-        [USE, ColType.ENUM_BOOL, AddReqType.NONE]
+        [USE, ColType.ENUM_BOOL, AddReqType.NONE],
     ]
 )

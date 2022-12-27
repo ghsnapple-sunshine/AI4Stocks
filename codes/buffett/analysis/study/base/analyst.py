@@ -53,6 +53,7 @@ class Analyst:
         use_index: bool = True,
         use_concept: bool = True,
         use_industry: bool = True,
+        kwd: str = DATETIME,
     ):
         #
         self._datasource_op = datasource_op
@@ -64,6 +65,7 @@ class Analyst:
         self._use_index = use_index
         self._use_concept = use_concept
         self._use_industry = use_industry
+        self._kwd = kwd
         #
         if not (
             use_stock or use_stock_minute or use_index or use_concept or use_industry
@@ -105,7 +107,7 @@ class Analyst:
         result = self._calculate(para)
         # filter & save
         if dataframe_is_valid(result):
-            result = result[para.span.is_insides(result[DATETIME])]
+            result = result[para.span.is_insides(result[self._kwd])]
         return para, result
 
     @staticmethod
@@ -260,7 +262,7 @@ class Analyst:
         """
         从数据库中筛选数据
 
-        :param para:
+        :param para:        code, source, freq, fuquan, analysis, [start, end]
         :return:
         """
         table_name = TableNameTool.get_by_code(para)

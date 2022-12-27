@@ -23,10 +23,10 @@ class SourceType(ComparableEnum):
             SourceType.AK_DC_INDEX: "dc_index",
             SourceType.AK_LG_PEPB: "lg_pepb",
             SourceType.AK_TH: "th_stock",
-            SourceType.ANA: "analysis_stock",
-            SourceType.ANA_CONCEPT: "analysis_concept",
-            SourceType.ANA_INDUSTRY: "analysis_industry",
-            SourceType.ANA_INDEX: "analysis_index",
+            SourceType.ANA: "ana_stock",
+            SourceType.ANA_CONCEPT: "ana_concept",
+            SourceType.ANA_INDUSTRY: "ana_industry",
+            SourceType.ANA_INDEX: "ana_index",
         }
         return SOURCE_TYPE_DICT[self]
 
