@@ -215,7 +215,7 @@ class Analyst:
 
         :return:
         """
-        if self._use_industry:
+        if not self._use_industry:
             return
         industry_list = DcIndustryListHandler(
             operator=self._datasource_op
