@@ -8,6 +8,7 @@ from buffett.task.analysis import (
     FuquanFactorTask,
     ConvertStockMinuteTask,
 )
+from buffett.task.analysis.conv_day import ConvertStockDailyTask
 from buffett.task.base import TaskScheduler
 
 
@@ -19,7 +20,8 @@ def analysis():
         # TargetPatternRecognizeTask,
         # TargetStatZdfTask,
         # FuquanFactorTask,
-        ConvertStockMinuteTask,
+        ConvertStockDailyTask,
+        # ConvertStockMinuteTask,
     ]
     tasks = [
         task_cls[i](

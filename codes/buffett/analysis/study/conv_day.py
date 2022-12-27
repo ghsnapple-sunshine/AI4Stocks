@@ -93,13 +93,23 @@ class ConvertStockDailyAnalyst(Analyst):
         bs_info = self._dataman.select_data(
             para=para.clone().with_source(SourceType.BS), economy=False, index=False
         )
+        dc_valid, bs_valid = dataframe_is_valid(dc_info), dataframe_is_valid(bs_info)
+        if not dc_valid and not bs_valid:
+            return
         all_dates = mtain_info[[DATE]].copy()
         dc_dates = mtain_info[mtain_info[USE] == DC][[DATE]].copy()
         bs_dates = mtain_info[mtain_info[USE] == BS][[DATE]].copy()
         assert len(dc_dates) + len(bs_dates) == len(all_dates)  # 同步验证是否存在问题
-        filter_dc_info = pd.merge(dc_dates, dc_info, how="left")[COLS]
-        filter_bs_info = pd.merge(bs_dates, bs_info, how="left")[COLS]
-        st = pd.merge(all_dates, bs_info, how="left")[[ST]]
-        merge_info = pd.concat([filter_bs_info, filter_dc_info])
-        merge_info[ST] = st[ST]
+        filter_dc_info = None
+        if dc_valid:
+            filter_dc_info = pd.merge(dc_dates, dc_info, how="left")[COLS]
+        filter_bs_info = None
+        st = None
+        if bs_valid:
+            filter_bs_info = pd.merge(bs_dates, bs_info, how="left")[COLS]
+            st = pd.merge(all_dates, bs_info, how="left")[[ST]]
+        merge_info = pd.concat_safe([filter_bs_info, filter_dc_info])
+        if bs_valid:
+            merge_info[ST] = st[ST]
+        merge_info = merge_info[pd.notna(merge_info[CLOSE])]
         return merge_info
