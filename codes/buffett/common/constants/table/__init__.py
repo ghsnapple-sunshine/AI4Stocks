@@ -11,9 +11,8 @@ STK_LS, LG_STK_LS, BS_STK_LS = "stock_list", "lg_stock_list", "bs_stock_list"
 STK_PROFIT = "stock_profit"
 STK_RT = "stock_realtime"
 TRA_CAL = "trade_calendar"
-
-# COL_DF = 'columns'
-
+# maintain类
+DAILY_MTAIN = "daily_maintain"
 # record类
 ANALY_RCD = "analysis_record"
 TASK_RCD = "task_record"
@@ -22,3 +21,4 @@ EA_RCD = "easy_record"
 RF_RCD = "reform_record"
 #
 FQ_FAC = "fuquan_factor"
+#

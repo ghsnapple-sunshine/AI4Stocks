@@ -33,9 +33,8 @@ class BaseMaintain:
         if csv:
             VSIZE = 1_000_000
             total = df.shape[0]
-            if total < VSIZE:
-                df.to_csv(f"{_dir}report.csv", header=True, index=False, encoding="gbk")
-            else:
+            df.to_csv(f"{_dir}report.csv", header=True, index=False, encoding="gbk")
+            if total > VSIZE:
                 i = 0
                 for i in range(total // VSIZE):
                     df.iloc[i * VSIZE : (i + 1) * VSIZE].to_csv(

@@ -12,8 +12,12 @@ from buffett.common.constants.col import (
     HIGH,
     LOW,
     CJL,
+    DATE,
 )
+from buffett.common.constants.col.my import USE, BS, DC
 from buffett.common.constants.col.target import CODE
+from buffett.common.constants.meta.handler.definition import DAILY_MTAIN_META
+from buffett.common.constants.table import DAILY_MTAIN
 from buffett.common.error import PreStepError
 from buffett.common.interface import ProducerConsumer
 from buffett.common.logger import Logger, LoggerBuilder
@@ -46,9 +50,10 @@ RENAMEb = dict((FIELDS[x], FIELDSb[x]) for x in range(4))
 RENAMEd = dict((FIELDS[x], FIELDSd[x]) for x in range(4))
 RENAMEt = dict((FIELDS[x], FIELDSt[x]) for x in range(4))
 #
-USE = "use"
-BS, DC, TH = "bs", "dc", "th"
-UNC = "uncertain"
+
+BS_DC, DC_TH, TH_BS = "bs_dc_err", "dc_th_err", "th_bs_err"
+MIN = "min_err"
+UNC = -1
 #
 ID = "id"
 
@@ -101,6 +106,7 @@ class StockDailyMaintain(BaseMaintain):
         data = self._determine_use(data)
         if save:
             self._save_report(df=data, feather=True, csv=True)
+            self._save_to_database(df=data)
         else:
             return data
 
@@ -176,12 +182,20 @@ class StockDailyMaintain(BaseMaintain):
 
     @staticmethod
     def _determine_use(data: DataFrame):
-        def compare(filed1, filed2):
+        def compare(dat, filed1, filed2):
             return (
-                (data[filed1[0]] == data[filed2[0]])
-                & (data[filed1[1]] == data[filed2[1]])
-                & (data[filed1[2]] == data[filed2[2]])
-                & (data[filed1[3]] == data[filed2[3]])
+                (dat[filed1[0]] == dat[filed2[0]])
+                & (dat[filed1[1]] == dat[filed2[1]])
+                & (dat[filed1[2]] == dat[filed2[2]])
+                & (dat[filed1[3]] == dat[filed2[3]])
+            )
+
+        def abs_error(dat, field1, field2):
+            return (
+                np.abs(dat[field1[0]] - dat[field2[0]])
+                + np.abs(dat[field1[1]] - dat[field2[1]])
+                + np.abs(dat[field1[2]] - dat[field2[2]])
+                + np.abs(dat[field1[3]] - dat[field2[3]])
             )
 
         data[USE] = UNC
@@ -197,18 +211,46 @@ class StockDailyMaintain(BaseMaintain):
         )
         data.loc[nna_d & na_b & na_t, USE] = DC
         data.loc[na_d & nna_b & na_t, USE] = BS
-        data.loc[na_d & na_b & nna_t, USE] = TH
-        # 3 data.loc[na_d & nna_b & nna_t & compare(FIELDSb, FIELDSt), USE] = BS
-        # 1 data.loc[nna_d & nna_b & na_t & compare(FIELDSd, FIELDSb), USE] = DC
-        # 2 data.loc[nna_d & na_b & nna_t & compare(FIELDSd, FIELDSt), USE] = DC
-        # 6 data.loc[na_d & nna_b & nna_t & compare(FIELDSb, FIELDSt), USE] = BS
-        # 4 data.loc[nna_d & nna_b & na_t & compare(FIELDSd, FIELDSb), USE] = DC
-        # 5 data.loc[nna_d & na_b & nna_t & compare(FIELDSd, FIELDSt), USE] = DC
-        # 3+6必须先执行，因为nna_d & nna_b & nna_t的情况下结果应该是DC
-        data.loc[nna_b & nna_t & compare(FIELDSb, FIELDSt), USE] = BS  # 3+6
-        data.loc[nna_d & nna_b & compare(FIELDSd, FIELDSb), USE] = DC  # 1+4
-        data.loc[nna_d & nna_t & compare(FIELDSd, FIELDSt), USE] = DC  # 2+5
+        data.loc[na_d & na_b & nna_t, USE] = DC
+        # 1 data.loc[na_d & nna_b & nna_t & compare(FIELDSb, FIELDSt), USE] = BS
+        # 2 data.loc[nna_d & nna_b & na_t & compare(FIELDSd, FIELDSb), USE] = DC
+        # 3 data.loc[nna_d & na_b & nna_t & compare(FIELDSd, FIELDSt), USE] = DC
+        # 4 data.loc[na_d & nna_b & nna_t & compare(FIELDSb, FIELDSt), USE] = BS
+        # 5 data.loc[nna_d & nna_b & na_t & compare(FIELDSd, FIELDSb), USE] = DC
+        # 6 data.loc[nna_d & na_b & nna_t & compare(FIELDSd, FIELDSt), USE] = DC
+        # 1+4必须先执行，因为nna_d & nna_b & nna_t的情况下结果应该是DC
+        data.loc[nna_b & nna_t & compare(data, FIELDSb, FIELDSt), USE] = BS  # 1+4
+        data.loc[nna_d & nna_b & compare(data, FIELDSd, FIELDSb), USE] = DC  # 2+5
+        data.loc[nna_d & nna_t & compare(data, FIELDSd, FIELDSt), USE] = DC  # 3+6
+        # 处理仍然是unknown的数据
+        unknown = data[data[USE] == UNC].copy()
+        if dataframe_is_valid(unknown):
+            unknown.loc[pd.isna(unknown[CLOSEt]), USE] = DC
+            unknown.loc[pd.isna(unknown[CLOSEb]), USE] = DC
+            unknown.loc[pd.isna(unknown[CLOSEd]), USE] = BS
+            unknown[BS_DC] = abs_error(unknown, FIELDSb, FIELDSd)
+            unknown[DC_TH] = abs_error(unknown, FIELDSd, FIELDSt)
+            unknown[TH_BS] = abs_error(unknown, FIELDSt, FIELDSb)
+            unknown[MIN] = np.vectorize(min)(
+                unknown[BS_DC], unknown[DC_TH], unknown[TH_BS]
+            )
+            unknown.loc[unknown[BS_DC] == unknown[MIN]] = DC
+            unknown.loc[unknown[DC_TH] == unknown[MIN]] = DC
+            unknown.loc[unknown[TH_BS] == unknown[MIN]] = BS
+            data.loc[data[USE] == UNC, USE] = unknown.loc[:, USE]
         return data
+
+    def _save_to_database(self, df: DataFrame):
+        """
+        将文件保存至数据库
+
+        :param df:
+        :return:
+        """
+        self._operator.drop_table(name=DAILY_MTAIN)
+        self._operator.create_table(name=DAILY_MTAIN, meta=DAILY_MTAIN_META)
+        df = df[[DATE, CODE, USE]]
+        self._operator.insert_data_safe(name=DAILY_MTAIN, meta=DAILY_MTAIN_META, df=df)
 
 
 class StockDailyMaintainLogger(Logger):

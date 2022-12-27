@@ -6,3 +6,6 @@ DORCD_START = "done_record_start"
 DORCD_END = "done_record_end"
 #
 TABLE_NAME = "table_name"
+#
+USE = "use"
+BS, DC, TH = 0, 1, 2

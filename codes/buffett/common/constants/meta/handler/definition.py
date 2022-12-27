@@ -84,6 +84,7 @@ from buffett.common.constants.col.task import (
     SUCCESS,
     ERR_MSG,
 )
+from buffett.download.maintain.daily_mtain import USE
 from buffett.download.mysql.types import AddReqType, ColType
 
 """
@@ -374,5 +375,17 @@ MONEY_SPLY_META = create_meta(
         [M2, ColType.FLOAT, AddReqType.NONE],
         [M2TB, ColType.FLOAT, AddReqType.NONE],
         [M2HB, ColType.FLOAT, AddReqType.NONE],
+    ]
+)
+
+
+"""
+Metadata for daily_maintain
+"""
+DAILY_MTAIN_META = create_meta(
+    meta_list=[
+        [DATE, ColType.DATE, AddReqType.KEY],
+        [CODE, ColType.CODE, AddReqType.KEY],
+        [USE, ColType.ENUM_BOOL, AddReqType.NONE]
     ]
 )
