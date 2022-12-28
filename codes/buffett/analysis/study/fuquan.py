@@ -378,13 +378,11 @@ class FuquanAnalyst:
         df = df.reset_index()
         df = pd.merge(df, factor, how="left", on=[KEY])
         if pd.isna(df[A].iloc[0]):
-            dates = factor[KEY]
-            date = dates[dates < df[KEY].iloc[0]]
-            if dataframe_is_valid(date):
-                max_date = dates.loc[-1, START_DATE]
-                df_f = factor[factor[KEY] == max_date].iloc[0]
-                df.loc[0, A] = df_f[A]
-                df.loc[0, B] = df_f[B]
+            dates = factor[factor[KEY] < df.loc[0, KEY]]
+            if dataframe_is_valid(dates):
+                date = dates.iloc[-1, :]
+                df.loc[0, A] = date[A]
+                df.loc[0, B] = date[B]
             else:
                 self._logger.warning_data_error(code=code, key=KEY, df=df)
         df = df.fillna(method="ffill")
