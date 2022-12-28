@@ -14,7 +14,7 @@ class TargetStatZdfTask(Task):
             wrapper=Wrapper(
                 StatZdfAnalyst(operator=operator, datasource_op=datasource_op).calculate
             ),
-            args=(DateSpan(start=Date(2000, 1, 1), end=Date(2021, 12, 31)),),
+            args=(DateSpan(start=Date(2000, 1, 1), end=Date(2022, 11, 1)),),
             start_time=start_time,
         )
         self._operator = operator

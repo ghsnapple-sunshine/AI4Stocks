@@ -16,7 +16,7 @@ class ConvertStockDailyTask(Task):
                     operator=operator, datasource_op=datasource_op
                 ).calculate
             ),
-            args=(DateSpan(start=Date(1990, 1, 1), end=Date.today()),),
+            args=(DateSpan(start=Date(1990, 1, 1), end=Date(2022, 12, 1)),),
             start_time=start_time,
         )
         self._operator = operator

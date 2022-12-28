@@ -74,7 +74,7 @@ class Analyst:
         #
         self._logger = LoggerBuilder.build(AnalysisLogger)(analyst)
         self._dataman = DataManager(datasource_op=datasource_op)
-        self._calendarman = CalendarManager(operator=datasource_op)
+        self._calendarman = CalendarManager(datasource_op=datasource_op)
         self._recorder = AnalysisRecorder(operator=operator)
 
     def calculate(self, span: DateSpan) -> None:
