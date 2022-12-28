@@ -29,7 +29,7 @@ def analysis():
             datasource_op=datasource_op,
             start_time=now.add(seconds=i),
         )
-        for i in range(0, len(task_cls))
+        for i in range(len(task_cls))
     ]
     sch = TaskScheduler(operator=operator, datasource_op=datasource_op, tasks=tasks)
     sch.run()

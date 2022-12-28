@@ -30,19 +30,19 @@ class SourceType(ComparableEnum):
         }
         return SOURCE_TYPE_DICT[self]
 
-    def is_dongcai(self) -> bool:
+    def is_analysis(self) -> bool:
         SOURCE_TYPE_DICT = {
             SourceType.BS: False,
-            SourceType.AK_DC: True,
-            SourceType.AK_DC_CONCEPT: True,
-            SourceType.AK_DC_INDUSTRY: True,
-            SourceType.AK_DC_INDEX: True,
+            SourceType.AK_DC: False,
+            SourceType.AK_DC_CONCEPT: False,
+            SourceType.AK_DC_INDUSTRY: False,
+            SourceType.AK_DC_INDEX: False,
             SourceType.AK_LG_PEPB: False,
             SourceType.AK_TH: False,
-            SourceType.ANA: False,
-            SourceType.ANA_CONCEPT: False,
-            SourceType.ANA_INDUSTRY: False,
-            SourceType.ANA_INDEX: False,
+            SourceType.ANA: True,
+            SourceType.ANA_CONCEPT: True,
+            SourceType.ANA_INDUSTRY: True,
+            SourceType.ANA_INDEX: True,
         }
         return SOURCE_TYPE_DICT[self]
 

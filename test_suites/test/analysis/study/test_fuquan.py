@@ -1,13 +1,30 @@
 from buffett.adapter.pendulum import Date
 from buffett.analysis import Para
 from buffett.analysis.study import FuquanAnalyst
+from buffett.analysis.study.tools import TableNameTool as AnaTool
+from buffett.analysis.types import CombExType, AnalystType
 from buffett.common.constants.col import OPEN, CLOSE, HIGH, LOW
+from buffett.common.constants.table import TRA_CAL
 from buffett.common.target import Target
-from buffett.download.handler.stock import DcDailyHandler, BsMinuteHandler
-from buffett.download.handler.stock.dc_fhpg import DcFhpgHandler
+from buffett.download.handler.stock import (
+    DcDailyHandler,
+    BsMinuteHandler,
+    DcFhpgHandler,
+)
+from buffett.download.handler.tools import TableNameTool as DlTool
 from buffett.download.types import FuquanType, SourceType, FreqType
 from test import create_1stock, create_2stocks, create_ex_1stock, DbSweeper
 from test.analysis.analysis_tester import AnalysisTester
+
+COMB_ANA_BFQ = CombExType(
+    source=SourceType.ANA,
+    freq=FreqType.DAY,
+    fuquan=FuquanType.BFQ,
+    analysis=AnalystType.FUQUAN,
+)
+COMB_ANA_HFQ = COMB_ANA_BFQ.clone().with_fuquan(FuquanType.HFQ)
+COMB_DC_BFQ = COMB_ANA_BFQ.clone().with_source(SourceType.AK_DC)
+COMB_DC_HFQ = COMB_ANA_HFQ.clone().with_source(SourceType.AK_DC)
 
 
 class TestFuquanAnalyst(AnalysisTester):
@@ -18,6 +35,7 @@ class TestFuquanAnalyst(AnalysisTester):
     _fhpg_handler = None
     _daily_handler = None
     _minute_handler = None
+    _analyst = None
 
     @classmethod
     def _setup_oncemore(cls):
@@ -26,12 +44,15 @@ class TestFuquanAnalyst(AnalysisTester):
 
         :return:
         """
-        cls._fhpg_handler = DcFhpgHandler(operator=cls._operator)
-        cls._daily_handler = DcDailyHandler(operator=cls._operator)
-        cls._minute_handler = BsMinuteHandler(operator=cls._operator)
+        cls._fhpg_handler = DcFhpgHandler(operator=cls._datasource_op)
+        cls._daily_handler = DcDailyHandler(operator=cls._datasource_op)
+        cls._minute_handler = BsMinuteHandler(operator=cls._datasource_op)
+        cls._analyst = FuquanAnalyst(
+            datasource_op=cls._datasource_op, operator=cls._operator
+        )
 
     def _setup_always(self) -> None:
-        DbSweeper.erase()
+        DbSweeper.erase_except(TRA_CAL)
 
     def test_fuquan(self):
         """
@@ -40,14 +61,14 @@ class TestFuquanAnalyst(AnalysisTester):
         :return:
         """
         # 准备数据
-        create_1stock(operator=self._operator, source="both")
+        create_1stock(operator=self._datasource_op, source="both")
         self._fhpg_handler.obtain_data()
-        create_2stocks(operator=self._operator, source="both")
+        create_2stocks(operator=self._datasource_op, source="both")
         self._daily_handler.obtain_data(para=self._long_para)
         self._minute_handler.obtain_data(para=self._long_para)
-        self._analyst = FuquanAnalyst(
-            datasource_op=self._select_op, operator=self._insert_op
-        )
+        # 转换数据
+        self._conv_daily_data(code="000001")
+        self._conv_daily_data(code="600000")
         # 测试计算复权因子
         self._analyst.calculate(span=self._long_para.span)
         bfq_para = (
@@ -153,14 +174,23 @@ class TestFuquanAnalyst(AnalysisTester):
         create_ex_1stock(operator=self._operator, target=Target(code), source="both")
         self._fhpg_handler.obtain_data()
         para = (
-            Para()
-            .with_start_n_end(start, end)
-            .with_code(code)
-            .with_fuquan(FuquanType.BFQ)
+            Para().with_code(code).with_comb(COMB_ANA_HFQ).with_start_n_end(start, end)
         )
         self._daily_handler.obtain_data(para=para)
+        # 转换数据
+        self._conv_daily_data(code=code)
         self._analyst = FuquanAnalyst(
-            datasource_op=self._select_op, operator=self._insert_op
+            datasource_op=self._datasource_op, operator=self._operator
         )
         # 测试计算复权因子
         self._analyst.calculate(span=para.span)
+
+    def _conv_daily_data(self, code: str):
+        # 转换bfq
+        name = AnaTool.get_by_code(Para().with_code(code).with_comb(COMB_ANA_BFQ))
+        source_name = DlTool.get_by_code(Para().with_code(code).with_comb(COMB_DC_BFQ))
+        self._operator.create_table_from(name=name, source_name=source_name)
+        # 转换hfq
+        name = AnaTool.get_by_code(Para().with_code(code).with_comb(COMB_ANA_HFQ))
+        source_name = DlTool.get_by_code(Para().with_code(code).with_comb(COMB_DC_HFQ))
+        self._operator.create_table_from(name=name, source_name=source_name)

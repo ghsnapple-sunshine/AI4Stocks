@@ -3,8 +3,11 @@ from buffett.analysis.study import FuquanAnalyst
 from buffett.analysis.study.conv_min import ConvertStockMinuteAnalyst
 from buffett.analysis.types import AnalystType
 from buffett.download.handler.calendar import CalendarHandler
-from buffett.download.handler.stock import BsMinuteHandler, DcDailyHandler
-from buffett.download.handler.stock.dc_fhpg import DcFhpgHandler
+from buffett.download.handler.stock import (
+    BsMinuteHandler,
+    DcDailyHandler,
+    DcFhpgHandler,
+)
 from buffett.download.types import SourceType, FreqType, FuquanType
 from test import create_1stock
 from test.analysis.analysis_tester import AnalysisTester
@@ -19,21 +22,21 @@ class TestStockConvertMinuteAnalyst(AnalysisTester):
 
     @classmethod
     def _setup_oncemore(cls):
-        create_1stock(operator=cls._operator, source="both")
-        cls._daily_handler = DcDailyHandler(operator=cls._operator)
+        create_1stock(operator=cls._datasource_op, source="both")
+        cls._daily_handler = DcDailyHandler(operator=cls._datasource_op)
         cls._daily_handler.obtain_data(para=cls._long_para)
-        cls._min5_handler = BsMinuteHandler(operator=cls._operator)
+        cls._min5_handler = BsMinuteHandler(operator=cls._datasource_op)
         cls._min5_handler.obtain_data(para=cls._long_para)
-        cls._fhpg_handler = DcFhpgHandler(operator=cls._operator)
+        cls._fhpg_handler = DcFhpgHandler(operator=cls._datasource_op)
         cls._fhpg_handler.obtain_data()
-        cls._calendar_handler = CalendarHandler(operator=cls._operator)
+        cls._calendar_handler = CalendarHandler(operator=cls._datasource_op)
         cls._calendar_handler.obtain_data()
         cls._fuquan_analyst = FuquanAnalyst(
-            operator=cls._insert_op, datasource_op=cls._select_op
+            operator=cls._operator, datasource_op=cls._datasource_op
         )
         cls._fuquan_analyst.calculate(span=cls._long_para.span)
         cls._conv_analyst = ConvertStockMinuteAnalyst(
-            operator=cls._insert_op, datasource_op=cls._select_op
+            operator=cls._operator, datasource_op=cls._datasource_op
         )
 
     def _setup_always(self) -> None:

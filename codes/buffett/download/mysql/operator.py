@@ -42,6 +42,17 @@ class Operator(Connector):
         if sql is not None:
             self.execute(sql)
 
+    def create_table_from(self, name: str, source_name: str):
+        """
+        从原表复制所有数据得到目标表
+
+        :param name:
+        :param source_name:
+        :return:
+        """
+        sql = f"create table {name} as select * from {source_name}"
+        self.execute(sql)
+
     def insert_data(self, name: str, df: DataFrame) -> None:
         """
         插入数据到Mysql表

@@ -6,7 +6,7 @@ from buffett.adapter.pandas import pd, DataFrame
 from buffett.analysis import Para
 from buffett.analysis.recorder.analysis_recorder import AnalysisRecorder
 from buffett.analysis.study.supporter import CalendarManager, DataManager
-from buffett.analysis.study.tool import get_stock_list, TableNameTool
+from buffett.analysis.study.tools import get_stock_list, TableNameTool
 from buffett.analysis.types import AnalystType
 from buffett.common.constants.col import (
     SOURCE,
@@ -73,7 +73,7 @@ class Analyst:
             raise ValueError("Should use at least one type of data.")
         #
         self._logger = LoggerBuilder.build(AnalysisLogger)(analyst)
-        self._dataman = DataManager(operator=datasource_op)
+        self._dataman = DataManager(datasource_op=datasource_op)
         self._calendarman = CalendarManager(operator=datasource_op)
         self._recorder = AnalysisRecorder(operator=operator)
 

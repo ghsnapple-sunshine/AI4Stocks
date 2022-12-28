@@ -5,9 +5,7 @@ from buffett.adapter.talib import PatternRecognize
 from buffett.analysis import Para
 from buffett.analysis.study.base import Analyst
 from buffett.analysis.types import AnalystType
-from buffett.common.constants.col import (
-    DATETIME,
-)
+from buffett.common.constants.col import DATETIME
 from buffett.common.constants.col.analysis import EVENT, VALUE
 from buffett.common.constants.meta.analysis import ANALY_EVENT_META
 from buffett.common.tools import dataframe_not_valid
@@ -32,7 +30,7 @@ class PatternAnalyst(Analyst):
         """
         start = self._calendarman.query(para.span.start, offset=-5)
         select_para = para.clone().with_start(start)
-        data = self._dataman.select_data(para=select_para, economy=True)
+        data = self._dataman.select_data(para=select_para)
         if dataframe_not_valid(data):
             self._logger.warning_calculate_end(para=para)
             return

@@ -1,18 +1,20 @@
 from abc import abstractmethod
 
+from buffett.analysis import Para
 from buffett.download.mysql import Operator
 from buffett.download.mysql.types import RoleType
 from test import Tester
 
 
 class AnalysisTester(Tester):
-    _insert_op = None
-    _select_op = None
+    _datasource_op = None
 
     @classmethod
     def _setup_once(cls):
-        cls._select_op = Operator(RoleType.DbTest)
-        cls._insert_op = Operator(RoleType.DbTest)  # 两个线程不能使用相同的Operator
+        cls._datasource_op = Operator(RoleType.DbTest)
+        cls._short_para = Para.from_base(cls._short_para)
+        cls._long_para = Para.from_base(cls._long_para)
+        cls._great_para = Para.from_base(cls._great_para)
         super(AnalysisTester, cls)._setup_once()
 
     @classmethod

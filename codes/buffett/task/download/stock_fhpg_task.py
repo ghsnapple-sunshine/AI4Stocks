@@ -2,7 +2,7 @@ from typing import Optional
 
 from buffett.adapter.pendulum import DateTime
 from buffett.common.wrapper import Wrapper
-from buffett.download.handler.stock.dc_fhpg import DcFhpgHandler
+from buffett.download.handler.stock import DcFhpgHandler
 from buffett.download.mysql import Operator
 from buffett.task.base import Task
 

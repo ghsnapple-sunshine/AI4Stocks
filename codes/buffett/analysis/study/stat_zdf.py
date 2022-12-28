@@ -72,7 +72,7 @@ class StatZdfAnalyst(Analyst):
         start = self._calendarman.query(para.span.start, offset=-20)
         end = self._calendarman.query(para.span.end, offset=20)
         select_para = para.clone().with_start_n_end(start, end)
-        data = self._dataman.select_data(para=select_para, economy=True)
+        data = self._dataman.select_data(para=select_para)
         if dataframe_not_valid(data) or len(data) < 40:
             self._logger.warning_calculate_end(para=para)
             return

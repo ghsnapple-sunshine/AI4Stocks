@@ -3,7 +3,7 @@ from typing import Optional
 from buffett.adapter.pandas import DataFrame, pd
 from buffett.analysis import Para
 from buffett.analysis.study.base import Analyst
-from buffett.analysis.study.tool import get_stock_list
+from buffett.analysis.study.tools import get_stock_list
 from buffett.analysis.types import AnalystType
 from buffett.common.constants.col import (
     FUQUAN,
@@ -88,10 +88,10 @@ class ConvertStockDailyAnalyst(Analyst):
         if dataframe_not_valid(mtain_info):
             return
         dc_info = self._dataman.select_data(
-            para=para.clone().with_source(SourceType.AK_DC), economy=False, index=False
+            para=para.clone().with_source(SourceType.AK_DC), index=False
         )
         bs_info = self._dataman.select_data(
-            para=para.clone().with_source(SourceType.BS), economy=False, index=False
+            para=para.clone().with_source(SourceType.BS), index=False
         )
         dc_valid, bs_valid = dataframe_is_valid(dc_info), dataframe_is_valid(bs_info)
         if not dc_valid and not bs_valid:
@@ -99,7 +99,6 @@ class ConvertStockDailyAnalyst(Analyst):
         all_dates = mtain_info[[DATE]].copy()
         dc_dates = mtain_info[mtain_info[USE] == DC][[DATE]].copy()
         bs_dates = mtain_info[mtain_info[USE] == BS][[DATE]].copy()
-        assert len(dc_dates) + len(bs_dates) == len(all_dates)  # 同步验证是否存在问题
         filter_dc_info = None
         if dc_valid:
             filter_dc_info = pd.merge(dc_dates, dc_info, how="left")[COLS]

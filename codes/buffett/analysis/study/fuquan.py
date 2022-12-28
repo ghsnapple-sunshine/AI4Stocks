@@ -4,7 +4,8 @@ from buffett.adapter.numpy import np, NAN
 from buffett.adapter.pandas import DataFrame, pd
 from buffett.analysis import Para
 from buffett.analysis.study.supporter import DataManager
-from buffett.analysis.study.tool import get_stock_list
+from buffett.analysis.study.tools import get_stock_list
+from buffett.analysis.types import CombExType
 from buffett.common.constants.col import (
     DATE,
     CLOSE,
@@ -30,12 +31,12 @@ from buffett.common.pendulum import (
 )
 from buffett.common.tools import dataframe_is_valid, dataframe_not_valid
 from buffett.common.wrapper import Wrapper
-from buffett.download.handler.stock.dc_fhpg import DcFhpgHandler
+from buffett.download.handler.stock import DcFhpgHandler
 from buffett.download.mysql import Operator
-from buffett.download.types import CombType, SourceType, FreqType, FuquanType
+from buffett.download.types import SourceType, FreqType, FuquanType
 
-HFQ_COMB = CombType(source=SourceType.AK_DC, freq=FreqType.DAY, fuquan=FuquanType.HFQ)
-BFQ_COMB = CombType(source=SourceType.AK_DC, freq=FreqType.DAY, fuquan=FuquanType.BFQ)
+HFQ_COMB = CombExType(source=SourceType.AK_DC, freq=FreqType.DAY, fuquan=FuquanType.HFQ)
+BFQ_COMB = CombExType(source=SourceType.AK_DC, freq=FreqType.DAY, fuquan=FuquanType.BFQ)
 THD1, THD2, THD3 = 0.9, 0.995, 0.999
 ST, ED = 0.02, 0.06
 EPS = 1e-10
@@ -57,8 +58,8 @@ class FuquanAnalyst:
     def __init__(self, operator: Operator, datasource_op: Operator):
         self._operator = operator
         self._datasource_op = datasource_op
-        self._fhpg_handler = DcFhpgHandler(operator=self._datasource_op)
-        self._dataman = DataManager(operator=self._datasource_op)
+        self._fhpg_handler = DcFhpgHandler(operator=datasource_op)
+        self._dataman = DataManager(datasource_op=datasource_op)
         self._factors = None
         self._span = None
         self._logger = LoggerBuilder.build(FuquanAnalystLogger)()

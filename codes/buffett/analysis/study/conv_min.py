@@ -5,10 +5,10 @@ from buffett.analysis import Para
 from buffett.analysis.study.base import Analyst
 from buffett.analysis.study.fuquan import FuquanAnalyst
 from buffett.analysis.types import AnalystType
-from buffett.common.constants.meta.analysis import BS_MIN5_META
+from buffett.common.constants.meta.analysis import CONV_MIN5_META
 from buffett.common.tools import dataframe_not_valid
 from buffett.download.mysql import Operator
-from buffett.download.types import FuquanType
+from buffett.download.types import FuquanType, SourceType
 
 
 class ConvertStockMinuteAnalyst(Analyst):
@@ -17,7 +17,7 @@ class ConvertStockMinuteAnalyst(Analyst):
             datasource_op=datasource_op,
             operator=operator,
             analyst=AnalystType.CONV,
-            meta=BS_MIN5_META,
+            meta=CONV_MIN5_META,
             use_stock=False,
             use_stock_minute=True,
             use_index=False,
@@ -36,7 +36,7 @@ class ConvertStockMinuteAnalyst(Analyst):
         :return:
         """
         bfq_info = self._dataman.select_data(
-            para=para.clone().with_fuquan(FuquanType.BFQ), economy=True
+            para=para.clone().with_source(SourceType.BS).with_fuquan(FuquanType.BFQ)
         )
         if dataframe_not_valid(bfq_info):
             self._logger.warning_calculate_end(para=para)

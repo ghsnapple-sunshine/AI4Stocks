@@ -95,7 +95,7 @@ ANALY_RCD_META = create_meta(
 """
 Metadata for BS_MIN5
 """
-BS_MIN5_META = create_meta(
+CONV_MIN5_META = create_meta(
     meta_list=[
         [DATETIME, ColType.DATETIME, AddReqType.KEY],
         [OPEN, ColType.FLOAT, AddReqType.NONE],

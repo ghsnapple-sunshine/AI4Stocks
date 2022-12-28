@@ -33,7 +33,7 @@ class AnalysisRecorder(SimpleRecorder):
                 para.comb.freq,
                 para.comb.fuquan,
                 para.comb.source,
-                para.analysis,
+                para.comb.analysis,
                 para.span.start,
                 para.span.end,
             ]
