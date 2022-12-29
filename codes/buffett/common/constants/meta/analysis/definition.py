@@ -46,7 +46,7 @@ Metadata for AnalysisEvent
 """
 ANALY_EVENT_META = create_meta(
     meta_list=[
-        [DATETIME, ColType.DATE, AddReqType.KEY],
+        [DATETIME, ColType.DATETIME, AddReqType.KEY],
         [EVENT, ColType.SHORT_DESC, AddReqType.KEY],
         [VALUE, ColType.INT32, AddReqType.NONE],
     ]
@@ -57,7 +57,7 @@ Metadata for AnalysisStat
 """
 ANALY_ZDF_META = create_meta(
     meta_list=[
-        [DATETIME, ColType.DATE, AddReqType.KEY],
+        [DATETIME, ColType.DATETIME, AddReqType.KEY],
         [ZF5_MAX, ColType.FLOAT, AddReqType.NONE],
         [ZF5_PCT99, ColType.FLOAT, AddReqType.NONE],
         [ZF5_PCT95, ColType.FLOAT, AddReqType.NONE],
