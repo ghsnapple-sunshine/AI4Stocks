@@ -9,12 +9,23 @@ def test_conv_min(self):
     """
     测试ConvertStockMinuteAnalyst
 
+    :param self:        _calendar_handler
+                        _dc_daily_handler
+                        _bs_daily_handler
+                        _th_daily_handler
+                        _bs_minute_handler
+                        _index_handler
+                        _concept_handler
+                        _industry_handler
+                        _fhpg_handler
+                        _daily_mtain
     :return:
     """
-    handler = ConvertStockMinuteAnalyst(
-        datasource_op=self._datasource_op, operator=self._operator
+    row = self._bs_minute_handler.select_data(para=self._long_para).shape[0]
+    analyst = ConvertStockMinuteAnalyst(
+        stk_op=self._datasource_op, ana_op=self._operator
     )
-    handler.calculate(span=self._long_para.span)
+    analyst.calculate(span=self._long_para.span)
     select_para = (
         Para()
         .with_source(SourceType.ANA)
@@ -23,5 +34,5 @@ def test_conv_min(self):
         .with_code("000001")
         .with_analysis(AnalystType.CONV)
     )
-    data = handler.select_data(select_para)
-    assert dataframe_is_valid(data)
+    row2 = analyst.select_data(select_para).shape[0]
+    assert row == row2

@@ -5,7 +5,7 @@ from buffett.adapter.pandas import DataFrame, pd
 from buffett.analysis import Para
 from buffett.analysis.study.supporter import DataManager
 from buffett.analysis.study.tools import get_stock_list
-from buffett.analysis.types import CombExType
+from buffett.analysis.types import CombExType, AnalystType
 from buffett.common.constants.col import (
     DATE,
     CLOSE,
@@ -35,8 +35,18 @@ from buffett.download.handler.stock import DcFhpgHandler
 from buffett.download.mysql import Operator
 from buffett.download.types import SourceType, FreqType, FuquanType
 
-HFQ_COMB = CombExType(source=SourceType.AK_DC, freq=FreqType.DAY, fuquan=FuquanType.HFQ)
-BFQ_COMB = CombExType(source=SourceType.AK_DC, freq=FreqType.DAY, fuquan=FuquanType.BFQ)
+HFQ_COMB = CombExType(
+    source=SourceType.ANA,
+    freq=FreqType.DAY,
+    fuquan=FuquanType.HFQ,
+    analysis=AnalystType.FUQUAN,
+)
+BFQ_COMB = CombExType(
+    source=SourceType.ANA,
+    freq=FreqType.DAY,
+    fuquan=FuquanType.BFQ,
+    analysis=AnalystType.FUQUAN,
+)
 THD1, THD2, THD3 = 0.9, 0.995, 0.999
 ST, ED = 0.02, 0.06
 EPS = 1e-10
@@ -55,11 +65,12 @@ AGG = {
 
 
 class FuquanAnalyst:
-    def __init__(self, operator: Operator, datasource_op: Operator):
-        self._operator = operator
-        self._datasource_op = datasource_op
-        self._fhpg_handler = DcFhpgHandler(operator=datasource_op)
-        self._dataman = DataManager(datasource_op=datasource_op)
+    def __init__(self, ana_op: Operator, stk_op: Operator):
+        self._stk_rop = stk_op
+        self._ana_rop = ana_op
+        self._ana_wop = ana_op.copy()
+        self._fhpg_handler = DcFhpgHandler(operator=stk_op)
+        self._dataman = DataManager(ana_rop=self._ana_rop, stk_rop=self._stk_rop)
         self._factors = None
         self._span = None
         self._logger = LoggerBuilder.build(FuquanAnalystLogger)()
@@ -75,7 +86,7 @@ class FuquanAnalyst:
         self._span = DateSpan(convert_date(span.start), convert_date(span.end))
         self._factors = {}
         # 获取StockList
-        stock_list = get_stock_list(operator=self._datasource_op)
+        stock_list = get_stock_list(operator=self._stk_rop)
         # 获取分红配股数据
         fhpg_infos = self._fhpg_handler.select_data(index=False)
         if dataframe_not_valid(fhpg_infos):
@@ -301,14 +312,14 @@ class FuquanAnalyst:
 
         :return:
         """
-        self._operator.create_table(name=FQ_FAC, meta=FQ_FAC_META)
+        self._ana_wop.create_table(name=FQ_FAC, meta=FQ_FAC_META)
 
         def _get_sub_table(k: str, v: DataFrame):
             v[CODE] = k
             return v
 
         data = pd.concat([_get_sub_table(k, v) for k, v in self._factors.items()])
-        self._operator.insert_data(name=FQ_FAC, df=data)
+        self._ana_wop.insert_data(name=FQ_FAC, df=data)
 
     def reform_to_hfq(self, code: str, df: DataFrame):
         """
@@ -357,7 +368,7 @@ class FuquanAnalyst:
         :return:
         """
         if self._factors is None:
-            groupby = self._operator.select_data(name=FQ_FAC, meta=FQ_FAC_META).groupby(
+            groupby = self._ana_rop.select_data(name=FQ_FAC, meta=FQ_FAC_META).groupby(
                 by=[CODE]
             )
             self._factors = dict((k, v[[START_DATE, A, B]]) for k, v in groupby)

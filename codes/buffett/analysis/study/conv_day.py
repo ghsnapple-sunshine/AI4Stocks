@@ -34,10 +34,11 @@ COLS = [DATE, OPEN, CLOSE, HIGH, LOW, CJL, CJE, ZDF, HSL]
 
 
 class ConvertStockDailyAnalyst(Analyst):
-    def __init__(self, operator: Operator, datasource_op: Operator):
+    def __init__(self, ana_op: Operator, stk_op: Operator):
         super(ConvertStockDailyAnalyst, self).__init__(
-            datasource_op=datasource_op,
-            operator=operator,
+            stk_rop=stk_op,
+            ana_rop=ana_op,
+            ana_wop=ana_op.copy(),
             analyst=AnalystType.CONV,
             meta=CONV_DAILY_META,
             use_stock=True,
@@ -52,7 +53,7 @@ class ConvertStockDailyAnalyst(Analyst):
     def calculate(self, span: DateSpan) -> None:
         self._mtain_result = dict(
             (k, v)
-            for k, v in self._datasource_op.select_data(
+            for k, v in self._stk_rop.select_data(
                 name=DAILY_MTAIN, meta=DAILY_MTAIN_META
             ).groupby(by=[CODE])
         )
@@ -64,7 +65,7 @@ class ConvertStockDailyAnalyst(Analyst):
 
         :return:
         """
-        stock_list = get_stock_list(operator=self._datasource_op)
+        stock_list = get_stock_list(operator=self._stk_rop)
         if dataframe_not_valid(stock_list):
             return
         comb_list = DataFrame(

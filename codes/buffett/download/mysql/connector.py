@@ -35,6 +35,7 @@ class Connector:
             self._db = "analysis"
             self._pwd = "Changeme_1234"
 
+        self._role = role
         self._conn = None
         self._cursor = None
         self._logger: ConnectorLogger = LoggerBuilder.build(ConnectorLogger)()

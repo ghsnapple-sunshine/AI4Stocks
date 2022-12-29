@@ -12,7 +12,7 @@ def test_conv_day(self):
     :return:
     """
     handler = ConvertStockDailyAnalyst(
-        datasource_op=self._datasource_op, operator=self._operator
+        stk_op=self._datasource_op, ana_op=self._operator
     )
     handler.calculate(span=self._long_para.span)
     select_para = (

@@ -12,10 +12,11 @@ from buffett.download.types import FuquanType, SourceType
 
 
 class ConvertStockMinuteAnalyst(Analyst):
-    def __init__(self, operator: Operator, datasource_op: Operator):
+    def __init__(self, ana_op: Operator, stk_op: Operator):
         super(ConvertStockMinuteAnalyst, self).__init__(
-            datasource_op=datasource_op,
-            operator=operator,
+            stk_rop=stk_op,
+            ana_rop=ana_op,
+            ana_wop=ana_op.copy(),
             analyst=AnalystType.CONV,
             meta=CONV_MIN5_META,
             use_stock=False,
@@ -25,7 +26,7 @@ class ConvertStockMinuteAnalyst(Analyst):
             use_industry=False,
         )
         self._fuquan_analyst = FuquanAnalyst(
-            operator=operator, datasource_op=datasource_op
+            ana_op=ana_op, stk_op=stk_op
         )
 
     def _calculate(self, para: Para) -> Optional[DataFrame]:

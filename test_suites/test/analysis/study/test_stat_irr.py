@@ -48,7 +48,7 @@ class TestAnalystIrregular(AnalysisTester):
         CalendarHandler(operator=self._operator).obtain_data()
         # run
         handler = StatZdfAnalyst(
-            datasource_op=self._datasource_op, operator=self._operator
+            stk_op=self._datasource_op, ana_op=self._operator
         )
         calc_span = DateSpan(Date(2000, 1, 1), Date(2021, 12, 31))
         handler.calculate(span=calc_span)

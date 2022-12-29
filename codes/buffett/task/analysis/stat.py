@@ -12,7 +12,7 @@ class TargetStatZdfTask(Task):
     ):
         super().__init__(
             wrapper=Wrapper(
-                StatZdfAnalyst(operator=operator, datasource_op=datasource_op).calculate
+                StatZdfAnalyst(ana_op=operator, stk_op=datasource_op).calculate
             ),
             args=(DateSpan(start=Date(2000, 1, 1), end=Date(2022, 11, 1)),),
             start_time=start_time,

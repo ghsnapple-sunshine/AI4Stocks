@@ -44,8 +44,9 @@ from buffett.download.types import FreqType, SourceType, FuquanType
 class Analyst:
     def __init__(
         self,
-        datasource_op: Operator,
-        operator: Operator,
+        stk_rop: Operator,
+        ana_rop: Operator,
+        ana_wop: Operator,
         analyst: AnalystType,
         meta: DataFrame = ANALY_EVENT_META,
         use_stock: bool = True,
@@ -56,8 +57,9 @@ class Analyst:
         kwd: str = DATETIME,
     ):
         #
-        self._datasource_op = datasource_op
-        self._operator = operator
+        self._stk_rop = stk_rop
+        self._ana_rop = ana_rop
+        self._ana_wop = ana_wop
         self._analyst = analyst
         self._meta = meta
         self._use_stock = use_stock
@@ -73,9 +75,9 @@ class Analyst:
             raise ValueError("Should use at least one type of data.")
         #
         self._logger = LoggerBuilder.build(AnalysisLogger)(analyst)
-        self._dataman = DataManager(datasource_op=datasource_op)
-        self._calendarman = CalendarManager(datasource_op=datasource_op)
-        self._recorder = AnalysisRecorder(operator=operator)
+        self._dataman = DataManager(ana_rop=ana_rop, stk_rop=stk_rop)
+        self._calendarman = CalendarManager(datasource_op=stk_rop)
+        self._recorder = AnalysisRecorder(operator=ana_wop)
 
     def calculate(self, span: DateSpan) -> None:
         """
@@ -131,8 +133,8 @@ class Analyst:
         para, data = obj
         if dataframe_is_valid(data):
             table_name = TableNameTool.get_by_code(para=para)
-            self._operator.create_table(name=table_name, meta=self._meta)
-            self._operator.insert_data_safe(name=table_name, df=data, meta=self._meta)
+            self._ana_wop.create_table(name=table_name, meta=self._meta)
+            self._ana_wop.insert_data_safe(name=table_name, df=data, meta=self._meta)
         self._recorder.save(para=para)
         self._logger.info_calculate_end(para)
 
@@ -162,7 +164,7 @@ class Analyst:
         """
         if not (self._use_stock or self._use_stock_minute):
             return
-        stock_list = get_stock_list(operator=self._datasource_op)
+        stock_list = get_stock_list(operator=self._stk_rop)
         if dataframe_not_valid(stock_list):
             return
         stock_list[SOURCE] = SourceType.ANA
@@ -181,7 +183,7 @@ class Analyst:
         """
         if not self._use_index:
             return
-        index_list = DcIndexListHandler(operator=self._datasource_op).select_data()
+        index_list = DcIndexListHandler(operator=self._stk_rop).select_data()
         if dataframe_not_valid(index_list):
             return
         index_list = index_list.rename(columns={INDEX_CODE: CODE, INDEX_NAME: NAME})
@@ -198,7 +200,7 @@ class Analyst:
         """
         if not self._use_concept:
             return
-        concept_list = DcConceptListHandler(operator=self._datasource_op).select_data()
+        concept_list = DcConceptListHandler(operator=self._stk_rop).select_data()
         if dataframe_not_valid(concept_list):
             return
         concept_list = concept_list.rename(
@@ -217,9 +219,7 @@ class Analyst:
         """
         if not self._use_industry:
             return
-        industry_list = DcIndustryListHandler(
-            operator=self._datasource_op
-        ).select_data()
+        industry_list = DcIndustryListHandler(operator=self._stk_rop).select_data()
         if dataframe_not_valid(industry_list):
             return
         industry_list = industry_list.rename(
@@ -266,7 +266,7 @@ class Analyst:
         :return:
         """
         table_name = TableNameTool.get_by_code(para)
-        data = self._operator.select_data(
+        data = self._ana_rop.select_data(
             name=table_name, meta=self._meta, span=para.span
         )
         return data

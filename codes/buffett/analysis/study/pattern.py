@@ -13,10 +13,11 @@ from buffett.download.mysql import Operator
 
 
 class PatternAnalyst(Analyst):
-    def __init__(self, operator: Operator, datasource_op: Operator):
+    def __init__(self, ana_op: Operator, stk_op: Operator):
         super(PatternAnalyst, self).__init__(
-            datasource_op=datasource_op,
-            operator=operator,
+            stk_rop=stk_op,
+            ana_rop=ana_op,
+            ana_wop=ana_op.copy(),
             analyst=AnalystType.PATTERN,
             meta=ANALY_EVENT_META,
         )

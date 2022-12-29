@@ -22,8 +22,9 @@ SOURCE_DICT = {
 
 
 class DataManager:
-    def __init__(self, datasource_op: Operator):
-        self._datasource_op = datasource_op
+    def __init__(self, stk_rop: Operator, ana_rop: Operator):
+        self._stk_rop = stk_rop
+        self._ana_rop = ana_rop
 
     def select_data(
         self,
@@ -44,10 +45,12 @@ class DataManager:
             by_code = False
             method = "get_by_date"
         if para.comb.source == SourceType.ANA:
+            rop = self._ana_rop
             para = para.clone().with_analysis(AnalystType.CONV)
             meta = ANA_DICT[para.comb]
             table_name = getattr(AnaTool, method)(para=para)
         else:
+            rop = self._stk_rop
             comb = para.comb
             comb = CombExType.to_base(comb) if isinstance(comb, CombExType) else comb
             if para.comb.source.is_analysis():
@@ -56,7 +59,7 @@ class DataManager:
             table_name = getattr(DlTool, method)(para=para)
         data = self._select_data(
             by_code=by_code,
-            operator=self._datasource_op,
+            operator=rop,
             table_name=table_name,
             meta=meta,
             span=para.span,

@@ -13,7 +13,7 @@ class ConvertStockDailyTask(Task):
         super().__init__(
             wrapper=Wrapper(
                 ConvertStockDailyAnalyst(
-                    operator=operator, datasource_op=datasource_op
+                    ana_op=operator, stk_op=datasource_op
                 ).calculate
             ),
             args=(DateSpan(start=Date(1990, 1, 1), end=Date(2022, 12, 1)),),

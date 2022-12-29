@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from typing import Optional, Union
 
 from buffett.adapter.pandas import DataFrame
@@ -235,3 +237,11 @@ class Operator(Connector):
             }
         )
         return df
+
+    def copy(self) -> Operator:
+        """
+        生成一个连接相同数据库的不同Operator
+
+        :return:
+        """
+        return Operator(self._role)

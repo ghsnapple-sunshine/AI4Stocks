@@ -54,4 +54,5 @@ def cleanup() -> None:
 
 
 if __name__ == "__main__":
-    cleanup()
+    while True:
+        cleanup()

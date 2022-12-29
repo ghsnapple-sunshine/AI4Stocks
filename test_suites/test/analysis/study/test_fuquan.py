@@ -20,7 +20,7 @@ COMB_ANA_BFQ = CombExType(
     source=SourceType.ANA,
     freq=FreqType.DAY,
     fuquan=FuquanType.BFQ,
-    analysis=AnalystType.FUQUAN,
+    analysis=AnalystType.CONV,
 )
 COMB_ANA_HFQ = COMB_ANA_BFQ.clone().with_fuquan(FuquanType.HFQ)
 COMB_DC_BFQ = COMB_ANA_BFQ.clone().with_source(SourceType.AK_DC)
@@ -48,7 +48,7 @@ class TestFuquanAnalyst(AnalysisTester):
         cls._daily_handler = DcDailyHandler(operator=cls._datasource_op)
         cls._minute_handler = BsMinuteHandler(operator=cls._datasource_op)
         cls._analyst = FuquanAnalyst(
-            datasource_op=cls._datasource_op, operator=cls._operator
+            stk_op=cls._datasource_op, ana_op=cls._operator
         )
 
     def _setup_always(self) -> None:
@@ -179,9 +179,6 @@ class TestFuquanAnalyst(AnalysisTester):
         self._daily_handler.obtain_data(para=para)
         # 转换数据
         self._conv_daily_data(code=code)
-        self._analyst = FuquanAnalyst(
-            datasource_op=self._datasource_op, operator=self._operator
-        )
         # 测试计算复权因子
         self._analyst.calculate(span=para.span)
 

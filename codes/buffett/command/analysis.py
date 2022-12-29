@@ -14,31 +14,31 @@ from buffett.task.base import TaskScheduler
 
 def analysis():
     ana_op = Operator(RoleType.DbAnaly)
-    ana_op2 = Operator(RoleType.DbAnaly)
     stk_op = Operator(RoleType.DbStock)
     _analysis(
-        task_cls=[ConvertStockDailyTask, FuquanFactorTask, ConvertStockMinuteTask],
-        operator=ana_op,
-        datasource_op=stk_op,
-    )
-    _analysis(
-        task_cls=[TargetPatternRecognizeTask, TargetStatZdfTask],
-        operator=ana_op,
-        datasource_op=ana_op2,
+        task_cls=[
+            ConvertStockDailyTask,
+            FuquanFactorTask,
+            ConvertStockMinuteTask,
+            TargetPatternRecognizeTask,
+            TargetStatZdfTask,
+        ],
+        ana_op=ana_op,
+        stk_op=stk_op,
     )
 
 
-def _analysis(task_cls, operator, datasource_op):
+def _analysis(task_cls, ana_op, stk_op):
     now = DateTime.now()
     tasks = [
         task_cls[i](
-            operator=operator,
-            datasource_op=datasource_op,
+            operator=ana_op,
+            datasource_op=stk_op,
             start_time=now.add(seconds=i),
         )
         for i in range(len(task_cls))
     ]
-    sch = TaskScheduler(operator=operator, datasource_op=datasource_op, tasks=tasks)
+    sch = TaskScheduler(operator=ana_op, datasource_op=stk_op, tasks=tasks)
     sch.run()
 
 
