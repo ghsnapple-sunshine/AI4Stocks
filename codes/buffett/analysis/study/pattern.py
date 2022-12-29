@@ -20,6 +20,7 @@ class PatternAnalyst(Analyst):
             ana_wop=ana_op.copy(),
             analyst=AnalystType.PATTERN,
             meta=ANALY_EVENT_META,
+            use_stock_minute=True,
         )
 
     def _calculate(self, para: Para) -> Optional[DataFrame]:
