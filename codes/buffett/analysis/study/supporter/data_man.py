@@ -44,7 +44,7 @@ class DataManager:
         else:
             by_code = False
             method = "get_by_date"
-        if para.comb.source == SourceType.ANA:
+        if para.comb.source == SourceType.ANA:  # 除了ana_stock外，其他数据重定向到stocks库中取
             rop = self._ana_rop
             para = para.clone().with_analysis(AnalystType.CONV)
             meta = ANA_DICT[para.comb]
@@ -52,9 +52,11 @@ class DataManager:
         else:
             rop = self._stk_rop
             comb = para.comb
-            comb = CombExType.to_base(comb) if isinstance(comb, CombExType) else comb
+            comb = CombExType.to_base(comb) if isinstance(comb, CombExType) else comb.clone()
             if para.comb.source.is_analysis():
-                comb.with_source(SOURCE_DICT[comb.source])
+                source = SOURCE_DICT[comb.source]
+                comb.with_source(source)
+                para = para.clone().with_source(source)
             meta = DL_DICT[comb]
             table_name = getattr(DlTool, method)(para=para)
         data = self._select_data(
