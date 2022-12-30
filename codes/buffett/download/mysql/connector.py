@@ -71,7 +71,7 @@ class Connector:
         """
         self.connect()
         try:
-            self._logger.info_print_sql(sql)
+            self._logger.debug_print_sql(sql)
             res = self._cursor.execute(sql)
             if commit:
                 self._conn.commit()
@@ -93,7 +93,7 @@ class Connector:
     def execute_many(self, sql: str, vals: list[list[Any]], commit: bool = True):
         self.connect()
         try:
-            self._logger.info_print_sql(sql)
+            self._logger.debug_print_sql(sql)
             res = self._cursor.executemany(sql, vals)
             if commit:
                 self._conn.commit()
@@ -120,7 +120,7 @@ class Connector:
 
 
 class ConnectorLogger(Logger):
-    def info_print_sql(self, sql: str):
+    def debug_print_sql(self, sql: str):
         self.debug(sql)
 
     def error_print_msg(self, e: Exception):
