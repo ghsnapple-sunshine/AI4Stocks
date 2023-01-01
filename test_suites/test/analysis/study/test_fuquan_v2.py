@@ -1,15 +1,15 @@
 from buffett.adapter.pendulum import Date
 from buffett.analysis import Para
-from buffett.analysis.study import FuquanAnalyst
+from buffett.analysis.study import FuquanAnalystV2
 from buffett.analysis.study.tools import TableNameTool as AnaTool
 from buffett.analysis.types import CombExType, AnalystType
 from buffett.common.constants.col import OPEN, CLOSE, HIGH, LOW
 from buffett.common.constants.table import TRA_CAL
 from buffett.common.target import Target
 from buffett.download.handler.stock import (
-    DcDailyHandler,
     BsMinuteHandler,
     DcFhpgHandler,
+    BsDailyHandler,
 )
 from buffett.download.handler.tools import TableNameTool as DlTool
 from buffett.download.types import FuquanType, SourceType, FreqType
@@ -23,20 +23,11 @@ COMB_ANA_BFQ = CombExType(
     analysis=AnalystType.CONV,
 )
 COMB_ANA_HFQ = COMB_ANA_BFQ.clone().with_fuquan(FuquanType.HFQ)
-COMB_DC_BFQ = COMB_ANA_BFQ.clone().with_source(SourceType.AK_DC)
-COMB_DC_HFQ = COMB_ANA_HFQ.clone().with_source(SourceType.AK_DC)
+COMB_BS_BFQ = COMB_ANA_BFQ.clone().with_source(SourceType.BS)
+COMB_BS_HFQ = COMB_ANA_HFQ.clone().with_source(SourceType.BS)
 
 
-class TestFuquanAnalyst(AnalysisTester):
-    """
-    测试所有的Analyst
-    """
-
-    _fhpg_handler = None
-    _daily_handler = None
-    _minute_handler = None
-    _analyst = None
-
+class TestFuquanAnalystV2(AnalysisTester):
     @classmethod
     def _setup_oncemore(cls):
         """
@@ -45,9 +36,9 @@ class TestFuquanAnalyst(AnalysisTester):
         :return:
         """
         cls._fhpg_handler = DcFhpgHandler(operator=cls._datasource_op)
-        cls._daily_handler = DcDailyHandler(operator=cls._datasource_op)
+        cls._daily_handler = BsDailyHandler(operator=cls._datasource_op)
         cls._minute_handler = BsMinuteHandler(operator=cls._datasource_op)
-        cls._analyst = FuquanAnalyst(stk_op=cls._datasource_op, ana_op=cls._operator)
+        cls._analyst = FuquanAnalystV2(stk_op=cls._datasource_op, ana_op=cls._operator)
 
     def _setup_always(self) -> None:
         DbSweeper.erase_except(TRA_CAL)
@@ -183,9 +174,9 @@ class TestFuquanAnalyst(AnalysisTester):
     def _conv_daily_data(self, code: str):
         # 转换bfq
         name = AnaTool.get_by_code(Para().with_code(code).with_comb(COMB_ANA_BFQ))
-        source_name = DlTool.get_by_code(Para().with_code(code).with_comb(COMB_DC_BFQ))
+        source_name = DlTool.get_by_code(Para().with_code(code).with_comb(COMB_BS_BFQ))
         self._operator.create_table_from(name=name, source_name=source_name)
         # 转换hfq
         name = AnaTool.get_by_code(Para().with_code(code).with_comb(COMB_ANA_HFQ))
-        source_name = DlTool.get_by_code(Para().with_code(code).with_comb(COMB_DC_HFQ))
+        source_name = DlTool.get_by_code(Para().with_code(code).with_comb(COMB_BS_HFQ))
         self._operator.create_table_from(name=name, source_name=source_name)

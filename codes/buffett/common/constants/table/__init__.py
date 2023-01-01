@@ -20,5 +20,5 @@ DL_RCD = "download_record"
 EA_RCD = "easy_record"
 RF_RCD = "reform_record"
 #
-FQ_FAC = "fuquan_factor"
+FQ_FAC, FQ_FAC_V2 = "fuquan_factor", "fuquan_factor_v2"
 #

@@ -72,11 +72,12 @@ class StockDailyMaintain(BaseMaintain):
         self._calendar = None
         self._logger = LoggerBuilder.build(StockDailyMaintainLogger)()
 
-    def run(self, save: bool = True) -> Optional[DataFrame]:
+    def run(self, save_file: bool = False, save_db: bool = True) -> Optional[DataFrame]:
         """
         检查股票的baostock, dongcai, tonghuashun的日线数据是否匹配
 
-        :param save:       保存结果至磁盘
+        :param save_file:       保存结果至磁盘
+        :param save_db:         保存结果至数据库
         :return:
         """
         # 准备工作空间
@@ -103,11 +104,12 @@ class StockDailyMaintain(BaseMaintain):
         prod_cons.run()
         data = pd.concat_safe(self._check_results)
         data = self._determine_use(data)
-        if save:
-            self._save_report(df=data, feather=True, csv=True)
-            self._save_to_database(df=data)
-        else:
+        if not save_file and not save_db:
             return data
+        if save_file:
+            self._save_report(df=data, feather=True, csv=True)
+        if save_db:
+            self._save_to_database(df=data)
 
     def _get_data_for_1stock(
         self, code: str
@@ -210,21 +212,21 @@ class StockDailyMaintain(BaseMaintain):
         )
         data.loc[nna_d & na_b & na_t, USE] = DC
         data.loc[na_d & nna_b & na_t, USE] = BS
-        data.loc[na_d & na_b & nna_t, USE] = DC
+        data.loc[na_d & na_b & nna_t, USE] = BS
         # 1 data.loc[na_d & nna_b & nna_t & compare(FIELDSb, FIELDSt), USE] = BS
         # 2 data.loc[nna_d & nna_b & na_t & compare(FIELDSd, FIELDSb), USE] = DC
         # 3 data.loc[nna_d & na_b & nna_t & compare(FIELDSd, FIELDSt), USE] = DC
         # 4 data.loc[na_d & nna_b & nna_t & compare(FIELDSb, FIELDSt), USE] = BS
         # 5 data.loc[nna_d & nna_b & na_t & compare(FIELDSd, FIELDSb), USE] = DC
         # 6 data.loc[nna_d & na_b & nna_t & compare(FIELDSd, FIELDSt), USE] = DC
-        # 1+4必须先执行，因为nna_d & nna_b & nna_t的情况下结果应该是DC
-        data.loc[nna_b & nna_t & compare(data, FIELDSb, FIELDSt), USE] = BS  # 1+4
+        # 2+5必须先执行，因为nna_d & nna_b & nna_t的情况下结果应该是BS
         data.loc[nna_d & nna_b & compare(data, FIELDSd, FIELDSb), USE] = DC  # 2+5
-        data.loc[nna_d & nna_t & compare(data, FIELDSd, FIELDSt), USE] = DC  # 3+6
+        data.loc[nna_b & nna_t & compare(data, FIELDSb, FIELDSt), USE] = BS  # 1+4
+        data.loc[nna_d & nna_t & compare(data, FIELDSd, FIELDSt), USE] = BS  # 3+6
         # 处理仍然是unknown的数据
         unknown = data[data[USE] == UNC].copy()
         if dataframe_is_valid(unknown):
-            unknown.loc[pd.isna(unknown[CLOSEt]), USE] = DC
+            unknown.loc[pd.isna(unknown[CLOSEt]), USE] = BS
             unknown.loc[pd.isna(unknown[CLOSEb]), USE] = DC
             unknown.loc[pd.isna(unknown[CLOSEd]), USE] = BS
             unknown[BS_DC] = abs_error(unknown, FIELDSb, FIELDSd)
@@ -233,7 +235,7 @@ class StockDailyMaintain(BaseMaintain):
             unknown[MIN] = np.vectorize(min)(
                 unknown[BS_DC], unknown[DC_TH], unknown[TH_BS]
             )
-            unknown.loc[unknown[BS_DC] == unknown[MIN]] = DC
+            unknown.loc[unknown[BS_DC] == unknown[MIN]] = BS
             unknown.loc[unknown[DC_TH] == unknown[MIN]] = DC
             unknown.loc[unknown[TH_BS] == unknown[MIN]] = BS
             data.loc[data[USE] == UNC, USE] = unknown.loc[:, USE]

@@ -347,18 +347,6 @@ STK_FHPG_META = create_meta(
     ]
 )
 
-"""
-Metadata for fuquan_factor
-"""
-FQ_FAC_META = create_meta(
-    meta_list=[
-        [CODE, ColType.CODE, AddReqType.KEY],
-        [START_DATE, ColType.DATE, AddReqType.KEY],
-        [END_DATE, ColType.DATE, AddReqType.KEY],
-        [A, ColType.DOUBLE, AddReqType.NONE],
-        [B, ColType.DOUBLE, AddReqType.NONE],
-    ]
-)
 
 """
 Metadata for money_supply

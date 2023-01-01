@@ -3,7 +3,7 @@ from typing import Optional
 from buffett.adapter.pandas import DataFrame
 from buffett.analysis import Para
 from buffett.analysis.study.base import Analyst
-from buffett.analysis.study.fuquan import FuquanAnalyst
+from buffett.analysis.study.fuquan_v2 import FuquanAnalystV2
 from buffett.analysis.types import AnalystType
 from buffett.common.constants.meta.analysis import CONV_MIN5_META
 from buffett.common.tools import dataframe_not_valid
@@ -25,9 +25,7 @@ class ConvertStockMinuteAnalyst(Analyst):
             use_concept=False,
             use_industry=False,
         )
-        self._fuquan_analyst = FuquanAnalyst(
-            ana_op=ana_op, stk_op=stk_op
-        )
+        self._fuquan_analyst = FuquanAnalystV2(ana_op=ana_op, stk_op=stk_op)
 
     def _calculate(self, para: Para) -> Optional[DataFrame]:
         """

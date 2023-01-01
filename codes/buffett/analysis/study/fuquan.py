@@ -19,7 +19,7 @@ from buffett.common.constants.col import (
     DATETIME,
 )
 from buffett.common.constants.col.target import CODE
-from buffett.common.constants.meta.handler.definition import FQ_FAC_META
+from buffett.common.constants.meta.analysis import FQ_FAC_META
 from buffett.common.constants.table import FQ_FAC
 from buffett.common.error import PreStepError
 from buffett.common.interface import ProducerConsumer
@@ -71,6 +71,8 @@ class FuquanAnalyst:
         self._ana_wop = ana_op.copy()
         self._fhpg_handler = DcFhpgHandler(operator=stk_op)
         self._dataman = DataManager(ana_rop=self._ana_rop, stk_rop=self._stk_rop)
+        self._NAME = FQ_FAC
+        self._META = FQ_FAC_META
         self._factors = None
         self._span = None
         self._logger = LoggerBuilder.build(FuquanAnalystLogger)()
@@ -312,14 +314,14 @@ class FuquanAnalyst:
 
         :return:
         """
-        self._ana_wop.create_table(name=FQ_FAC, meta=FQ_FAC_META)
+        self._ana_wop.create_table(name=self._NAME, meta=self._META)
 
         def _get_sub_table(k: str, v: DataFrame):
             v[CODE] = k
             return v
 
         data = pd.concat([_get_sub_table(k, v) for k, v in self._factors.items()])
-        self._ana_wop.insert_data(name=FQ_FAC, df=data)
+        self._ana_wop.insert_data(name=self._NAME, df=data)
 
     def reform_to_hfq(self, code: str, df: DataFrame):
         """
@@ -368,7 +370,7 @@ class FuquanAnalyst:
         :return:
         """
         if self._factors is None:
-            groupby = self._ana_rop.select_data(name=FQ_FAC, meta=FQ_FAC_META).groupby(
+            groupby = self._ana_rop.select_data(name=self._NAME, meta=self._META).groupby(
                 by=[CODE]
             )
             self._factors = dict((k, v[[START_DATE, A, B]]) for k, v in groupby)

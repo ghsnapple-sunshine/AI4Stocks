@@ -48,7 +48,7 @@ class TestStockDailyMaintain(Tester):
         self._bs_handler.obtain_data(para=para)
         self._dc_handler.obtain_data(para=para)
         self._th_handler.obtain_data(para=para)
-        result = self._mtain.run(save=False)
+        result = self._mtain.run(save_file=False, save_db=False)
         assert dataframe_is_valid(result)
 
     def test_000001(self):
@@ -62,10 +62,26 @@ class TestStockDailyMaintain(Tester):
         self._bs_handler.obtain_data(para=para)
         self._dc_handler.obtain_data(para=para)
         self._th_handler.obtain_data(para=para)
-        result = self._mtain.run(save=False)
+        result = self._mtain.run(save_file=False, save_db=False)
         assert dataframe_not_valid(
             result[
                 (result["close_d"] != result["close_b"])
                 & (result["close_d"] != result["close_t"])
             ]
         )
+
+    def test_000058(self):
+        """
+        现网异常数据
+
+        :return:
+        """
+        create_ex_1stock(
+            operator=self._operator, target=Target("000058"), source="both"
+        )
+        para = Para().with_start_n_end(Date(1990, 1, 1), Date(2022, 12, 1))
+        self._bs_handler.obtain_data(para=para)
+        self._dc_handler.obtain_data(para=para)
+        self._th_handler.obtain_data(para=para)
+        result = self._mtain.run(save_file=False, save_db=False)
+        assert dataframe_is_valid(result)

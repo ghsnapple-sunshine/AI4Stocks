@@ -16,6 +16,8 @@ from buffett.common.constants.col import (
     ZDF,
     HSL,
     ST,
+    A,
+    B,
 )
 from buffett.common.constants.col.analysis import (
     EVENT,
@@ -120,5 +122,19 @@ CONV_DAILY_META = create_meta(
         [ZDF, ColType.FLOAT, AddReqType.NONE],
         [HSL, ColType.FLOAT, AddReqType.NONE],
         [ST, ColType.ENUM_BOOL, AddReqType.NONE],
+    ]
+)
+
+
+"""
+Metadata for fuquan_factor
+"""
+FQ_FAC_META = create_meta(
+    meta_list=[
+        [CODE, ColType.CODE, AddReqType.KEY],
+        [START_DATE, ColType.DATE, AddReqType.KEY],
+        [END_DATE, ColType.DATE, AddReqType.KEY],
+        [A, ColType.DOUBLE, AddReqType.NONE],
+        [B, ColType.DOUBLE, AddReqType.NONE],
     ]
 )

@@ -1,5 +1,5 @@
 from buffett.adapter.pendulum import DateTime, Date
-from buffett.analysis.study import FuquanAnalyst
+from buffett.analysis.study import FuquanAnalystV2
 from buffett.common.pendulum import DateSpan
 from buffett.common.wrapper import Wrapper
 from buffett.download.mysql import Operator
@@ -12,7 +12,7 @@ class FuquanFactorTask(Task):
     ):
         super().__init__(
             wrapper=Wrapper(
-                FuquanAnalyst(ana_op=operator, stk_op=datasource_op).calculate
+                FuquanAnalystV2(ana_op=operator, stk_op=datasource_op).calculate
             ),
             args=(DateSpan(start=Date(1990, 1, 1), end=Date(2022, 12, 1)),),
             start_time=start_time,
