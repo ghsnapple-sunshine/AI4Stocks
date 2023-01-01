@@ -50,6 +50,9 @@ class FuquanAnalystV2(FuquanAnalyst):
                 B: 0,
             }
         )
-        merge_info = pd.merge(_f2, _d1, how="left", on=[START_DATE])
+        # 除权日可能不是交易日
+        _d2 = pd.merge(_f2, _d1, how="outer", on=[START_DATE]).sort_values(by=[START_DATE])
+        _d3 = _d2.fillna(method="ffill")
+        merge_info = pd.merge(_f2, _d3, how="left", on=[START_DATE])
         self._factors[code] = merge_info
         self._logger.info_end_calculate(code)
