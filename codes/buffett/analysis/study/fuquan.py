@@ -89,10 +89,11 @@ class FuquanAnalyst:
         self._factors = {}
         # 获取StockList
         stock_list = get_stock_list(operator=self._stk_rop)
-        # 获取分红配股数据
+        # 获取和过滤分红配股数据
         fhpg_infos = self._fhpg_handler.select_data(index=False)
         if dataframe_not_valid(fhpg_infos):
             raise PreStepError(FuquanAnalyst, DcFhpgHandler)
+        fhpg_infos = pd.merge(stock_list[[CODE]], fhpg_infos, how="inner", on=[CODE])
         fhpg_infos = fhpg_infos[span.is_insides(fhpg_infos[DATE])]
         # 获取不含分红配股信息的StockList
         stocks_without_f = self._split_stock_list(
@@ -370,9 +371,9 @@ class FuquanAnalyst:
         :return:
         """
         if self._factors is None:
-            groupby = self._ana_rop.select_data(name=self._NAME, meta=self._META).groupby(
-                by=[CODE]
-            )
+            groupby = self._ana_rop.select_data(
+                name=self._NAME, meta=self._META
+            ).groupby(by=[CODE])
             self._factors = dict((k, v[[START_DATE, A, B]]) for k, v in groupby)
         factor = self._factors[code]
         if DATE in df.index.names:
@@ -405,15 +406,15 @@ class FuquanAnalyst:
 class FuquanAnalystLogger(Logger):
     @classmethod
     def info_start_calculate(cls, code: str):
-        Logger.info(f"Start to calculate Fuquan Factor for {code}.")
+        cls.info(f"Start to calculate Fuquan Factor for {code}.")
 
     @classmethod
     def info_end_calculate(cls, code: str):
-        Logger.info(f"Successfully calculate Fuquan Factor for {code}.")
+        cls.info(f"Successfully calculate Fuquan Factor for {code}.")
 
     @classmethod
     def warning_calculate_end(cls, code: str):
-        Logger.warning(
+        cls.warning(
             f"End calculate Fuquan Factor for {code}, nothing is found for calculation."
         )
 
@@ -421,4 +422,4 @@ class FuquanAnalystLogger(Logger):
     def warning_data_error(cls, code: str, key: str, df: DataFrame):
         error_data = df[pd.isna(df[A])][key]
         span = DateSpan(error_data.min(), error_data.max())
-        Logger.warning(f"Fuquan Factor for {code} is missed in {span}.")
+        cls.warning(f"Fuquan Factor for {code} is missed in {span}.")

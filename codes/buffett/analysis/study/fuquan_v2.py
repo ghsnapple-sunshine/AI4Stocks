@@ -1,10 +1,10 @@
 from buffett.adapter.numpy import np
 from buffett.adapter.pandas import DataFrame, pd
-from buffett.analysis.study.fuquan import FuquanAnalyst
+from buffett.analysis.study.fuquan import FuquanAnalyst, FuquanAnalystLogger
 from buffett.common.constants.col import DATE, CLOSE, A, START_DATE, END_DATE, B
 from buffett.common.constants.meta.analysis import FQ_FAC_META
 from buffett.common.constants.table import FQ_FAC_V2
-from buffett.common.tools import dataframe_not_valid
+from buffett.common.tools import dataframe_not_valid, dataframe_is_valid
 from buffett.download.mysql import Operator
 
 
@@ -51,8 +51,21 @@ class FuquanAnalystV2(FuquanAnalyst):
             }
         )
         # 除权日可能不是交易日
-        _d2 = pd.merge(_f2, _d1, how="outer", on=[START_DATE]).sort_values(by=[START_DATE])
+        _d2 = pd.merge(_f2, _d1, how="outer", on=[START_DATE]).sort_values(
+            by=[START_DATE]
+        )
         _d3 = _d2.fillna(method="ffill")
         merge_info = pd.merge(_f2, _d3, how="left", on=[START_DATE])
         self._factors[code] = merge_info
-        self._logger.info_end_calculate(code)
+        if dataframe_is_valid(merge_info):
+            self._logger.info_end_calculate(code)
+        else:
+            self._logger.warning_calculate_error(code)
+
+
+class FuquanAnalystLoggerV2(FuquanAnalystLogger):
+    @classmethod
+    def warning_calculate_error(cls, code: str):
+        cls.warning(
+            f"End calculate Fuquan Factor for {code}, nothing is found for save."
+        )
