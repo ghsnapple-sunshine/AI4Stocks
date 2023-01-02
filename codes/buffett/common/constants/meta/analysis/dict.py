@@ -1,10 +1,10 @@
 from buffett.analysis.types import CombExType, AnalystType
 from buffett.common.constants.meta.analysis.definition import (
     CONV_DAILY_META,
-    CONV_MIN5_META,
     ANALY_EVENT_META,
     ANALY_ZDF_META,
 )
+from buffett.common.constants.meta.handler import BS_MINUTE_META
 from buffett.download.types import SourceType, FreqType, FuquanType
 
 META_DICT = {
@@ -27,7 +27,7 @@ META_DICT = {
         freq=FreqType.MIN5,
         fuquan=FuquanType.HFQ,
         analysis=AnalystType.CONV,
-    ): CONV_MIN5_META,
+    ): BS_MINUTE_META,
     # Pattern识别
     CombExType(
         source=SourceType.ANA,

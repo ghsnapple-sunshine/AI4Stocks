@@ -5,7 +5,8 @@ from buffett.analysis import Para
 from buffett.analysis.study.base import Analyst
 from buffett.analysis.study.fuquan_v2 import FuquanAnalystV2
 from buffett.analysis.types import AnalystType
-from buffett.common.constants.meta.analysis import CONV_MIN5_META
+from buffett.common.constants.col import CJL, CJE
+from buffett.common.constants.meta.handler import BS_MINUTE_META
 from buffett.common.tools import dataframe_not_valid
 from buffett.download.mysql import Operator
 from buffett.download.types import FuquanType, SourceType
@@ -18,7 +19,7 @@ class ConvertStockMinuteAnalyst(Analyst):
             ana_rop=ana_op,
             ana_wop=ana_op.copy(),
             analyst=AnalystType.CONV,
-            meta=CONV_MIN5_META,
+            meta=BS_MINUTE_META,
             use_stock=False,
             use_stock_minute=True,
             use_index=False,
@@ -43,5 +44,6 @@ class ConvertStockMinuteAnalyst(Analyst):
         hfq_info = self._fuquan_analyst.reform_to_hfq(
             code=para.target.code, df=bfq_info
         )
+        hfq_info[[CJL, CJE]] = bfq_info.loc[:, [CJL, CJE]]
         hfq_info = hfq_info.reset_index()
         return hfq_info

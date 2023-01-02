@@ -10,7 +10,7 @@ def test_fuquan_factor(self):
 
     :return:
     """
-    handler = FuquanAnalystV2(stk_op=self._datasource_op, ana_op=self._operator)
+    handler = FuquanAnalystV2(stk_op=self._stk_op, ana_op=self._operator)
     handler.calculate(span=self._long_para.span)
-    data = self._datasource_op.select_data(name=FQ_FAC_V2, meta=FQ_FAC_META)
+    data = self._stk_op.select_data(name=FQ_FAC_V2, meta=FQ_FAC_META)
     assert dataframe_is_valid(data)

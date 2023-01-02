@@ -23,7 +23,7 @@ def test_conv_min(self):
     """
     row = self._bs_minute_handler.select_data(para=self._long_para).shape[0]
     analyst = ConvertStockMinuteAnalyst(
-        stk_op=self._datasource_op, ana_op=self._operator
+        stk_op=self._stk_op, ana_op=self._operator
     )
     analyst.calculate(span=self._long_para.span)
     select_para = (
