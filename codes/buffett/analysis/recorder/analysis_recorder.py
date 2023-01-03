@@ -6,7 +6,7 @@ from buffett.analysis.types import AnalystType
 from buffett.common.constants.col import FREQ, FUQUAN, SOURCE, START_DATE, END_DATE
 from buffett.common.constants.col.analysis import ANALYSIS
 from buffett.common.constants.col.target import CODE
-from buffett.common.constants.meta.analysis import ANALY_RCD_META
+from buffett.common.constants.meta.analysis import ANA_RCD_META
 from buffett.common.constants.table import ANALY_RCD
 from buffett.common.tools import dataframe_not_valid
 from buffett.download.mysql import Operator
@@ -17,7 +17,7 @@ from buffett.download.types import FreqType, FuquanType, SourceType
 class AnalysisRecorder(SimpleRecorder):
     def __init__(self, operator: Operator):
         super(AnalysisRecorder, self).__init__(
-            operator=operator, table_name=ANALY_RCD, meta=ANALY_RCD_META
+            operator=operator, table_name=ANALY_RCD, meta=ANA_RCD_META
         )
 
     def save(self, para: Para) -> None:
@@ -48,7 +48,7 @@ class AnalysisRecorder(SimpleRecorder):
 
         :return:
         """
-        df = self._operator.select_data(name=self._TABLE_NAME, meta=ANALY_RCD_META)
+        df = self._operator.select_data(name=self._TABLE_NAME, meta=ANA_RCD_META)
         if dataframe_not_valid(df):
             return
         df[ANALYSIS] = df[ANALYSIS].apply(lambda x: AnalystType(x))

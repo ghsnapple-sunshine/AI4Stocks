@@ -14,7 +14,7 @@ def get_operator_root():
 
 operators = {
     "1": get_operator_root(),
-    "2": Operator(RoleType.DbAnaly),
+    "2": Operator(RoleType.DB_ANA),
 }
 
 

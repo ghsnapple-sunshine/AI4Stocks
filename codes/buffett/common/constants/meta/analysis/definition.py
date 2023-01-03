@@ -47,7 +47,7 @@ from buffett.download.mysql.types import ColType, AddReqType
 """
 Metadata for AnalysisEvent
 """
-ANALY_EVENT_META = create_meta(
+ANA_EVENT_META = create_meta(
     meta_list=[
         [DATETIME, ColType.DATETIME, AddReqType.KEY],
         [EVENT, ColType.SHORT_DESC, AddReqType.KEY],
@@ -58,7 +58,7 @@ ANALY_EVENT_META = create_meta(
 """
 Metadata for AnalysisStat
 """
-ANALY_ZDF_META = create_meta(
+ANA_ZDF_META = create_meta(
     meta_list=[
         [DATETIME, ColType.DATETIME, AddReqType.KEY],
         [ZF5_MAX, ColType.FLOAT, AddReqType.NONE],
@@ -83,7 +83,7 @@ ANALY_ZDF_META = create_meta(
 """
 Metadata for ANALY_RCD
 """
-ANALY_RCD_META = create_meta(
+ANA_RCD_META = create_meta(
     meta_list=[
         [CODE, ColType.CODE, AddReqType.KEY],
         [FREQ, ColType.ENUM_BOOL, AddReqType.KEY],
@@ -130,7 +130,7 @@ FQ_FAC_META = create_meta(
 """
 Metadata for ANA_MIN5_MTAIN
 """
-ANALY_MIN5_MTAIN_META = create_meta(
+ANA_MIN5_MTAIN_META = create_meta(
     meta_list=[
         [CODE, ColType.CODE, AddReqType.NONE],
         [TYPE, ColType.ENUM_BOOL, AddReqType.NONE],

@@ -69,7 +69,7 @@ for fname in datafilelist:
 """
 
 code_list = ["000001", "000002"]
-hdl = DcDailyHandler(Operator(RoleType.DbTest))
+hdl = DcDailyHandler(Operator(RoleType.DB_TEST))
 for code in code_list:
     # 利用 AKShare 获取股票的后复权数据，这里只获取前 6 列
     stock_hfq_df = ak.stock_zh_a_hist(symbol=code, adjust="hfq").iloc[:, :6]

@@ -11,8 +11,8 @@ class MockTester(Tester):
 
     @classmethod
     def _setup_once(cls):
-        cls._stk_op = Operator(RoleType.DbStock)
-        cls._ana_op = Operator(RoleType.DbAnaly)
+        cls._stk_op = Operator(RoleType.DB_STK)
+        cls._ana_op = Operator(RoleType.DB_ANA)
         super(MockTester, cls)._setup_once()
 
     @classmethod

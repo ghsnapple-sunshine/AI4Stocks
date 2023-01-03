@@ -11,7 +11,7 @@ class AnalysisTester(Tester):
 
     @classmethod
     def _setup_once(cls):
-        cls._datasource_op = Operator(RoleType.DbTest)
+        cls._datasource_op = Operator(RoleType.DB_TEST)
         cls._short_para = Para.from_base(cls._short_para)
         cls._long_para = Para.from_base(cls._long_para)
         cls._great_para = Para.from_base(cls._great_para)

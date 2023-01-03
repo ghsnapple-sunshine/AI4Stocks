@@ -21,7 +21,7 @@ from buffett.common.constants.col import (
     TYPE,
 )
 from buffett.common.constants.col.target import CODE
-from buffett.common.constants.meta.analysis import ANALY_MIN5_MTAIN_META
+from buffett.common.constants.meta.analysis import ANA_MIN5_MTAIN_META
 from buffett.common.constants.table import AMA_MIN5_MTAIN
 from buffett.common.error import PreStepError
 from buffett.common.logger import Logger, LoggerBuilder
@@ -107,9 +107,9 @@ class ConvertStockMinuteAnalystMaintain:
             dfs.extend(r)
         df = pd.concat(dfs)
         self._ana_wop.drop_table(name=AMA_MIN5_MTAIN)
-        self._ana_wop.create_table(name=AMA_MIN5_MTAIN, meta=ANALY_MIN5_MTAIN_META)
+        self._ana_wop.create_table(name=AMA_MIN5_MTAIN, meta=ANA_MIN5_MTAIN_META)
         self._ana_wop.insert_data_safe(
-            name=AMA_MIN5_MTAIN, meta=ANALY_MIN5_MTAIN_META, df=df
+            name=AMA_MIN5_MTAIN, meta=ANA_MIN5_MTAIN_META, df=df
         )
 
 

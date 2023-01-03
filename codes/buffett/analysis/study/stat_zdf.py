@@ -26,7 +26,7 @@ from buffett.common.constants.col.analysis import (
     DF20_MAX,
     ZF20_MAX,
 )
-from buffett.common.constants.meta.analysis import ANALY_ZDF_META
+from buffett.common.constants.meta.analysis import ANA_ZDF_META
 from buffett.common.logger import Logger, LoggerBuilder
 from buffett.common.tools import dataframe_not_valid
 from buffett.download.mysql import Operator
@@ -61,7 +61,7 @@ class StatZdfAnalyst(Analyst):
             ana_rop=ana_op,
             ana_wop=ana_op.copy(),
             analyst=AnalystType.STAT_ZDF,
-            meta=ANALY_ZDF_META,
+            meta=ANA_ZDF_META,
             use_stock_minute=True,
         )
         self._zdf_logger = LoggerBuilder.build(StatZdfLogger)()

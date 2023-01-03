@@ -27,7 +27,7 @@ from buffett.task.download import (
 
 
 def download():
-    operator = Operator(RoleType.DbStock)
+    operator = Operator(RoleType.DB_STK)
     task_cls = [
         CalendarTask,
         SseStockListTask,

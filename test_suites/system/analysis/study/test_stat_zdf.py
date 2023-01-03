@@ -7,7 +7,7 @@ from buffett.analysis.study import FuquanAnalystV2, StatZdfAnalyst
 from buffett.analysis.study.tools import TableNameTool
 from buffett.analysis.types import AnalystType
 from buffett.common.constants.col.target import CODE, NAME
-from buffett.common.constants.meta.analysis import FQ_FAC_META, ANALY_ZDF_META
+from buffett.common.constants.meta.analysis import FQ_FAC_META, ANA_ZDF_META
 from buffett.common.constants.table import FQ_FAC_V2
 from buffett.common.magic import get_name
 from buffett.common.tools import dataframe_is_valid
@@ -66,5 +66,5 @@ class TestFuquanAnalyst(MockTester):
             .with_fuquan(FuquanType.HFQ)
             .with_analysis(AnalystType.STAT_ZDF)
         )
-        data = self._operator.select_data(name=table_name, meta=ANALY_ZDF_META)
+        data = self._operator.select_data(name=table_name, meta=ANA_ZDF_META)
         assert dataframe_is_valid(data)

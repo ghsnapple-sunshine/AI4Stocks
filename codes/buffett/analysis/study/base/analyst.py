@@ -28,7 +28,7 @@ from buffett.common.constants.col.target import (
     INDUSTRY_CODE,
     INDUSTRY_NAME,
 )
-from buffett.common.constants.meta.analysis import ANALY_EVENT_META
+from buffett.common.constants.meta.analysis import ANA_EVENT_META
 from buffett.common.interface import ProducerConsumer
 from buffett.common.logger import LoggerBuilder, Logger
 from buffett.common.pendulum import DateSpan, convert_datetime
@@ -48,7 +48,7 @@ class Analyst:
         ana_rop: Operator,
         ana_wop: Operator,
         analyst: AnalystType,
-        meta: DataFrame = ANALY_EVENT_META,
+        meta: DataFrame = ANA_EVENT_META,
         use_stock: bool = True,
         use_stock_minute: bool = False,
         use_index: bool = True,

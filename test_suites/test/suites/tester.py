@@ -32,7 +32,7 @@ class Tester(SimpleTester):
         :return:
         """
         # 定义变量
-        cls._operator = Operator(role=RoleType.DbTest)
+        cls._operator = Operator(role=RoleType.DB_TEST)
         cls._operator.connect()
         cls._table_name = "test_{0}".format(DateTime.now().format("YYYYMMDD_HHmmss"))
         cls._short_para = (
@@ -106,6 +106,6 @@ class Tester(SimpleTester):
         :param para:
         :return:
         """
-        operator = Operator(RoleType.DbStock)
+        operator = Operator(RoleType.DB_STK)
         handler = cls(operator=operator)
         return handler.select_data(para=para)

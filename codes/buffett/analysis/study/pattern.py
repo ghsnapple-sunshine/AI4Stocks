@@ -7,7 +7,7 @@ from buffett.analysis.study.base import Analyst
 from buffett.analysis.types import AnalystType
 from buffett.common.constants.col import DATETIME
 from buffett.common.constants.col.analysis import EVENT, VALUE
-from buffett.common.constants.meta.analysis import ANALY_EVENT_META
+from buffett.common.constants.meta.analysis import ANA_EVENT_META
 from buffett.common.tools import dataframe_not_valid
 from buffett.download.mysql import Operator
 
@@ -19,7 +19,7 @@ class PatternAnalyst(Analyst):
             ana_rop=ana_op,
             ana_wop=ana_op.copy(),
             analyst=AnalystType.PATTERN,
-            meta=ANALY_EVENT_META,
+            meta=ANA_EVENT_META,
         )
 
     def _calculate(self, para: Para) -> Optional[DataFrame]:

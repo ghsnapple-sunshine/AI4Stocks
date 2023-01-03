@@ -95,7 +95,7 @@ class ThsStockListHandler(Handler):
 
 if __name__ == "__main__":
     FILE_NAME = "E:/BuffettData/daily_maintain/20221224_010507/report"
-    op = Operator(RoleType.DbStock)
+    op = Operator(RoleType.DB_STK)
     stock_list_hdl = ThsStockListHandler(operator=op, file_name=FILE_NAME)
     ths_daily_hdl = ThDailyHandler(operator=op, target_list_handler=stock_list_hdl)
     ths_daily_hdl.obtain_data(

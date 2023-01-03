@@ -13,8 +13,8 @@ from buffett.task.base import TaskScheduler
 
 
 def analysis():
-    ana_op = Operator(RoleType.DbAnaly)
-    stk_op = Operator(RoleType.DbStock)
+    ana_op = Operator(RoleType.DB_ANA)
+    stk_op = Operator(RoleType.DB_STK)
     _analysis(
         task_cls=[
             # ConvertStockDailyTask,

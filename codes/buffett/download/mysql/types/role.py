@@ -2,8 +2,7 @@ from buffett.adapter.enum import Enum
 
 
 class RoleType(Enum):
-    DbStock = 1
-    DbTest = 2
-    DbInfo = 3
+    DB_STK = 1
+    DB_TEST = 2
     ROOT = 4
-    DbAnaly = 5
+    DB_ANA = 5

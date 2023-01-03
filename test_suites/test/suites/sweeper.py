@@ -8,7 +8,7 @@ from buffett.download.mysql.types import RoleType
 
 
 class DbSweeper:
-    _operator = Operator(RoleType.DbTest)
+    _operator = Operator(RoleType.DB_TEST)
 
     @classmethod
     def cleanup(cls):

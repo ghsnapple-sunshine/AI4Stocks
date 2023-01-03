@@ -5,7 +5,7 @@ from buffett.task.maintain import StockDailyMaintainTask, ConvertStockMinuteMain
 
 
 def maintain():
-    operator = Operator(RoleType.DbStock)
+    operator = Operator(RoleType.DB_STK)
     task_cls = [StockDailyMaintainTask]
     tasks = [
         task_cls[i](operator=operator, start_time=DateTime.today())
@@ -15,8 +15,8 @@ def maintain():
 
 
 def analysis_maintain():
-    ana_op = Operator(RoleType.DbAnaly)
-    stk_op = Operator(RoleType.DbStock)
+    ana_op = Operator(RoleType.DB_ANA)
+    stk_op = Operator(RoleType.DB_STK)
     task_cls = [ConvertStockMinuteMaintainTask]
     tasks = [
         task_cls[i](operator=ana_op, datasource_op=stk_op, start_time=DateTime.today())
