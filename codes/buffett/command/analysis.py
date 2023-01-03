@@ -17,8 +17,8 @@ def analysis():
     stk_op = Operator(RoleType.DbStock)
     _analysis(
         task_cls=[
-            ConvertStockDailyTask,
-            FuquanFactorTask,
+            # ConvertStockDailyTask,
+            # FuquanFactorTask,
             ConvertStockMinuteTask,
             TargetPatternRecognizeTask,
             TargetStatZdfTask,

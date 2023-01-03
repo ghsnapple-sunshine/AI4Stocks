@@ -19,6 +19,8 @@ TASK_RCD = "task_record"
 DL_RCD = "download_record"
 EA_RCD = "easy_record"
 RF_RCD = "reform_record"
+# analysis maintain类
+AMA_MIN5_MTAIN = "analysis_min5_maintain"
 #
 FQ_FAC, FQ_FAC_V2 = "fuquan_factor", "fuquan_factor_v2"
 #

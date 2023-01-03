@@ -40,6 +40,10 @@ class Connector:
         self._cursor = None
         self._logger: ConnectorLogger = LoggerBuilder.build(ConnectorLogger)()
 
+    @property
+    def role(self):
+        return self._role
+
     def connect(self):
         if self._conn is None:
             config = {

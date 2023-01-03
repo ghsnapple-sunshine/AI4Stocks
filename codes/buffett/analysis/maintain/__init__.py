@@ -1,0 +1,1 @@
+from buffett.analysis.maintain.conv_min5_mtain import ConvertStockMinuteAnalystMaintain

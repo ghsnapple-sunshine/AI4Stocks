@@ -18,6 +18,7 @@ from buffett.common.constants.col import (
     ST,
     A,
     B,
+    TYPE,
 )
 from buffett.common.constants.col.analysis import (
     EVENT,
@@ -123,5 +124,17 @@ FQ_FAC_META = create_meta(
         [END_DATE, ColType.DATE, AddReqType.KEY],
         [A, ColType.DOUBLE, AddReqType.NONE],
         [B, ColType.DOUBLE, AddReqType.NONE],
+    ]
+)
+
+"""
+Metadata for ANA_MIN5_MTAIN
+"""
+ANALY_MIN5_MTAIN_META = create_meta(
+    meta_list=[
+        [CODE, ColType.CODE, AddReqType.NONE],
+        [TYPE, ColType.ENUM_BOOL, AddReqType.NONE],
+        [START_DATE, ColType.DATE, AddReqType.NONE],
+        [END_DATE, ColType.DATE, AddReqType.NONE],
     ]
 )

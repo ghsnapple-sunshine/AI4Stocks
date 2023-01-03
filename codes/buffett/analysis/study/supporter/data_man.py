@@ -52,7 +52,11 @@ class DataManager:
         else:
             rop = self._stk_rop
             comb = para.comb
-            comb = CombExType.to_base(comb) if isinstance(comb, CombExType) else comb.clone()
+            comb = (
+                CombExType.to_base(comb)
+                if isinstance(comb, CombExType)
+                else comb.clone()
+            )
             if para.comb.source.is_analysis():
                 source = SOURCE_DICT[comb.source]
                 comb.with_source(source)
