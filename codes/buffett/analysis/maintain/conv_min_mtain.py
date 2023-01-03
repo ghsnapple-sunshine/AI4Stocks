@@ -87,12 +87,12 @@ class ConvertStockMinuteAnalystMaintain:
         """
         分进程运行
 
-        :param para:       stock_list, ana_role, stk_role
+        :param para:       pid, stock_list, ana_role, stk_role
         :return:
         """
-        tid, stock_list, ana_role, stk_role = para
+        pid, stock_list, ana_role, stk_role = para
         worker = ConvertStockMinuteAnalystMaintainWorker(
-            ana_rop=Operator(ana_role), stk_rop=Operator(stk_role), tid=tid
+            ana_rop=Operator(ana_role), stk_rop=Operator(stk_role), pid=pid
         )
         return worker.run(stock_list)
 
@@ -118,11 +118,12 @@ class ConvertStockMinuteAnalystMaintainWorker:
     分钟线维护的子线程算子
     """
 
-    def __init__(self, ana_rop: Operator, stk_rop: Operator, tid: int):
+    def __init__(self, ana_rop: Operator, stk_rop: Operator, pid: int):
         self._ana_rop = ana_rop
         self._stk_rop = stk_rop
         self._dataman = DataManager(ana_rop=self._ana_rop, stk_rop=self._stk_rop)
-        self._logger = LoggerBuilder.build(StockMinuteAnalystMaintainLogger)(tid=tid)
+        self._pid = pid
+        self._logger = None
 
     def run(self, stock_list: list[str]) -> list[Optional[DataFrame]]:
         """
@@ -131,6 +132,9 @@ class ConvertStockMinuteAnalystMaintainWorker:
         :param stock_list:  股票清单
         :return:
         """
+        self._logger = LoggerBuilder.build(StockMinuteAnalystMaintainLogger)(
+            pid=self._pid, total=len(stock_list)
+        )
         dfs = [self._calculate_1stock(x) for x in stock_list]
         return dfs
 

@@ -134,7 +134,7 @@ ANA_MIN5_MTAIN_META = create_meta(
     meta_list=[
         [CODE, ColType.CODE, AddReqType.NONE],
         [TYPE, ColType.ENUM_BOOL, AddReqType.NONE],
-        [START_DATE, ColType.DATE, AddReqType.NONE],
-        [END_DATE, ColType.DATE, AddReqType.NONE],
+        [START_DATE, ColType.DATETIME, AddReqType.NONE],
+        [END_DATE, ColType.DATETIME, AddReqType.NONE],
     ]
 )

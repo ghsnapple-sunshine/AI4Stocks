@@ -1,2 +1,2 @@
-from buffett.task.maintain.conv_min5_mtain_task import ConvertStockMinuteMaintainTask
+from buffett.task.maintain.conv_min_mtain_task import ConvertStockMinuteMaintainTask
 from buffett.task.maintain.daily_mtain_task import StockDailyMaintainTask
