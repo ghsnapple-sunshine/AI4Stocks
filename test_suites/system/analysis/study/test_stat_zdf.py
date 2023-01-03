@@ -2,7 +2,7 @@ from unittest.mock import patch
 
 from buffett.adapter.pandas import DataFrame
 from buffett.analysis import Para
-from buffett.analysis.recorder.analysis_recorder import AnalysisRecorder
+from buffett.analysis.recorder import AnalysisRecorder
 from buffett.analysis.study import FuquanAnalystV2, StatZdfAnalyst
 from buffett.analysis.study.tools import TableNameTool
 from buffett.analysis.types import AnalystType

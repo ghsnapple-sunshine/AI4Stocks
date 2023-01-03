@@ -4,7 +4,7 @@ from typing import Optional
 from buffett.adapter.numpy import NAN
 from buffett.adapter.pandas import pd, DataFrame
 from buffett.analysis import Para
-from buffett.analysis.recorder.analysis_recorder import AnalysisRecorder
+from buffett.analysis.recorder import AnalysisRecorder
 from buffett.analysis.study.supporter import CalendarManager, DataManager
 from buffett.analysis.study.tools import get_stock_list, TableNameTool
 from buffett.analysis.types import AnalystType

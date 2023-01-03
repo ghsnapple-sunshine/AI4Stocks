@@ -1,0 +1,1 @@
+from buffett.analysis.recorder.analysis_recorder import AnalysisRecorder
