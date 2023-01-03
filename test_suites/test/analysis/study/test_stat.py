@@ -40,5 +40,3 @@ class TestStatisticsAnalyst(SimpleTester):
         df1 = DataFrame(data=arr1, columns=columns)
         df2 = DataFrame(data=arr2, columns=columns)
         assert cls.dataframe_almost_equals(df1, df2, on_index=True)
-
-

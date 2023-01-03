@@ -8,7 +8,7 @@ from buffett.download.handler.stock import (
     BsDailyHandler,
     ThDailyHandler,
     BsMinuteHandler,
-    DcFhpgHandler
+    DcFhpgHandler,
 )
 from buffett.download.maintain import StockDailyMaintain
 from test import (
