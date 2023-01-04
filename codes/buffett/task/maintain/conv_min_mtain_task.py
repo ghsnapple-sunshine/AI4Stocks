@@ -19,7 +19,7 @@ class ConvertStockMinuteMaintainTask(Task):
         super().__init__(
             wrapper=Wrapper(
                 ConvertStockMinuteAnalystMaintain(
-                    ana_op=operator, stk_rop=datasource_op
+                    ana_rop=operator, stk_rop=datasource_op
                 ).run
             ),
             start_time=start_time,

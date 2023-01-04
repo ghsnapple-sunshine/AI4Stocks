@@ -2,7 +2,7 @@ from typing import Optional
 
 from buffett.adapter.pandas import DataFrame, pd
 from buffett.analysis import Para
-from buffett.analysis.study.base import Analyst
+from buffett.analysis.study.base import Analyst, AnalystWorker
 from buffett.analysis.study.tools import get_stock_list
 from buffett.analysis.types import AnalystType
 from buffett.common.constants.col import (
@@ -20,12 +20,9 @@ from buffett.common.constants.col import (
     ST,
 )
 from buffett.common.constants.col.my import USE, DC, BS
-from buffett.common.constants.col.target import CODE
 from buffett.common.constants.meta.analysis.definition import CONV_DAILY_META
-from buffett.common.constants.meta.handler.definition import DAILY_MTAIN_META
 from buffett.common.constants.table import DAILY_MTAIN
 from buffett.common.magic import SOURCE
-from buffett.common.pendulum import DateSpan
 from buffett.common.tools import dataframe_not_valid, dataframe_is_valid
 from buffett.download.mysql import Operator
 from buffett.download.types import FuquanType, SourceType, FreqType
@@ -34,13 +31,14 @@ COLS = [DATE, OPEN, CLOSE, HIGH, LOW, CJL, CJE, ZDF, HSL]
 
 
 class ConvertStockDailyAnalyst(Analyst):
-    def __init__(self, ana_op: Operator, stk_op: Operator):
+    def __init__(self, ana_rop: Operator, ana_wop: Operator, stk_rop: Operator):
         super(ConvertStockDailyAnalyst, self).__init__(
-            stk_rop=stk_op,
-            ana_rop=ana_op,
-            ana_wop=ana_op.copy(),
+            stk_rop=stk_rop,
+            ana_rop=ana_rop,
+            ana_wop=ana_wop,
             analyst=AnalystType.CONV,
             meta=CONV_DAILY_META,
+            Worker=ConvertStockDailyAnalystWorker,
             use_stock=True,
             use_stock_minute=False,
             use_index=False,
@@ -48,16 +46,6 @@ class ConvertStockDailyAnalyst(Analyst):
             use_industry=False,
             kwd=DATE,
         )
-        self._mtain_result = None
-
-    def calculate(self, span: DateSpan) -> None:
-        self._mtain_result = dict(
-            (k, v)
-            for k, v in self._stk_rop.select_data(
-                name=DAILY_MTAIN, meta=DAILY_MTAIN_META
-            ).groupby(by=[CODE])
-        )
-        super(ConvertStockDailyAnalyst, self).calculate(span=span)
 
     def _get_stock_list(self) -> Optional[DataFrame]:
         """
@@ -78,6 +66,28 @@ class ConvertStockDailyAnalyst(Analyst):
         stock_list = pd.merge(stock_list, comb_list, how="cross")
         return stock_list
 
+
+class ConvertStockDailyAnalystWorker(AnalystWorker):
+    def __init__(
+        self,
+        stk_rop: Operator,
+        ana_rop: Operator,
+        ana_wop: Operator,
+        analyst: AnalystType,
+        meta: DataFrame,
+        kwd: str,
+        pid: int,
+    ):
+        super(ConvertStockDailyAnalystWorker, self).__init__(
+            pid=pid,
+            stk_rop=stk_rop,
+            ana_rop=ana_rop,
+            ana_wop=ana_wop,
+            analyst=analyst,
+            meta=meta,
+            kwd=kwd,
+        )
+
     def _calculate(self, para: Para) -> Optional[DataFrame]:
         """
         执行计算逻辑
@@ -85,7 +95,11 @@ class ConvertStockDailyAnalyst(Analyst):
         :param para:
         :return:
         """
-        mtain_info = self._mtain_result.get(para.target.code)
+        mtain_info = self._stk_rop.execute(
+            f"select * from {DAILY_MTAIN} where `code`='{para.target.code}'",
+            fetch=True,
+
+        )
         if dataframe_not_valid(mtain_info):
             return
         dc_info = self._dataman.select_data(

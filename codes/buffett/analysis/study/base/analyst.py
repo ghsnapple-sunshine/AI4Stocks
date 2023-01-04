@@ -1,11 +1,13 @@
+from __future__ import annotations
+
 from abc import abstractmethod
-from typing import Optional
+from typing import Optional, Type
 
 from buffett.adapter.numpy import NAN
 from buffett.adapter.pandas import pd, DataFrame
 from buffett.analysis import Para
 from buffett.analysis.recorder import AnalysisRecorder
-from buffett.analysis.study.supporter import CalendarManager, DataManager
+from buffett.analysis.study.supporter import DataManager
 from buffett.analysis.study.tools import get_stock_list, TableNameTool
 from buffett.analysis.types import AnalystType
 from buffett.common.constants.col import (
@@ -28,8 +30,7 @@ from buffett.common.constants.col.target import (
     INDUSTRY_CODE,
     INDUSTRY_NAME,
 )
-from buffett.common.constants.meta.analysis import ANA_EVENT_META
-from buffett.common.interface import ProducerConsumer
+from buffett.common.interface import ProducerConsumer, MultiProcessTaskManager
 from buffett.common.logger import LoggerBuilder, Logger
 from buffett.common.pendulum import DateSpan, convert_datetime
 from buffett.common.tools import dataframe_is_valid, dataframe_not_valid
@@ -38,6 +39,7 @@ from buffett.download.handler.concept import DcConceptListHandler
 from buffett.download.handler.index import DcIndexListHandler
 from buffett.download.handler.industry import DcIndustryListHandler
 from buffett.download.mysql import Operator
+from buffett.download.mysql.types import RoleType
 from buffett.download.types import FreqType, SourceType, FuquanType
 
 
@@ -48,7 +50,8 @@ class Analyst:
         ana_rop: Operator,
         ana_wop: Operator,
         analyst: AnalystType,
-        meta: DataFrame = ANA_EVENT_META,
+        meta: DataFrame,
+        Worker: Type[AnalystWorker],
         use_stock: bool = True,
         use_stock_minute: bool = False,
         use_index: bool = True,
@@ -62,6 +65,7 @@ class Analyst:
         self._ana_wop = ana_wop
         self._analyst = analyst
         self._meta = meta
+        self._Worker = Worker
         self._use_stock = use_stock
         self._use_stock_minute = use_stock_minute
         self._use_index = use_index
@@ -74,10 +78,7 @@ class Analyst:
         ):
             raise ValueError("Should use at least one type of data.")
         #
-        self._logger = LoggerBuilder.build(AnalysisLogger)(analyst)
-        self._dataman = DataManager(ana_rop=ana_rop, stk_rop=stk_rop)
-        self._calendarman = CalendarManager(datasource_op=stk_rop)
-        self._recorder = AnalysisRecorder(operator=ana_wop)
+        self._recorder = AnalysisRecorder(operator=ana_rop)
 
     def calculate(self, span: DateSpan) -> None:
         """
@@ -91,52 +92,52 @@ class Analyst:
         comb_records = self._get_comb_records(
             todo_records=todo_records, done_records=done_records
         )
-        # 使用生产者/消费者模式，异步下载/保存数据
-        prod_cons = ProducerConsumer(
-            producer=Wrapper(self._calculate_1target),
-            consumer=Wrapper(self._save_1target),
-            queue_size=30,
-            args_map=comb_records.itertuples(index=False),
-            task_num=len(comb_records),
+        taskman = MultiProcessTaskManager(
+            worker=self._run_with_multiprocess,
+            args=[
+                comb_records,
+                self._Worker,
+                self._ana_rop.role,
+                self._ana_wop.role,
+                self._stk_rop.role,
+                self._analyst,
+                self._meta,
+                self._kwd,
+            ],
         )
-        prod_cons.run()
-
-    def _calculate_1target(self, row: tuple) -> tuple[Para, DataFrame]:
-        #
-        para = Para.from_tuple(row)
-        self._logger.info_calculate_start(para)
-        # select & calculate
-        result = self._calculate(para)
-        # filter & save
-        if dataframe_is_valid(result):
-            result = result[para.span.is_insides(result[self._kwd])]
-        return para, result
+        taskman.run()
 
     @staticmethod
-    @abstractmethod
-    def _calculate(para: Para) -> Optional[DataFrame]:
+    def _run_with_multiprocess(
+        para: tuple[
+            int,
+            DataFrame,
+            Type[AnalystWorker],
+            RoleType,
+            RoleType,
+            RoleType,
+            AnalystType,
+            DataFrame,
+            str,
+        ]
+    ) -> None:
         """
-        执行计算逻辑
+        基于子进程运行
 
-        :param para:
+        :param para:        pid, comb_records, AnalystWorker(Cls), ana_r, ana_w, stk_r, analysis, meta, kwd
         :return:
         """
-        pass
-
-    def _save_1target(self, obj: tuple[Para, DataFrame]):
-        """
-        将数据存储到数据库
-
-        :param obj:
-        :return:
-        """
-        para, data = obj
-        if dataframe_is_valid(data):
-            table_name = TableNameTool.get_by_code(para=para)
-            self._ana_wop.create_table(name=table_name, meta=self._meta)
-            self._ana_wop.insert_data_safe(name=table_name, df=data, meta=self._meta)
-        self._recorder.save(para=para)
-        self._logger.info_calculate_end(para)
+        pid, comb_records, Worker, ana_r, ana_w, stk_r, analyst, meta, kwd = para
+        worker = Worker(
+            pid=pid,
+            ana_rop=Operator(ana_r),
+            ana_wop=Operator(ana_w),
+            stk_rop=Operator(stk_r),
+            analyst=analyst,
+            meta=meta,
+            kwd=kwd,
+        )
+        worker.calculate(comb_records)
 
     def _get_todo_records(self, span: DateSpan) -> DataFrame:
         """
@@ -272,17 +273,100 @@ class Analyst:
         return data
 
 
+class AnalystWorker:
+    def __init__(
+        self,
+        pid: int,
+        ana_rop: Operator,
+        ana_wop: Operator,
+        stk_rop: Operator,
+        analyst: AnalystType,
+        meta: DataFrame,
+        kwd: str,
+    ):
+        #
+        self._ana_rop = ana_rop
+        self._ana_wop = ana_wop
+        self._stk_rop = stk_rop
+        self._analyst = analyst
+        self._meta = meta
+        self._kwd = kwd
+        self._pid = pid
+        #
+        self._logger = None
+        self._dataman = DataManager(ana_rop=ana_rop, stk_rop=stk_rop)
+        self._recorder = AnalysisRecorder(operator=ana_wop)
+
+    def calculate(self, comb_records: DataFrame):
+        # 初始化Logger
+        self._logger = LoggerBuilder.build(AnalysisLogger)(
+            pid=self._pid, total=len(comb_records), analyst=self._analyst
+        )
+        # 使用生产者/消费者模式，异步下载/保存数据
+        prod_cons = ProducerConsumer(
+            producer=Wrapper(self._calculate_1target),
+            consumer=Wrapper(self._save_1target),
+            queue_size=3,
+            args_map=comb_records.itertuples(index=False),
+            task_num=len(comb_records),
+        )
+        prod_cons.run()
+
+    def _calculate_1target(self, row: tuple) -> tuple[Para, DataFrame]:
+        #
+        para = Para.from_tuple(row)
+        self._logger.info_calculate_start(para)
+        # select & calculate
+        result = self._calculate(para)
+        # filter & save
+        if dataframe_is_valid(result):
+            result = result[para.span.is_insides(result[self._kwd])]
+        return para, result
+
+    @staticmethod
+    @abstractmethod
+    def _calculate(para: Para) -> Optional[DataFrame]:
+        """
+        执行计算逻辑
+
+        :param para:
+        :return:
+        """
+        pass
+
+    def _save_1target(self, obj: tuple[Para, DataFrame]):
+        """
+        将数据存储到数据库
+
+        :param obj:
+        :return:
+        """
+        para, data = obj
+        if dataframe_is_valid(data):
+            table_name = TableNameTool.get_by_code(para=para)
+            self._ana_wop.create_table(name=table_name, meta=self._meta)
+            self._ana_wop.insert_data_safe(name=table_name, df=data, meta=self._meta)
+        self._recorder.save(para=para)
+        self._logger.info_calculate_end(para)
+
+
 class AnalysisLogger(Logger):
-    def __init__(self, analyst: AnalystType):
+    def __init__(self, pid: int, total: int, analyst: AnalystType):
+        self._pid = pid
+        self._total = total
+        self._curr = 1
         self._analyst = str(analyst)
 
     def info_calculate_start(self, para: Para):
-        Logger.info(f"Start to Calculate {self._analyst} for {para}")
+        self.info(
+            f"[P{self._pid}]({self._curr}/{self._total})Start to Calculate {self._analyst} for {para}."
+        )
+        self._curr += 1
 
     def info_calculate_end(self, para: Para):
-        Logger.info(f"Successfully Calculate {self._analyst} for {para}")
+        self.info(f"[P{self._pid}]Successfully Calculate {self._analyst} for {para}.")
 
     def warning_calculate_end(self, para: Para):
-        Logger.info(
-            f"End Calculate {self._analyst} for {para}, nothing is found for calculation."
+        self.info(
+            f"[P{self._pid}]End Calculate {self._analyst} for {para}, nothing is found for calculation."
         )

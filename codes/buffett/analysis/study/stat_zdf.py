@@ -5,7 +5,8 @@ from zdf_stat import stat_past_with_period  # ignore this pycharm error
 from buffett.adapter.numpy import np
 from buffett.adapter.pandas import DataFrame
 from buffett.analysis import Para
-from buffett.analysis.study.base import Analyst
+from buffett.analysis.study.base import Analyst, AnalystWorker
+from buffett.analysis.study.supporter import CalendarManager
 from buffett.analysis.types import AnalystType
 from buffett.common.constants.col import CLOSE, HIGH, LOW, DATETIME
 from buffett.common.constants.col.analysis import (
@@ -27,7 +28,6 @@ from buffett.common.constants.col.analysis import (
     ZF20_MAX,
 )
 from buffett.common.constants.meta.analysis import ANA_ZDF_META
-from buffett.common.logger import Logger, LoggerBuilder
 from buffett.common.tools import dataframe_not_valid
 from buffett.download.mysql import Operator
 from buffett.download.types import FreqType
@@ -55,16 +55,43 @@ output_columns = [
 
 
 class StatZdfAnalyst(Analyst):
-    def __init__(self, ana_op: Operator, stk_op: Operator):
+    def __init__(self, ana_rop: Operator, ana_wop: Operator, stk_rop: Operator):
         super(StatZdfAnalyst, self).__init__(
-            stk_rop=stk_op,
-            ana_rop=ana_op,
-            ana_wop=ana_op.copy(),
+            stk_rop=stk_rop,
+            ana_rop=ana_rop,
+            ana_wop=ana_wop,
             analyst=AnalystType.STAT_ZDF,
             meta=ANA_ZDF_META,
+            Worker=StatZdfAnalystWorker,
+            use_stock=True,
             use_stock_minute=True,
+            use_index=True,
+            use_concept=True,
+            use_industry=True,
         )
-        self._zdf_logger = LoggerBuilder.build(StatZdfLogger)()
+
+
+class StatZdfAnalystWorker(AnalystWorker):
+    def __init__(
+        self,
+        stk_rop: Operator,
+        ana_rop: Operator,
+        ana_wop: Operator,
+        analyst: AnalystType,
+        meta: DataFrame,
+        kwd: str,
+        pid: int,
+    ):
+        super(StatZdfAnalystWorker, self).__init__(
+            pid=pid,
+            stk_rop=stk_rop,
+            ana_rop=ana_rop,
+            ana_wop=ana_wop,
+            analyst=analyst,
+            meta=meta,
+            kwd=kwd,
+        )
+        self._calendarman = CalendarManager(datasource_op=stk_rop)
 
     def _calculate(self, para: Para) -> Optional[DataFrame]:
         """
@@ -73,7 +100,6 @@ class StatZdfAnalyst(Analyst):
         :param para:
         :return:
         """
-        self._zdf_logger.debug_step1(para=para)
         mul = 1 if para.comb.freq == FreqType.DAY else 48
         start = para.span.start
         end = self._calendarman.query(para.span.end, offset=20)
@@ -85,7 +111,8 @@ class StatZdfAnalyst(Analyst):
         stat = self._calculate_zdf(data, mul)
         return stat
 
-    def _calculate_zdf(self, df: DataFrame, mul: int) -> DataFrame:
+    @staticmethod
+    def _calculate_zdf(df: DataFrame, mul: int) -> DataFrame:
         """
         分别计算5日和20日的统计量
 
@@ -94,26 +121,9 @@ class StatZdfAnalyst(Analyst):
         :return:
         """
         arr = df[input_columns].values
-        self._zdf_logger.debug_step2()
         stat5 = stat_past_with_period(arr, period=5 * mul)
-        self._zdf_logger.debug_step3()
         stat20 = stat_past_with_period(arr, period=20 * mul)
         stat = np.concatenate([stat5, stat20], axis=1)
         data = DataFrame(data=stat, columns=output_columns)
         data[DATETIME] = df.index
         return data
-
-
-class StatZdfLogger(Logger):
-    def __init__(self):
-        self._para = None
-
-    def debug_step1(self, para: Para):
-        self._para = para
-        Logger.debug(f"1. Prepare data for {para}.")
-
-    def debug_step2(self):
-        Logger.debug(f"2. Process 5-day stat for {self._para}.")
-
-    def debug_step3(self):
-        Logger.debug(f"3. Process 20-day stat for {self._para}.")

@@ -9,8 +9,10 @@ from buffett.download.mysql import Operator
 
 
 class FuquanAnalystV2(FuquanAnalyst):
-    def __init__(self, ana_op: Operator, stk_op: Operator):
-        super(FuquanAnalystV2, self).__init__(ana_op=ana_op, stk_op=stk_op)
+    def __init__(self, ana_rop: Operator, ana_wop: Operator, stk_rop: Operator):
+        super(FuquanAnalystV2, self).__init__(
+            ana_rop=ana_rop, ana_wop=ana_wop, stk_rop=stk_rop
+        )
         # override parameters
         self._NAME = FQ_FAC_V2
         self._META = FQ_FAC_META

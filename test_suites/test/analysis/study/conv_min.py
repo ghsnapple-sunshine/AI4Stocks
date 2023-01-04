@@ -22,7 +22,7 @@ def test_conv_min(self):
     :return:
     """
     row = self._bs_minute_handler.select_data(para=self._long_para).shape[0]
-    analyst = ConvertStockMinuteAnalyst(stk_op=self._stk_rop, ana_op=self._operator)
+    analyst = ConvertStockMinuteAnalyst(stk_rop=self._stk_rop, ana_rop=self._operator)
     analyst.calculate(span=self._long_para.span)
     select_para = (
         Para()

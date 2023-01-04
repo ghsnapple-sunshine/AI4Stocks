@@ -12,7 +12,9 @@ class TargetPatternRecognizeTask(Task):
     ):
         super().__init__(
             wrapper=Wrapper(
-                PatternAnalyst(ana_op=operator, stk_op=datasource_op).calculate
+                PatternAnalyst(
+                    ana_rop=operator, ana_wop=operator.copy(), stk_rop=datasource_op
+                ).calculate
             ),
             args=(DateSpan(start=Date(2000, 1, 1), end=Date(2022, 11, 1)),),
             start_time=start_time,

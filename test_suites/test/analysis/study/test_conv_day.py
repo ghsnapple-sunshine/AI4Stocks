@@ -29,7 +29,7 @@ class TestConvertStockDailyAnalyst(AnalysisTester):
         cls._bs_handler = BsDailyHandler(operator=cls._operator)
         cls._bs_handler.obtain_data(para=cls._short_para)
         cls._analyst = ConvertStockDailyAnalyst(
-            stk_op=cls._datasource_op, ana_op=cls._operator
+            stk_rop=cls._datasource_op, ana_rop=cls._operator
         )
 
     @classmethod

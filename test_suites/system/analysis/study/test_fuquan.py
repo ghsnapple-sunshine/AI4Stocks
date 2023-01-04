@@ -14,7 +14,7 @@ from system.mock_tester import MockTester
 
 class FuquanAnalystForMock(FuquanAnalystV2):
     def __init__(self, ana_rop: Operator, stk_op: Operator, ana_wop: Operator):
-        super(FuquanAnalystForMock, self).__init__(ana_op=ana_rop, stk_op=stk_op)
+        super(FuquanAnalystForMock, self).__init__(ana_rop=ana_rop, stk_op=stk_op)
         self._ana_wop = ana_wop
 
 

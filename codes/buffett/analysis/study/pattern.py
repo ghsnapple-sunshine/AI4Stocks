@@ -3,7 +3,8 @@ from typing import Optional
 from buffett.adapter.pandas import pd, DataFrame, Series
 from buffett.adapter.talib import PatternRecognize
 from buffett.analysis import Para
-from buffett.analysis.study.base import Analyst
+from buffett.analysis.study.base import Analyst, AnalystWorker
+from buffett.analysis.study.supporter import CalendarManager
 from buffett.analysis.types import AnalystType
 from buffett.common.constants.col import DATETIME
 from buffett.common.constants.col.analysis import EVENT, VALUE
@@ -13,14 +14,43 @@ from buffett.download.mysql import Operator
 
 
 class PatternAnalyst(Analyst):
-    def __init__(self, ana_op: Operator, stk_op: Operator):
+    def __init__(self, ana_rop: Operator, ana_wop: Operator, stk_rop: Operator):
         super(PatternAnalyst, self).__init__(
-            stk_rop=stk_op,
-            ana_rop=ana_op,
-            ana_wop=ana_op.copy(),
+            stk_rop=stk_rop,
+            ana_rop=ana_rop,
+            ana_wop=ana_wop,
             analyst=AnalystType.PATTERN,
             meta=ANA_EVENT_META,
+            Worker=PatternAnalystWorker,
+            use_stock=True,
+            use_stock_minute=False,
+            use_index=False,
+            use_concept=False,
+            use_industry=False,
         )
+
+
+class PatternAnalystWorker(AnalystWorker):
+    def __init__(
+        self,
+        stk_rop: Operator,
+        ana_rop: Operator,
+        ana_wop: Operator,
+        analyst: AnalystType,
+        meta: DataFrame,
+        kwd: str,
+        pid: int,
+    ):
+        super(PatternAnalystWorker, self).__init__(
+            pid=pid,
+            stk_rop=stk_rop,
+            ana_rop=ana_rop,
+            ana_wop=ana_wop,
+            analyst=analyst,
+            meta=meta,
+            kwd=kwd,
+        )
+        self._calendarman = CalendarManager(datasource_op=stk_rop)
 
     def _calculate(self, para: Para) -> Optional[DataFrame]:
         """

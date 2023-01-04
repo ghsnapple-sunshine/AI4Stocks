@@ -1,1 +1,1 @@
-from buffett.analysis.study.base.analyst import Analyst
+from buffett.analysis.study.base.analyst import Analyst, AnalystWorker

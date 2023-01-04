@@ -5,23 +5,14 @@ from buffett.analysis.maintain import ConvertStockMinuteAnalystMaintain
 from buffett.common.constants.col.target import CODE, NAME
 from buffett.common.magic import get_name
 from buffett.download.handler.list import SseStockListHandler, BsStockListHandler
-from buffett.download.mysql import Operator
 from system.mock_tester import MockTester
-
-
-class ConvertStockMinuteAnalystMaintainForMock(ConvertStockMinuteAnalystMaintain):
-    def __init__(self, ana_rop: Operator, stk_op: Operator, ana_wop: Operator):
-        super(ConvertStockMinuteAnalystMaintainForMock, self).__init__(
-            ana_op=ana_rop, stk_rop=stk_op
-        )
-        self._ana_wop = ana_wop
 
 
 class TestConvertStockMinuteAnalyst(MockTester):
     @classmethod
     def _setup_oncemore(cls):
-        cls._mtain = ConvertStockMinuteAnalystMaintainForMock(
-            ana_rop=cls._ana_op, ana_wop=cls._operator, stk_op=cls._stk_op
+        cls._mtain = ConvertStockMinuteAnalystMaintain(
+            ana_rop=cls._ana_op, ana_wop=cls._operator, stk_rop=cls._stk_op
         )
 
     def _setup_always(self) -> None:

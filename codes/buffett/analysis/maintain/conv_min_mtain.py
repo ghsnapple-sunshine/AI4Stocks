@@ -41,9 +41,9 @@ NA, ZERO = 1, 0
 
 
 class ConvertStockMinuteAnalystMaintain:
-    def __init__(self, ana_op: Operator, stk_rop: Operator):
-        self._ana_rop = ana_op
-        self._ana_wop = ana_op.copy()
+    def __init__(self, ana_rop: Operator, ana_wop: Operator, stk_rop: Operator):
+        self._ana_rop = ana_rop
+        self._ana_wop = ana_wop
         self._stk_rop = stk_rop
         self._dataman = DataManager(ana_rop=self._ana_rop, stk_rop=self._stk_rop)
 

@@ -65,11 +65,11 @@ AGG = {
 
 
 class FuquanAnalyst:
-    def __init__(self, ana_op: Operator, stk_op: Operator):
-        self._stk_rop = stk_op
-        self._ana_rop = ana_op
-        self._ana_wop = ana_op.copy()
-        self._fhpg_handler = DcFhpgHandler(operator=stk_op)
+    def __init__(self, ana_rop: Operator, ana_wop: Operator, stk_rop: Operator):
+        self._stk_rop = stk_rop
+        self._ana_rop = ana_rop
+        self._ana_wop = ana_wop
+        self._fhpg_handler = DcFhpgHandler(operator=stk_rop)
         self._dataman = DataManager(ana_rop=self._ana_rop, stk_rop=self._stk_rop)
         self._NAME = FQ_FAC
         self._META = FQ_FAC_META

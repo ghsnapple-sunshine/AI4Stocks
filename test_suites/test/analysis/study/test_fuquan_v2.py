@@ -38,7 +38,7 @@ class TestFuquanAnalystV2(AnalysisTester):
         cls._fhpg_handler = DcFhpgHandler(operator=cls._datasource_op)
         cls._daily_handler = BsDailyHandler(operator=cls._datasource_op)
         cls._minute_handler = BsMinuteHandler(operator=cls._datasource_op)
-        cls._analyst = FuquanAnalystV2(stk_op=cls._datasource_op, ana_op=cls._operator)
+        cls._analyst = FuquanAnalystV2(stk_op=cls._datasource_op, ana_rop=cls._operator)
 
     def _setup_always(self) -> None:
         DbSweeper.erase_except(TRA_CAL)

@@ -4,6 +4,7 @@ from pandas import (
     DataFrame as pd_DataFrame,
     Series as pd_Series,
     concat as pd_concat,
+    DateOffset as pd_DateOffset,
     isna as pd_isna,
     notna as pd_notna,
     NaT as pd_NAT,
@@ -21,6 +22,7 @@ from pandas import (
 
 # types
 DataFrame = pd_DataFrame
+DateOffset = pd_DateOffset
 Timestamp = pd_Timestamp
 Timedelta = pd_Timedelta
 Series = pd_Series
