@@ -2,7 +2,7 @@ from zdf_stat import stat_past_with_period
 
 from buffett.adapter.numpy import np, ndarray
 from buffett.adapter.pandas import DataFrame
-from buffett.cython.zdf.origin import stat_past_with_period as stat_past_with_period_py
+from buffett.cython.zdf.origin import stat_future_period as stat_past_with_period_py
 from test import SimpleTester
 
 

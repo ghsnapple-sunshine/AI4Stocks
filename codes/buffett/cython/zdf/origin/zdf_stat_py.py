@@ -5,7 +5,7 @@ from buffett.cython.zdf.origin.tree_py import Tree
 CLOSEd, HIGHd, LOWd = 0, 1, 2
 
 
-def stat_past_with_period(arr: ndarray, period: int) -> ndarray:
+def stat_future_period(arr: ndarray, period: int) -> ndarray:
     num = len(arr)
     res = np.zeros([num, 8], dtype=float)
     closes, highs, lows = Tree(), Tree(), Tree()

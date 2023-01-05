@@ -2009,7 +2009,7 @@ static PyTypeObject *__pyx_ptype_4tree_Tree = 0;
 static PyTypeObject *__pyx_ptype_8quantile_Quantile = 0;
 
 /* Module declarations from 'zdf_stat' */
-static PyArrayObject *__pyx_f_8zdf_stat_stat_past_with_period(PyArrayObject *, int, int __pyx_skip_dispatch); /*proto*/
+static PyArrayObject *__pyx_f_8zdf_stat_stat_future_period(PyArrayObject *, int, int __pyx_skip_dispatch); /*proto*/
 static __Pyx_TypeInfo __Pyx_TypeInfo_nn___pyx_t_5numpy_float_t = { "float_t", NULL, sizeof(__pyx_t_5numpy_float_t), { 0 }, 0, 'R', 0, 0 };
 #define __Pyx_MODULE_NAME "zdf_stat"
 extern int __pyx_module_is_main_zdf_stat;
@@ -2054,7 +2054,7 @@ static PyObject *__pyx_n_s_range;
 static PyObject *__pyx_n_s_reshape;
 static PyObject *__pyx_n_s_test;
 static PyObject *__pyx_n_s_zeros;
-static PyObject *__pyx_pf_8zdf_stat_stat_past_with_period(CYTHON_UNUSED PyObject *__pyx_self, PyArrayObject *__pyx_v_arr, int __pyx_v_period); /* proto */
+static PyObject *__pyx_pf_8zdf_stat_stat_future_period(CYTHON_UNUSED PyObject *__pyx_self, PyArrayObject *__pyx_v_arr, int __pyx_v_period); /* proto */
 static PyObject *__pyx_int_0;
 static PyObject *__pyx_int_1;
 static PyObject *__pyx_int_5;
@@ -2072,16 +2072,16 @@ static PyObject *__pyx_tuple__4;
 static PyObject *__pyx_tuple__5;
 /* Late includes */
 
-/* "zdf_stat.pyx":9
+/* "zdf_stat.pyx":8
  * 
  * 
- * cpdef cnp.ndarray[cnp.float_t, ndim=2] stat_past_with_period(cnp.ndarray[cnp.float_t, ndim=2] arr, int period):             # <<<<<<<<<<<<<<
+ * cpdef cnp.ndarray[cnp.float_t, ndim=2] stat_future_period(cnp.ndarray[cnp.float_t, ndim=2] arr, int period):             # <<<<<<<<<<<<<<
  * # def stat_past_with_period(arr, period):
  *     # S0
  */
 
-static PyObject *__pyx_pw_8zdf_stat_1stat_past_with_period(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static PyArrayObject *__pyx_f_8zdf_stat_stat_past_with_period(PyArrayObject *__pyx_v_arr, int __pyx_v_period, CYTHON_UNUSED int __pyx_skip_dispatch) {
+static PyObject *__pyx_pw_8zdf_stat_1stat_future_period(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static PyArrayObject *__pyx_f_8zdf_stat_stat_future_period(PyArrayObject *__pyx_v_arr, int __pyx_v_period, CYTHON_UNUSED int __pyx_skip_dispatch) {
   int __pyx_v_CLOSEd;
   int __pyx_v_HIGHd;
   int __pyx_v_LOWd;
@@ -2119,7 +2119,7 @@ static PyArrayObject *__pyx_f_8zdf_stat_stat_past_with_period(PyArrayObject *__p
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
-  __Pyx_RefNannySetupContext("stat_past_with_period", 0);
+  __Pyx_RefNannySetupContext("stat_future_period", 0);
   __pyx_pybuffer_res.pybuffer.buf = NULL;
   __pyx_pybuffer_res.refcount = 0;
   __pyx_pybuffernd_res.data = NULL;
@@ -2130,11 +2130,11 @@ static PyArrayObject *__pyx_f_8zdf_stat_stat_past_with_period(PyArrayObject *__p
   __pyx_pybuffernd_arr.rcbuffer = &__pyx_pybuffer_arr;
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_arr.rcbuffer->pybuffer, (PyObject*)__pyx_v_arr, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack) == -1)) __PYX_ERR(0, 9, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_arr.rcbuffer->pybuffer, (PyObject*)__pyx_v_arr, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack) == -1)) __PYX_ERR(0, 8, __pyx_L1_error)
   }
   __pyx_pybuffernd_arr.diminfo[0].strides = __pyx_pybuffernd_arr.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_arr.diminfo[0].shape = __pyx_pybuffernd_arr.rcbuffer->pybuffer.shape[0]; __pyx_pybuffernd_arr.diminfo[1].strides = __pyx_pybuffernd_arr.rcbuffer->pybuffer.strides[1]; __pyx_pybuffernd_arr.diminfo[1].shape = __pyx_pybuffernd_arr.rcbuffer->pybuffer.shape[1];
 
-  /* "zdf_stat.pyx":14
+  /* "zdf_stat.pyx":13
  *     # print("Enter 'stat_past_with_period'.")
  *     # S1
  *     cdef int CLOSEd = 0             # <<<<<<<<<<<<<<
@@ -2143,7 +2143,7 @@ static PyArrayObject *__pyx_f_8zdf_stat_stat_past_with_period(PyArrayObject *__p
  */
   __pyx_v_CLOSEd = 0;
 
-  /* "zdf_stat.pyx":15
+  /* "zdf_stat.pyx":14
  *     # S1
  *     cdef int CLOSEd = 0
  *     cdef int HIGHd = 1             # <<<<<<<<<<<<<<
@@ -2152,7 +2152,7 @@ static PyArrayObject *__pyx_f_8zdf_stat_stat_past_with_period(PyArrayObject *__p
  */
   __pyx_v_HIGHd = 1;
 
-  /* "zdf_stat.pyx":16
+  /* "zdf_stat.pyx":15
  *     cdef int CLOSEd = 0
  *     cdef int HIGHd = 1
  *     cdef int LOWd = 2             # <<<<<<<<<<<<<<
@@ -2161,31 +2161,31 @@ static PyArrayObject *__pyx_f_8zdf_stat_stat_past_with_period(PyArrayObject *__p
  */
   __pyx_v_LOWd = 2;
 
-  /* "zdf_stat.pyx":19
+  /* "zdf_stat.pyx":18
  *     # print("Finish create CLOSEd, HIGHd, LOWd.")
  *     # S2
  *     cdef int num = len(arr)             # <<<<<<<<<<<<<<
  *     # print("Finish create num.")
  *     cdef cnp.ndarray[cnp.float_t, ndim=2] res = np.zeros([num, 8], dtype=float)
  */
-  __pyx_t_1 = PyObject_Length(((PyObject *)__pyx_v_arr)); if (unlikely(__pyx_t_1 == ((Py_ssize_t)-1))) __PYX_ERR(0, 19, __pyx_L1_error)
+  __pyx_t_1 = PyObject_Length(((PyObject *)__pyx_v_arr)); if (unlikely(__pyx_t_1 == ((Py_ssize_t)-1))) __PYX_ERR(0, 18, __pyx_L1_error)
   __pyx_v_num = __pyx_t_1;
 
-  /* "zdf_stat.pyx":21
+  /* "zdf_stat.pyx":20
  *     cdef int num = len(arr)
  *     # print("Finish create num.")
  *     cdef cnp.ndarray[cnp.float_t, ndim=2] res = np.zeros([num, 8], dtype=float)             # <<<<<<<<<<<<<<
  *     # cdef c_np.ndarray[double, ndim=2] res = c_np.PyArray_ZEROS(nd=2, dims=[num, 8], type=c_np.NPY_FLOAT, fortran=0)
  *     # print("Finish create res.")
  */
-  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_np); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 21, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_np); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 20, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_zeros); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 21, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_zeros); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 20, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_v_num); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 21, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_v_num); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 20, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_4 = PyList_New(2); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 21, __pyx_L1_error)
+  __pyx_t_4 = PyList_New(2); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 20, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
   __Pyx_GIVEREF(__pyx_t_2);
   PyList_SET_ITEM(__pyx_t_4, 0, __pyx_t_2);
@@ -2193,26 +2193,26 @@ static PyArrayObject *__pyx_f_8zdf_stat_stat_past_with_period(PyArrayObject *__p
   __Pyx_GIVEREF(__pyx_int_8);
   PyList_SET_ITEM(__pyx_t_4, 1, __pyx_int_8);
   __pyx_t_2 = 0;
-  __pyx_t_2 = PyTuple_New(1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 21, __pyx_L1_error)
+  __pyx_t_2 = PyTuple_New(1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 20, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_GIVEREF(__pyx_t_4);
   PyTuple_SET_ITEM(__pyx_t_2, 0, __pyx_t_4);
   __pyx_t_4 = 0;
-  __pyx_t_4 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 21, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 20, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
-  if (PyDict_SetItem(__pyx_t_4, __pyx_n_s_dtype, ((PyObject *)(&PyFloat_Type))) < 0) __PYX_ERR(0, 21, __pyx_L1_error)
-  __pyx_t_5 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_t_2, __pyx_t_4); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 21, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_4, __pyx_n_s_dtype, ((PyObject *)(&PyFloat_Type))) < 0) __PYX_ERR(0, 20, __pyx_L1_error)
+  __pyx_t_5 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_t_2, __pyx_t_4); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 20, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-  if (!(likely(((__pyx_t_5) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_5, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 21, __pyx_L1_error)
+  if (!(likely(((__pyx_t_5) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_5, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 20, __pyx_L1_error)
   __pyx_t_6 = ((PyArrayObject *)__pyx_t_5);
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
     if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_res.rcbuffer->pybuffer, (PyObject*)__pyx_t_6, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float_t, PyBUF_FORMAT| PyBUF_STRIDES| PyBUF_WRITABLE, 2, 0, __pyx_stack) == -1)) {
       __pyx_v_res = ((PyArrayObject *)Py_None); __Pyx_INCREF(Py_None); __pyx_pybuffernd_res.rcbuffer->pybuffer.buf = NULL;
-      __PYX_ERR(0, 21, __pyx_L1_error)
+      __PYX_ERR(0, 20, __pyx_L1_error)
     } else {__pyx_pybuffernd_res.diminfo[0].strides = __pyx_pybuffernd_res.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_res.diminfo[0].shape = __pyx_pybuffernd_res.rcbuffer->pybuffer.shape[0]; __pyx_pybuffernd_res.diminfo[1].strides = __pyx_pybuffernd_res.rcbuffer->pybuffer.strides[1]; __pyx_pybuffernd_res.diminfo[1].shape = __pyx_pybuffernd_res.rcbuffer->pybuffer.shape[1];
     }
   }
@@ -2220,43 +2220,43 @@ static PyArrayObject *__pyx_f_8zdf_stat_stat_past_with_period(PyArrayObject *__p
   __pyx_v_res = ((PyArrayObject *)__pyx_t_5);
   __pyx_t_5 = 0;
 
-  /* "zdf_stat.pyx":25
+  /* "zdf_stat.pyx":24
  *     # print("Finish create res.")
  *     # S3
  *     cdef Tree closes = Tree()             # <<<<<<<<<<<<<<
  *     cdef Tree highs = Tree()
  *     cdef Tree lows = Tree()
  */
-  __pyx_t_5 = __Pyx_PyObject_CallNoArg(((PyObject *)__pyx_ptype_4tree_Tree)); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 25, __pyx_L1_error)
+  __pyx_t_5 = __Pyx_PyObject_CallNoArg(((PyObject *)__pyx_ptype_4tree_Tree)); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 24, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
   __pyx_v_closes = ((struct __pyx_obj_4tree_Tree *)__pyx_t_5);
   __pyx_t_5 = 0;
 
-  /* "zdf_stat.pyx":26
+  /* "zdf_stat.pyx":25
  *     # S3
  *     cdef Tree closes = Tree()
  *     cdef Tree highs = Tree()             # <<<<<<<<<<<<<<
  *     cdef Tree lows = Tree()
  *     # print("Finish create closes, highs and lows.")
  */
-  __pyx_t_5 = __Pyx_PyObject_CallNoArg(((PyObject *)__pyx_ptype_4tree_Tree)); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 26, __pyx_L1_error)
+  __pyx_t_5 = __Pyx_PyObject_CallNoArg(((PyObject *)__pyx_ptype_4tree_Tree)); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 25, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
   __pyx_v_highs = ((struct __pyx_obj_4tree_Tree *)__pyx_t_5);
   __pyx_t_5 = 0;
 
-  /* "zdf_stat.pyx":27
+  /* "zdf_stat.pyx":26
  *     cdef Tree closes = Tree()
  *     cdef Tree highs = Tree()
  *     cdef Tree lows = Tree()             # <<<<<<<<<<<<<<
  *     # print("Finish create closes, highs and lows.")
  *     # S4
  */
-  __pyx_t_5 = __Pyx_PyObject_CallNoArg(((PyObject *)__pyx_ptype_4tree_Tree)); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 27, __pyx_L1_error)
+  __pyx_t_5 = __Pyx_PyObject_CallNoArg(((PyObject *)__pyx_ptype_4tree_Tree)); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 26, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
   __pyx_v_lows = ((struct __pyx_obj_4tree_Tree *)__pyx_t_5);
   __pyx_t_5 = 0;
 
-  /* "zdf_stat.pyx":30
+  /* "zdf_stat.pyx":29
  *     # print("Finish create closes, highs and lows.")
  *     # S4
  *     cdef list quans = [Quantile(x, period) for x in [1, 5, 10, 90, 95, 99]]             # <<<<<<<<<<<<<<
@@ -2264,22 +2264,22 @@ static PyArrayObject *__pyx_f_8zdf_stat_stat_past_with_period(PyArrayObject *__p
  *     # S5
  */
   { /* enter inner scope */
-    __pyx_t_5 = PyList_New(0); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 30, __pyx_L5_error)
+    __pyx_t_5 = PyList_New(0); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 29, __pyx_L5_error)
     __Pyx_GOTREF(__pyx_t_5);
     __pyx_t_4 = __pyx_tuple_; __Pyx_INCREF(__pyx_t_4); __pyx_t_1 = 0;
     for (;;) {
       if (__pyx_t_1 >= 6) break;
       #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-      __pyx_t_2 = PyTuple_GET_ITEM(__pyx_t_4, __pyx_t_1); __Pyx_INCREF(__pyx_t_2); __pyx_t_1++; if (unlikely(0 < 0)) __PYX_ERR(0, 30, __pyx_L5_error)
+      __pyx_t_2 = PyTuple_GET_ITEM(__pyx_t_4, __pyx_t_1); __Pyx_INCREF(__pyx_t_2); __pyx_t_1++; if (unlikely(0 < 0)) __PYX_ERR(0, 29, __pyx_L5_error)
       #else
-      __pyx_t_2 = PySequence_ITEM(__pyx_t_4, __pyx_t_1); __pyx_t_1++; if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 30, __pyx_L5_error)
+      __pyx_t_2 = PySequence_ITEM(__pyx_t_4, __pyx_t_1); __pyx_t_1++; if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 29, __pyx_L5_error)
       __Pyx_GOTREF(__pyx_t_2);
       #endif
       __Pyx_XDECREF_SET(__pyx_7genexpr__pyx_v_x, __pyx_t_2);
       __pyx_t_2 = 0;
-      __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_v_period); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 30, __pyx_L5_error)
+      __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_v_period); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 29, __pyx_L5_error)
       __Pyx_GOTREF(__pyx_t_2);
-      __pyx_t_3 = PyTuple_New(2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 30, __pyx_L5_error)
+      __pyx_t_3 = PyTuple_New(2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 29, __pyx_L5_error)
       __Pyx_GOTREF(__pyx_t_3);
       __Pyx_INCREF(__pyx_7genexpr__pyx_v_x);
       __Pyx_GIVEREF(__pyx_7genexpr__pyx_v_x);
@@ -2287,10 +2287,10 @@ static PyArrayObject *__pyx_f_8zdf_stat_stat_past_with_period(PyArrayObject *__p
       __Pyx_GIVEREF(__pyx_t_2);
       PyTuple_SET_ITEM(__pyx_t_3, 1, __pyx_t_2);
       __pyx_t_2 = 0;
-      __pyx_t_2 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_8quantile_Quantile), __pyx_t_3, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 30, __pyx_L5_error)
+      __pyx_t_2 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_8quantile_Quantile), __pyx_t_3, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 29, __pyx_L5_error)
       __Pyx_GOTREF(__pyx_t_2);
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-      if (unlikely(__Pyx_ListComp_Append(__pyx_t_5, (PyObject*)__pyx_t_2))) __PYX_ERR(0, 30, __pyx_L5_error)
+      if (unlikely(__Pyx_ListComp_Append(__pyx_t_5, (PyObject*)__pyx_t_2))) __PYX_ERR(0, 29, __pyx_L5_error)
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     }
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
@@ -2304,7 +2304,7 @@ static PyArrayObject *__pyx_f_8zdf_stat_stat_past_with_period(PyArrayObject *__p
   __pyx_v_quans = ((PyObject*)__pyx_t_5);
   __pyx_t_5 = 0;
 
-  /* "zdf_stat.pyx":34
+  /* "zdf_stat.pyx":33
  *     # S5
  *     cdef int i
  *     for i in range(1, period):  # d[t+1: t+n)             # <<<<<<<<<<<<<<
@@ -2316,7 +2316,7 @@ static PyArrayObject *__pyx_f_8zdf_stat_stat_past_with_period(PyArrayObject *__p
   for (__pyx_t_9 = 1; __pyx_t_9 < __pyx_t_8; __pyx_t_9+=1) {
     __pyx_v_i = __pyx_t_9;
 
-    /* "zdf_stat.pyx":35
+    /* "zdf_stat.pyx":34
  *     cdef int i
  *     for i in range(1, period):  # d[t+1: t+n)
  *         closes.add(arr[i, CLOSEd])             # <<<<<<<<<<<<<<
@@ -2336,11 +2336,11 @@ static PyArrayObject *__pyx_f_8zdf_stat_stat_past_with_period(PyArrayObject *__p
     } else if (unlikely(__pyx_t_11 >= __pyx_pybuffernd_arr.diminfo[1].shape)) __pyx_t_12 = 1;
     if (unlikely(__pyx_t_12 != -1)) {
       __Pyx_RaiseBufferIndexError(__pyx_t_12);
-      __PYX_ERR(0, 35, __pyx_L1_error)
+      __PYX_ERR(0, 34, __pyx_L1_error)
     }
     ((struct __pyx_vtabstruct_4tree_Tree *)__pyx_v_closes->__pyx_vtab)->add(__pyx_v_closes, (*__Pyx_BufPtrStrided2d(__pyx_t_5numpy_float_t *, __pyx_pybuffernd_arr.rcbuffer->pybuffer.buf, __pyx_t_10, __pyx_pybuffernd_arr.diminfo[0].strides, __pyx_t_11, __pyx_pybuffernd_arr.diminfo[1].strides)), 0);
 
-    /* "zdf_stat.pyx":36
+    /* "zdf_stat.pyx":35
  *     for i in range(1, period):  # d[t+1: t+n)
  *         closes.add(arr[i, CLOSEd])
  *         highs.add(arr[i, HIGHd])             # <<<<<<<<<<<<<<
@@ -2360,11 +2360,11 @@ static PyArrayObject *__pyx_f_8zdf_stat_stat_past_with_period(PyArrayObject *__p
     } else if (unlikely(__pyx_t_10 >= __pyx_pybuffernd_arr.diminfo[1].shape)) __pyx_t_12 = 1;
     if (unlikely(__pyx_t_12 != -1)) {
       __Pyx_RaiseBufferIndexError(__pyx_t_12);
-      __PYX_ERR(0, 36, __pyx_L1_error)
+      __PYX_ERR(0, 35, __pyx_L1_error)
     }
     ((struct __pyx_vtabstruct_4tree_Tree *)__pyx_v_highs->__pyx_vtab)->add(__pyx_v_highs, (*__Pyx_BufPtrStrided2d(__pyx_t_5numpy_float_t *, __pyx_pybuffernd_arr.rcbuffer->pybuffer.buf, __pyx_t_11, __pyx_pybuffernd_arr.diminfo[0].strides, __pyx_t_10, __pyx_pybuffernd_arr.diminfo[1].strides)), 0);
 
-    /* "zdf_stat.pyx":37
+    /* "zdf_stat.pyx":36
  *         closes.add(arr[i, CLOSEd])
  *         highs.add(arr[i, HIGHd])
  *         lows.add(arr[i, LOWd])             # <<<<<<<<<<<<<<
@@ -2384,12 +2384,12 @@ static PyArrayObject *__pyx_f_8zdf_stat_stat_past_with_period(PyArrayObject *__p
     } else if (unlikely(__pyx_t_11 >= __pyx_pybuffernd_arr.diminfo[1].shape)) __pyx_t_12 = 1;
     if (unlikely(__pyx_t_12 != -1)) {
       __Pyx_RaiseBufferIndexError(__pyx_t_12);
-      __PYX_ERR(0, 37, __pyx_L1_error)
+      __PYX_ERR(0, 36, __pyx_L1_error)
     }
     ((struct __pyx_vtabstruct_4tree_Tree *)__pyx_v_lows->__pyx_vtab)->add(__pyx_v_lows, (*__Pyx_BufPtrStrided2d(__pyx_t_5numpy_float_t *, __pyx_pybuffernd_arr.rcbuffer->pybuffer.buf, __pyx_t_10, __pyx_pybuffernd_arr.diminfo[0].strides, __pyx_t_11, __pyx_pybuffernd_arr.diminfo[1].strides)), 0);
   }
 
-  /* "zdf_stat.pyx":40
+  /* "zdf_stat.pyx":39
  *     # print("Finish warm-up stages.")
  *     # S6
  *     for i in range(num - period):             # <<<<<<<<<<<<<<
@@ -2401,7 +2401,7 @@ static PyArrayObject *__pyx_f_8zdf_stat_stat_past_with_period(PyArrayObject *__p
   for (__pyx_t_9 = 0; __pyx_t_9 < __pyx_t_8; __pyx_t_9+=1) {
     __pyx_v_i = __pyx_t_9;
 
-    /* "zdf_stat.pyx":43
+    /* "zdf_stat.pyx":42
  *         # S6.1
  *         # d[t+n]
  *         closes.add(arr[i + period, CLOSEd])             # <<<<<<<<<<<<<<
@@ -2421,11 +2421,11 @@ static PyArrayObject *__pyx_f_8zdf_stat_stat_past_with_period(PyArrayObject *__p
     } else if (unlikely(__pyx_t_10 >= __pyx_pybuffernd_arr.diminfo[1].shape)) __pyx_t_12 = 1;
     if (unlikely(__pyx_t_12 != -1)) {
       __Pyx_RaiseBufferIndexError(__pyx_t_12);
-      __PYX_ERR(0, 43, __pyx_L1_error)
+      __PYX_ERR(0, 42, __pyx_L1_error)
     }
     ((struct __pyx_vtabstruct_4tree_Tree *)__pyx_v_closes->__pyx_vtab)->add(__pyx_v_closes, (*__Pyx_BufPtrStrided2d(__pyx_t_5numpy_float_t *, __pyx_pybuffernd_arr.rcbuffer->pybuffer.buf, __pyx_t_11, __pyx_pybuffernd_arr.diminfo[0].strides, __pyx_t_10, __pyx_pybuffernd_arr.diminfo[1].strides)), 0);
 
-    /* "zdf_stat.pyx":44
+    /* "zdf_stat.pyx":43
  *         # d[t+n]
  *         closes.add(arr[i + period, CLOSEd])
  *         highs.add(arr[i + period, HIGHd])             # <<<<<<<<<<<<<<
@@ -2445,16 +2445,16 @@ static PyArrayObject *__pyx_f_8zdf_stat_stat_past_with_period(PyArrayObject *__p
     } else if (unlikely(__pyx_t_11 >= __pyx_pybuffernd_arr.diminfo[1].shape)) __pyx_t_12 = 1;
     if (unlikely(__pyx_t_12 != -1)) {
       __Pyx_RaiseBufferIndexError(__pyx_t_12);
-      __PYX_ERR(0, 44, __pyx_L1_error)
+      __PYX_ERR(0, 43, __pyx_L1_error)
     }
     ((struct __pyx_vtabstruct_4tree_Tree *)__pyx_v_highs->__pyx_vtab)->add(__pyx_v_highs, (*__Pyx_BufPtrStrided2d(__pyx_t_5numpy_float_t *, __pyx_pybuffernd_arr.rcbuffer->pybuffer.buf, __pyx_t_10, __pyx_pybuffernd_arr.diminfo[0].strides, __pyx_t_11, __pyx_pybuffernd_arr.diminfo[1].strides)), 0);
 
-    /* "zdf_stat.pyx":45
+    /* "zdf_stat.pyx":44
  *         closes.add(arr[i + period, CLOSEd])
  *         highs.add(arr[i + period, HIGHd])
  *         lows.add(arr[i + period, LOWd])             # <<<<<<<<<<<<<<
  *         # print(f"--round:{i}--")
- *         # print([closes.get_nth(x) for x in range(0, 100)])
+ *         # print([closes.get_nth(x) for x in range(period)])
  */
     __pyx_t_11 = (__pyx_v_i + __pyx_v_period);
     __pyx_t_10 = __pyx_v_LOWd;
@@ -2469,32 +2469,32 @@ static PyArrayObject *__pyx_f_8zdf_stat_stat_past_with_period(PyArrayObject *__p
     } else if (unlikely(__pyx_t_10 >= __pyx_pybuffernd_arr.diminfo[1].shape)) __pyx_t_12 = 1;
     if (unlikely(__pyx_t_12 != -1)) {
       __Pyx_RaiseBufferIndexError(__pyx_t_12);
-      __PYX_ERR(0, 45, __pyx_L1_error)
+      __PYX_ERR(0, 44, __pyx_L1_error)
     }
     ((struct __pyx_vtabstruct_4tree_Tree *)__pyx_v_lows->__pyx_vtab)->add(__pyx_v_lows, (*__Pyx_BufPtrStrided2d(__pyx_t_5numpy_float_t *, __pyx_pybuffernd_arr.rcbuffer->pybuffer.buf, __pyx_t_11, __pyx_pybuffernd_arr.diminfo[0].strides, __pyx_t_10, __pyx_pybuffernd_arr.diminfo[1].strides)), 0);
 
-    /* "zdf_stat.pyx":49
- *         # print([closes.get_nth(x) for x in range(0, 100)])
+    /* "zdf_stat.pyx":48
+ *         # print([closes.get_nth(x) for x in range(period)])
  *         # S6.2
  *         res[i, 0:6] = [q.get_value(closes) for q in quans]  # 1%, 5%, 10%, 90%, 95%, 99%             # <<<<<<<<<<<<<<
  *         res[i, 6] = lows.get_nth(-1)  #
  *         res[i, 7] = highs.get_nth(0)  #
  */
     { /* enter inner scope */
-      __pyx_t_5 = PyList_New(0); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 49, __pyx_L15_error)
+      __pyx_t_5 = PyList_New(0); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 48, __pyx_L15_error)
       __Pyx_GOTREF(__pyx_t_5);
       __pyx_t_4 = __pyx_v_quans; __Pyx_INCREF(__pyx_t_4); __pyx_t_1 = 0;
       for (;;) {
         if (__pyx_t_1 >= PyList_GET_SIZE(__pyx_t_4)) break;
         #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-        __pyx_t_2 = PyList_GET_ITEM(__pyx_t_4, __pyx_t_1); __Pyx_INCREF(__pyx_t_2); __pyx_t_1++; if (unlikely(0 < 0)) __PYX_ERR(0, 49, __pyx_L15_error)
+        __pyx_t_2 = PyList_GET_ITEM(__pyx_t_4, __pyx_t_1); __Pyx_INCREF(__pyx_t_2); __pyx_t_1++; if (unlikely(0 < 0)) __PYX_ERR(0, 48, __pyx_L15_error)
         #else
-        __pyx_t_2 = PySequence_ITEM(__pyx_t_4, __pyx_t_1); __pyx_t_1++; if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 49, __pyx_L15_error)
+        __pyx_t_2 = PySequence_ITEM(__pyx_t_4, __pyx_t_1); __pyx_t_1++; if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 48, __pyx_L15_error)
         __Pyx_GOTREF(__pyx_t_2);
         #endif
         __Pyx_XDECREF_SET(__pyx_8genexpr1__pyx_v_q, __pyx_t_2);
         __pyx_t_2 = 0;
-        __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_8genexpr1__pyx_v_q, __pyx_n_s_get_value); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 49, __pyx_L15_error)
+        __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_8genexpr1__pyx_v_q, __pyx_n_s_get_value); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 48, __pyx_L15_error)
         __Pyx_GOTREF(__pyx_t_3);
         __pyx_t_13 = NULL;
         if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_3))) {
@@ -2508,10 +2508,10 @@ static PyArrayObject *__pyx_f_8zdf_stat_stat_past_with_period(PyArrayObject *__p
         }
         __pyx_t_2 = (__pyx_t_13) ? __Pyx_PyObject_Call2Args(__pyx_t_3, __pyx_t_13, ((PyObject *)__pyx_v_closes)) : __Pyx_PyObject_CallOneArg(__pyx_t_3, ((PyObject *)__pyx_v_closes));
         __Pyx_XDECREF(__pyx_t_13); __pyx_t_13 = 0;
-        if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 49, __pyx_L15_error)
+        if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 48, __pyx_L15_error)
         __Pyx_GOTREF(__pyx_t_2);
         __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-        if (unlikely(__Pyx_ListComp_Append(__pyx_t_5, (PyObject*)__pyx_t_2))) __PYX_ERR(0, 49, __pyx_L15_error)
+        if (unlikely(__Pyx_ListComp_Append(__pyx_t_5, (PyObject*)__pyx_t_2))) __PYX_ERR(0, 48, __pyx_L15_error)
         __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
       }
       __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
@@ -2522,9 +2522,9 @@ static PyArrayObject *__pyx_f_8zdf_stat_stat_past_with_period(PyArrayObject *__p
       goto __pyx_L1_error;
       __pyx_L18_exit_scope:;
     } /* exit inner scope */
-    __pyx_t_4 = __Pyx_PyInt_From_int(__pyx_v_i); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 49, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyInt_From_int(__pyx_v_i); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 48, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
-    __pyx_t_2 = PyTuple_New(2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 49, __pyx_L1_error)
+    __pyx_t_2 = PyTuple_New(2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 48, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_GIVEREF(__pyx_t_4);
     PyTuple_SET_ITEM(__pyx_t_2, 0, __pyx_t_4);
@@ -2532,11 +2532,11 @@ static PyArrayObject *__pyx_f_8zdf_stat_stat_past_with_period(PyArrayObject *__p
     __Pyx_GIVEREF(__pyx_slice__2);
     PyTuple_SET_ITEM(__pyx_t_2, 1, __pyx_slice__2);
     __pyx_t_4 = 0;
-    if (unlikely(PyObject_SetItem(((PyObject *)__pyx_v_res), __pyx_t_2, __pyx_t_5) < 0)) __PYX_ERR(0, 49, __pyx_L1_error)
+    if (unlikely(PyObject_SetItem(((PyObject *)__pyx_v_res), __pyx_t_2, __pyx_t_5) < 0)) __PYX_ERR(0, 48, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
 
-    /* "zdf_stat.pyx":50
+    /* "zdf_stat.pyx":49
  *         # S6.2
  *         res[i, 0:6] = [q.get_value(closes) for q in quans]  # 1%, 5%, 10%, 90%, 95%, 99%
  *         res[i, 6] = lows.get_nth(-1)  #             # <<<<<<<<<<<<<<
@@ -2556,11 +2556,11 @@ static PyArrayObject *__pyx_f_8zdf_stat_stat_past_with_period(PyArrayObject *__p
     } else if (unlikely(__pyx_t_11 >= __pyx_pybuffernd_res.diminfo[1].shape)) __pyx_t_12 = 1;
     if (unlikely(__pyx_t_12 != -1)) {
       __Pyx_RaiseBufferIndexError(__pyx_t_12);
-      __PYX_ERR(0, 50, __pyx_L1_error)
+      __PYX_ERR(0, 49, __pyx_L1_error)
     }
     *__Pyx_BufPtrStrided2d(__pyx_t_5numpy_float_t *, __pyx_pybuffernd_res.rcbuffer->pybuffer.buf, __pyx_t_10, __pyx_pybuffernd_res.diminfo[0].strides, __pyx_t_11, __pyx_pybuffernd_res.diminfo[1].strides) = ((struct __pyx_vtabstruct_4tree_Tree *)__pyx_v_lows->__pyx_vtab)->get_nth(__pyx_v_lows, -1);
 
-    /* "zdf_stat.pyx":51
+    /* "zdf_stat.pyx":50
  *         res[i, 0:6] = [q.get_value(closes) for q in quans]  # 1%, 5%, 10%, 90%, 95%, 99%
  *         res[i, 6] = lows.get_nth(-1)  #
  *         res[i, 7] = highs.get_nth(0)  #             # <<<<<<<<<<<<<<
@@ -2580,11 +2580,11 @@ static PyArrayObject *__pyx_f_8zdf_stat_stat_past_with_period(PyArrayObject *__p
     } else if (unlikely(__pyx_t_10 >= __pyx_pybuffernd_res.diminfo[1].shape)) __pyx_t_12 = 1;
     if (unlikely(__pyx_t_12 != -1)) {
       __Pyx_RaiseBufferIndexError(__pyx_t_12);
-      __PYX_ERR(0, 51, __pyx_L1_error)
+      __PYX_ERR(0, 50, __pyx_L1_error)
     }
     *__Pyx_BufPtrStrided2d(__pyx_t_5numpy_float_t *, __pyx_pybuffernd_res.rcbuffer->pybuffer.buf, __pyx_t_11, __pyx_pybuffernd_res.diminfo[0].strides, __pyx_t_10, __pyx_pybuffernd_res.diminfo[1].strides) = ((struct __pyx_vtabstruct_4tree_Tree *)__pyx_v_highs->__pyx_vtab)->get_nth(__pyx_v_highs, 0);
 
-    /* "zdf_stat.pyx":54
+    /* "zdf_stat.pyx":53
  *         # S6.3
  *         # d[t+1]
  *         closes.delete(arr[i + 1, CLOSEd])             # <<<<<<<<<<<<<<
@@ -2604,11 +2604,11 @@ static PyArrayObject *__pyx_f_8zdf_stat_stat_past_with_period(PyArrayObject *__p
     } else if (unlikely(__pyx_t_11 >= __pyx_pybuffernd_arr.diminfo[1].shape)) __pyx_t_12 = 1;
     if (unlikely(__pyx_t_12 != -1)) {
       __Pyx_RaiseBufferIndexError(__pyx_t_12);
-      __PYX_ERR(0, 54, __pyx_L1_error)
+      __PYX_ERR(0, 53, __pyx_L1_error)
     }
     ((struct __pyx_vtabstruct_4tree_Tree *)__pyx_v_closes->__pyx_vtab)->delete(__pyx_v_closes, (*__Pyx_BufPtrStrided2d(__pyx_t_5numpy_float_t *, __pyx_pybuffernd_arr.rcbuffer->pybuffer.buf, __pyx_t_10, __pyx_pybuffernd_arr.diminfo[0].strides, __pyx_t_11, __pyx_pybuffernd_arr.diminfo[1].strides)), 0);
 
-    /* "zdf_stat.pyx":55
+    /* "zdf_stat.pyx":54
  *         # d[t+1]
  *         closes.delete(arr[i + 1, CLOSEd])
  *         highs.delete(arr[i + 1, HIGHd])             # <<<<<<<<<<<<<<
@@ -2628,11 +2628,11 @@ static PyArrayObject *__pyx_f_8zdf_stat_stat_past_with_period(PyArrayObject *__p
     } else if (unlikely(__pyx_t_10 >= __pyx_pybuffernd_arr.diminfo[1].shape)) __pyx_t_12 = 1;
     if (unlikely(__pyx_t_12 != -1)) {
       __Pyx_RaiseBufferIndexError(__pyx_t_12);
-      __PYX_ERR(0, 55, __pyx_L1_error)
+      __PYX_ERR(0, 54, __pyx_L1_error)
     }
     ((struct __pyx_vtabstruct_4tree_Tree *)__pyx_v_highs->__pyx_vtab)->delete(__pyx_v_highs, (*__Pyx_BufPtrStrided2d(__pyx_t_5numpy_float_t *, __pyx_pybuffernd_arr.rcbuffer->pybuffer.buf, __pyx_t_11, __pyx_pybuffernd_arr.diminfo[0].strides, __pyx_t_10, __pyx_pybuffernd_arr.diminfo[1].strides)), 0);
 
-    /* "zdf_stat.pyx":56
+    /* "zdf_stat.pyx":55
  *         closes.delete(arr[i + 1, CLOSEd])
  *         highs.delete(arr[i + 1, HIGHd])
  *         lows.delete(arr[i + 1, LOWd])             # <<<<<<<<<<<<<<
@@ -2652,21 +2652,21 @@ static PyArrayObject *__pyx_f_8zdf_stat_stat_past_with_period(PyArrayObject *__p
     } else if (unlikely(__pyx_t_11 >= __pyx_pybuffernd_arr.diminfo[1].shape)) __pyx_t_12 = 1;
     if (unlikely(__pyx_t_12 != -1)) {
       __Pyx_RaiseBufferIndexError(__pyx_t_12);
-      __PYX_ERR(0, 56, __pyx_L1_error)
+      __PYX_ERR(0, 55, __pyx_L1_error)
     }
     ((struct __pyx_vtabstruct_4tree_Tree *)__pyx_v_lows->__pyx_vtab)->delete(__pyx_v_lows, (*__Pyx_BufPtrStrided2d(__pyx_t_5numpy_float_t *, __pyx_pybuffernd_arr.rcbuffer->pybuffer.buf, __pyx_t_10, __pyx_pybuffernd_arr.diminfo[0].strides, __pyx_t_11, __pyx_pybuffernd_arr.diminfo[1].strides)), 0);
   }
 
-  /* "zdf_stat.pyx":59
+  /* "zdf_stat.pyx":58
  *     # print("Finish iteration calculations.")
  *     # S7
  *     res = (res / arr[:, CLOSEd].reshape((num, 1)) - 1) * 100             # <<<<<<<<<<<<<<
  *     # print("Finish convert calculates. Exit 'stat_past_with_period'.")
  *     return res
  */
-  __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_v_CLOSEd); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 59, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_v_CLOSEd); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 58, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_4 = PyTuple_New(2); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 59, __pyx_L1_error)
+  __pyx_t_4 = PyTuple_New(2); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 58, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
   __Pyx_INCREF(__pyx_slice__3);
   __Pyx_GIVEREF(__pyx_slice__3);
@@ -2674,15 +2674,15 @@ static PyArrayObject *__pyx_f_8zdf_stat_stat_past_with_period(PyArrayObject *__p
   __Pyx_GIVEREF(__pyx_t_2);
   PyTuple_SET_ITEM(__pyx_t_4, 1, __pyx_t_2);
   __pyx_t_2 = 0;
-  __pyx_t_2 = __Pyx_PyObject_GetItem(((PyObject *)__pyx_v_arr), __pyx_t_4); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 59, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetItem(((PyObject *)__pyx_v_arr), __pyx_t_4); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 58, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-  __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_reshape); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 59, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_reshape); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 58, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_v_num); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 59, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_v_num); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 58, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_3 = PyTuple_New(2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 59, __pyx_L1_error)
+  __pyx_t_3 = PyTuple_New(2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 58, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_GIVEREF(__pyx_t_2);
   PyTuple_SET_ITEM(__pyx_t_3, 0, __pyx_t_2);
@@ -2703,19 +2703,19 @@ static PyArrayObject *__pyx_f_8zdf_stat_stat_past_with_period(PyArrayObject *__p
   __pyx_t_5 = (__pyx_t_2) ? __Pyx_PyObject_Call2Args(__pyx_t_4, __pyx_t_2, __pyx_t_3) : __Pyx_PyObject_CallOneArg(__pyx_t_4, __pyx_t_3);
   __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 59, __pyx_L1_error)
+  if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 58, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-  __pyx_t_4 = __Pyx_PyNumber_Divide(((PyObject *)__pyx_v_res), __pyx_t_5); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 59, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_PyNumber_Divide(((PyObject *)__pyx_v_res), __pyx_t_5); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 58, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
   __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-  __pyx_t_5 = __Pyx_PyInt_SubtractObjC(__pyx_t_4, __pyx_int_1, 1, 0, 0); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 59, __pyx_L1_error)
+  __pyx_t_5 = __Pyx_PyInt_SubtractObjC(__pyx_t_4, __pyx_int_1, 1, 0, 0); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 58, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-  __pyx_t_4 = PyNumber_Multiply(__pyx_t_5, __pyx_int_100); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 59, __pyx_L1_error)
+  __pyx_t_4 = PyNumber_Multiply(__pyx_t_5, __pyx_int_100); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 58, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
   __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-  if (!(likely(((__pyx_t_4) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_4, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 59, __pyx_L1_error)
+  if (!(likely(((__pyx_t_4) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_4, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 58, __pyx_L1_error)
   __pyx_t_6 = ((PyArrayObject *)__pyx_t_4);
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
@@ -2732,13 +2732,13 @@ static PyArrayObject *__pyx_f_8zdf_stat_stat_past_with_period(PyArrayObject *__p
       __pyx_t_14 = __pyx_t_15 = __pyx_t_16 = 0;
     }
     __pyx_pybuffernd_res.diminfo[0].strides = __pyx_pybuffernd_res.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_res.diminfo[0].shape = __pyx_pybuffernd_res.rcbuffer->pybuffer.shape[0]; __pyx_pybuffernd_res.diminfo[1].strides = __pyx_pybuffernd_res.rcbuffer->pybuffer.strides[1]; __pyx_pybuffernd_res.diminfo[1].shape = __pyx_pybuffernd_res.rcbuffer->pybuffer.shape[1];
-    if (unlikely(__pyx_t_7 < 0)) __PYX_ERR(0, 59, __pyx_L1_error)
+    if (unlikely(__pyx_t_7 < 0)) __PYX_ERR(0, 58, __pyx_L1_error)
   }
   __pyx_t_6 = 0;
   __Pyx_DECREF_SET(__pyx_v_res, ((PyArrayObject *)__pyx_t_4));
   __pyx_t_4 = 0;
 
-  /* "zdf_stat.pyx":61
+  /* "zdf_stat.pyx":60
  *     res = (res / arr[:, CLOSEd].reshape((num, 1)) - 1) * 100
  *     # print("Finish convert calculates. Exit 'stat_past_with_period'.")
  *     return res             # <<<<<<<<<<<<<<
@@ -2748,10 +2748,10 @@ static PyArrayObject *__pyx_f_8zdf_stat_stat_past_with_period(PyArrayObject *__p
   __pyx_r = ((PyArrayObject *)__pyx_v_res);
   goto __pyx_L0;
 
-  /* "zdf_stat.pyx":9
+  /* "zdf_stat.pyx":8
  * 
  * 
- * cpdef cnp.ndarray[cnp.float_t, ndim=2] stat_past_with_period(cnp.ndarray[cnp.float_t, ndim=2] arr, int period):             # <<<<<<<<<<<<<<
+ * cpdef cnp.ndarray[cnp.float_t, ndim=2] stat_future_period(cnp.ndarray[cnp.float_t, ndim=2] arr, int period):             # <<<<<<<<<<<<<<
  * # def stat_past_with_period(arr, period):
  *     # S0
  */
@@ -2770,7 +2770,7 @@ static PyArrayObject *__pyx_f_8zdf_stat_stat_past_with_period(PyArrayObject *__p
     __Pyx_SafeReleaseBuffer(&__pyx_pybuffernd_arr.rcbuffer->pybuffer);
     __Pyx_SafeReleaseBuffer(&__pyx_pybuffernd_res.rcbuffer->pybuffer);
   __Pyx_ErrRestore(__pyx_type, __pyx_value, __pyx_tb);}
-  __Pyx_AddTraceback("zdf_stat.stat_past_with_period", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("zdf_stat.stat_future_period", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = 0;
   goto __pyx_L2;
   __pyx_L0:;
@@ -2790,8 +2790,8 @@ static PyArrayObject *__pyx_f_8zdf_stat_stat_past_with_period(PyArrayObject *__p
 }
 
 /* Python wrapper */
-static PyObject *__pyx_pw_8zdf_stat_1stat_past_with_period(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static PyObject *__pyx_pw_8zdf_stat_1stat_past_with_period(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+static PyObject *__pyx_pw_8zdf_stat_1stat_future_period(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static PyObject *__pyx_pw_8zdf_stat_1stat_future_period(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   PyArrayObject *__pyx_v_arr = 0;
   int __pyx_v_period;
   int __pyx_lineno = 0;
@@ -2799,7 +2799,7 @@ static PyObject *__pyx_pw_8zdf_stat_1stat_past_with_period(PyObject *__pyx_self,
   int __pyx_clineno = 0;
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
-  __Pyx_RefNannySetupContext("stat_past_with_period (wrapper)", 0);
+  __Pyx_RefNannySetupContext("stat_future_period (wrapper)", 0);
   {
     static PyObject **__pyx_pyargnames[] = {&__pyx_n_s_arr,&__pyx_n_s_period,0};
     PyObject* values[2] = {0,0};
@@ -2823,11 +2823,11 @@ static PyObject *__pyx_pw_8zdf_stat_1stat_past_with_period(PyObject *__pyx_self,
         case  1:
         if (likely((values[1] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_period)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("stat_past_with_period", 1, 2, 2, 1); __PYX_ERR(0, 9, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("stat_future_period", 1, 2, 2, 1); __PYX_ERR(0, 8, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "stat_past_with_period") < 0)) __PYX_ERR(0, 9, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "stat_future_period") < 0)) __PYX_ERR(0, 8, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 2) {
       goto __pyx_L5_argtuple_error;
@@ -2836,18 +2836,18 @@ static PyObject *__pyx_pw_8zdf_stat_1stat_past_with_period(PyObject *__pyx_self,
       values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
     }
     __pyx_v_arr = ((PyArrayObject *)values[0]);
-    __pyx_v_period = __Pyx_PyInt_As_int(values[1]); if (unlikely((__pyx_v_period == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 9, __pyx_L3_error)
+    __pyx_v_period = __Pyx_PyInt_As_int(values[1]); if (unlikely((__pyx_v_period == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 8, __pyx_L3_error)
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("stat_past_with_period", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 9, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("stat_future_period", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 8, __pyx_L3_error)
   __pyx_L3_error:;
-  __Pyx_AddTraceback("zdf_stat.stat_past_with_period", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("zdf_stat.stat_future_period", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_arr), __pyx_ptype_5numpy_ndarray, 1, "arr", 0))) __PYX_ERR(0, 9, __pyx_L1_error)
-  __pyx_r = __pyx_pf_8zdf_stat_stat_past_with_period(__pyx_self, __pyx_v_arr, __pyx_v_period);
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_arr), __pyx_ptype_5numpy_ndarray, 1, "arr", 0))) __PYX_ERR(0, 8, __pyx_L1_error)
+  __pyx_r = __pyx_pf_8zdf_stat_stat_future_period(__pyx_self, __pyx_v_arr, __pyx_v_period);
 
   /* function exit code */
   goto __pyx_L0;
@@ -2858,7 +2858,7 @@ static PyObject *__pyx_pw_8zdf_stat_1stat_past_with_period(PyObject *__pyx_self,
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_8zdf_stat_stat_past_with_period(CYTHON_UNUSED PyObject *__pyx_self, PyArrayObject *__pyx_v_arr, int __pyx_v_period) {
+static PyObject *__pyx_pf_8zdf_stat_stat_future_period(CYTHON_UNUSED PyObject *__pyx_self, PyArrayObject *__pyx_v_arr, int __pyx_v_period) {
   __Pyx_LocalBuf_ND __pyx_pybuffernd_arr;
   __Pyx_Buffer __pyx_pybuffer_arr;
   PyObject *__pyx_r = NULL;
@@ -2867,18 +2867,18 @@ static PyObject *__pyx_pf_8zdf_stat_stat_past_with_period(CYTHON_UNUSED PyObject
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
-  __Pyx_RefNannySetupContext("stat_past_with_period", 0);
+  __Pyx_RefNannySetupContext("stat_future_period", 0);
   __pyx_pybuffer_arr.pybuffer.buf = NULL;
   __pyx_pybuffer_arr.refcount = 0;
   __pyx_pybuffernd_arr.data = NULL;
   __pyx_pybuffernd_arr.rcbuffer = &__pyx_pybuffer_arr;
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_arr.rcbuffer->pybuffer, (PyObject*)__pyx_v_arr, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack) == -1)) __PYX_ERR(0, 9, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_arr.rcbuffer->pybuffer, (PyObject*)__pyx_v_arr, &__Pyx_TypeInfo_nn___pyx_t_5numpy_float_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack) == -1)) __PYX_ERR(0, 8, __pyx_L1_error)
   }
   __pyx_pybuffernd_arr.diminfo[0].strides = __pyx_pybuffernd_arr.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_arr.diminfo[0].shape = __pyx_pybuffernd_arr.rcbuffer->pybuffer.shape[0]; __pyx_pybuffernd_arr.diminfo[1].strides = __pyx_pybuffernd_arr.rcbuffer->pybuffer.strides[1]; __pyx_pybuffernd_arr.diminfo[1].shape = __pyx_pybuffernd_arr.rcbuffer->pybuffer.shape[1];
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = ((PyObject *)__pyx_f_8zdf_stat_stat_past_with_period(__pyx_v_arr, __pyx_v_period, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 9, __pyx_L1_error)
+  __pyx_t_1 = ((PyObject *)__pyx_f_8zdf_stat_stat_future_period(__pyx_v_arr, __pyx_v_period, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 8, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -2893,7 +2893,7 @@ static PyObject *__pyx_pf_8zdf_stat_stat_past_with_period(CYTHON_UNUSED PyObject
     __Pyx_ErrFetch(&__pyx_type, &__pyx_value, &__pyx_tb);
     __Pyx_SafeReleaseBuffer(&__pyx_pybuffernd_arr.rcbuffer->pybuffer);
   __Pyx_ErrRestore(__pyx_type, __pyx_value, __pyx_tb);}
-  __Pyx_AddTraceback("zdf_stat.stat_past_with_period", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("zdf_stat.stat_future_period", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   goto __pyx_L2;
   __pyx_L0:;
@@ -3922,7 +3922,7 @@ static CYTHON_INLINE NPY_DATETIMEUNIT __pyx_f_5numpy_get_datetime64_unit(PyObjec
 }
 
 static PyMethodDef __pyx_methods[] = {
-  {"stat_past_with_period", (PyCFunction)(void*)(PyCFunctionWithKeywords)__pyx_pw_8zdf_stat_1stat_past_with_period, METH_VARARGS|METH_KEYWORDS, 0},
+  {"stat_future_period", (PyCFunction)(void*)(PyCFunctionWithKeywords)__pyx_pw_8zdf_stat_1stat_future_period, METH_VARARGS|METH_KEYWORDS, 0},
   {0, 0, 0, 0}
 };
 
@@ -3989,7 +3989,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {0, 0, 0, 0, 0, 0, 0}
 };
 static CYTHON_SMALL_CODE int __Pyx_InitCachedBuiltins(void) {
-  __pyx_builtin_range = __Pyx_GetBuiltinName(__pyx_n_s_range); if (!__pyx_builtin_range) __PYX_ERR(0, 34, __pyx_L1_error)
+  __pyx_builtin_range = __Pyx_GetBuiltinName(__pyx_n_s_range); if (!__pyx_builtin_range) __PYX_ERR(0, 33, __pyx_L1_error)
   __pyx_builtin_ImportError = __Pyx_GetBuiltinName(__pyx_n_s_ImportError); if (!__pyx_builtin_ImportError) __PYX_ERR(1, 944, __pyx_L1_error)
   return 0;
   __pyx_L1_error:;
@@ -4000,36 +4000,36 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__Pyx_InitCachedConstants", 0);
 
-  /* "zdf_stat.pyx":30
+  /* "zdf_stat.pyx":29
  *     # print("Finish create closes, highs and lows.")
  *     # S4
  *     cdef list quans = [Quantile(x, period) for x in [1, 5, 10, 90, 95, 99]]             # <<<<<<<<<<<<<<
  *     # print("Finish create closes, highs and lows.")
  *     # S5
  */
-  __pyx_tuple_ = PyTuple_Pack(6, __pyx_int_1, __pyx_int_5, __pyx_int_10, __pyx_int_90, __pyx_int_95, __pyx_int_99); if (unlikely(!__pyx_tuple_)) __PYX_ERR(0, 30, __pyx_L1_error)
+  __pyx_tuple_ = PyTuple_Pack(6, __pyx_int_1, __pyx_int_5, __pyx_int_10, __pyx_int_90, __pyx_int_95, __pyx_int_99); if (unlikely(!__pyx_tuple_)) __PYX_ERR(0, 29, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple_);
   __Pyx_GIVEREF(__pyx_tuple_);
 
-  /* "zdf_stat.pyx":49
- *         # print([closes.get_nth(x) for x in range(0, 100)])
+  /* "zdf_stat.pyx":48
+ *         # print([closes.get_nth(x) for x in range(period)])
  *         # S6.2
  *         res[i, 0:6] = [q.get_value(closes) for q in quans]  # 1%, 5%, 10%, 90%, 95%, 99%             # <<<<<<<<<<<<<<
  *         res[i, 6] = lows.get_nth(-1)  #
  *         res[i, 7] = highs.get_nth(0)  #
  */
-  __pyx_slice__2 = PySlice_New(__pyx_int_0, __pyx_int_6, Py_None); if (unlikely(!__pyx_slice__2)) __PYX_ERR(0, 49, __pyx_L1_error)
+  __pyx_slice__2 = PySlice_New(__pyx_int_0, __pyx_int_6, Py_None); if (unlikely(!__pyx_slice__2)) __PYX_ERR(0, 48, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_slice__2);
   __Pyx_GIVEREF(__pyx_slice__2);
 
-  /* "zdf_stat.pyx":59
+  /* "zdf_stat.pyx":58
  *     # print("Finish iteration calculations.")
  *     # S7
  *     res = (res / arr[:, CLOSEd].reshape((num, 1)) - 1) * 100             # <<<<<<<<<<<<<<
  *     # print("Finish convert calculates. Exit 'stat_past_with_period'.")
  *     return res
  */
-  __pyx_slice__3 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__3)) __PYX_ERR(0, 59, __pyx_L1_error)
+  __pyx_slice__3 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__3)) __PYX_ERR(0, 58, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_slice__3);
   __Pyx_GIVEREF(__pyx_slice__3);
 
@@ -4413,30 +4413,21 @@ if (!__Pyx_RefNanny) {
   #endif
 
   /* "zdf_stat.pyx":1
- * import numpy             # <<<<<<<<<<<<<<
- * import numpy as np
- * cimport numpy as cnp
- */
-  __pyx_t_1 = __Pyx_Import(__pyx_n_s_numpy, 0, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_numpy, __pyx_t_1) < 0) __PYX_ERR(0, 1, __pyx_L1_error)
-  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-
-  /* "zdf_stat.pyx":2
- * import numpy
  * import numpy as np             # <<<<<<<<<<<<<<
  * cimport numpy as cnp
  * 
  */
-  __pyx_t_1 = __Pyx_Import(__pyx_n_s_numpy, 0, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 2, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_Import(__pyx_n_s_numpy, 0, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_np, __pyx_t_1) < 0) __PYX_ERR(0, 2, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_np, __pyx_t_1) < 0) __PYX_ERR(0, 1, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "zdf_stat.pyx":1
- * import numpy             # <<<<<<<<<<<<<<
- * import numpy as np
- * cimport numpy as cnp
+  /* "zdf_stat.pyx":8
+ * 
+ * 
+ * cpdef cnp.ndarray[cnp.float_t, ndim=2] stat_future_period(cnp.ndarray[cnp.float_t, ndim=2] arr, int period):             # <<<<<<<<<<<<<<
+ * # def stat_past_with_period(arr, period):
+ *     # S0
  */
   __pyx_t_1 = __Pyx_PyDict_NewPresized(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);

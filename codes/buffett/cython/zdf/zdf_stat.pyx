@@ -1,4 +1,3 @@
-import numpy
 import numpy as np
 cimport numpy as cnp
 
@@ -6,7 +5,7 @@ from tree cimport Tree
 from quantile cimport Quantile
 
 
-cpdef cnp.ndarray[cnp.float_t, ndim=2] stat_past_with_period(cnp.ndarray[cnp.float_t, ndim=2] arr, int period):
+cpdef cnp.ndarray[cnp.float_t, ndim=2] stat_future_period(cnp.ndarray[cnp.float_t, ndim=2] arr, int period):
 # def stat_past_with_period(arr, period):
     # S0
     # print("Enter 'stat_past_with_period'.")
@@ -44,7 +43,7 @@ cpdef cnp.ndarray[cnp.float_t, ndim=2] stat_past_with_period(cnp.ndarray[cnp.flo
         highs.add(arr[i + period, HIGHd])
         lows.add(arr[i + period, LOWd])
         # print(f"--round:{i}--")
-        # print([closes.get_nth(x) for x in range(0, 100)])
+        # print([closes.get_nth(x) for x in range(period)])
         # S6.2 计算
         res[i, 0:6] = [q.get_value(closes) for q in quans]  # 1%, 5%, 10%, 90%, 95%, 99%
         res[i, 6] = lows.get_nth(-1)  # 最高

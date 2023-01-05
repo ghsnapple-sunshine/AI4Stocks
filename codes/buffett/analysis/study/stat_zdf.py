@@ -1,6 +1,6 @@
 from typing import Optional
 
-from zdf_stat import stat_past_with_period  # ignore this pycharm error
+from zdf_stat import stat_future_period  # ignore this pycharm error
 
 from buffett.adapter.numpy import np
 from buffett.adapter.pandas import DataFrame
@@ -121,8 +121,8 @@ class StatZdfAnalystWorker(AnalystWorker):
         :return:
         """
         arr = df[input_columns].values
-        stat5 = stat_past_with_period(arr, period=5 * mul)
-        stat20 = stat_past_with_period(arr, period=20 * mul)
+        stat5 = stat_future_period(arr, period=5 * mul)
+        stat20 = stat_future_period(arr, period=20 * mul)
         stat = np.concatenate([stat5, stat20], axis=1)
         data = DataFrame(data=stat, columns=output_columns)
         data[DATETIME] = df.index
