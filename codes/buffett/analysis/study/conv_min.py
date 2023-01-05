@@ -74,6 +74,7 @@ class ConvertStockMinuteAnalystWorker(AnalystWorker):
             self._logger.warning_calculate_end(para=para)
             return
         _b0 = pd.merge(self._calendar, bfq_info, how="inner", on=[DATETIME])
+        _b0.loc[_b0[CLOSE] == 0, [OPEN, CLOSE, HIGH, LOW, CJL, CJE]] = float("nan")
         _b0[CLOSE] = _b0[CLOSE].ffill()
         _b1 = np.vectorize(pd.isna)(_b0[OPEN])
         _b0.loc[_b1, [OPEN, HIGH, LOW]] = _b0.loc[_b1, CLOSE]
