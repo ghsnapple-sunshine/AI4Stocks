@@ -4,29 +4,20 @@ from buffett.download.mysql import Operator
 from buffett.download.mysql.types import RoleType
 
 
-def get_operator_root():
-    """
-    由于使用root权限需要输入密码，该方法可以避免在操作其他数据库时（前）需要输入root密码，改善体验。
-    :return:
-    """
-    yield Operator(RoleType.ROOT)
-
-
-operators = {
-    "1": get_operator_root(),
-    "2": Operator(RoleType.DB_ANA),
+roles = {
+    "1": RoleType.ROOT,
+    "2": RoleType.DB_ANA,
 }
 
 
 def cleanup() -> None:
     db = input("请选择要操作的数据库： 1.stocks, 2.analysis. (1/2)")
-    op = operators.get(db)
-    if op is None:
+    role = roles.get(db)
+    if role is None:
         print("输入错误。")
         return
     #
-    if db == "1":
-        op = next(op)
+    op = Operator(role)
     tbls = op.execute("show tables", fetch=True)
     if dataframe_not_valid(tbls):
         print("数据库为空")

@@ -2,3 +2,4 @@
 *.pyc
 *.rar
 /codes/buffett/adapter/request/pool
+.idea/other.xml
