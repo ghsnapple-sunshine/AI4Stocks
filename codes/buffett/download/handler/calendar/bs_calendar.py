@@ -2,7 +2,7 @@ from typing import Optional
 
 from buffett.adapter.baostock import bs
 from buffett.adapter.numpy import np
-from buffett.adapter.pandas import DataFrame, pd, DateOffset
+from buffett.adapter.pandas import DataFrame, pd, Timedelta
 from buffett.common.constants.col import DATE, DATETIME
 from buffett.common.constants.meta.handler import CAL_META
 from buffett.common.constants.table import TRA_CAL
@@ -61,7 +61,7 @@ class CalendarHandler(FastHandler):
             add_times = DataFrame(
                 {
                     ADD: [
-                        DateOffset(hour=x // 60, minute=x % 60)
+                        Timedelta(minutes=x)
                         for x in np.concatenate(
                             [np.arange(5, 125, 5), np.arange(215, 335, 5)]
                         )
@@ -70,8 +70,9 @@ class CalendarHandler(FastHandler):
                 }
             )
             dates = pd.merge(dates, add_times, how="cross")
-            datetimes = DataFrame({DATETIME: dates[DATETIME] + dates[ADD]})
-            datetimes = datetimes.sort_values(by=[DATETIME])
+            datetimes = DataFrame({DATETIME: dates[DATETIME] + dates[ADD]}).sort_values(
+                by=[DATETIME]
+            )
             if index:
                 datetimes = datetimes.set_index(DATETIME)
             return datetimes
