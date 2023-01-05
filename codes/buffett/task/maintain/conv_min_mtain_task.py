@@ -3,7 +3,6 @@ from typing import Optional
 from buffett.adapter.pendulum import DateTime
 from buffett.analysis.maintain import ConvertStockMinuteAnalystMaintain
 from buffett.common.wrapper import Wrapper
-from buffett.download.maintain import StockDailyMaintain
 from buffett.download.mysql import Operator
 from buffett.task.base import Task
 
@@ -19,7 +18,7 @@ class ConvertStockMinuteMaintainTask(Task):
         super().__init__(
             wrapper=Wrapper(
                 ConvertStockMinuteAnalystMaintain(
-                    ana_rop=operator, stk_rop=datasource_op
+                    ana_rop=operator, ana_wop=operator.copy(), stk_rop=datasource_op
                 ).run
             ),
             start_time=start_time,

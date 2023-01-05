@@ -1,4 +1,3 @@
-import multiprocessing
 from typing import Union, Optional
 
 from buffett.adapter.numpy import np
@@ -13,8 +12,6 @@ from buffett.common.constants.col import (
     CLOSE,
     HIGH,
     LOW,
-    CJL,
-    CJE,
     DATETIME,
     START_DATE,
     END_DATE,
@@ -24,8 +21,10 @@ from buffett.common.constants.col.target import CODE
 from buffett.common.constants.meta.analysis import ANA_MIN5_MTAIN_META
 from buffett.common.constants.table import AMA_MIN5_MTAIN
 from buffett.common.error import PreStepError
+from buffett.common.interface import MultiProcessTaskManager, ProducerConsumer
 from buffett.common.logger import Logger, LoggerBuilder
 from buffett.common.tools import dataframe_not_valid
+from buffett.common.wrapper import Wrapper
 from buffett.download.handler.list import SseStockListHandler, BsStockListHandler
 from buffett.download.mysql import Operator
 from buffett.download.mysql.types import RoleType
@@ -48,6 +47,11 @@ class ConvertStockMinuteAnalystMaintain:
         self._dataman = DataManager(ana_rop=self._ana_rop, stk_rop=self._stk_rop)
 
     def run(self):
+        """
+        运行自检程序
+
+        :return:
+        """
         # 准备数据
         stock_list = get_stock_list(operator=self._stk_rop)
         if dataframe_not_valid(stock_list):
@@ -55,30 +59,17 @@ class ConvertStockMinuteAnalystMaintain:
                 ConvertStockMinuteAnalystMaintain,
                 Union[SseStockListHandler, BsStockListHandler],
             )
-        paras = self._create_para(stock_list)
-        with multiprocessing.Pool() as workers:
-            results = workers.map(self._run_with_subprocess, paras)
+        taskman = MultiProcessTaskManager(
+            worker=self._run_with_subprocess,
+            args=[
+                stock_list[CODE].values.tolist(),
+                self._ana_rop.role,
+                self._stk_rop.role,
+            ],
+        )
+        results = taskman.run()
         # 保存结果
         self._save_to_database(results)
-
-    def _create_para(
-        self, stock_list: DataFrame
-    ) -> list[tuple[int, list[str], RoleType, RoleType]]:
-        """
-        创建多进程计算所需的para
-
-        :param stock_list:
-        :return:
-        """
-        ana_role = self._ana_rop.role
-        stk_role = self._stk_rop.role
-        stock_list = stock_list[CODE].values.tolist()
-        total_num = len(stock_list)
-        chunk_num = min(max(total_num, 4) // 4, 8)
-        paras = [
-            (i, stock_list[i::chunk_num], ana_role, stk_role) for i in range(chunk_num)
-        ]
-        return paras
 
     @staticmethod
     def _run_with_subprocess(
@@ -87,12 +78,12 @@ class ConvertStockMinuteAnalystMaintain:
         """
         分进程运行
 
-        :param para:       pid, stock_list, ana_role, stk_role
+        :param para:       pid, stock_list, ana_r, stk_r
         :return:
         """
-        pid, stock_list, ana_role, stk_role = para
+        pid, stock_list, ana_r, stk_r = para
         worker = ConvertStockMinuteAnalystMaintainWorker(
-            ana_rop=Operator(ana_role), stk_rop=Operator(stk_role), pid=pid
+            pid=pid, ana_rop=Operator(ana_r), stk_rop=Operator(stk_r)
         )
         return worker.run(stock_list)
 
@@ -124,6 +115,7 @@ class ConvertStockMinuteAnalystMaintainWorker:
         self._dataman = DataManager(ana_rop=self._ana_rop, stk_rop=self._stk_rop)
         self._pid = pid
         self._logger = None
+        self._results = []
 
     def run(self, stock_list: list[str]) -> list[Optional[DataFrame]]:
         """
@@ -132,22 +124,41 @@ class ConvertStockMinuteAnalystMaintainWorker:
         :param stock_list:  股票清单
         :return:
         """
+        # 准备工作区
+        self._results = []
         self._logger = LoggerBuilder.build(StockMinuteAnalystMaintainLogger)(
             pid=self._pid, total=len(stock_list)
         )
-        dfs = [self._calculate_1stock(x) for x in stock_list]
-        return dfs
+        prod_cons = ProducerConsumer(
+            producer=Wrapper(self._get_data_for_1stock),
+            consumer=Wrapper(self._calculate_1stock),
+            args_map=stock_list,
+            queue_size=3,
+            task_num=len(stock_list),
+        )
+        prod_cons.run()
+        return self._results
 
-    def _calculate_1stock(self, code: str) -> Optional[DataFrame]:
+    def _get_data_for_1stock(self, code: str) -> tuple[str, DataFrame]:
         """
-        判断股票信息里是否有NA及0数据
+        根据股票代码获取分钟线数据
 
-        :param code:        股票代码
+        :param code:
         :return:
         """
         self._logger.info_start(code)
         para = Para().with_code(code).with_comb(HFQ_COMB)
         hfq_info = self._dataman.select_data(para=para, index=False)
+        return code, hfq_info
+
+    def _calculate_1stock(self, info: tuple[str, DataFrame]) -> None:
+        """
+        判断股票信息里是否有NA及0数据
+
+        :param info:        股票代码
+        :return:
+        """
+        code, hfq_info = info
         if dataframe_not_valid(hfq_info):
             self._logger.warning_end(code)
             return
@@ -157,8 +168,6 @@ class ConvertStockMinuteAnalystMaintainWorker:
             | is_na(hfq_info[CLOSE])
             | is_na(hfq_info[HIGH])
             | is_na(hfq_info[LOW])
-            | is_na(hfq_info[CJL])
-            | is_na(hfq_info[CJE])
         ][DATETIME]
         na_datetimes_exist = not na_datetimes.empty
         des_na = self._describe(na_datetimes) if na_datetimes_exist else []
@@ -173,21 +182,29 @@ class ConvertStockMinuteAnalystMaintainWorker:
         if not zero_datetimes_exist and not na_datetimes_exist:
             self._logger.info_success(code)
             return
-        df_na, df_zero = None, None
         if na_datetimes_exist:
             self._logger.warning_na_datetimes(code, des_na)
             df_na = DataFrame(des_na, columns=[START_DATE, END_DATE])
             df_na[TYPE] = NA
             df_na[CODE] = code
+            self._results.append(df_na)
         if zero_datetimes_exist:
             self._logger.warning_zero_datetimes(code, des_zero)
             df_zero = DataFrame(des_na, columns=[START_DATE, END_DATE])
             df_zero[TYPE] = ZERO
             df_zero[CODE] = code
-        return pd.concat([df_na, df_zero])
+            self._results.append(df_zero)
 
     @staticmethod
     def _describe(datetimes: Series) -> list[list[DateTime, DateTime]]:
+        """
+        把问题数据描述成若干个分段，如：
+            ....AxxB....CxxxD....E.
+        --> [[A,B], [C,D], [E,E]]
+
+        :param datetimes:
+        :return:
+        """
         index = datetimes.index
         _i0 = index[:-1]
         _i1 = index[1:]
