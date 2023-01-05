@@ -251,13 +251,13 @@ class Analyst:
         done_records = done_records.rename(
             columns={START_DATE: DORCD_START, END_DATE: DORCD_END}
         )
-        comb_list = pd.merge(
+        comb_records = pd.merge(
             todo_records,
             done_records,
             how="left",
             on=[CODE, SOURCE, FREQ, FUQUAN, ANALYSIS],
-        )
-        return comb_list
+        ).sort_values(by=[FREQ, CODE, SOURCE])
+        return comb_records
 
     def select_data(self, para: Para) -> Optional[DataFrame]:
         """
