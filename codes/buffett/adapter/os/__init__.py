@@ -1,5 +1,13 @@
-from os import system as os_system, makedirs as os_makedirs, path as os_path
+from os import (
+    system as os_system,
+    makedirs as os_makedirs,
+    path as os_path,
+    getpid as os_getpid,
+)
 
-system = os_system
-makedirs = os_makedirs
-path = os_path
+
+class os:
+    getpid = os_getpid
+    makedirs = os_makedirs
+    path = os_path
+    system = os_system

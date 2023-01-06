@@ -1,6 +1,6 @@
 from typing import Callable
 
-from buffett.adapter.os import makedirs, path
+from buffett.adapter.os import os
 from buffett.adapter.pandas import pd, DataFrame
 from buffett.adapter.pickle import load, dump
 from buffett.common.error import AttrTypeError
@@ -59,15 +59,15 @@ class Accelerator:
         cls._folder_path = FOLDER_PATH % (today,)
         cls._index_path = INDEX_PATH % (today,)
         cls._file_path = FILE_PATH % (today, "%s")
-        if path.isfile(cls._index_path):  # index file exists
+        if os.path.isfile(cls._index_path):  # index file exists
             with open(cls._index_path, "rb") as index_file:
                 cls._cache = load(file=index_file)
             cls._file_num = sum([x[1] is not None for x in cls._cache.values()])
             return
         # if _cache is not successfully loaded...
-        elif not path.isdir(Accelerator._folder_path):  # folder file not exists
+        elif not os.path.isdir(Accelerator._folder_path):  # folder file not exists
             # rmtree(ROOT_PATH)
-            makedirs(Accelerator._folder_path)
+            os.makedirs(Accelerator._folder_path)
         Accelerator._cache = {}  # assign it to empty if not loaded
 
     @staticmethod
