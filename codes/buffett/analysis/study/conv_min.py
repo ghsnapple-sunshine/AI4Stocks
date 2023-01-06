@@ -1,9 +1,6 @@
 from typing import Optional
 
-import numpy as np
-import pandas as pd
-
-from buffett.adapter.pandas import DataFrame
+from buffett.adapter.pandas import DataFrame, pd
 from buffett.analysis import Para
 from buffett.analysis.study.base import Analyst, AnalystWorker
 from buffett.analysis.study.fuquan_v2 import FuquanAnalystV2
@@ -57,7 +54,7 @@ class ConvertStockMinuteAnalystWorker(AnalystWorker):
             ana_rop=ana_rop, ana_wop=ana_wop, stk_rop=stk_rop
         )
         self._calendar = CalendarHandler(operator=stk_rop).select_data(
-            index=True, to_datetimes=True
+            index=False, to_datetimes=True
         )
 
     def _calculate(self, para: Para) -> Optional[DataFrame]:
@@ -67,19 +64,27 @@ class ConvertStockMinuteAnalystWorker(AnalystWorker):
         :param para:
         :return:
         """
+        # S0: 准备数据
         bfq_info = self._dataman.select_data(
-            para=para.clone().with_source(SourceType.BS).with_fuquan(FuquanType.BFQ)
+            para=para.clone().with_source(SourceType.BS).with_fuquan(FuquanType.BFQ),
+            index=False,
         )
         if dataframe_not_valid(bfq_info):
             self._logger.warning_calculate_end(para=para)
             return
-        _b0 = pd.merge(self._calendar, bfq_info, how="inner", on=[DATETIME])
-        _b0.loc[_b0[CLOSE] == 0, [OPEN, CLOSE, HIGH, LOW, CJL, CJE]] = float("nan")
-        _b0[CLOSE] = _b0[CLOSE].ffill()
-        _b1 = np.vectorize(pd.isna)(_b0[OPEN])
-        _b0.loc[_b1, [OPEN, HIGH, LOW]] = _b0.loc[_b1, CLOSE]
-        _b0.loc[_b1, [CJL, CJE]] = 0
-        hfq_info = self._fuquan_analyst.reform_to_hfq(code=para.target.code, df=_b0)
-        hfq_info[[CJL, CJE]] = _b0.loc[:, [CJL, CJE]]
-        hfq_info = hfq_info.reset_index()
-        return hfq_info
+        # S1: 计算
+        _st, _ed = bfq_info.loc[0, DATETIME], bfq_info.loc[len(bfq_info) - 1, DATETIME]
+        _c1 = self._calendar[
+            (self._calendar[DATETIME] >= _st) & (self._calendar[DATETIME] <= _ed)
+        ]
+        _c2 = pd.merge(_c1, bfq_info, how="left", on=[DATETIME])
+        _c2.loc[_c2[CLOSE] == 0, [OPEN, CLOSE, HIGH, LOW, CJL, CJE]] = float("nan")
+        _c2[CLOSE] = _c2[CLOSE].ffill()
+        _f1 = pd.isna(_c2[OPEN])
+        _c2.loc[_f1, [OPEN, HIGH, LOW]] = _c2.loc[_f1, CLOSE]
+        _c2.loc[_f1, [CJL, CJE]] = 0
+        _c3 = _c2.set_index(DATETIME)
+        _c4 = self._fuquan_analyst.reform_to_hfq(code=para.target.code, df=_c3)
+        _c4[[CJL, CJE]] = _c3[[CJL, CJE]]
+        conv_info = _c4[pd.notna(_c4[CLOSE])].reset_index()
+        return conv_info

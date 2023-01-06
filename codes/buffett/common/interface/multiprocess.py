@@ -1,28 +1,25 @@
 import multiprocessing
-from typing import Any, Union, Callable
-
-from buffett.adapter.numpy import ndarray
-from buffett.adapter.pandas import DataFrame
-from buffett.common.error import ParamTypeError
+from typing import Any, Callable
 
 
 class MultiProcessTaskManager:
-    def __init__(
-        self,
-        worker: Callable,
-        args: list[Any],
-    ):
+    def __init__(self, worker: Callable, args: list[Any], iterable_args: int = 1):
         self._worker = worker
         self._args = args
-        if not isinstance(args[0], (DataFrame, ndarray, list, tuple)):
-            raise ParamTypeError("args[0]", Union[DataFrame, ndarray, list, tuple])
+        self._iterable_args = iterable_args
 
     def run(self):
-        args0 = self._args[0]
-        total_num = len(args0)
+        total_num = len(self._args[0])
         chunk_num = min(max(total_num, 4) // 4, 8)
         paras = [
-            tuple([i, args0[i::chunk_num]] + self._args[1:]) for i in range(chunk_num)
+            tuple(
+                [x]
+                + [
+                    args[x::chunk_num] if y < self._iterable_args else args
+                    for y, args in enumerate(self._args)
+                ]
+            )
+            for x in range(chunk_num)
         ]
         with multiprocessing.Pool() as workers:
             results = workers.map(self._worker, paras)

@@ -1,21 +1,14 @@
 from unittest.mock import patch
 
 from buffett.adapter.pandas import DataFrame
-from buffett.analysis.study import FuquanAnalystV2
+from buffett.analysis.study import FuquanAnalyst
 from buffett.common.constants.col.target import CODE, NAME
 from buffett.common.constants.meta.analysis import FQ_FAC_META
 from buffett.common.constants.table import FQ_FAC_V2
 from buffett.common.magic import get_name
 from buffett.common.tools import dataframe_is_valid
 from buffett.download.handler.list import SseStockListHandler, BsStockListHandler
-from buffett.download.mysql import Operator
 from system.mock_tester import MockTester
-
-
-class FuquanAnalystForMock(FuquanAnalystV2):
-    def __init__(self, ana_rop: Operator, stk_op: Operator, ana_wop: Operator):
-        super(FuquanAnalystForMock, self).__init__(ana_rop=ana_rop, stk_op=stk_op)
-        self._ana_wop = ana_wop
 
 
 class TestFuquanAnalyst(MockTester):
@@ -23,8 +16,8 @@ class TestFuquanAnalyst(MockTester):
 
     @classmethod
     def _setup_oncemore(cls):
-        cls._analyst = FuquanAnalystForMock(
-            ana_rop=cls._ana_op, ana_wop=cls._operator, stk_op=cls._stk_op
+        cls._analyst = FuquanAnalyst(
+            ana_rop=cls._ana_op, ana_wop=cls._operator, stk_rop=cls._stk_op
         )
 
     def _setup_always(self) -> None:
@@ -36,7 +29,10 @@ class TestFuquanAnalyst(MockTester):
 
         :return:
         """
-        stock_list = DataFrame({CODE: ["000980"], NAME: [""]})
+        self._atom_test("000980")
+
+    def _atom_test(self, code: str):
+        stock_list = DataFrame({CODE: [code], NAME: [""]})
         with patch.object(
             SseStockListHandler,
             get_name(SseStockListHandler.select_data),

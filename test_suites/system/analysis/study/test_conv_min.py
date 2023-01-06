@@ -26,46 +26,34 @@ class TestConvertStockMinuteAnalyst(MockTester):
         pass
 
     def test_000001(self):
-        stock_list = DataFrame({CODE: ["000001"], NAME: [""]})
-        with patch.object(
-            SseStockListHandler,
-            get_name(SseStockListHandler.select_data),
-            return_value=stock_list,
-        ):
-            with patch.object(
-                BsStockListHandler,
-                get_name(BsStockListHandler.select_data),
-                return_value=stock_list,
-            ):
-                with patch.object(
-                    AnalysisRecorder,
-                    get_name(AnalysisRecorder.select_data),
-                    return_value=None,
-                ):
-                    self._analyst.calculate(
-                        span=DateSpan(start=Date(1990, 1, 1), end=Date(2022, 12, 1))
-                    )
-        table_name = TableNameTool.get_by_code(
-            para=Para()
-            .with_code("000001")
-            .with_source(SourceType.ANA)
-            .with_freq(FreqType.MIN5)
-            .with_fuquan(FuquanType.HFQ)
-            .with_analysis(AnalystType.CONV)
-        )
-        data = self._operator.select_data(name=table_name, meta=None)
-        assert all(
-            [pd.notna(x) for x in data.values.reshape((data.shape[0] * data.shape[1],))]
-        )
-
-    def test_600004(self):
         """
-        测试现网告警数据
-        经分析其在开盘前有数据导致出现告警
+        测试现网报错数据
+        市场中有NA数据
 
         :return:
         """
-        stock_list = DataFrame({CODE: ["600004"], NAME: [""]})
+        self._atom_test("000001")
+
+    def test_600004(self):
+        """
+        测试现网报错数据
+        开盘前(9:30前)有数据
+
+        :return:
+        """
+        self._atom_test("600004")
+
+    def test_002350(self):
+        """
+        测试现网报错数据
+        上市前(2010/2/3)有数据
+
+        :return:
+        """
+        self._atom_test("002350")
+
+    def _atom_test(self, code: str):
+        stock_list = DataFrame({CODE: [code], NAME: [""]})
         with patch.object(
             SseStockListHandler,
             get_name(SseStockListHandler.select_data),
@@ -86,7 +74,7 @@ class TestConvertStockMinuteAnalyst(MockTester):
                     )
         table_name = TableNameTool.get_by_code(
             para=Para()
-            .with_code("600004")
+            .with_code(code)
             .with_source(SourceType.ANA)
             .with_freq(FreqType.MIN5)
             .with_fuquan(FuquanType.HFQ)

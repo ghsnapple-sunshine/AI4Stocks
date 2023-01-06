@@ -34,9 +34,7 @@ class pd:
     # methods
     concat = pd_concat
     isna = pd_isna
-    isnas = np.vectorize(pd_isna)
     notna = pd_notna
-    notnas = np.vectorize(pd_notna)
     NAT = pd_NAT
     merge = pd_merge
     read_csv = pd_read_csv

@@ -47,6 +47,15 @@ class TestFuquanAnalyst(MockTester):
         """
         self._atom_test("600098")
 
+    def test_002350(self):
+        """
+        计算涨跌幅中卡死
+        （？）
+
+        :return:
+        """
+        self._atom_test("002350")
+
     def _atom_test(self, code: str):
         stock_list = DataFrame({CODE: [code], NAME: [""]})
         with patch.object(

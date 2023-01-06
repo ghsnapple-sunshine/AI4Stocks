@@ -254,6 +254,14 @@ class StockDailyMaintain(BaseMaintain):
             name=DAILY_MTAIN, meta=DAILY_MTAIN_META, df=df, update=True
         )
 
+    def select_data(self):
+        """
+        返回所有maintain数据
+
+        :return:
+        """
+        return self._operator.select_data(name=DAILY_MTAIN, meta=DAILY_MTAIN_META)
+
 
 class StockDailyMaintainLogger(Logger):
     @classmethod
