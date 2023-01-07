@@ -47,3 +47,18 @@ class TestConvertStockMinuteAnalyst(MockTester):
             ):
                 self._mtain.run()
                 assert True  # 能运行即可
+
+    def test_000003(self):
+        stock_list = DataFrame({CODE: ["000003"], NAME: [""]})
+        with patch.object(
+            SseStockListHandler,
+            get_name(SseStockListHandler.select_data),
+            return_value=stock_list,
+        ):
+            with patch.object(
+                BsStockListHandler,
+                get_name(BsStockListHandler.select_data),
+                return_value=stock_list,
+            ):
+                self._mtain.run()
+                assert True  # 能运行即可

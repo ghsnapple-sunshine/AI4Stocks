@@ -190,7 +190,7 @@ class ConvertStockMinuteAnalystMaintainWorker:
             self._results.append(df_na)
         if zero_datetimes_exist:
             self._logger.warning_zero_datetimes(code, des_zero)
-            df_zero = DataFrame(des_na, columns=[START_DATE, END_DATE])
+            df_zero = DataFrame(des_zero, columns=[START_DATE, END_DATE])
             df_zero[TYPE] = ZERO
             df_zero[CODE] = code
             self._results.append(df_zero)
