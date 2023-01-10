@@ -79,17 +79,13 @@ class StatZdfAnalystWorker(AnalystWorker):
         ana_wop: Operator,
         analyst: AnalystType,
         meta: DataFrame,
-        kwd: str,
-        pid: int,
     ):
         super(StatZdfAnalystWorker, self).__init__(
-            pid=pid,
             stk_rop=stk_rop,
             ana_rop=ana_rop,
             ana_wop=ana_wop,
             analyst=analyst,
             meta=meta,
-            kwd=kwd,
         )
         self._calendarman = CalendarManager(datasource_op=stk_rop)
 
@@ -106,9 +102,10 @@ class StatZdfAnalystWorker(AnalystWorker):
         select_para = para.clone().with_start_n_end(start, end)
         data = self._dataman.select_data(para=select_para)
         if dataframe_not_valid(data) or len(data) < 40 * mul:
-            self._logger.warning_calculate_end(para=para)
+            self._logger.warning_end(para=para)
             return
         stat = self._calculate_zdf(data, mul)
+        stat = stat[para.span.is_insides(stat[DATETIME])]
         return stat
 
     @staticmethod

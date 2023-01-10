@@ -1,7 +1,7 @@
 from unittest.mock import patch
 
 from buffett.adapter.pandas import DataFrame
-from buffett.analysis.maintain import ConvertStockMinuteAnalystMaintain
+from buffett.analysis.maintain import StockMinuteHfqMaintain
 from buffett.common.constants.col.target import CODE, NAME
 from buffett.common.magic import get_name
 from buffett.download.handler.list import SseStockListHandler, BsStockListHandler
@@ -11,7 +11,7 @@ from system.mock_tester import MockTester
 class TestConvertStockMinuteAnalyst(MockTester):
     @classmethod
     def _setup_oncemore(cls):
-        cls._mtain = ConvertStockMinuteAnalystMaintain(
+        cls._mtain = StockMinuteHfqMaintain(
             ana_rop=cls._ana_op, ana_wop=cls._operator, stk_rop=cls._stk_op
         )
 

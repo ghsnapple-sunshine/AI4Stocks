@@ -1,25 +1,29 @@
-from buffett.analysis.study import StatZdfAnalyst
-from buffett.common.pendulum import DateSpan, DateTime, Date
+from typing import Optional
+
+from buffett.adapter.pendulum import DateTime
+from buffett.analysis.maintain import StockMinuteHfqMaintain
 from buffett.common.wrapper import Wrapper
 from buffett.download.mysql import Operator
 from buffett.task.base import Task
 
 
-class TargetStatZdfTask(Task):
+class StockMinuteHfqMaintainTask(Task):
     def __init__(
-        self, operator: Operator, datasource_op: Operator, start_time: DateTime
+        self,
+        operator: Operator,
+        datasource_op: Operator,
+        start_time: Optional[DateTime] = None,
+        **kwargs
     ):
         super().__init__(
             wrapper=Wrapper(
-                StatZdfAnalyst(
+                StockMinuteHfqMaintain(
                     ana_rop=operator, ana_wop=operator.copy(), stk_rop=datasource_op
-                ).calculate
+                ).run
             ),
-            args=(DateSpan(start=Date(2000, 1, 1), end=Date(2022, 11, 1)),),
             start_time=start_time,
         )
         self._operator = operator
-        self._datasource_op = datasource_op
 
     def get_subsequent_task(self, success: bool):
         return None

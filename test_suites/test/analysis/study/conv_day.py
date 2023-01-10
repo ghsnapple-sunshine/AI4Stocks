@@ -9,9 +9,22 @@ def test_conv_day(self):
     """
     测试ConvertStockDailyAnalyst
 
+    :param self:        _calendar_handler
+                        _dc_daily_handler
+                        _bs_daily_handler
+                        _th_daily_handler
+                        _bs_minute_handler
+                        _index_handler
+                        _concept_handler
+                        _industry_handler
+                        _fhpg_handler
+                        _daily_mtain
+                        _data_manager
     :return:
     """
-    handler = ConvertStockDailyAnalyst(stk_rop=self._stk_rop, ana_rop=self._operator)
+    handler = ConvertStockDailyAnalyst(
+        stk_rop=self._stk_rop, ana_rop=self._ana_rop, ana_wop=self._ana_wop
+    )
     handler.calculate(span=self._long_para.span)
     select_para = (
         Para()

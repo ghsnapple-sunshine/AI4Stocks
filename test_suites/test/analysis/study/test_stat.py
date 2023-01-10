@@ -1,8 +1,8 @@
-from zdf_stat import stat_past_with_period
+from zdf_stat import stat_future_period
 
 from buffett.adapter.numpy import np, ndarray
 from buffett.adapter.pandas import DataFrame
-from buffett.cython.zdf.origin import stat_future_period as stat_past_with_period_py
+from buffett.cython.zdf.origin import stat_future_period as stat_future_period_py
 from test import SimpleTester
 
 
@@ -20,8 +20,8 @@ class TestStatisticsAnalyst(SimpleTester):
         inputs1[:, 1] = np.arange(1, 501, dtype=float)
         inputs1[:, 2] = np.arange(1, 501, dtype=float)
 
-        res1 = stat_past_with_period(arr=inputs1, period=100)
-        res2 = stat_past_with_period_py(arr=inputs1, period=100)
+        res1 = stat_future_period(arr=inputs1, period=100)
+        res2 = stat_future_period_py(arr=inputs1, period=100)
 
         exception = np.zeros(shape=(500, 8), dtype=float)
         q = [1, 5, 10, 90, 95, 99]

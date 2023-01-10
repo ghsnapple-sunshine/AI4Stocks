@@ -22,7 +22,7 @@ SOURCE_DICT = {
 
 
 class DataManager:
-    def __init__(self, stk_rop: Operator, ana_rop: Operator):
+    def __init__(self, stk_rop: Optional[Operator], ana_rop: Optional[Operator]):
         self._stk_rop = stk_rop
         self._ana_rop = ana_rop
 

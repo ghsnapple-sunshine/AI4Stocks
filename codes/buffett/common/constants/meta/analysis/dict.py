@@ -25,6 +25,12 @@ META_DICT = {
     CombExType(
         source=SourceType.ANA,
         freq=FreqType.MIN5,
+        fuquan=FuquanType.BFQ,
+        analysis=AnalystType.CONV,
+    ): BS_MINUTE_META,
+    CombExType(
+        source=SourceType.ANA,
+        freq=FreqType.MIN5,
         fuquan=FuquanType.HFQ,
         analysis=AnalystType.CONV,
     ): BS_MINUTE_META,

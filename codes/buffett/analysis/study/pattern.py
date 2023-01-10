@@ -59,7 +59,7 @@ class PatternAnalystWorker(AnalystWorker):
         select_para = para.clone().with_start(start)
         data = self._dataman.select_data(para=select_para)
         if dataframe_not_valid(data):
-            self._logger.warning_calculate_end(para=para)
+            self._logger.warning_end(para=para)
             return
         pattern = PatternRecognize.all(inputs=data)
         pattern = self._convert_pattern(pattern)

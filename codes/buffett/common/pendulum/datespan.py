@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import Optional
 
 from buffett.adapter.numpy import np
+from buffett.adapter.pandas import Series
 from buffett.adapter.pendulum import date
 from buffett.common.error import ParamTypeError
 from buffett.common.pendulum.convert import convert_date, convert_datetime
@@ -83,14 +84,19 @@ class DateSpan:
         condition2 = True if self._end is None else dt < self._end
         return condition1 and condition2
 
-    def is_insides(self, dt: Date):
+    def is_insides(self, dt: Series) -> Series:
         """
         判断日期是否在span内（向量化方法）
 
         :param dt:            日期
         :return:              是否在span内
         """
-        return self._is_insides(dt)
+        if self._start is not None and self._end is not None:
+            return (self._start <= dt) & (dt < self._end)
+        elif self._start is not None:
+            return self._start <= dt
+        else:
+            return dt < self._end
 
     def is_cross(self, other: DateSpan) -> bool:
         """

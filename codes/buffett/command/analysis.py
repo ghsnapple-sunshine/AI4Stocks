@@ -2,13 +2,7 @@ from buffett.common.logger import Logger, LogType
 from buffett.common.pendulum import DateTime
 from buffett.download.mysql import Operator
 from buffett.download.mysql.types import RoleType
-from buffett.task.analysis import (
-    TargetPatternRecognizeTask,
-    TargetStatZdfTask,
-    FuquanFactorTask,
-    ConvertStockMinuteTask,
-)
-from buffett.task.analysis.conv_day import ConvertStockDailyTask
+from buffett.task.analysis import ConvertStockMinuteBfqTask, ConvertStockMinuteTask
 from buffett.task.base import TaskScheduler
 
 
@@ -19,9 +13,10 @@ def analysis():
         task_cls=[
             # ConvertStockDailyTask,
             # FuquanFactorTask,
+            ConvertStockMinuteBfqTask,
             ConvertStockMinuteTask,
-            TargetPatternRecognizeTask,
-            TargetStatZdfTask,
+            # TargetPatternRecognizeTask,
+            # TargetStatZdfTask,
         ],
         ana_op=ana_op,
         stk_op=stk_op,

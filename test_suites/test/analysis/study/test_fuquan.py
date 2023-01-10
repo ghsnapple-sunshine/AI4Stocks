@@ -1,10 +1,10 @@
-from buffett.adapter.pendulum import Date
 from buffett.analysis import Para
 from buffett.analysis.study import FuquanAnalyst
 from buffett.analysis.study.tools import TableNameTool as AnaTool
 from buffett.analysis.types import CombExType, AnalystType
 from buffett.common.constants.col import OPEN, CLOSE, HIGH, LOW
 from buffett.common.constants.table import TRA_CAL
+from buffett.common.pendulum import Date
 from buffett.common.target import Target
 from buffett.download.handler.stock import (
     DcDailyHandler,
@@ -44,10 +44,12 @@ class TestFuquanAnalyst(AnalysisTester):
 
         :return:
         """
-        cls._fhpg_handler = DcFhpgHandler(operator=cls._datasource_op)
-        cls._daily_handler = DcDailyHandler(operator=cls._datasource_op)
-        cls._minute_handler = BsMinuteHandler(operator=cls._datasource_op)
-        cls._analyst = FuquanAnalyst(stk_op=cls._datasource_op, ana_rop=cls._operator)
+        cls._fhpg_handler = DcFhpgHandler(operator=cls._stk_rop)
+        cls._daily_handler = DcDailyHandler(operator=cls._stk_rop)
+        cls._minute_handler = BsMinuteHandler(operator=cls._stk_rop)
+        cls._analyst = FuquanAnalyst(
+            stk_rop=cls._stk_rop, ana_rop=cls._ana_rop, ana_wop=cls._ana_wop
+        )
 
     def _setup_always(self) -> None:
         DbSweeper.erase_except(TRA_CAL)
@@ -59,9 +61,9 @@ class TestFuquanAnalyst(AnalysisTester):
         :return:
         """
         # 准备数据
-        create_1stock(operator=self._datasource_op, source="both")
+        create_1stock(operator=self._stk_rop, source="both")
         self._fhpg_handler.obtain_data()
-        create_2stocks(operator=self._datasource_op, source="both")
+        create_2stocks(operator=self._stk_rop, source="both")
         self._daily_handler.obtain_data(para=self._long_para)
         self._minute_handler.obtain_data(para=self._long_para)
         # 转换数据

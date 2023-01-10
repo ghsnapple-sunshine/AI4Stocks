@@ -30,6 +30,8 @@ datetime64 = np_datetime64
 
 
 class np:
+    maxs = np_vectorize(max)
+    mins = np_vectorize(min)
     # methods
     abs = np_abs
     arange = np_arange

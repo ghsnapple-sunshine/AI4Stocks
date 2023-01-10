@@ -87,7 +87,6 @@ class ConvertStockDailyAnalyst(Analyst):
     @staticmethod
     def _run_with_multiprocess(
         para: tuple[
-            int,
             DataFrame,
             list[list[str]],
             RoleType,
@@ -95,17 +94,15 @@ class ConvertStockDailyAnalyst(Analyst):
             RoleType,
             AnalystType,
             DataFrame,
-            str,
         ]
     ) -> None:
         """
         基于子进程运行
 
-        :param para:        pid, comb_records, dc_dates, ana_r, ana_w, stk_r, analysis, meta, kwd
+        :param para:        comb_records, dc_dates, ana_r, ana_w, stk_r, analysis, meta
         :return:
         """
         (
-            pid,
             comb_records,
             dc_dates,
             ana_r,
@@ -113,16 +110,13 @@ class ConvertStockDailyAnalyst(Analyst):
             stk_r,
             analyst,
             meta,
-            kwd,
         ) = para
         worker = ConvertStockDailyAnalystWorker(
-            pid=pid,
             ana_rop=Operator(ana_r),
             ana_wop=Operator(ana_w),
             stk_rop=Operator(stk_r),
             analyst=analyst,
             meta=meta,
-            kwd=kwd,
         )
         worker.calculate_ex(comb_records, dc_dates)
 
@@ -169,8 +163,6 @@ class ConvertStockDailyAnalystWorker(AnalystWorker):
         stk_rop: Operator,
         analyst: AnalystType,
         meta: DataFrame,
-        kwd: str,
-        pid: int,
     ):
         super(ConvertStockDailyAnalystWorker, self).__init__(
             stk_rop=stk_rop,
@@ -193,7 +185,9 @@ class ConvertStockDailyAnalystWorker(AnalystWorker):
         :return:
         """
         # 初始化Logger
-        self._logger = LoggerBuilder.build(AnalysisLogger)(analyst=self._analyst)
+        self._logger = LoggerBuilder.build(AnalysisLogger)(
+            analyst=self._analyst, total=len(comb_records)
+        )
         self._dc_dates = dict(zip(comb_records[CODE], dc_dates))
         # 使用生产者/消费者模式，异步下载/保存数据
         prod_cons = ProducerConsumer(
@@ -216,7 +210,7 @@ class ConvertStockDailyAnalystWorker(AnalystWorker):
         dc_dates, dc_info, bs_info = self._prepare(para)
         bs_valid, dc_valid = dataframe_is_valid(bs_info), dataframe_is_valid(dc_info)
         if not bs_valid and not dc_valid:
-            self._logger.warning_calculate_end(para=para)
+            self._logger.warning_end(para=para)
             return
         # S1: 计算
         # S1.1: 计算st, ed

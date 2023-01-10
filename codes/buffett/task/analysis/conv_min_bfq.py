@@ -1,4 +1,4 @@
-from buffett.analysis.study import ConvertStockDailyAnalyst
+from buffett.analysis.study import ConvertStockMinuteBfqAnalyst
 from buffett.common.constants.col.my import ANA_R, ANA_W, STK_R
 from buffett.common.pendulum import DateSpan, DateTime, Date
 from buffett.common.wrapper import Wrapper
@@ -6,11 +6,11 @@ from buffett.download.mysql import Operator
 from buffett.task.base import Task
 
 
-class ConvertStockDailyTask(Task):
+class ConvertStockMinuteBfqTask(Task):
     def __init__(self, ops: dict[str, Operator], start_time: DateTime):
         super().__init__(
             wrapper=Wrapper(
-                ConvertStockDailyAnalyst(
+                ConvertStockMinuteBfqAnalyst(
                     ana_rop=ops.get(ANA_R),
                     ana_wop=ops.get(ANA_W),
                     stk_rop=ops.get(STK_R),

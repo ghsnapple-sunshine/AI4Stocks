@@ -1,7 +1,7 @@
 from abc import abstractmethod
 from typing import Optional
 
-from buffett.adapter import os
+from buffett.adapter.os import os
 from buffett.adapter.pandas import DataFrame
 from buffett.adapter.pendulum import DateTime
 

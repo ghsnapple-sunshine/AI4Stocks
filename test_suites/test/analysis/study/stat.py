@@ -11,7 +11,9 @@ def test_stat(self):
 
     :return:
     """
-    handler = StatZdfAnalyst(stk_rop=self._stk_rop, ana_rop=self._operator)
+    handler = StatZdfAnalyst(
+        stk_rop=self._stk_rop, ana_rop=self._ana_rop, ana_wop=self._ana_wop
+    )
     handler.calculate(span=self._long_para.span)
     select_para = (
         Para()

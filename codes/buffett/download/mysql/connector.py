@@ -29,6 +29,11 @@ class Connector:
             self._user = "analyst"
             self._db = "analysis"
             self._pwd = "Changeme_1234"
+        elif role == RoleType.DB_MT:
+            self._port = 3306
+            self._user = "mtainer"
+            self._db = "maintain"
+            self._pwd = "Changeme_1234"
 
         self._role = role
         self._conn = None

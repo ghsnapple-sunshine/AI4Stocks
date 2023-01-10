@@ -6,3 +6,4 @@ class RoleType(Enum):
     DB_TEST = 2
     ROOT = 4
     DB_ANA = 5
+    DB_MT = 6

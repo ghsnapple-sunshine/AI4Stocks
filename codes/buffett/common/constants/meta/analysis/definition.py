@@ -41,6 +41,7 @@ from buffett.common.constants.col.analysis import (
     DF20_PCT95,
     DF20_PCT90,
 )
+from buffett.common.constants.col.my import DAILY_SUFFIX, MIN5_SUFFIX
 from buffett.common.constants.col.target import CODE
 from buffett.download.mysql.types import ColType, AddReqType
 
@@ -136,5 +137,26 @@ ANA_MIN5_MTAIN_META = create_meta(
         [TYPE, ColType.ENUM_BOOL, AddReqType.NONE],
         [START_DATE, ColType.DATETIME, AddReqType.NONE],
         [END_DATE, ColType.DATETIME, AddReqType.NONE],
+    ]
+)
+
+"""
+Metadata for DAILY_MIN5_MTAIN
+"""
+DAILY_MIN5_MTAIN_META = create_meta(
+    meta_list=[
+        [DATE, ColType.DATE, AddReqType.KEY],
+        [OPEN + DAILY_SUFFIX, ColType.FLOAT, AddReqType.NONE],
+        [CLOSE + DAILY_SUFFIX, ColType.FLOAT, AddReqType.NONE],
+        [HIGH + DAILY_SUFFIX, ColType.FLOAT, AddReqType.NONE],
+        [LOW + DAILY_SUFFIX, ColType.FLOAT, AddReqType.NONE],
+        [CJL + DAILY_SUFFIX, ColType.BIGINT_UNSIGNED, AddReqType.NONE],
+        [CJE + DAILY_SUFFIX, ColType.BIGINT_UNSIGNED, AddReqType.NONE],
+        [OPEN + MIN5_SUFFIX, ColType.FLOAT, AddReqType.NONE],
+        [CLOSE + MIN5_SUFFIX, ColType.FLOAT, AddReqType.NONE],
+        [HIGH + MIN5_SUFFIX, ColType.FLOAT, AddReqType.NONE],
+        [LOW + MIN5_SUFFIX, ColType.FLOAT, AddReqType.NONE],
+        [CJL + MIN5_SUFFIX, ColType.BIGINT_UNSIGNED, AddReqType.NONE],
+        [CJE + MIN5_SUFFIX, ColType.BIGINT_UNSIGNED, AddReqType.NONE],
     ]
 )

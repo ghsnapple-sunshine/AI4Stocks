@@ -20,15 +20,15 @@ from test.analysis.analysis_tester import AnalysisTester
 class TestAnalystIrregular(AnalysisTester):
     @classmethod
     def _setup_oncemore(cls):
-        create_1stock(operator=cls._operator, source="both")
-        DcDailyHandler(operator=cls._operator).obtain_data(para=cls._long_para)
-        create_1index(operator=cls._operator)
-        DcIndexDailyHandler(operator=cls._operator).obtain_data(para=cls._long_para)
-        create_1concept(operator=cls._operator)
-        DcConceptDailyHandler(operator=cls._operator).obtain_data(para=cls._long_para)
-        create_1industry(operator=cls._operator)
-        DcIndustryDailyHandler(operator=cls._operator).obtain_data(para=cls._long_para)
-        CalendarHandler(operator=cls._operator).obtain_data()
+        create_1stock(operator=cls._stk_rop, source="both")
+        DcDailyHandler(operator=cls._stk_rop).obtain_data(para=cls._long_para)
+        create_1index(operator=cls._stk_rop)
+        DcIndexDailyHandler(operator=cls._stk_rop).obtain_data(para=cls._long_para)
+        create_1concept(operator=cls._stk_rop)
+        DcConceptDailyHandler(operator=cls._stk_rop).obtain_data(para=cls._long_para)
+        create_1industry(operator=cls._stk_rop)
+        DcIndustryDailyHandler(operator=cls._stk_rop).obtain_data(para=cls._long_para)
+        CalendarHandler(operator=cls._stk_rop).obtain_data()
 
     def _setup_always(self) -> None:
         pass
@@ -47,6 +47,8 @@ class TestAnalystIrregular(AnalysisTester):
         DcDailyHandler(operator=self._operator).obtain_data(para=select_para)
         CalendarHandler(operator=self._operator).obtain_data()
         # run
-        handler = StatZdfAnalyst(stk_rop=self._datasource_op, ana_rop=self._operator)
+        handler = StatZdfAnalyst(
+            stk_rop=self._stk_rop, ana_rop=self._ana_rop, ana_wop=self._ana_wop
+        )
         calc_span = DateSpan(Date(2000, 1, 1), Date(2021, 12, 31))
         handler.calculate(span=calc_span)

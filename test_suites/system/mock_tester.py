@@ -1,5 +1,6 @@
 from abc import abstractmethod
 
+from buffett.adapter.pandas import DataFrame
 from buffett.download.mysql import Operator
 from buffett.download.mysql.types import RoleType
 from test import Tester
@@ -23,3 +24,9 @@ class MockTester(Tester):
     @abstractmethod
     def _setup_always(self) -> None:
         pass
+
+    @staticmethod
+    def copydb(table_name: str, meta: DataFrame, source: Operator, dest: Operator):
+        df = source.select_data(name=table_name, meta=meta)
+        dest.create_table(name=table_name, meta=meta)
+        dest.insert_data(name=table_name, df=df)

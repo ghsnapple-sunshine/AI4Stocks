@@ -19,7 +19,7 @@ from buffett.common.constants.col import (
 )
 from buffett.common.constants.col.target import CODE
 from buffett.common.constants.meta.analysis import ANA_MIN5_MTAIN_META
-from buffett.common.constants.table import AMA_MIN5_MTAIN
+from buffett.common.constants.table import ANA_MIN5_MTAIN
 from buffett.common.error import PreStepError
 from buffett.common.interface import MultiProcessTaskManager, ProducerConsumer
 from buffett.common.logger import Logger, LoggerBuilder
@@ -39,7 +39,7 @@ HFQ_COMB = CombExType(
 NA, ZERO = 1, 0
 
 
-class ConvertStockMinuteAnalystMaintain:
+class StockMinuteHfqMaintain:
     def __init__(self, ana_rop: Operator, ana_wop: Operator, stk_rop: Operator):
         self._ana_rop = ana_rop
         self._ana_wop = ana_wop
@@ -56,7 +56,7 @@ class ConvertStockMinuteAnalystMaintain:
         stock_list = get_stock_list(operator=self._stk_rop)
         if dataframe_not_valid(stock_list):
             raise PreStepError(
-                ConvertStockMinuteAnalystMaintain,
+                StockMinuteHfqMaintain,
                 Union[SseStockListHandler, BsStockListHandler],
             )
         taskman = MultiProcessTaskManager(
@@ -97,10 +97,10 @@ class ConvertStockMinuteAnalystMaintain:
         for r in results:
             dfs.extend(r)
         df = pd.concat(dfs)
-        self._ana_wop.drop_table(name=AMA_MIN5_MTAIN)
-        self._ana_wop.create_table(name=AMA_MIN5_MTAIN, meta=ANA_MIN5_MTAIN_META)
+        self._ana_wop.drop_table(name=ANA_MIN5_MTAIN)
+        self._ana_wop.create_table(name=ANA_MIN5_MTAIN, meta=ANA_MIN5_MTAIN_META)
         self._ana_wop.insert_data_safe(
-            name=AMA_MIN5_MTAIN, meta=ANA_MIN5_MTAIN_META, df=df
+            name=ANA_MIN5_MTAIN, meta=ANA_MIN5_MTAIN_META, df=df
         )
 
 

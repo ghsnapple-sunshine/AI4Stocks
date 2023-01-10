@@ -303,7 +303,7 @@ class AnalystWorker:
     def _calculate_1target(self, row: tuple) -> tuple[Para, DataFrame]:
         #
         para = Para.from_tuple(row)
-        self._logger.info_calculate_start(para)
+        self._logger.info_start(para)
         # select & calculate
         result = self._calculate(para)
         return para, result
@@ -332,7 +332,7 @@ class AnalystWorker:
             self._ana_wop.create_table(name=table_name, meta=self._meta)
             self._ana_wop.insert_data_safe(name=table_name, df=data, meta=self._meta)
         self._recorder.save(para=para)
-        self._logger.info_calculate_end(para)
+        self._logger.info_end(para)
 
 
 class AnalysisLogger(ProgressLogger):
@@ -340,15 +340,15 @@ class AnalysisLogger(ProgressLogger):
         super(AnalysisLogger, self).__init__(total=total)
         self._analyst = str(analyst)
 
-    def info_calculate_start(self, para: Para):
+    def info_start(self, para: Para):
         self.info_with_progress(
             f"Start to Calculate {self._analyst} for {para}.", update=True
         )
 
-    def info_calculate_end(self, para: Para):
+    def info_end(self, para: Para):
         self.info(f"Successfully Calculate {self._analyst} for {para}.")
 
-    def warning_calculate_end(self, para: Para):
-        self.info(
+    def warning_end(self, para: Para):
+        self.warning(
             f"End Calculate {self._analyst} for {para}, nothing is found for calculation."
         )

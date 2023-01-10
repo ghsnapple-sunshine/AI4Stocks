@@ -1,4 +1,3 @@
-from buffett.adapter.pendulum import Date
 from buffett.analysis import Para
 from buffett.analysis.study import ConvertStockDailyAnalyst
 from buffett.analysis.types import AnalystType
@@ -7,6 +6,7 @@ from buffett.common.constants.col.my import USE, DC, BS
 from buffett.common.constants.col.target import CODE
 from buffett.common.constants.meta.handler import DAILY_MTAIN_META
 from buffett.common.constants.table import DAILY_MTAIN
+from buffett.common.pendulum import Date
 from buffett.download.handler.calendar import CalendarHandler
 from buffett.download.handler.stock import DcDailyHandler, BsDailyHandler
 from buffett.download.types import SourceType, FreqType, FuquanType
@@ -29,7 +29,7 @@ class TestConvertStockDailyAnalyst(AnalysisTester):
         cls._bs_handler = BsDailyHandler(operator=cls._operator)
         cls._bs_handler.obtain_data(para=cls._short_para)
         cls._analyst = ConvertStockDailyAnalyst(
-            stk_rop=cls._datasource_op, ana_rop=cls._operator
+            stk_rop=cls._ana_rop, ana_rop=cls._ana_rop, ana_wop=cls._ana_wop
         )
 
     @classmethod

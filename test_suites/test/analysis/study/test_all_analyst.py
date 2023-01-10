@@ -1,3 +1,4 @@
+from buffett.analysis.study.supporter import DataManager
 from buffett.download.handler.calendar import CalendarHandler
 from buffett.download.handler.concept import DcConceptDailyHandler
 from buffett.download.handler.index import DcIndexDailyHandler
@@ -40,44 +41,47 @@ class TestAnalyst(AnalysisTester):
     _industry_handler = None
     _fhpg_handler = None
     _daily_mtain = None
+    _data_manager = None
 
     @classmethod
     def _setup_oncemore(cls):
         # 下载交易日历
-        cls._calendar_handler = CalendarHandler(operator=cls._datasource_op)
+        cls._calendar_handler = CalendarHandler(operator=cls._stk_rop)
         cls._calendar_handler.obtain_data()
         # 下载股票清单\日线\分钟线
         create_2stocks(operator=cls._operator, source="both")
-        cls._dc_daily_handler = DcDailyHandler(operator=cls._datasource_op)
+        cls._dc_daily_handler = DcDailyHandler(operator=cls._stk_rop)
         cls._dc_daily_handler.obtain_data(para=cls._long_para)
-        cls._bs_daily_handler = BsDailyHandler(operator=cls._datasource_op)
+        cls._bs_daily_handler = BsDailyHandler(operator=cls._stk_rop)
         cls._bs_daily_handler.obtain_data(para=cls._long_para)
         cls._th_daily_handler = ThDailyHandler(
-            operator=cls._datasource_op,
-            target_list_handler=SseStockListHandler(operator=cls._datasource_op),
+            operator=cls._stk_rop,
+            target_list_handler=SseStockListHandler(operator=cls._stk_rop),
         )
         cls._th_daily_handler.obtain_data(para=cls._long_para)
-        cls._bs_minute_handler = BsMinuteHandler(operator=cls._datasource_op)
+        cls._bs_minute_handler = BsMinuteHandler(operator=cls._stk_rop)
         cls._bs_minute_handler.obtain_data(para=cls._long_para)
         # 下载指数数据
-        create_1index(operator=cls._datasource_op)
-        cls._index_handler = DcIndexDailyHandler(operator=cls._datasource_op)
+        create_1index(operator=cls._stk_rop)
+        cls._index_handler = DcIndexDailyHandler(operator=cls._stk_rop)
         cls._index_handler.obtain_data(para=cls._long_para)
         # 下载概念数据
-        create_1concept(operator=cls._datasource_op)
-        cls._concept_handler = DcConceptDailyHandler(operator=cls._datasource_op)
+        create_1concept(operator=cls._stk_rop)
+        cls._concept_handler = DcConceptDailyHandler(operator=cls._stk_rop)
         cls._concept_handler.obtain_data(para=cls._long_para)
         # 下载行业数据
-        create_1industry(operator=cls._datasource_op)
+        create_1industry(operator=cls._stk_rop)
         cls._industry_handler = DcIndustryDailyHandler(
-            operator=cls._datasource_op
+            operator=cls._stk_rop
         ).obtain_data(para=cls._long_para)
         # 下载分红配股数据
-        cls._fhpg_handler = DcFhpgHandler(operator=cls._datasource_op)
+        cls._fhpg_handler = DcFhpgHandler(operator=cls._stk_rop)
         cls._fhpg_handler.obtain_data()
         # daily maintain
-        cls._daily_mtain = StockDailyMaintain(operator=cls._datasource_op)
+        cls._daily_mtain = StockDailyMaintain(operator=cls._stk_rop)
         cls._daily_mtain.run()
+        # data manager
+        cls._data_manager = DataManager(stk_rop=cls._stk_rop, ana_rop=cls._ana_rop)
 
     def _setup_always(self) -> None:
         pass

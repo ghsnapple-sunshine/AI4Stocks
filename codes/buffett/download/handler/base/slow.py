@@ -61,12 +61,6 @@ class SlowHandler(Handler):
         self._fix_cache = {}
 
     def obtain_data(self, para: Para):
-        """
-        获取数据并保存
-
-        :param para:
-        :return:
-        """
         if not isinstance(para.span, DateSpan):
             raise ParamTypeError("para.span", DateSpan)
 
@@ -254,7 +248,7 @@ class SlowHandler(Handler):
         :param df:              数据
         :return:
         """
-        self._operator.create_table(name=table_name, meta=self._META)
+        self._operator.create_table(name=table_name, meta=self._META, update=True)
         self._operator.insert_data_safe(
             name=table_name, df=df, meta=self._META, update=True
         )

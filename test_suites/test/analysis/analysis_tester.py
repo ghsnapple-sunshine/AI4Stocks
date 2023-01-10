@@ -7,11 +7,15 @@ from test import Tester
 
 
 class AnalysisTester(Tester):
-    _datasource_op = None
+    _stk_rop = None
+    _ana_rop = None
+    _ana_wop = None
 
     @classmethod
     def _setup_once(cls):
-        cls._datasource_op = Operator(RoleType.DB_TEST)
+        cls._stk_rop = Operator(RoleType.DB_TEST)
+        cls._ana_rop = Operator(RoleType.DB_TEST)
+        cls._ana_wop = Operator(RoleType.DB_TEST)
         cls._short_para = Para.from_base(cls._short_para)
         cls._long_para = Para.from_base(cls._long_para)
         cls._great_para = Para.from_base(cls._great_para)

@@ -1,1 +1,2 @@
-from buffett.analysis.maintain.conv_min_mtain import ConvertStockMinuteAnalystMaintain
+from buffett.analysis.maintain.min_bfq import StockMinuteBfqMaintain
+from buffett.analysis.maintain.min_hfq import StockMinuteHfqMaintain
