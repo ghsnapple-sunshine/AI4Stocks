@@ -55,23 +55,23 @@ class ProgressLogger(ExLogger):
         self._total = total
         self._curr = 1
 
-    def debug(self, msg: str, update: bool = False):
-        Logger.debug(self._format(msg))
+    def debug_with_progress(self, msg: str, update: bool = False):
+        Logger.debug(self._format_with_progress(msg))
         self._update(update)
 
-    def info(self, msg: str, update: bool = False):
-        Logger.info(self._format(msg))
+    def info_with_progress(self, msg: str, update: bool = False):
+        Logger.info(self._format_with_progress(msg))
         self._update(update)
 
-    def warning(self, msg: str, update: bool = False):
-        Logger.warning(self._format(msg))
+    def warning_with_progress(self, msg: str, update: bool = False):
+        Logger.warning(self._format_with_progress(msg))
         self._update(update)
 
-    def error(self, msg: str, update: bool = False):
-        Logger.error(self._format(msg))
+    def error_with_progress(self, msg: str, update: bool = False):
+        Logger.error(self._format_with_progress(msg))
         self._update(update)
 
-    def _format(self, msg: str):
+    def _format_with_progress(self, msg: str):
         return f"[{self._pid}] ({self._curr}/{self._total}) {msg}"
 
     def _update(self, update: bool):

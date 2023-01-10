@@ -38,17 +38,13 @@ class PatternAnalystWorker(AnalystWorker):
         ana_wop: Operator,
         analyst: AnalystType,
         meta: DataFrame,
-        kwd: str,
-        pid: int,
     ):
         super(PatternAnalystWorker, self).__init__(
-            pid=pid,
             stk_rop=stk_rop,
             ana_rop=ana_rop,
             ana_wop=ana_wop,
             analyst=analyst,
             meta=meta,
-            kwd=kwd,
         )
         self._calendarman = CalendarManager(datasource_op=stk_rop)
 
@@ -67,6 +63,7 @@ class PatternAnalystWorker(AnalystWorker):
             return
         pattern = PatternRecognize.all(inputs=data)
         pattern = self._convert_pattern(pattern)
+        pattern = pattern[para.span.is_insides(pattern[DATETIME])]
         return pattern
 
     @staticmethod

@@ -54,7 +54,6 @@ class ConvertStockDailyAnalyst(Analyst):
             use_index=False,
             use_concept=False,
             use_industry=False,
-            kwd=DATE,
         )
 
     def calculate(self, span: DateSpan) -> None:
@@ -80,9 +79,8 @@ class ConvertStockDailyAnalyst(Analyst):
                 self._stk_rop.role,
                 self._analyst,
                 self._meta,
-                self._kwd,
             ],
-            iterable_args=2
+            iterable_args=2,
         )
         taskman.run()
 
@@ -175,13 +173,11 @@ class ConvertStockDailyAnalystWorker(AnalystWorker):
         pid: int,
     ):
         super(ConvertStockDailyAnalystWorker, self).__init__(
-            pid=pid,
             stk_rop=stk_rop,
             ana_rop=ana_rop,
             ana_wop=ana_wop,
             analyst=analyst,
             meta=meta,
-            kwd=kwd,
         )
         self._calendar = CalendarHandler(operator=stk_rop).select_data(
             index=False, to_datetimes=False
@@ -197,9 +193,7 @@ class ConvertStockDailyAnalystWorker(AnalystWorker):
         :return:
         """
         # 初始化Logger
-        self._logger = LoggerBuilder.build(AnalysisLogger)(
-            pid=self._pid, total=len(comb_records), analyst=self._analyst
-        )
+        self._logger = LoggerBuilder.build(AnalysisLogger)(analyst=self._analyst)
         self._dc_dates = dict(zip(comb_records[CODE], dc_dates))
         # 使用生产者/消费者模式，异步下载/保存数据
         prod_cons = ProducerConsumer(

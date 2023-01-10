@@ -13,8 +13,7 @@ class MultiProcessTaskManager:
         chunk_num = min(max(total_num, 4) // 4, 8)
         paras = [
             tuple(
-                [x]
-                + [
+                [
                     args[x::chunk_num] if y < self._iterable_args else args
                     for y, args in enumerate(self._args)
                 ]

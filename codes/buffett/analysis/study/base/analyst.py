@@ -16,7 +16,6 @@ from buffett.common.constants.col import (
     START_DATE,
     END_DATE,
     FUQUAN,
-    DATETIME,
 )
 from buffett.common.constants.col.analysis import ANALYSIS
 from buffett.common.constants.col.my import DORCD_START, DORCD_END
@@ -31,7 +30,7 @@ from buffett.common.constants.col.target import (
     INDUSTRY_NAME,
 )
 from buffett.common.interface import ProducerConsumer, MultiProcessTaskManager
-from buffett.common.logger import LoggerBuilder, Logger
+from buffett.common.logger import LoggerBuilder, ProgressLogger
 from buffett.common.pendulum import DateSpan, convert_datetime
 from buffett.common.tools import dataframe_is_valid, dataframe_not_valid
 from buffett.common.wrapper import Wrapper
@@ -57,7 +56,6 @@ class Analyst:
         use_index: bool = True,
         use_concept: bool = True,
         use_industry: bool = True,
-        kwd: str = DATETIME,
     ):
         #
         self._stk_rop = stk_rop
@@ -71,7 +69,6 @@ class Analyst:
         self._use_index = use_index
         self._use_concept = use_concept
         self._use_industry = use_industry
-        self._kwd = kwd
         #
         if not (
             use_stock or use_stock_minute or use_index or use_concept or use_industry
@@ -102,7 +99,6 @@ class Analyst:
                 self._stk_rop.role,
                 self._analyst,
                 self._meta,
-                self._kwd,
             ],
         )
         taskman.run()
@@ -110,7 +106,6 @@ class Analyst:
     @staticmethod
     def _run_with_multiprocess(
         para: tuple[
-            int,
             DataFrame,
             Type[AnalystWorker],
             RoleType,
@@ -118,24 +113,21 @@ class Analyst:
             RoleType,
             AnalystType,
             DataFrame,
-            str,
         ]
     ) -> None:
         """
         基于子进程运行
 
-        :param para:        pid, comb_records, AnalystWorker(Cls), ana_r, ana_w, stk_r, analysis, meta, kwd
+        :param para:        comb_records, AnalystWorker(Cls), ana_r, ana_w, stk_r, analysis, meta
         :return:
         """
-        pid, comb_records, Worker, ana_r, ana_w, stk_r, analyst, meta, kwd = para
+        comb_records, Worker, ana_r, ana_w, stk_r, analyst, meta = para
         worker = Worker(
-            pid=pid,
             ana_rop=Operator(ana_r),
             ana_wop=Operator(ana_w),
             stk_rop=Operator(stk_r),
             analyst=analyst,
             meta=meta,
-            kwd=kwd,
         )
         worker.calculate(comb_records)
 
@@ -276,13 +268,11 @@ class Analyst:
 class AnalystWorker:
     def __init__(
         self,
-        pid: int,
         ana_rop: Operator,
         ana_wop: Operator,
         stk_rop: Operator,
         analyst: AnalystType,
         meta: DataFrame,
-        kwd: str,
     ):
         #
         self._ana_rop = ana_rop
@@ -290,8 +280,6 @@ class AnalystWorker:
         self._stk_rop = stk_rop
         self._analyst = analyst
         self._meta = meta
-        self._kwd = kwd
-        self._pid = pid
         #
         self._logger = None
         self._dataman = DataManager(ana_rop=ana_rop, stk_rop=stk_rop)
@@ -300,7 +288,7 @@ class AnalystWorker:
     def calculate(self, comb_records: DataFrame):
         # 初始化Logger
         self._logger = LoggerBuilder.build(AnalysisLogger)(
-            pid=self._pid, total=len(comb_records), analyst=self._analyst
+            total=len(comb_records), analyst=self._analyst
         )
         # 使用生产者/消费者模式，异步下载/保存数据
         prod_cons = ProducerConsumer(
@@ -318,9 +306,6 @@ class AnalystWorker:
         self._logger.info_calculate_start(para)
         # select & calculate
         result = self._calculate(para)
-        # filter & save
-        if dataframe_is_valid(result):
-            result = result[para.span.is_insides(result[self._kwd])]
         return para, result
 
     @staticmethod
@@ -350,23 +335,20 @@ class AnalystWorker:
         self._logger.info_calculate_end(para)
 
 
-class AnalysisLogger(Logger):
-    def __init__(self, pid: int, total: int, analyst: AnalystType):
-        self._pid = pid
-        self._total = total
-        self._curr = 1
+class AnalysisLogger(ProgressLogger):
+    def __init__(self, total: int, analyst: AnalystType):
+        super(AnalysisLogger, self).__init__(total=total)
         self._analyst = str(analyst)
 
     def info_calculate_start(self, para: Para):
-        self.info(
-            f"[P{self._pid}]({self._curr}/{self._total})Start to Calculate {self._analyst} for {para}."
+        self.info_with_progress(
+            f"Start to Calculate {self._analyst} for {para}.", update=True
         )
-        self._curr += 1
 
     def info_calculate_end(self, para: Para):
-        self.info(f"[P{self._pid}]Successfully Calculate {self._analyst} for {para}.")
+        self.info(f"Successfully Calculate {self._analyst} for {para}.")
 
     def warning_calculate_end(self, para: Para):
         self.info(
-            f"[P{self._pid}]End Calculate {self._analyst} for {para}, nothing is found for calculation."
+            f"End Calculate {self._analyst} for {para}, nothing is found for calculation."
         )

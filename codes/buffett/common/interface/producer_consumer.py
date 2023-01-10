@@ -5,7 +5,7 @@ from typing import Iterable, Any, Optional
 
 from buffett.adapter.threading import Thread, Event
 from buffett.adapter.wellknown import format_exc
-from buffett.common.logger import Logger, LoggerBuilder
+from buffett.common.logger import LoggerBuilder, ExLogger
 from buffett.common.wrapper import Wrapper
 
 PRODUCER, CONSUMER = "Producer", "Consumer"
@@ -29,7 +29,7 @@ class Producer(Thread):
         self._runtime = runtime
         self._wrapper = wrapper
         if args_map is None:
-            self._args_map = range(0, task_num)
+            self._args_map = range(task_num)
             self._run = self._run_without_para
         else:
             self._args_map = args_map
@@ -68,6 +68,7 @@ class Producer(Thread):
             if self._runtime.err is None:
                 self._runtime.err = e
                 self._runtime.err_msg = format_exc()
+                self._logger.error(self._runtime.err_msg)
                 self._release_consumer()
                 self._logger.debug_end(True)
             else:
@@ -142,6 +143,7 @@ class Consumer(Thread):
             if self._runtime.err is None:
                 self._runtime.err = e
                 self._runtime.err_msg = format_exc()
+                self._logger.error(self._runtime.err_msg)
                 # 如果有需要，恢复阻塞中的生产者
                 self._release_producer()
                 # 打印结束
@@ -226,8 +228,9 @@ class Runtime:
         self.event_not_empty.clear()  # 全空
 
 
-class ProducerConsumerLogger(Logger):
+class ProducerConsumerLogger(ExLogger):
     def __init__(self, role: int):
+        super(ProducerConsumerLogger, self).__init__()
         if role == PRODUCER:
             self._self = PRODUCER
             self._other = CONSUMER
@@ -236,16 +239,16 @@ class ProducerConsumerLogger(Logger):
             self._other = PRODUCER
 
     def debug_tasknum(self, task_num: int):
-        Logger.debug(f"{self._self} task num is {task_num}.")
+        self.debug(f"{self._self} task num is {task_num}.")
 
     def debug_start(self):
-        Logger.debug(f"{self._self} start.")
+        self.debug(f"{self._self} start.")
 
     def debug_end(self, with_err: bool):
-        Logger.debug(f"{self._self} end{' with error' if with_err else ''}.")
+        self.debug(f"{self._self} end{' with error' if with_err else ''}.")
 
     def debug_wait(self):
-        Logger.debug(f"{self._self} make himself wait.")
+        self.debug(f"{self._self} make himself wait.")
 
     def debug_release(self):
-        Logger.debug(f"{self._self} release {self._other}.")
+        self.debug(f"{self._self} release {self._other}.")

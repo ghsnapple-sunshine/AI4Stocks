@@ -2,9 +2,9 @@ from abc import abstractmethod
 from types import MappingProxyType
 from typing import Any, Optional
 
-from buffett.adapter import logging
 from buffett.adapter.wellknown import format_exc
 from buffett.common.constants.col.task import CLASS, MODULE, START_TIME
+from buffett.common.logger import ExLogger, LoggerBuilder
 from buffett.common.magic import get_module_name, get_class_name
 from buffett.common.pendulum import DateTime
 from buffett.common.wrapper import Wrapper
@@ -25,26 +25,19 @@ class Task:
             start_time if isinstance(start_time, DateTime) else DateTime.now()
         )
         self._task_id = None
+        self._logger = LoggerBuilder.build(TaskLogger)(wrapper)
 
     def run(self) -> tuple[bool, Any, None, Optional[str]]:
         success = True
         err_msg = None
         res = None
         try:
-            logging.info(
-                f"---------------Start running {self._wrapper.full_name}---------------"
-            )
+            self._logger.info_start()
             res = self._wrapper.run(*self._args, **self._kwargs)
-            logging.info(
-                f"---------------End running {self._wrapper.full_name}---------------"
-            )
+            self._logger.info_end()
             new_task = self.get_subsequent_task(success=True)
         except Exception:
-            logging.error(
-                f"---------------Error occurred when running {self._wrapper.full_name}---------------"
-            )
-            err_msg = format_exc()
-            logging.error(err_msg)
+            self._logger.error_end(format_exc())
             success = False
             new_task = self.get_subsequent_task(success=False)
         return success, res, new_task, err_msg
@@ -79,3 +72,21 @@ class Task:
     @abstractmethod
     def get_subsequent_task(self, success: bool):
         pass
+
+
+class TaskLogger(ExLogger):
+    _SEP = "-" * 10
+
+    def __init__(self, wrapper):
+        super(TaskLogger, self).__init__()
+        self._name = wrapper.full_name
+
+    def info_start(self):
+        self.info(f"{self._SEP}Start running {self._name}{self._SEP}")
+
+    def info_end(self):
+        self.info(f"{self._SEP}End running {self._name}{self._SEP}")
+
+    def error_end(self, msg: str):
+        self.error(f"{self._SEP}Error occurred when running {self._name}{self._SEP}")
+        self.error(msg)
